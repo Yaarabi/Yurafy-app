@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Moroccan SME Social Media Automation SaaS
 
-First, run the development server:
+**Empowering Moroccan SMEs with AI-driven content and social media automation.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This SaaS platform helps small and medium-sized businesses in Morocco create AI-generated product descriptions, auto-generated landing pages, and schedule posts on Instagram. The goal is to save time, reduce marketing costs, and boost online engagement through AI-powered automation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+### Phase 1: Core MVP
+**Objective:** Validate concept and onboard early users.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **AI-generated Product Descriptions**
+  - Input: product name, category, and image
+  - Output: high-quality, persuasive copy in **Arabic, French, and English**
+  - Optional SEO-focused captions for Instagram
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Product Info Pages**
+  - Auto-generated landing page per product
+  - Includes image, AI description, price, and contact buttons
+  - Mobile-first design
 
-## Deploy on Vercel
+- **Instagram Bot MVP**
+  - Connect via official Instagram Graph API
+  - AI suggests captions and hashtags
+  - Schedule posts per user-defined time
+  - Image posts only (no reels/videos initially)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Backend**
+  - Next.js API routes for scheduling
+  - BullMQ + Redis for per-user scheduled jobs
+  - Postgres / MongoDB for user data, schedules, and access tokens
+  - Optional: dashboard analytics (posts, likes, comments)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend**
+  - Next.js + Tailwind UI
+  - Simple onboarding: connect Instagram, add products, set posting schedule
+  - Preview AI-generated product pages and Instagram posts
+
+---
+
+### Phase 2: Beta Expansion
+**Objective:** Enhance features, engagement, and reliability.
+
+- WhatsApp bot via WhatsApp Business API
+  - Automated responses for inquiries, orders, promotions
+  - Optional broadcast messages for subscribers
+- Instagram video/reel support
+  - AI-generated thumbnails and captions
+  - Short-form content posting
+- Enhanced analytics dashboard
+- User management and subscriptions
+  - Stripe integration
+  - Free tier + paid tiers
+
+---
+
+### Phase 3: Growth & Automation
+**Objective:** Scale SaaS and improve automation for multiple SMEs.
+
+- Multi-language AI support
+  - Arabic (Darija), French, English
+  - Auto-adapts captions and product pages
+- Content templates & campaigns
+  - Pre-built templates for holidays, sales, promotions
+  - Multi-day AI-generated posting campaigns
+- Reliability & monitoring
+  - BullMQ Pro for high-volume jobs
+  - Error monitoring, retries, rate-limiting
+- Local marketing & partnerships
+  - Collaborations with incubators, artisan networks, Instagram influencers
+  - Workshops to educate sellers
+
+---
+
+## Pricing Strategy (Morocco)
+
+- **Freemium:** 1–2 posts/week, AI captions only
+- **Starter:** $10–15/month → up to 10 posts, product pages, Instagram bot
+- **Pro:** $25–30/month → unlimited posts, WhatsApp bot, analytics
+- Suppo
