@@ -1,47 +1,87 @@
-
 "use client";
 import { motion } from "framer-motion";
-
-const plans = [
-    { name: "Seller", features: ["Product pages", "AI content"], price: "Free" },
-    { name: "Insta Bot", features: ["Seller + Instagram automation"], price: "$10/mo" },
-    { name: "WhatsApp Bot", features: ["Seller + WhatsApp automation"], price: "$20/mo" },
-    { name: "Pro", features: ["All features included"], price: "$30/mo", highlighted: true },
-];
+import { useTranslations } from "next-intl";
 
 export default function PlansSection() {
+    const t = useTranslations("PlansSection");
+
+    const plans = [
+        {
+            name: t("seller.name"),
+            features: [t("seller.feature1"), t("seller.feature2")],
+            price: t("seller.price"),
+        },
+        {
+            name: t("instabot.name"),
+            features: [t("instabot.feature1")],
+            price: t("instabot.price"),
+        },
+        {
+            name: t("whatsappbot.name"),
+            features: [t("whatsappbot.feature1")],
+            price: t("whatsappbot.price"),
+        },
+        {
+            name: t("pro.name"),
+            features: [t("pro.feature1")],
+            price: t("pro.price"),
+            highlighted: true,
+        },
+    ];
+
     return (
-        <section className="py-16 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-10">Flexible Plans to Fit Your Business</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {plans.map((plan, i) => (
-            <motion.div
-                key={plan.name}
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className={`p-6 rounded-xl shadow-lg bg-white border ${
-                plan.highlighted ? "border-indigo-500" : "border-gray-200"
-                }`}
-            >
-                {plan.highlighted && (
-                <span className="inline-block px-3 py-1 text-xs font-semibold bg-indigo-500 text-white rounded-full mb-3">
-                    Most Popular
-                </span>
-                )}
-                <h3 className="text-xl font-bold mb-4">{plan.name}</h3>
-                <p className="text-3xl font-extrabold mb-4">{plan.price}</p>
-                <ul className="space-y-2 mb-4">
-                {plan.features.map((f) => (
-                    <li key={f} className="text-gray-700">• {f}</li>
+        <section className="py-20 bg-white">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 text-gray-900">
+                {t("title")}
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto px-6">
+                {plans.map((plan, i) => (
+                    <motion.div
+                        key={plan.name}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className={`relative p-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl 
+                        ${plan.highlighted 
+                            ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0" 
+                            : "bg-white border border-gray-200 hover:border-indigo-400"
+                        }`}
+                    >
+                        {plan.highlighted && (
+                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-md">
+                                {t("mostPopular")}
+                            </span>
+                        )}
+                        <h3 className={`text-xl font-bold mb-4 ${plan.highlighted ? "text-white" : "text-gray-900"}`}>
+                            {plan.name}
+                        </h3>
+                        <p className={`text-3xl font-extrabold mb-6 ${plan.highlighted ? "text-yellow-300" : "text-indigo-600"}`}>
+                            {plan.price}
+                        </p>
+                        <ul className="space-y-2 mb-6">
+                            {plan.features.map((f) => (
+                                <li
+                                    key={f}
+                                    className={`flex items-center gap-2 ${
+                                        plan.highlighted ? "text-indigo-100" : "text-gray-700"
+                                    }`}
+                                >
+                                    ✅ {f}
+                                </li>
+                            ))}
+                        </ul>
+                        <button
+                            className={`w-full py-3 rounded-lg font-semibold transition 
+                                ${plan.highlighted 
+                                ? "bg-white text-indigo-600 hover:bg-gray-100" 
+                                : "bg-indigo-500 text-white hover:bg-indigo-600"
+                                }`}
+                        >
+                            {t("choosePlan")}
+                        </button>
+                    </motion.div>
                 ))}
-                </ul>
-                <button className="w-full py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition">
-                Choose Plan
-                </button>
-            </motion.div>
-            ))}
-        </div>
+            </div>
         </section>
     );
 }

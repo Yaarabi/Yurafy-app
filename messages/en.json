@@ -1,0 +1,160 @@
+
+{
+    "AboutSection": {
+        "title": "Who We Are",
+        "description": "Yura IT is a forward-thinking technology company dedicated to helping Moroccan small businesses grow online. We combine AI, automation, and expert web development to deliver smart solutions that save time and increase sales. Whether you’re a local artisan, retailer, or online seller, our tools help you reach your customers faster and smarter.",
+        "highlight1": "AI-generated product descriptions for instant, high-quality content",
+        "highlight2": "Instagram bot for automated posting and engagement",
+        "highlight3": "WhatsApp bot for customer communication and order updates",
+        "highlight4": "Custom product pages to showcase and sell your products"
+    },
+    "FeaturesSection": {
+        "title": "All-in-One Automation for Sellers",
+        "feature1": {
+        "title": "AI Product Descriptions",
+        "description": "Generate persuasive product descriptions in Arabic, French, and English."
+        },
+        "feature2": {
+        "title": "Product Pages",
+        "description": "Custom landing pages for each product, ready to share with customers."
+        },
+        "feature3": {
+        "title": "Instagram Bot",
+        "description": "Schedule posts, hashtags, and captions automatically."
+        },
+        "feature4": {
+        "title": "WhatsApp Bot",
+        "description": "Automate messages, order updates, and broadcast campaigns."
+        }
+    },
+    
+    "Footer": {
+        "companyName": "Yura IT",
+        "companyDescription": "Empowering Moroccan SMEs with AI-driven automation. Create, post, and grow effortlessly.",
+        "navigation": {
+        "title": "Navigation",
+        "home": "Home",
+        "products": "Products",
+        "pricing": "Pricing",
+        "about": "About",
+        "contact": "Contact"
+        },
+        "resources": {
+        "title": "Resources",
+        "blog": "Blog",
+        "faqs": "FAQs",
+        "support": "Support",
+        "terms": "Terms & Privacy"
+        },
+        "contact": {
+        "title": "Contact Us",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address"
+        },
+        "copyright": "© 2025 Yura IT – All rights reserved."
+    },
+    "HeroSection": {
+    "language": "EN",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logoAlt": "Yura IT Logo",
+    "title": "Yura IT – AI-Powered Automation - Smart Solutions",
+    "subtitle": "Simplify your social media, boost sales, and save time with AI-generated product content, Instagram & WhatsApp automation, and custom product pages.",
+    "cta": {
+        "getStarted": "Get Started Free",
+        "learnMore": "Learn More"
+    },
+    "dashboardAlt": "Seller dashboard mockup"
+    },
+    
+    "HowItWorks": {
+        "title": "How It Works",
+        "step1": {
+        "title": "Connect Your Account",
+        "description": "Link your Instagram Business and WhatsApp Business accounts in a few clicks."
+        },
+        "step2": {
+        "title": "Add Your Products",
+        "description": "Upload your product images and basic info. Our AI generates descriptions and captions automatically."
+        },
+        "step3": {
+        "title": "Schedule Posts",
+        "description": "Choose when and where you want to publish — Instagram posts or WhatsApp messages — and let the AI do the rest."
+        },
+        "step4": {
+        "title": "Grow & Track",
+        "description": "Monitor engagement, reach, and sales with built-in analytics dashboards."
+        }
+    
+    },
+    
+    "OtherServicesSection": {
+        "title": "Grow Smarter with Yura IT Services",
+        "subtitle": "Explore how Yura IT can help your business thrive with web development, AI-powered automation, and integration solutions.",
+        "service1": {
+        "title": "Custom Web Development",
+        "description": "Building fast, responsive, and modern websites tailored to your business needs."
+        },
+        "service2": {
+        "title": "AI Solutions",
+        "description": "Integrating AI to automate tasks, generate content, and optimize workflows."
+        },
+        "service3": {
+        "title": "Automation & Integrations",
+        "description": "Connecting apps, social media, and communication channels to streamline operations."
+        },
+        "cta": {
+        "contact": "Contact Us"
+        }
+    },
+    
+    "PlansSection": {
+        "title": "Flexible Plans to Fit Your Business",
+        "mostPopular": "⭐ Most Popular",
+        "choosePlan": "Choose Plan",
+        "seller": {
+        "name": "Seller",
+        "feature1": "Product pages",
+        "feature2": "AI content",
+        "price": "$5/mo"
+        },
+        "instabot": {
+        "name": "Insta Bot",
+        "feature1": "Seller + Instagram automation",
+        "price": "$10/mo"
+        },
+        "whatsappbot": {
+        "name": "WhatsApp Bot",
+        "feature1": "Seller + WhatsApp automation",
+        "price": "$20/mo"
+        },
+        "pro": {
+        "name": "Pro",
+        "feature1": "All features included",
+        "price": "$30/mo"
+        }
+    },
+    
+    "TestimonialsSection": {
+        "title": "What Our Sellers Say",
+        "testimonial1": {
+        "quote": "Yura IT made posting on Instagram effortless — my products reach more clients than ever.",
+        "name": "Fatima, Artisan"
+        },
+        "testimonial2": {
+        "quote": "AI descriptions save me hours every week. The WhatsApp bot keeps my customers informed instantly.",
+        "name": "Youssef, Retailer"
+        }
+    },
+    
+    "CallToAction": {
+        "headline": "Ready to Grow Your Business with Yura IT?",
+        "cta": "Get Started Now"
+    }
+
+
+
+
+
+}

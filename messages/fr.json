@@ -1,0 +1,147 @@
+{
+    "AboutSection": {
+        "title": "Qui Nous Sommes",
+        "description": "Yura IT est une entreprise technologique innovante dédiée à aider les petites entreprises marocaines à se développer en ligne. Nous combinons l'IA, l'automatisation et le développement web expert pour fournir des solutions intelligentes qui font gagner du temps et augmentent les ventes. Que vous soyez un artisan local, un commerçant ou un vendeur en ligne, nos outils vous aident à atteindre vos clients plus rapidement et efficacement.",
+        "highlight1": "Descriptions de produits générées par l'IA pour un contenu instantané et de haute qualité",
+        "highlight2": "Bot Instagram pour publication et engagement automatisés",
+        "highlight3": "Bot WhatsApp pour la communication client et les mises à jour de commandes",
+        "highlight4": "Pages produits personnalisées pour présenter et vendre vos produits"
+    },
+    "FeaturesSection": {
+        "title": "Automatisation Tout-en-Un pour les Vendeurs",
+        "feature1": {
+        "title": "Descriptions de Produits IA",
+        "description": "Générez des descriptions de produits convaincantes en arabe, français et anglais."
+        },
+        "feature2": {
+        "title": "Pages Produits",
+        "description": "Pages d’atterrissage personnalisées pour chaque produit, prêtes à partager avec les clients."
+        },
+        "feature3": {
+        "title": "Bot Instagram",
+        "description": "Planifiez automatiquement les publications, hashtags et légendes."
+        },
+        "feature4": {
+        "title": "Bot WhatsApp",
+        "description": "Automatisez les messages, mises à jour de commandes et campagnes."
+        }
+    },
+    "Footer": {
+        "companyName": "Yura IT",
+        "companyDescription": "Soutenir les PME marocaines avec l'automatisation pilotée par l'IA. Créez, publiez et développez facilement.",
+        "navigation": {
+        "title": "Navigation",
+        "home": "Accueil",
+        "products": "Produits",
+        "pricing": "Tarifs",
+        "about": "À propos",
+        "contact": "Contact"
+        },
+        "resources": {
+        "title": "Ressources",
+        "blog": "Blog",
+        "faqs": "FAQs",
+        "support": "Support",
+        "terms": "Conditions & Confidentialité"
+        },
+        "contact": {
+        "title": "Contactez-Nous",
+        "email": "Email",
+        "phone": "Téléphone",
+        "address": "Adresse"
+        },
+        "copyright": "© 2025 Yura IT – Tous droits réservés."
+    },
+    "HeroSection": {
+        "language": "FR",
+        "login": "Se Connecter",
+        "signup": "S'inscrire",
+        "logoAlt": "Logo Yura IT",
+        "title": "Yura IT – Automatisation IA - Solutions Intelligentes",
+        "subtitle": "Simplifiez vos réseaux sociaux, augmentez vos ventes et gagnez du temps avec du contenu produit généré par l'IA, l'automatisation Instagram & WhatsApp et des pages produits personnalisées.",
+        "cta": {
+        "getStarted": "Commencer Gratuitement",
+        "learnMore": "En Savoir Plus"
+        },
+        "dashboardAlt": "Maquette du tableau de bord vendeur"
+    },
+    "HowItWorks": {
+        "title": "Comment Ça Marche",
+        "step1": {
+        "title": "Connectez Votre Compte",
+        "description": "Liez vos comptes Instagram Business et WhatsApp Business en quelques clics."
+        },
+        "step2": {
+        "title": "Ajoutez Vos Produits",
+        "description": "Téléchargez vos images et informations de produits. Notre IA génère automatiquement descriptions et légendes."
+        },
+        "step3": {
+        "title": "Programmez les Publications",
+        "description": "Choisissez quand et où publier — posts Instagram ou messages WhatsApp — et laissez l'IA faire le reste."
+        },
+        "step4": {
+        "title": "Développez & Suivez",
+        "description": "Suivez l'engagement, la portée et les ventes avec des tableaux de bord analytiques intégrés."
+        }
+    },
+    "OtherServicesSection": {
+        "title": "Développez Plus Malin avec les Services Yura IT",
+        "subtitle": "Découvrez comment Yura IT peut aider votre entreprise à prospérer avec le développement web, l'automatisation IA et les solutions d'intégration.",
+        "service1": {
+        "title": "Développement Web Sur Mesure",
+        "description": "Création de sites web rapides, réactifs et modernes, adaptés à vos besoins."
+        },
+        "service2": {
+        "title": "Solutions IA",
+        "description": "Intégration de l'IA pour automatiser les tâches, générer du contenu et optimiser les flux de travail."
+        },
+        "service3": {
+        "title": "Automatisation & Intégrations",
+        "description": "Connectez vos applications, réseaux sociaux et canaux de communication pour simplifier vos opérations."
+        },
+        "cta": {
+        "contact": "Contactez-Nous"
+        }
+    },
+    "PlansSection": {
+        "title": "Plans Flexibles pour Votre Entreprise",
+        "mostPopular": "⭐ Le Plus Populaire",
+        "choosePlan": "Choisir un Plan",
+        "seller": {
+        "name": "Vendeur",
+        "feature1": "Pages produits",
+        "feature2": "Contenu IA",
+        "price": "5$/mois"
+        },
+        "instabot": {
+        "name": "Insta Bot",
+        "feature1": "Vendeur + automatisation Instagram",
+        "price": "10$/mois"
+        },
+        "whatsappbot": {
+        "name": "WhatsApp Bot",
+        "feature1": "Vendeur + automatisation WhatsApp",
+        "price": "20$/mois"
+        },
+        "pro": {
+        "name": "Pro",
+        "feature1": "Toutes les fonctionnalités incluses",
+        "price": "30$/mois"
+        }
+    },
+    "TestimonialsSection": {
+        "title": "Ce Que Nos Vendeurs Disent",
+        "testimonial1": {
+        "quote": "Yura IT rend la publication sur Instagram sans effort — mes produits atteignent plus de clients que jamais.",
+        "name": "Fatima, Artisan"
+        },
+        "testimonial2": {
+        "quote": "Les descriptions IA me font gagner des heures chaque semaine. Le bot WhatsApp informe instantanément mes clients.",
+        "name": "Youssef, Commerçant"
+        }
+    },
+    "CallToAction": {
+        "headline": "Prêt à Développer Votre Entreprise avec Yura IT ?",
+        "cta": "Commencez Maintenant"
+    }
+    }
