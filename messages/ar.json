@@ -144,30 +144,35 @@
         "headline": "هل أنت مستعد لتنمية عملك مع Yura IT؟",
         "cta": "ابدأ الآن"
     },
+    
+    "HeroSectionLogin": {
+        "signup": "إنشاء حساب",
+        "login": "تسجيل الدخول"
+    },
     "Auth": {
         "loginTitle": "تسجيل الدخول إلى حسابك",
-        "signupTitle": "إنشاء حساب Yura IT",
+        "signupTitle": "إنشاء حساب Yura IT الخاص بك",
         "emailLabel": "البريد الإلكتروني",
         "emailPlaceholder": "أدخل بريدك الإلكتروني",
         "passwordLabel": "كلمة المرور",
         "passwordPlaceholder": "أدخل كلمة المرور",
         "confirmPasswordLabel": "تأكيد كلمة المرور",
         "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
-        "brandNameLabel": "اسم العلامة التجارية",
-        "brandNamePlaceholder": "اسم نشاطك التجاري أو علامتك",
         "firstNameLabel": "الاسم الأول",
-        "firstNamePlaceholder": "أدخل اسمك الأول",
+        "firstNamePlaceholder": "اسمك الأول",
         "lastNameLabel": "اسم العائلة",
-        "lastNamePlaceholder": "أدخل اسم العائلة",
+        "lastNamePlaceholder": "اسم العائلة",
+        "brandNameLabel": "اسم العلامة التجارية",
+        "brandNamePlaceholder": "اسم عملك أو علامتك التجارية",
         "phoneLabel": "رقم الهاتف",
         "phonePlaceholder": "مثال: +212 6 00 00 00 00",
-        "planLabel": "اختر الخطة",
+        "planLabel": "اختر خطتك",
         "planOptions": {
-            "default": "اختر خطة",
-            "landing": "صفحة هبوط",
-            "instagBot": "بوت إنستغرام",
-            "whatsappBot": "بوت واتساب",
-            "pro": "برو"
+        "default": "اختر خطة",
+        "landing": "صفحة هبوط",
+        "instagBot": "بوت إنستغرام",
+        "whatsappBot": "بوت واتساب",
+        "pro": "المحترف"
         },
         "submitLogin": "تسجيل الدخول",
         "submitSignup": "إنشاء حساب",
@@ -178,7 +183,13 @@
         "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
         "errorPasswordMismatch": "كلمتا المرور غير متطابقتين",
         "successSignup": "تم إنشاء الحساب بنجاح!",
-        "successLogin": "مرحبًا بعودتك!"
+        "successLogin": "مرحباً بعودتك!"
+    },
+    "FooterLogin": {
+        "companyDescription": "تمكين الشركات من خلال الأتمتة المدعومة بالذكاء الاصطناعي.",
+        "copyright": "© 2025 Yura IT – جميع الحقوق محفوظة."
     }
-
 }
+
+
+
