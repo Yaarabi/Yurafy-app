@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FaInstagram, FaWhatsapp, FaChartLine } from 'react-icons/fa';
 import { LogIn, UserPlus } from 'lucide-react';
@@ -9,23 +10,46 @@ import LocaleSwitcher from './LocaleSwitcher';
 
 export default function HeroSection() {
     const t = useTranslations('HeroSection');
+    const router = useRouter();
+    const params = useParams(); // { locale: 'en' | 'fr' | 'ar' }
+
+    const handleLogin = () => {
+        router.push(`/${params.locale}/login`);
+    };
+
+    const handleSignup = () => {
+        router.push(`/${params.locale}/signup`);
+    };
+
+    const handleGetStarted = () => {
+        router.push(`/${params.locale}/signup`);
+    };
+
+    const handleLearnMore = () => {
+        router.push(`/${params.locale}#how-it-works`); 
+    };
 
     return (
         <section className="bg-gradient-to-br from-white to-blue-100 py-20 px-6 md:px-16">
         <div className="max-w-7xl mx-auto">
             {/* Top Bar: Language + Auth */}
             <div className="flex justify-end items-center gap-4 mb-8">
-            {/* Language Selector */}
             <LocaleSwitcher />
 
             {/* Login */}
-            <button className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100 transition">
+            <button
+                onClick={handleLogin}
+                className="cursor-pointer flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100 transition"
+            >
                 <LogIn className="w-5 h-5" />
                 {t('login')}
             </button>
 
             {/* Sign Up */}
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition shadow">
+            <button
+                onClick={handleSignup}
+                className="cursor-pointer flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition shadow"
+            >
                 <UserPlus className="w-5 h-5" />
                 {t('signup')}
             </button>
@@ -56,10 +80,16 @@ export default function HeroSection() {
                 <p className="text-lg text-gray-700 mb-6">{t('subtitle')}</p>
 
                 <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                <button
+                    onClick={handleGetStarted}
+                    className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+                >
                     {t('cta.getStarted')}
                 </button>
-                <button className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition">
+                <button
+                    onClick={handleLearnMore}
+                    className="cursor-pointer border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition"
+                >
                     {t('cta.learnMore')}
                 </button>
                 </div>

@@ -31,7 +31,9 @@ export default function HowItWorks() {
     ];
 
     return (
-        <section className="bg-blue-100 py-20 px-6 md:px-16">
+        <section
+        id='how-it-works'
+        className="bg-blue-100 py-20 px-6 md:px-16">
             <div className="max-w-6xl mx-auto text-center">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}

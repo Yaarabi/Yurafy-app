@@ -143,5 +143,42 @@
     "CallToAction": {
         "headline": "هل أنت مستعد لتنمية عملك مع Yura IT؟",
         "cta": "ابدأ الآن"
+    },
+    "Auth": {
+        "loginTitle": "تسجيل الدخول إلى حسابك",
+        "signupTitle": "إنشاء حساب Yura IT",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "passwordLabel": "كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "confirmPasswordLabel": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+        "brandNameLabel": "اسم العلامة التجارية",
+        "brandNamePlaceholder": "اسم نشاطك التجاري أو علامتك",
+        "firstNameLabel": "الاسم الأول",
+        "firstNamePlaceholder": "أدخل اسمك الأول",
+        "lastNameLabel": "اسم العائلة",
+        "lastNamePlaceholder": "أدخل اسم العائلة",
+        "phoneLabel": "رقم الهاتف",
+        "phonePlaceholder": "مثال: +212 6 00 00 00 00",
+        "planLabel": "اختر الخطة",
+        "planOptions": {
+            "default": "اختر خطة",
+            "landing": "صفحة هبوط",
+            "instagBot": "بوت إنستغرام",
+            "whatsappBot": "بوت واتساب",
+            "pro": "برو"
+        },
+        "submitLogin": "تسجيل الدخول",
+        "submitSignup": "إنشاء حساب",
+        "forgotPassword": "هل نسيت كلمة المرور؟",
+        "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+        "noAccountYet": "ليس لديك حساب بعد؟",
+        "errorRequired": "هذا الحقل مطلوب",
+        "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+        "errorPasswordMismatch": "كلمتا المرور غير متطابقتين",
+        "successSignup": "تم إنشاء الحساب بنجاح!",
+        "successLogin": "مرحبًا بعودتك!"
     }
+
 }

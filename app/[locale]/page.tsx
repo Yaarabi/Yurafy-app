@@ -9,6 +9,7 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import CallToAction from "@/components/home/CallToAction";
 import Footer from "@/components/home/Footer";
 import ServicesSection from "@/components/home/otherServicesSection";
+import LoginForm from "@/components/login/loginForm";
 
 export default function Home() {
   return (

@@ -143,5 +143,42 @@
     "CallToAction": {
         "headline": "Prêt à Développer Votre Entreprise avec Yura IT ?",
         "cta": "Commencez Maintenant"
+    },
+    "Auth": {
+        "loginTitle": "Connectez-vous à votre compte",
+        "signupTitle": "Créez votre compte Yura IT",
+        "emailLabel": "E-mail",
+        "emailPlaceholder": "Entrez votre e-mail",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "Entrez votre mot de passe",
+        "confirmPasswordLabel": "Confirmez le mot de passe",
+        "confirmPasswordPlaceholder": "Ressaisissez votre mot de passe",
+        "brandNameLabel": "Nom de la marque",
+        "brandNamePlaceholder": "Le nom de votre entreprise ou marque",
+        "firstNameLabel": "Prénom",
+        "firstNamePlaceholder": "Votre prénom",
+        "lastNameLabel": "Nom",
+        "lastNamePlaceholder": "Votre nom de famille",
+        "phoneLabel": "Numéro de téléphone",
+        "phonePlaceholder": "ex. +212 6 00 00 00 00",
+        "planLabel": "Choisissez votre plan",
+        "planOptions": {
+            "default": "Sélectionnez un plan",
+            "landing": "Page d'accueil",
+            "instagBot": "Bot Instagram",
+            "whatsappBot": "Bot WhatsApp",
+            "pro": "Pro"
+        },
+        "submitLogin": "Connexion",
+        "submitSignup": "Inscription",
+        "forgotPassword": "Mot de passe oublié ?",
+        "alreadyHaveAccount": "Vous avez déjà un compte ?",
+        "noAccountYet": "Vous n'avez pas encore de compte ?",
+        "errorRequired": "Ce champ est requis",
+        "errorInvalidEmail": "Veuillez entrer une adresse e-mail valide",
+        "errorPasswordMismatch": "Les mots de passe ne correspondent pas",
+        "successSignup": "Compte créé avec succès !",
+        "successLogin": "Bienvenue !"
     }
+
     }

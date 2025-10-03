@@ -151,10 +151,57 @@
     "CallToAction": {
         "headline": "Ready to Grow Your Business with Yura IT?",
         "cta": "Get Started Now"
+    },
+    "HeroSectionLogin": {
+        "signup": "Sign Up",
+        "login": "Login"
+    },
+    "Auth": {
+        "loginTitle": "Sign In to Your Account",
+        "signupTitle": "Create Your Yura IT Account",
+        "emailLabel": "Email",
+        "emailPlaceholder": "Enter your email",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "Re-enter your password",
+        "firstNameLabel": "First Name",
+        "firstNamePlaceholder": "Your first name",
+        "lastNameLabel": "Last Name",
+        "lastNamePlaceholder": "Your last name",
+        "brandNameLabel": "Brand Name",
+        "brandNamePlaceholder": "Your business or brand name",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "e.g. +212 6 00 00 00 00",
+        "planLabel": "Choose Your Plan",
+        "planOptions": {
+            "default": "Select a plan",
+            "landing": "Landing Page",
+            "instagBot": "Instagram Bot",
+            "whatsappBot": "WhatsApp Bot",
+            "pro": "Pro"
+        },
+        "submitLogin": "Login",
+        "submitSignup": "Sign Up",
+        "forgotPassword": "Forgot your password?",
+        "alreadyHaveAccount": "Already have an account?",
+        "noAccountYet": "Don't have an account yet?",
+        "errorRequired": "This field is required",
+        "errorInvalidEmail": "Please enter a valid email address",
+        "errorPasswordMismatch": "Passwords do not match",
+        "successSignup": "Account created successfully!",
+        "successLogin": "Welcome back!"
+        },
+    "FooterLogin": {
+        "companyDescription": "Empowering with AI-driven automation.",
+        "copyright": "© 2025 Yura IT – All rights reserved."
     }
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
