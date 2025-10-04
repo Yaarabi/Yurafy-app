@@ -1,0 +1,15 @@
+
+'use client'
+import OrdersTable from '@/components/dashboard/ordersTable';
+import {useTranslations} from 'next-intl';
+
+export default function OrdersPage() {
+    const t = useTranslations('orders');
+    
+    return (
+        <div className="grid gap-4">
+        <h2 className="text-xl font-semibold">{t('title')}</h2>
+        <OrdersTable/>
+        </div>
+    );
+}

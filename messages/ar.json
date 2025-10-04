@@ -151,7 +151,7 @@
     },
     "Auth": {
         "loginTitle": "تسجيل الدخول إلى حسابك",
-        "signupTitle": "إنشاء حساب Yura IT الخاص بك",
+        "signupTitle": "إنشاء حساب الخاص بك",
         "emailLabel": "البريد الإلكتروني",
         "emailPlaceholder": "أدخل بريدك الإلكتروني",
         "passwordLabel": "كلمة المرور",
@@ -188,7 +188,95 @@
     "FooterLogin": {
         "companyDescription": "تمكين الشركات من خلال الأتمتة المدعومة بالذكاء الاصطناعي.",
         "copyright": "© 2025 Yura IT – جميع الحقوق محفوظة."
+    },
+    
+    "common": {
+        "appTitle": "لوحة تحكم البائع",
+        "logout": "تسجيل الخروج"
+    },
+    "nav": {
+        "dashboard": "الرئيسية",
+        "orders": "الطلبات",
+        "products": "المنتجات",
+        "settings": "الإعدادات",
+        "support": "الدعم"
+    },
+    "dashboard": {
+        "title": "مرحباً بك في لوحتك",
+        "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد."
+    },
+    "orders": {
+        "title": "الطلبات",
+        "columns": {
+        "id": "رقم الطلب",
+        "customer": "العميل",
+        "total": "الإجمالي",
+        "status": "الحالة"
+        },
+        "status": {
+        "pending": "قيد الانتظار",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "ملغاة"
+        }
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "profileTitle": "المعلومات الشخصية",
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "save": "حفظ التغييرات",
+        "brandTitle": "شعار العلامة",
+        "brandHint": "حمّل شعارك (PNG، JPG، SVG)."
+    },
+    "support": {
+        "title": "روبوت الدعم",
+        "welcome": "مرحباً! أنا روبوت الدعم. كيف يمكنني مساعدتك؟",
+        "stubReply": "شكراً! سيقوم وكيل بمراجعة طلبك قريباً.",
+        "placeholder": "اكتب سؤالك...",
+        "send": "إرسال"
+    },
+    
+    "products": {
+        "title": "المنتجات",
+        "new": "منتج جديد",
+        "createTitle": "إنشاء منتج جديد",
+        "columns": {
+        "name": "الاسم",
+        "slug": "الرابط المختصر",
+        "price": "السعر",
+        "discount": "الخصم (%)",
+        "stock": "المخزون",
+        "category": "الفئة",
+        "brand": "العلامة التجارية",
+        "images": "الصور",
+        "salesCount": "عدد المبيعات",
+        "createdAt": "تاريخ الإنشاء"
+        },
+        "form": {
+        "name": "اسم المنتج",
+        "slug": "الرابط المختصر",
+        "description": "الوصف",
+        "price": "السعر",
+        "discount": "الخصم (%)",
+        "stock": "المخزون",
+        "category": "معرّف الفئة",
+        "brand": "العلامة التجارية",
+        "images": "روابط الصور (مفصولة بفواصل)",
+        "create": "إنشاء",
+        "creating": "جارٍ الإنشاء..."
+        },
+        "errors": {
+        "nameRequired": "اسم المنتج مطلوب",
+        "slugRequired": "الرابط المختصر مطلوب",
+        "pricePositive": "يجب أن يكون السعر موجبًا",
+        "stockNonNegative": "لا يمكن أن يكون المخزون سالبًا",
+        "categoryRequired": "الفئة مطلوبة",
+        "imagesRequired": "مطلوب إدخال صورة واحدة على الأقل"
+        }
     }
+
+
 }
 
 

@@ -158,7 +158,7 @@
     },
     "Auth": {
         "loginTitle": "Sign In to Your Account",
-        "signupTitle": "Create Your Yura IT Account",
+        "signupTitle": "Create Your Account",
         "emailLabel": "Email",
         "emailPlaceholder": "Enter your email",
         "passwordLabel": "Password",
@@ -195,8 +195,95 @@
     "FooterLogin": {
         "companyDescription": "Empowering with AI-driven automation.",
         "copyright": "© 2025 Yura IT – All rights reserved."
+    },
+    "common": {
+        "appTitle": "Seller Dashboard",
+        "logout": "Logout"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "products": "Products",
+        "settings": "Settings",
+        "support": "Support"
+    },
+    "dashboard": {
+        "title": "Welcome to your dashboard",
+        "subtitle": "Manage orders, products, and your brand in one place."
+    },
+    "orders": {
+        "title": "Orders",
+        "columns": {
+        "id": "Order ID",
+        "customer": "Customer",
+        "total": "Total",
+        "status": "Status"
+        },
+        "status": {
+        "pending": "Pending",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+        }
+    },
+    "products": {
+        "title": "Products",
+        "new": "New Product",
+        "createTitle": "Create a New Product",
+        "columns": {
+        "name": "Name",
+        "slug": "Slug",
+        "price": "Price",
+        "discount": "Discount (%)",
+        "stock": "Stock",
+        "category": "Category",
+        "brand": "Brand",
+        "images": "Images",
+        "salesCount": "Sales Count",
+        "createdAt": "Created At"
+        },
+        "form": {
+        "name": "Product Name",
+        "slug": "Slug",
+        "description": "Description",
+        "price": "Price",
+        "discount": "Discount (%)",
+        "stock": "Stock",
+        "category": "Category ID",
+        "brand": "Brand",
+        "images": "Image URLs (comma separated)",
+        "create": "Create",
+        "creating": "Creating..."
+        },
+        "errors": {
+        "nameRequired": "Product name is required",
+        "slugRequired": "Slug is required",
+        "pricePositive": "Price must be positive",
+        "stockNonNegative": "Stock cannot be negative",
+        "categoryRequired": "Category is required",
+        "imagesRequired": "At least one image is required"
+        }
+    },
+
+    "settings": {
+        "title": "Settings",
+        "profileTitle": "Personal information",
+        "name": "Name",
+        "email": "Email",
+        "save": "Save changes",
+        "brandTitle": "Brand logo",
+        "brandHint": "Upload your brand logo (PNG, JPG, SVG)."
+    },
+    "support": {
+        "title": "Support bot",
+        "welcome": "Hi! I’m your support bot. How can I help?",
+        "stubReply": "Thanks! A support agent will review this shortly.",
+        "placeholder": "Type your question...",
+        "send": "Send"
     }
 }
+
+
 
 
 

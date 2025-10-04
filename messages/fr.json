@@ -150,7 +150,7 @@
     },
     "Auth": {
         "loginTitle": "Connectez-vous à votre compte",
-        "signupTitle": "Créez votre compte Yura IT",
+        "signupTitle": "Créez votre compte",
         "emailLabel": "Email",
         "emailPlaceholder": "Entrez votre email",
         "passwordLabel": "Mot de passe",
@@ -187,7 +187,93 @@
     "FooterLogin": {
         "companyDescription": "Renforcer les entreprises avec l'automatisation propulsée par l'IA.",
         "copyright": "© 2025 Yura IT – Tous droits réservés."
+    },
+    "common": {
+        "appTitle": "Tableau de bord vendeur",
+        "logout": "Se déconnecter"
+    },
+    "nav": {
+        "dashboard": "Accueil",
+        "orders": "Commandes",
+        "products": "Produits",
+        "settings": "Paramètres",
+        "support": "Support"
+    },
+    "dashboard": {
+        "title": "Bienvenue sur votre tableau de bord",
+        "subtitle": "Gérez les commandes, les produits et votre marque au même endroit."
+    },
+    "orders": {
+        "title": "Commandes",
+        "columns": {
+        "id": "ID de commande",
+        "customer": "Client",
+        "total": "Total",
+        "status": "Statut"
+        },
+        "status": {
+        "pending": "En attente",
+        "shipped": "Expédiée",
+        "delivered": "Livrée",
+        "cancelled": "Annulée"
+        }
+    },
+    "settings": {
+        "title": "Paramètres",
+        "profileTitle": "Informations personnelles",
+        "name": "Nom",
+        "email": "E-mail",
+        "save": "Enregistrer les modifications",
+        "brandTitle": "Logo de marque",
+        "brandHint": "Importez votre logo (PNG, JPG, SVG)."
+    },
+    "support": {
+        "title": "Bot de support",
+        "welcome": "Bonjour ! Je suis votre bot de support. Comment puis-je aider ?",
+        "stubReply": "Merci ! Un agent examinera votre demande prochainement.",
+        "placeholder": "Tapez votre question...",
+        "send": "Envoyer"
+    },
+    "products": {
+        "title": "Produits",
+        "new": "Nouveau produit",
+        "createTitle": "Créer un nouveau produit",
+        "columns": {
+        "name": "Nom",
+        "slug": "Slug",
+        "price": "Prix",
+        "discount": "Remise (%)",
+        "stock": "Stock",
+        "category": "Catégorie",
+        "brand": "Marque",
+        "images": "Images",
+        "salesCount": "Ventes",
+        "createdAt": "Créé le"
+        },
+        "form": {
+        "name": "Nom du produit",
+        "slug": "Slug",
+        "description": "Description",
+        "price": "Prix",
+        "discount": "Remise (%)",
+        "stock": "Stock",
+        "category": "ID de catégorie",
+        "brand": "Marque",
+        "images": "URLs des images (séparées par des virgules)",
+        "create": "Créer",
+        "creating": "Création..."
+        },
+        "errors": {
+        "nameRequired": "Le nom du produit est requis",
+        "slugRequired": "Le slug est requis",
+        "pricePositive": "Le prix doit être positif",
+        "stockNonNegative": "Le stock ne peut pas être négatif",
+        "categoryRequired": "La catégorie est requise",
+        "imagesRequired": "Au moins une image est requise"
+        }
     }
+
+
 }
 
 
