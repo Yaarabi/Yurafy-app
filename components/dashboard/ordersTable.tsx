@@ -68,7 +68,7 @@ export default function OrdersTable() {
                     {columns.map((col) => (
                     <td key={String(col.key)} className="px-4 py-2 text-gray-300">
                         {col.key === 'user'
-                        ? (order.user as any)?.name || 'N/A'
+                        ? (order.owner as any)?.name || 'N/A'
                         : col.key === 'createdAt'
                         ? new Date(order.createdAt).toLocaleDateString()
                         : String(order[col.key as keyof IOrder] ?? '')}
