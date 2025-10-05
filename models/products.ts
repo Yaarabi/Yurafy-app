@@ -2,6 +2,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IProduct {
+    
     name: string;
     slug: string;
     description?: string;
@@ -24,6 +25,7 @@ export interface IProduct {
 
 const ProductSchema = new Schema(
     {
+        owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
         name: { type: String, required: true, trim: true },
         slug: { type: String, required: true, unique: true, lowercase: true },
         description: { type: String },
@@ -31,7 +33,6 @@ const ProductSchema = new Schema(
         discount: { type: Number, default: 0 },
         stock: { type: Number, required: true, default: 0 },
         category: { type: String, required: true },
-        brand: { type: String },
         images: [{ type: String, required: true }],
         variants: [
         {

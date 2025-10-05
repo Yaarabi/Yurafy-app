@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder  {
-  user: mongoose.Types.ObjectId; // reference to customer
+  owner: mongoose.Types.ObjectId; 
   products: {
     product: mongoose.Types.ObjectId; 
     quantity: number;

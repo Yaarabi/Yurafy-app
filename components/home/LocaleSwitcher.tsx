@@ -28,7 +28,7 @@ export default function LocaleSwitcher() {
         <select
         value={locale}
         onChange={(e) => switchLocale(e.target.value)}
-        className="border border-gray-300 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition cursor-pointer"
+        className="border border-gray-300 px-2 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition cursor-pointer"
         >
         {locales.map((loc) => (
             <option key={loc.code} value={loc.code}>

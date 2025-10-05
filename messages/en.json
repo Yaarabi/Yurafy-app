@@ -280,7 +280,16 @@
         "stubReply": "Thanks! A support agent will review this shortly.",
         "placeholder": "Type your question...",
         "send": "Send"
+    },
+    "shop": {
+        "searchPlaceholder": "Search for products...",
+        "noProducts": "No products available."
+    },
+    "product": {
+        "orderCOD": "Order with Cash on Delivery",
+        "codNote": "Pay when you receive your order."
     }
+
 }
 
 

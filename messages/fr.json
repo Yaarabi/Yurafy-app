@@ -271,7 +271,16 @@
         "categoryRequired": "La catégorie est requise",
         "imagesRequired": "Au moins une image est requise"
         }
+    },
+    "shop": {
+        "searchPlaceholder": "Rechercher des produits...",
+        "noProducts": "Aucun produit disponible."
+    },
+    "product": {
+        "orderCOD": "Commander avec paiement à la livraison",
+        "codNote": "Payez lorsque vous recevez votre commande."
     }
+
 
 
 }

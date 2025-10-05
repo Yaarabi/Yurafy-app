@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
     },
     plan: {
         type: String,
-        enum: ["landing page", "instag bot", "whatsapp bot", "Pro", null],
-        default: null
+        enum: ["store", "insta bot", "whatsapp bot", "Pro", "free"],
+        default: "free"
     }
 });
 

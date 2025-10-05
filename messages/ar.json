@@ -274,7 +274,16 @@
         "categoryRequired": "الفئة مطلوبة",
         "imagesRequired": "مطلوب إدخال صورة واحدة على الأقل"
         }
+    },
+    "shop": {
+        "searchPlaceholder": "ابحث عن المنتجات...",
+        "noProducts": "لا توجد منتجات متاحة."
+    },
+    "product": {
+        "orderCOD": "اطلب والدفع عند الاستلام",
+        "codNote": "ادفع عند استلام طلبك."
     }
+
 
 
 }
