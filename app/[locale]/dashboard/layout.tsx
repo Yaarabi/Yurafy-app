@@ -1,3 +1,4 @@
+'use client';
 
 import Sidebar from '@/components/dashboard/sideBar';
 import Header from '@/components/dashboard/header';
@@ -15,7 +16,7 @@ async function getMessages(locale: string) {
 
 export default async function Layout({
     children,
-    params
+    params,
     }: {
     children: ReactNode;
     params: Promise<{ locale: string }>;
@@ -23,24 +24,19 @@ export default async function Layout({
     const { locale } = await params;
     const supportedLocales = ['en', 'fr', 'ar'];
 
-    if (!supportedLocales.includes(locale)) {
-        notFound();
-    }
+    if (!supportedLocales.includes(locale)) notFound();
 
     const messages = await getMessages(locale);
 
     return (
-            <NextIntlClientProvider locale={locale} messages={messages}>
-                <div className="grid grid-cols-[16rem_1fr] min-h-screen">
-                    <Sidebar />
-                    <div className="flex flex-col">
-                        <Header />
-                        <main className="p-4">{children}</main>
-                    </div>
-                </div>
-            </NextIntlClientProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+        <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen bg-gray-800">
+            <Sidebar />
+            <div className="flex flex-col flex-1">
+            <Header />
+            <main className="p-4 flex-1">{children}</main>
+            </div>
+        </div>
+        </NextIntlClientProvider>
     );
 }
-
-
-

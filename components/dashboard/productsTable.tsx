@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { IProduct } from "@/models/products"; 
+import { IProduct } from "@/models/products";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function ProductsTable() {
@@ -9,7 +9,7 @@ export default function ProductsTable() {
     const [loading, setLoading] = useState(true);
 
     const columns = [
-        { key: "id", label: "ID" },
+        { key: "index", label: "#" },
         { key: "name", label: "Name" },
         { key: "price", label: "Price" },
         { key: "stock", label: "Stock" },
@@ -22,8 +22,9 @@ export default function ProductsTable() {
             const res = await fetch("/api/products");
             if (!res.ok) throw new Error("Failed to fetch products");
             const data = await res.json();
+
             setProducts(
-            data.map((p: any) => ({
+            data.products.map((p: any) => ({
                 id: p._id,
                 ...p,
             }))
@@ -34,15 +35,14 @@ export default function ProductsTable() {
             setLoading(false);
         }
         }
+
         fetchProducts();
     }, []);
 
     async function handleDelete(id: string) {
         if (!confirm("Are you sure you want to delete this product?")) return;
         try {
-        const res = await fetch(`/api/products/${id}`, {
-            method: "DELETE",
-        });
+        const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
         if (res.ok) {
             setProducts((prev) => prev.filter((p) => p.id !== id));
         } else {
@@ -52,68 +52,77 @@ export default function ProductsTable() {
         console.error(err);
         }
     }
+
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="min-w-full">
-            <thead className="bg-gray-800/50">
+        <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-md shadow-lg">
+        <table className="min-w-full text-sm">
+            <thead className="bg-gray-800/70">
             <tr>
                 {columns.map((col) => (
                 <th
                     key={String(col.key)}
-                    className="text-left px-4 py-2 text-gray-200 font-medium"
+                    className="px-4 py-3 text-left font-semibold text-gray-200 uppercase tracking-wider"
                 >
                     {col.label}
                 </th>
                 ))}
-                <th className="px-4 py-2 text-gray-200 font-medium">Actions</th>
+                <th className="px-4 py-3 text-gray-200 font-semibold uppercase tracking-wider">
+                Actions
+                </th>
             </tr>
             </thead>
+
             <tbody>
             {loading ? (
                 <tr>
                 <td
                     colSpan={columns.length + 1}
-                    className="px-4 py-4 text-center text-gray-400"
+                    className="px-4 py-6 text-center text-gray-400"
                 >
-                    Loading...
+                    Loading products...
                 </td>
                 </tr>
             ) : products.length === 0 ? (
                 <tr>
                 <td
                     colSpan={columns.length + 1}
-                    className="px-4 py-4 text-center text-gray-400"
+                    className="px-4 py-6 text-center text-gray-400"
                 >
                     No products found
                 </td>
                 </tr>
             ) : (
-                products.map((row) => (
-                <tr key={row.id} className="border-t border-gray-800">
-                    {columns.map((col) => (
-                    <td
-                        key={String(col.key)}
-                        className="px-4 py-2 text-gray-300"
-                    >
-                        {String(row[col.key])}
+                products.map((row, i) => (
+                <tr
+                    key={row.id}
+                    className={`border-t border-gray-800 transition-colors duration-150 hover:bg-gray-800/40 ${
+                    i % 2 === 0 ? "bg-gray-900/40" : ""
+                    }`}
+                >
+                    <td className="px-4 py-3 text-gray-400">{i + 1}</td>
+                    <td className="px-4 py-3 text-gray-300 font-medium">
+                    {row.name}
                     </td>
-                    ))}
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-3 text-gray-300">${row.price}</td>
+                    <td className="px-4 py-3 text-gray-300">{row.stock}</td>
+                    <td className="px-4 py-3 text-gray-300">{row.salesCount}</td>
+
+                    <td className="px-4 py-3">
                     <div className="flex gap-3">
-                        {/* Update Action */}
                         <button
                         onClick={() =>
                             (window.location.href = `/dashboard/products/${row.id}/edit`)
                         }
-                        className="text-indigo-400 hover:text-indigo-200"
+                        className="text-indigo-400 hover:text-indigo-200 transition-transform hover:scale-110"
+                        title="Edit product"
                         >
                         <FaEdit />
                         </button>
 
-                        {/* Delete Action */}
                         <button
                         onClick={() => handleDelete(row.id)}
-                        className="text-red-400 hover:text-red-200"
+                        className="text-red-400 hover:text-red-200 transition-transform hover:scale-110"
+                        title="Delete product"
                         >
                         <FaTrash />
                         </button>
@@ -126,5 +135,4 @@ export default function ProductsTable() {
         </table>
         </div>
     );
- 
 }

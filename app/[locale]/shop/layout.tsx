@@ -34,7 +34,7 @@ export default async function Layout({
     return (
             <NextIntlClientProvider locale={locale} messages={messages}>
                 <Header/>
-                <main className="p-4">{children}</main>
+                {children}
                 <Footer/>
             </NextIntlClientProvider>
     );

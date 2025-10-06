@@ -2,7 +2,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IProduct {
-    
+    _id?: string;
+    owner: string,
     name: string;
     slug: string;
     description?: string;
@@ -11,6 +12,7 @@ export interface IProduct {
     stock: number;
     category: string;
     brand?: string;
+    mainImage: string;
     images: string[];
     variants?: {
         size?: string;
@@ -33,7 +35,8 @@ const ProductSchema = new Schema(
         discount: { type: Number, default: 0 },
         stock: { type: Number, required: true, default: 0 },
         category: { type: String, required: true },
-        images: [{ type: String, required: true }],
+        mainImage: { type: String, required: true },
+        images: [{ type: String, required: false }],
         variants: [
         {
             size: { type: String },

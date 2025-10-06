@@ -2,24 +2,17 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { IProduct } from '@/models/products';
+import { useParams } from 'next/navigation';
 
-interface Product {
-    _id: string;
-    name: string;
-    price: number;
-    category: string;
-    images: string;
-    description: string;
-    stock: number;
-}
-
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product }: { product: IProduct }) {
+    const params = useParams();
     return (
-        <Link href={`/shop/${product._id}`} className="group">
+        <Link href={`/${params.locale}/shop/${product._id}`} className="group">
         <div className="bg-white shadow-md rounded-2xl overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-blue-400/30">
             <div className="relative w-full h-56">
             <Image
-                src={product.images}
+                src={product.mainImage}
                 alt={product.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"

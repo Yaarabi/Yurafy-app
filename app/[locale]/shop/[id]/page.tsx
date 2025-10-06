@@ -2,16 +2,28 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { IProduct } from '@/models/products';   
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage({ params }: { params: { id: string } }) {
     const t = useTranslations('product');
-
+    const [product, setProduct] = useState<IProduct | null>(null);
     // Mock product for demo
-    const product = {
-        name: 'Minimalist Smart Watch',
-        description: 'Stay connected with this sleek smartwatch featuring fitness tracking, notifications, and heart rate monitor.',
-        price: 499,
-        images: '/logo.png',
+    useEffect(() => {
+        async function fetchProduct() {
+            const res = await fetch(`/api/products?id=${params.id}`);
+            const data = await res.json();
+            setProduct(data.product);
+        }
+
+        fetchProduct();
+    }, [params.id]);
+    if (!product) {
+        return (
+        <p className="text-center text-gray-400 mt-10 animate-pulse">
+            {t('loadingProduct')}
+        </p>
+        );
     };
 
     return (
@@ -25,7 +37,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
             {/* Product Image */}
             <div className="relative w-full md:w-1/2 h-96 rounded-2xl overflow-hidden shadow-md">
             <Image
-                src={product.images}
+                src={product.mainImage}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform hover:scale-105"

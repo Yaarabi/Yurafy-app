@@ -10,7 +10,7 @@ export default function Header() {
     const t = useTranslations('shop');
 
     return (
-        <header className="w-full backdrop-blur-md bg-white/70 border-b border-gray-200 sticky top-0 z-50 shadow-md">
+        <header className="w-full backdrop-blur-md bg-blue-50 border-b border-gray-200 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 md:py-4">
             {/* Logo */}
             <motion.div
@@ -24,8 +24,8 @@ export default function Header() {
                 <Image
                 src="/logo.png"
                 alt="Yura Logo"
-                width={42}
-                height={42}
+                width={50}
+                height={50}
                 className="relative z-10"
                 />
             </div>
