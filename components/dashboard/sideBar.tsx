@@ -12,6 +12,7 @@ import {
     MdClose, 
     MdMenu 
 } from 'react-icons/md';
+import { signOut } from 'next-auth/react';
 
 const navItems = [
     { href: 'dashboard', icon: <MdDashboard size={20} />, key: 'nav.dashboard' },
@@ -27,6 +28,12 @@ export default function Sidebar() {
     const params = useParams();
     const router = useRouter();
     const [open, setOpen] = useState(false);
+
+    const handleSignOut = () => {
+        signOut({ redirect: false }).then(() => {
+            router.push(`/${params.locale}/login`);
+        });
+    };
 
     return (
         <>
@@ -69,7 +76,7 @@ export default function Sidebar() {
 
             {/* Logout */}
             <div className="mt-auto">
-            <form action="/api/logout" method="post">
+            <form onSubmit={(e) => { e.preventDefault(); handleSignOut(); }}>
                 <button
                 type="submit"
                 className="cursor-pointer w-full px-3 py-2 rounded-md bg-gray-800 hover:bg-red-600 text-gray-200 font-medium transition"

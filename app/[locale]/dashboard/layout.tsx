@@ -1,10 +1,8 @@
-'use client';
+import { ReactNode } from "react";
+import { notFound } from "next/navigation";
+import ProtectedDashboardClient from "@/components/dashboard/dashboardLayout";
 
-import Sidebar from '@/components/dashboard/sideBar';
-import Header from '@/components/dashboard/header';
-import { NextIntlClientProvider } from 'next-intl';
-import { notFound } from 'next/navigation';
-import { ReactNode } from 'react';
+
 
 async function getMessages(locale: string) {
     try {
@@ -14,29 +12,23 @@ async function getMessages(locale: string) {
     }
 }
 
-export default async function Layout({
+export default async function DashboardLayoutServer({
     children,
     params,
     }: {
     children: ReactNode;
-    params: Promise<{ locale: string }>;
+    params: { locale: string };
     }) {
     const { locale } = await params;
-    const supportedLocales = ['en', 'fr', 'ar'];
+    const supportedLocales = ["en", "fr", "ar"];
 
     if (!supportedLocales.includes(locale)) notFound();
 
     const messages = await getMessages(locale);
 
     return (
-        <NextIntlClientProvider locale={locale} messages={messages}>
-        <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen bg-gray-800">
-            <Sidebar />
-            <div className="flex flex-col flex-1">
-            <Header />
-            <main className="p-4 flex-1">{children}</main>
-            </div>
-        </div>
-        </NextIntlClientProvider>
+        <ProtectedDashboardClient locale={locale} messages={messages}>
+        {children}
+        </ProtectedDashboardClient>
     );
 }

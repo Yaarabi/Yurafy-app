@@ -2,19 +2,19 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    firstName: {
+    name: {
         type: String,
         required: true,
         trim: true
     },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    // lastName: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
     brandName: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     email: {
@@ -30,14 +30,20 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     plan: {
         type: String,
         enum: ["store", "insta bot", "whatsapp bot", "Pro", "free"],
         default: "free"
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
 });
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;
