@@ -13,49 +13,47 @@ export function useSignIn() {
         redirect: false,
         });
 
-        if (res?.error) return res.error as string;
+        if (res?.error) return res.error as string; // Return error string
 
-        // if (res?.ok) {
-        // const email = formData.get("email");
-        // if (email === "admin@gmail.com") {
+        if (res?.ok) {
         return router.push(`/${params.locale}/dashboard`);
-        // } else {
-        //     router.push(`/${params.locale}/shop`);
-        // }
-        // }
+        }
     }
 
     return { signInUser };
-    }
+}
+
 
 export function useSignUp() {
     const router = useRouter();
     const params = useParams();
 
     async function signUpUser(formData: FormData) {
-        const name = (formData.get("name") as string).trim();
-        const email = (formData.get("email") as string).trim();
-        const password = (formData.get("password") as string).trim();
+        const name = (formData.get('name') as string)?.trim();
+        const email = (formData.get('email') as string)?.trim();
+        const password = (formData.get('password') as string)?.trim();
 
         try {
-        const res = await fetch("/api/signUp", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const res = await fetch('/api/signUp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password }),
         });
 
         const data = await res.json();
 
         if (!res.ok || data.error) {
-            return "Registration failed. Try again.";
-        } else {
-            router.push(`/${params.locale}/login`);
+            return data.error || 'Registration failed. Try again.';
         }
+
+        router.push(`/${params.locale}/login`);
+        return true;
         } catch (err) {
-        console.error("Registration fetch error:", err);
-        return "Something went wrong. Please try again.";
+        console.error('Registration fetch error:', err);
+        return 'Something went wrong. Please try again.';
         }
     }
 
     return { signUpUser };
     }
+

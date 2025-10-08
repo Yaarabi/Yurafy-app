@@ -2,6 +2,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder  {
+  _id: string;
   owner: mongoose.Types.ObjectId; 
   products: {
     product: mongoose.Types.ObjectId; 
@@ -24,7 +25,7 @@ export interface IOrder  {
 
 const OrderSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
     products: [
       {
         product: { type: Schema.Types.ObjectId, ref: "Product", required: true },

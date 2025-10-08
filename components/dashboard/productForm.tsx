@@ -1,16 +1,18 @@
-    'use client';
+'use client';
 
-    import { useState, FormEvent, ChangeEvent } from 'react';
-    import { useTranslations } from 'next-intl';
-    import { IProduct } from '@/models/products';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { IProduct } from '@/models/products';
+import { useSession } from 'next-auth/react';
 
-    interface ProductFormProps {
+interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
     loading?: boolean;
-    }
+}
 
-    export default function ProductForm({ onSubmit, loading }: ProductFormProps) {
+export default function ProductForm({ onSubmit, loading }: ProductFormProps) {
     const t = useTranslations('products.form');
+    const { data: session } = useSession();
 
     const PRODUCT_CATEGORIES = [
         'Fashion & Apparel',
@@ -31,7 +33,7 @@
     ];
 
     const [values, setValues] = useState<Partial<IProduct>>({
-        owner: Object('654321abcdef123456789012'), // Placeholder owner ID
+        owner: session?.user?.id, 
         name: '',
         slug: '',
         description: '',
@@ -45,6 +47,13 @@
         variants: [],
     });
 
+    // Update owner ID if session loads after initial render
+    useEffect(() => {
+        if (session?.user?.id) {
+        setValues((prev) => ({ ...prev, owner: session.user.id as string }));
+        }
+    }, [session]);
+
     const [errors, setErrors] = useState<Partial<Record<keyof IProduct, string>>>({});
 
     /** Convert uploaded files to Base64 */
@@ -56,7 +65,6 @@
         if (!files) return;
 
         const base64Images: string[] = [];
-
         for (const file of Array.from(files)) {
         const base64 = await toBase64(file);
         base64Images.push(base64 as string);
@@ -68,7 +76,6 @@
         }));
     };
 
-    /** Convert file to Base64 string */
     function toBase64(file: File) {
         return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -78,8 +85,9 @@
         });
     }
 
-    /** Handle text, number, and select inputs */
-    function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    function handleChange(
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) {
         const { name, value, type } = e.target;
         setValues((prev) => ({
         ...prev,
@@ -87,7 +95,6 @@
         }));
     }
 
-    /** Basic validation */
     function validate(): boolean {
         const newErrors: Partial<Record<keyof IProduct, string>> = {};
         if (!values.name?.trim()) newErrors.name = t('errors.nameRequired');
@@ -111,7 +118,7 @@
         onSubmit={handleSubmit}
         className="w-full p-6 bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6"
         >
-        {/* Name & Slug in one row */}
+        {/* Name & Slug */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label={t('name')} name="name" value={values.name || ''} onChange={handleChange} error={errors.name} />
             <Input label={t('slug')} name="slug" value={values.slug || ''} onChange={handleChange} error={errors.slug} />
@@ -146,32 +153,19 @@
             </div>
         </div>
 
-        {/* Main Image & Additional Images */}
+        {/* Images */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Main Image */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300 font-medium">{t('mainImage')}</label>
-            <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, 'mainImage')}
-                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
-            />
-            {values.mainImage && (
-                <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />
-            )}
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'mainImage')} className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200" />
+            {values.mainImage && <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />}
             </div>
 
             {/* Additional Images */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300 font-medium">{t('otherImages')}</label>
-            <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleImageUpload(e, 'images')}
-                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
-            />
+            <input type="file" accept="image/*" multiple onChange={(e) => handleImageUpload(e, 'images')} className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200" />
             <div className="flex flex-wrap gap-3 mt-2">
                 {values.images?.map((img, idx) => (
                 <img key={idx} src={img} alt={`Preview ${idx + 1}`} className="w-28 h-28 object-cover rounded-lg border border-gray-700" />
@@ -180,16 +174,13 @@
             </div>
         </div>
 
-        <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}
-        >
+        <button type="submit" disabled={loading} className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}>
             {loading ? t('creating') : t('create')}
         </button>
         </form>
     );
-    }
+}
+
 
     /* Reusable Input */
     interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

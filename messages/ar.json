@@ -150,40 +150,49 @@
         "login": "تسجيل الدخول"
     },
     "Auth": {
-        "loginTitle": "تسجيل الدخول إلى حسابك",
-        "signupTitle": "إنشاء حساب الخاص بك",
-        "emailLabel": "البريد الإلكتروني",
-        "emailPlaceholder": "أدخل بريدك الإلكتروني",
-        "passwordLabel": "كلمة المرور",
-        "passwordPlaceholder": "أدخل كلمة المرور",
-        "confirmPasswordLabel": "تأكيد كلمة المرور",
-        "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
-        "firstNameLabel": "الاسم الأول",
-        "firstNamePlaceholder": "اسمك الأول",
-        "lastNameLabel": "اسم العائلة",
-        "lastNamePlaceholder": "اسم العائلة",
-        "brandNameLabel": "اسم العلامة التجارية",
-        "brandNamePlaceholder": "اسم عملك أو علامتك التجارية",
-        "phoneLabel": "رقم الهاتف",
-        "phonePlaceholder": "مثال: +212 6 00 00 00 00",
-        "planLabel": "اختر خطتك",
-        "planOptions": {
+    "loginTitle": "تسجيل الدخول إلى حسابك",
+    "signupTitle": "إنشاء حساب جديد",
+
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "passwordLabel": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "confirmPasswordLabel": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+    "NameLabel": "الاسم الكامل",
+    "NamePlaceholder": "اكتب اسمك الكامل",
+    "brandNameLabel": "اسم العلامة التجارية",
+    "brandNamePlaceholder": "اسم عملك أو علامتك التجارية",
+    "phoneLabel": "رقم الهاتف",
+    "phonePlaceholder": "مثال: +212 6 00 00 00 00",
+
+    "planLabel": "اختر الخطة",
+    "planOptions": {
         "default": "اختر خطة",
         "landing": "صفحة هبوط",
         "instagBot": "بوت إنستغرام",
         "whatsappBot": "بوت واتساب",
-        "pro": "المحترف"
-        },
-        "submitLogin": "تسجيل الدخول",
-        "submitSignup": "إنشاء حساب",
-        "forgotPassword": "هل نسيت كلمة المرور؟",
-        "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
-        "noAccountYet": "ليس لديك حساب بعد؟",
-        "errorRequired": "هذا الحقل مطلوب",
-        "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
-        "errorPasswordMismatch": "كلمتا المرور غير متطابقتين",
-        "successSignup": "تم إنشاء الحساب بنجاح!",
-        "successLogin": "مرحباً بعودتك!"
+        "pro": "احترافية"
+    },
+
+    "submitLogin": "تسجيل الدخول",
+    "submitSignup": "إنشاء حساب",
+    "loadingLogin": "جارٍ تسجيل الدخول...",
+    "loadingSignup": "جارٍ إنشاء الحساب...",
+
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "noAccountYet": "ليس لديك حساب بعد؟",
+
+    "errorRequired": "هذا الحقل مطلوب",
+    "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+    "errorPasswordMismatch": "كلمتا المرور غير متطابقتين",
+    "errorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
+    "errorAccountExists": "يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.",
+    "errorUnexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+
+    "successSignup": "تم إنشاء الحساب بنجاح! سيتم التحويل قريباً...",
+    "successLogin": "مرحباً بعودتك!"
     },
     "FooterLogin": {
         "companyDescription": "تمكين الشركات من خلال الأتمتة المدعومة بالذكاء الاصطناعي.",
@@ -236,44 +245,48 @@
         "placeholder": "اكتب سؤالك...",
         "send": "إرسال"
     },
-    
     "products": {
         "title": "المنتجات",
         "new": "منتج جديد",
         "createTitle": "إنشاء منتج جديد",
         "columns": {
         "name": "الاسم",
-        "slug": "الرابط المختصر",
+        "slug": "الرابط",
         "price": "السعر",
         "discount": "الخصم (%)",
         "stock": "المخزون",
         "category": "الفئة",
-        "brand": "العلامة التجارية",
+        "brand": "الماركة",
         "images": "الصور",
+        "mainImage": "الصورة الرئيسية",
+        "otherImages": "صور أخرى",
         "salesCount": "عدد المبيعات",
         "createdAt": "تاريخ الإنشاء"
         },
         "form": {
-        "name": "اسم المنتج",
-        "slug": "الرابط المختصر",
-        "description": "الوصف",
-        "price": "السعر",
-        "discount": "الخصم (%)",
-        "stock": "المخزون",
-        "category": "معرّف الفئة",
-        "brand": "العلامة التجارية",
-        "images": "روابط الصور (مفصولة بفواصل)",
-        "create": "إنشاء",
-        "creating": "جارٍ الإنشاء..."
+            "name": "اسم المنتج",
+            "slug": "رابط المنتج",
+            "description": "الوصف",
+            "price": "السعر",
+            "discount": "الخصم (%)",
+            "stock": "المخزون",
+            "category": "الفئة",
+            "brand": "العلامة التجارية",
+            "mainImage": "الصورة الرئيسية",
+            "otherImages": "صور أخرى",
+            "selectCategory": "اختر فئة",
+            "create": "إنشاء",
+            "creating": "جارٍ الإنشاء..."
         },
         "errors": {
-        "nameRequired": "اسم المنتج مطلوب",
-        "slugRequired": "الرابط المختصر مطلوب",
-        "pricePositive": "يجب أن يكون السعر موجبًا",
-        "stockNonNegative": "لا يمكن أن يكون المخزون سالبًا",
-        "categoryRequired": "الفئة مطلوبة",
-        "imagesRequired": "مطلوب إدخال صورة واحدة على الأقل"
+            "nameRequired": "اسم المنتج مطلوب",
+            "slugRequired": "رابط المنتج مطلوب",
+            "pricePositive": "يجب أن يكون السعر إيجابيًا",
+            "stockNonNegative": "لا يمكن أن يكون المخزون سلبيًا",
+            "categoryRequired": "الفئة مطلوبة",
+            "mainImageRequired": "الصورة الرئيسية مطلوبة"
         }
+
     },
     "shop": {
         "searchPlaceholder": "ابحث عن المنتجات...",

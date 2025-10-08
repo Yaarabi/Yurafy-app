@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import Product from "@/models/products";
@@ -10,7 +9,9 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
         const category = searchParams.get("category");
+        const owner = searchParams.get("owner"); // 🔹 new owner filter
 
+        // Fetch single product by ID
         if (id) {
         const product = await Product.findById(id);
         if (!product) {
@@ -19,24 +20,29 @@ export async function GET(req: Request) {
         return NextResponse.json({ message: "Product retrieved", product });
         }
 
-        if (category) {
-        const products = await Product.find({ category });
+        // Build dynamic query
+        const query: Record<string, string> = {};
+        if (category) query.category = category;
+        if (owner) query.owner = owner;
+
+        // Fetch products based on query
+        const products = await Product.find(query);
+
         if (products.length === 0) {
-            return NextResponse.json({ message: "No products found in this category" }, { status: 404 });
-        }
-        return NextResponse.json({ message: "Category products retrieved", products });
+        return NextResponse.json(
+            { message: owner ? "No products found" : category ? "No products found in this category" : "No products found" },
+            { status: 404 }
+        );
         }
 
-        const products = await Product.find();
-        return NextResponse.json({ message: "All products retrieved", products });
-
+        return NextResponse.json({
+        message: owner ? "Owner's products retrieved" : category ? "Category products retrieved" : "All products retrieved",
+        products,
+        });
     } catch (error) {
         return NextResponse.json({ message: "Server error", error }, { status: 500 });
     }
 }
-
-
-
 
 export async function POST(req: Request) {
     await connectDB();
@@ -79,8 +85,8 @@ export async function DELETE(req: Request) {
         const result = await Product.findByIdAndDelete(id);
         if (!result) return NextResponse.json({ message: "Product not found" }, { status: 404 });
 
-        return NextResponse.json({ message: "Product Deleted", data: result },{ status: 202 });
+        return NextResponse.json({ message: "Product Deleted", data: result }, { status: 202 });
     } catch (error) {
         return NextResponse.json({ message: "Error in DELETE request", error }, { status: 500 });
     }
-}
+    }

@@ -1,23 +1,54 @@
+'use client';
+import React from 'react';
 
-"use client"
 interface InputFieldProps {
     label: string;
-    placeholder: string;
+    placeholder?: string;
     type: string;
     name: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    error?: string | null;
+    required?: boolean;
 }
 
-export default function InputField({ label, placeholder, type, name }: InputFieldProps) {
+export default function InputField({
+    label,
+    placeholder,
+    type,
+    name,
+    value,
+    onChange,
+    error,
+    required = false,
+    }: InputFieldProps) {
     return (
-        <div>
-        <label htmlFor={name} className="block text-gray-300 mb-1">{label}</label>
+        <div className="space-y-1">
+        <label
+            htmlFor={name}
+            className="block text-gray-300 mb-1 font-medium"
+        >
+            {label}
+            {required && <span className="text-red-400 ml-1">*</span>}
+        </label>
+
         <input
             id={name}
             name={name}
             type={type}
             placeholder={placeholder}
-            className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            value={value}
+            onChange={onChange}
+            required={required}
+            aria-invalid={!!error}
+            className={`w-full px-4 py-2 rounded bg-gray-800 text-white border 
+            ${error ? 'border-red-500 focus:ring-red-400' : 'border-gray-700 focus:ring-cyan-400'}
+            focus:outline-none focus:ring-2 transition-all duration-200`}
         />
+
+        {error && (
+            <p className="text-red-400 text-xs mt-1">{error}</p>
+        )}
         </div>
     );
 }

@@ -157,41 +157,50 @@
         "login": "Login"
     },
     "Auth": {
-        "loginTitle": "Sign In to Your Account",
-        "signupTitle": "Create Your Account",
-        "emailLabel": "Email",
-        "emailPlaceholder": "Enter your email",
-        "passwordLabel": "Password",
-        "passwordPlaceholder": "Enter your password",
-        "confirmPasswordLabel": "Confirm Password",
-        "confirmPasswordPlaceholder": "Re-enter your password",
-        "firstNameLabel": "First Name",
-        "firstNamePlaceholder": "Your first name",
-        "lastNameLabel": "Last Name",
-        "lastNamePlaceholder": "Your last name",
-        "brandNameLabel": "Brand Name",
-        "brandNamePlaceholder": "Your business or brand name",
-        "phoneLabel": "Phone Number",
-        "phonePlaceholder": "e.g. +212 6 00 00 00 00",
-        "planLabel": "Choose Your Plan",
-        "planOptions": {
-            "default": "Select a plan",
-            "landing": "Landing Page",
-            "instagBot": "Instagram Bot",
-            "whatsappBot": "WhatsApp Bot",
-            "pro": "Pro"
-        },
-        "submitLogin": "Login",
-        "submitSignup": "Sign Up",
-        "forgotPassword": "Forgot your password?",
-        "alreadyHaveAccount": "Already have an account?",
-        "noAccountYet": "Don't have an account yet?",
-        "errorRequired": "This field is required",
-        "errorInvalidEmail": "Please enter a valid email address",
-        "errorPasswordMismatch": "Passwords do not match",
-        "successSignup": "Account created successfully!",
-        "successLogin": "Welcome back!"
-        },
+    "loginTitle": "Sign In to Your Account",
+    "signupTitle": "Create Your Account",
+    
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "NameLabel": "Full Name",
+    "NamePlaceholder": "Your full name",
+    "brandNameLabel": "Brand Name",
+    "brandNamePlaceholder": "Your business or brand name",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "e.g. +212 6 00 00 00 00",
+
+    "planLabel": "Choose Your Plan",
+    "planOptions": {
+        "default": "Select a plan",
+        "landing": "Landing Page",
+        "instagBot": "Instagram Bot",
+        "whatsappBot": "WhatsApp Bot",
+        "pro": "Pro"
+    },
+
+    "submitLogin": "Login",
+    "submitSignup": "Sign Up",
+    "loadingLogin": "Logging in...",
+    "loadingSignup": "Creating your account...",
+
+    "forgotPassword": "Forgot your password?",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccountYet": "Don't have an account yet?",
+
+    "errorRequired": "This field is required",
+    "errorInvalidEmail": "Please enter a valid email address",
+    "errorPasswordMismatch": "Passwords do not match",
+    "errorInvalidCredentials": "Invalid email or password. Please try again.",
+    "errorAccountExists": "An account with this email already exists.",
+    "errorUnexpected": "Something went wrong. Please try again.",
+
+    "successSignup": "Account created successfully! Redirecting...",
+    "successLogin": "Welcome back!"
+    },
     "FooterLogin": {
         "companyDescription": "Empowering with AI-driven automation.",
         "copyright": "© 2025 Yura IT – All rights reserved."
@@ -226,6 +235,7 @@
         "cancelled": "Cancelled"
         }
     },
+    
     "products": {
         "title": "Products",
         "new": "New Product",
@@ -239,32 +249,36 @@
         "category": "Category",
         "brand": "Brand",
         "images": "Images",
+        "mainImage": "Main Image",
+        "otherImages": "Other Images",
         "salesCount": "Sales Count",
         "createdAt": "Created At"
         },
-        "form": {
+    "form": {
         "name": "Product Name",
         "slug": "Slug",
         "description": "Description",
         "price": "Price",
         "discount": "Discount (%)",
         "stock": "Stock",
-        "category": "Category ID",
+        "category": "Category",
         "brand": "Brand",
-        "images": "Image URLs (comma separated)",
+        "mainImage": "Main Image",
+        "otherImages": "Other Images",
+        "selectCategory": "Select a category",
         "create": "Create",
         "creating": "Creating..."
-        },
-        "errors": {
+    },
+    "errors": {
         "nameRequired": "Product name is required",
         "slugRequired": "Slug is required",
         "pricePositive": "Price must be positive",
         "stockNonNegative": "Stock cannot be negative",
         "categoryRequired": "Category is required",
-        "imagesRequired": "At least one image is required"
-        }
-    },
+        "mainImageRequired": "Main image is required"
+    }
 
+    },
     "settings": {
         "title": "Settings",
         "profileTitle": "Personal information",

@@ -1,34 +1,37 @@
-
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import Order from "@/models/orders";
 
-// ✅ GET Orders (all, by id, or by user)
+// ✅ GET Orders (all, by id, or by owner)
 export async function GET(req: Request) {
     await connectDB();
 
     try {
         const { searchParams } = new URL(req.url);
-        const id = searchParams.get("id");
-        const user = searchParams.get("user");
+        const id = searchParams.get("id");       // Get order by its ID
+        const owner = searchParams.get("owner"); // Get orders by owner ID
 
         if (id) {
-        const order = await Order.findById(id).populate("user").populate("products.product");
-        if (!order) {
-            return NextResponse.json({ message: "Order not found" }, { status: 404 });
-        }
-        return NextResponse.json({ message: "Order retrieved", order });
+            const order = await Order.findById(id);
+
+            if (!order) {
+                return NextResponse.json({ message: "Order not found" }, { status: 404 });
+            }
+            return NextResponse.json({ message: "Order retrieved", order });
         }
 
-        if (user) {
-        const orders = await Order.find({ user }).populate("products.product");
-        if (orders.length === 0) {
-            return NextResponse.json({ message: "No orders found for this user" }, { status: 404 });
-        }
-        return NextResponse.json({ message: "User orders retrieved", orders });
+        if (owner) {
+            const orders = await Order.find({ owner })
+
+            if (orders.length === 0) {
+                return NextResponse.json({ message: "No orders found for this owner" }, { status: 404 });
+            }
+            return NextResponse.json({ message: "Owner orders retrieved", orders });
         }
 
-        const orders = await Order.find().populate("user").populate("products.product");
+        // Return all orders
+        const orders = await Order.find();
+
         return NextResponse.json({ message: "All orders retrieved", orders });
     } catch (error) {
         return NextResponse.json({ message: "Server error", error }, { status: 500 });
@@ -42,10 +45,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         const order = new Order(body);
         await order.save();
-        return NextResponse.json(
-        { message: "Order created successfully", order },
-        { status: 201 }
-        );
+        return NextResponse.json({ message: "Order created successfully", order }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ message: "Order creation failed", error }, { status: 500 });
     }
