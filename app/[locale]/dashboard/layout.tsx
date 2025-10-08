@@ -17,7 +17,7 @@ export default async function DashboardLayoutServer({
     params,
     }: {
     children: ReactNode;
-    params: { locale: string };
+    params: Promise<{ locale: string }>;
     }) {
     const { locale } = await params;
     const supportedLocales = ["en", "fr", "ar"];
