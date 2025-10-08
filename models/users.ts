@@ -7,15 +7,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // lastName: {
-    //     type: String,
-    //     required: true,
-    //     trim: true
-    // },
     brandName: {
         type: String,
         required: false,
         trim: true
+    },
+    logo: {
+        type: String,
+        required: false,
     },
     email: {
         type: String,

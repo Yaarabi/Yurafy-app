@@ -1,0 +1,77 @@
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import ProductForm from '@/components/dashboard/productForm';
+import { IProduct } from '@/models/products';
+
+export default function EditProductPage() {
+    const t = useTranslations('products');
+    const { id } = useParams(); 
+    const [product, setProduct] = useState<Partial<IProduct> | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(true);
+
+    // Fetch product data
+    useEffect(() => {
+        if (!id) return;
+        async function fetchProduct() {
+        try {
+            const res = await fetch(`/api/products?id=${id}`);
+            if (!res.ok) throw new Error('Failed to fetch product');
+            const data = await res.json();
+            setProduct(data.product);
+        } catch (err) {
+            console.error(err);
+            alert(t('fetchError'));
+        } finally {
+            setFetching(false);
+        }
+        }
+        fetchProduct();
+    }, [id]);
+
+    // Handle update
+    async function update(values: Partial<IProduct>) {
+        setLoading(true);
+        try {
+        const res = await fetch(`/api/products?id=${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(values),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || 'Something went wrong');
+        }
+
+        alert(t('updateSuccess'));
+        } catch (error: any) {
+        console.error(error);
+        alert(error.message || t('updateError'));
+        } finally {
+        setLoading(false);
+        }
+    }
+
+    if (fetching) {
+        return <p className="text-gray-400">{t('loading')}</p>;
+    }
+
+    return (
+        <div className="grid gap-6">
+        <h2 className="text-2xl font-semibold">{t('editTitle')}</h2>
+        {product && (
+            <ProductForm
+            onSubmit={update}
+            loading={loading}
+            // 👇 this will prefill the form with existing product data
+            initialValues={product}
+            />
+        )}
+        </div>
+    );
+}

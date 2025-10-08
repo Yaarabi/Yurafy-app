@@ -102,7 +102,7 @@ export default function ProductsTable() {
                                 <td className="px-4 py-3 text-gray-300">{row.salesCount}</td>
                                 <td className="px-4 py-3">
                                     <div className="flex gap-3">
-                                        <button onClick={() => (window.location.href = `/dashboard/products/${row._id}/edit`)}
+                                        <button onClick={() => (window.location.href = `/${locale}/dashboard/products/${row._id}`)}
                                                 className="text-indigo-400 hover:text-indigo-200 transition-transform hover:scale-110" title="Edit product">
                                             <FaEdit />
                                         </button>

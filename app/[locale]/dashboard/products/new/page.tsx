@@ -8,7 +8,6 @@ export default function NewProductPage() {
     const [loading, setLoading] = useState(false);
 
     async function create(values: any) {
-        console.log(values);
         setLoading(true);
         try {
         const res = await fetch('/api/products', {

@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import Sidebar from "@/components/dashboard/sideBar";
-import Header from "@/components/dashboard/header";
 import Providers from "@/components/home/provider"; 
 
 interface Props {
@@ -32,7 +31,6 @@ export default function ProtectedDashboardClient({ children, locale, messages }:
             <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen bg-gray-800">
                 <Sidebar />
                 <div className="flex flex-col flex-1">
-                <Header />
                 <main className="p-4 flex-1">{children}</main>
                 </div>
             </div>

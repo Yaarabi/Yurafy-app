@@ -8,9 +8,10 @@ import { useSession } from 'next-auth/react';
 interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
     loading?: boolean;
+    initialValues?: Partial<IProduct>;
 }
 
-export default function ProductForm({ onSubmit, loading }: ProductFormProps) {
+export default function ProductForm({ onSubmit, loading, initialValues }: ProductFormProps) {
     const t = useTranslations('products.form');
     const { data: session } = useSession();
 
@@ -45,6 +46,7 @@ export default function ProductForm({ onSubmit, loading }: ProductFormProps) {
         mainImage: '',
         images: [],
         variants: [],
+        ...initialValues,
     });
 
     // Update owner ID if session loads after initial render
@@ -175,7 +177,7 @@ export default function ProductForm({ onSubmit, loading }: ProductFormProps) {
         </div>
 
         <button type="submit" disabled={loading} className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}>
-            {loading ? t('creating') : t('create')}
+            {loading ? ((initialValues) ? t('updating') : t('creating')) : ((initialValues) ? t('update') : t('create'))}
         </button>
         </form>
     );

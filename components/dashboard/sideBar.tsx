@@ -1,18 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { 
-    MdDashboard, 
-    MdShoppingCart, 
-    MdInventory2, 
-    MdSettings, 
-    MdSupportAgent, 
-    MdClose, 
-    MdMenu 
+import { useSession, signOut } from 'next-auth/react';
+import {
+    MdDashboard,
+    MdShoppingCart,
+    MdInventory2,
+    MdSettings,
+    MdSupportAgent,
+    MdClose,
+    MdMenu,
 } from 'react-icons/md';
-import { signOut } from 'next-auth/react';
+import { FaUser } from 'react-icons/fa';
+import Image from 'next/image';
 
 const navItems = [
     { href: 'dashboard', icon: <MdDashboard size={20} />, key: 'nav.dashboard' },
@@ -29,9 +31,28 @@ export default function Sidebar() {
     const router = useRouter();
     const [open, setOpen] = useState(false);
 
+    const { data: session, status } = useSession();
+    const [user, setUser] = useState<any>(null);
+
+    // Fetch user data from API
+    useEffect(() => {
+        const fetchUser = async () => {
+        if (status === 'authenticated' && session?.user?.id) {
+            try {
+            const res = await fetch(`/api/users?id=${session.user.id}`);
+            const data = await res.json();
+            if (res.ok) setUser(data.user);
+            } catch (err) {
+            console.error('Failed to fetch user:', err);
+            }
+        }
+        };
+        fetchUser();
+    }, [status, session]);
+
     const handleSignOut = () => {
         signOut({ redirect: false }).then(() => {
-            router.push(`/${params.locale}/login`);
+        router.push(`/${params.locale}/login`);
         });
     };
 
@@ -52,8 +73,28 @@ export default function Sidebar() {
             transition-transform transform ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
             `}
         >
-            {/* Logo */}
-            <div className="text-2xl font-bold text-indigo-500">Rua Dashboard</div>
+            {/* Profile Section */}
+            <div className="flex items-center gap-3">
+            {user?.logo ? (
+                <Image
+                src={user.logo}
+                alt="User Logo"
+                width={40}
+                height={40}
+                className="rounded-full object-cover"
+                />
+            ) : (
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-700">
+                <FaUser className="text-gray-300" size={20} />
+                </div>
+            )}
+            <div>
+                <p className="font-semibold text-white">
+                {user?.brandName && user.brandName.trim() !== '' ? user.brandName : user?.name}
+                </p>
+                <p className="text-xs text-gray-400">{user?.email}</p>
+            </div>
+            </div>
 
             {/* Navigation */}
             <nav className="flex flex-col gap-2 mt-6">
@@ -76,7 +117,12 @@ export default function Sidebar() {
 
             {/* Logout */}
             <div className="mt-auto">
-            <form onSubmit={(e) => { e.preventDefault(); handleSignOut(); }}>
+            <form
+                onSubmit={(e) => {
+                e.preventDefault();
+                handleSignOut();
+                }}
+            >
                 <button
                 type="submit"
                 className="cursor-pointer w-full px-3 py-2 rounded-md bg-gray-800 hover:bg-red-600 text-gray-200 font-medium transition"
