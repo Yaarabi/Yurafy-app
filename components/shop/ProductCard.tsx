@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation';
 export default function ProductCard({ product }: { product: IProduct }) {
     const params = useParams();
     return (
-        <Link href={`/${params.locale}/shop/${product._id}`} className="group">
+        <Link href={`/${params.locale}/shop/${product.slug}`} className="group">
         <div className="bg-white shadow-md rounded-2xl overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-blue-400/30">
             <div className="relative w-full h-56">
             <Image
