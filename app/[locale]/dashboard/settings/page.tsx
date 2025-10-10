@@ -7,6 +7,7 @@ import EditableField from '@/components/dashboard/setting/SettingsField';
 import PlanSelector from '@/components/dashboard/setting/PlanSelector';
 import LogoUploader from '@/components/dashboard/setting/LogoPreview';
 import SettingsSection from '@/components/dashboard/setting/settingSection';
+import LocaleSwitcher from '@/components/home/LocaleSwitcher';
 
 export default function SettingsPage() {
     const { data: session, status } = useSession();
@@ -127,6 +128,9 @@ export default function SettingsPage() {
         <SettingsSection title="Logo">
             {/* Pass input handler instead of file */}
             <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
+        </SettingsSection>
+        <SettingsSection title='Language'>
+            <LocaleSwitcher/>
         </SettingsSection>
         </div>
     );

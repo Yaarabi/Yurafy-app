@@ -4,6 +4,7 @@ import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
+import ProductVariants from './product/ProductVariant'; // 👈 Updated component
 
 interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
@@ -34,7 +35,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
     ];
 
     const [values, setValues] = useState<Partial<IProduct>>({
-        owner: session?.user?.id, 
+        owner: session?.user?.id,
         name: '',
         slug: '',
         description: '',
@@ -45,18 +46,19 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         brand: '',
         mainImage: '',
         images: [],
-        variants: [],
+        sizes: [],
+        colors: [],
         ...initialValues,
     });
 
-    // Update owner ID if session loads after initial render
+    const [showVariants, setShowVariants] = useState(false);
+    const [errors, setErrors] = useState<Partial<Record<keyof IProduct, string>>>({});
+
     useEffect(() => {
         if (session?.user?.id) {
         setValues((prev) => ({ ...prev, owner: session.user.id as string }));
         }
     }, [session]);
-
-    const [errors, setErrors] = useState<Partial<Record<keyof IProduct, string>>>({});
 
     /** Convert uploaded files to Base64 */
     const handleImageUpload = async (
@@ -160,14 +162,27 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             {/* Main Image */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300 font-medium">{t('mainImage')}</label>
-            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'mainImage')} className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200" />
-            {values.mainImage && <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />}
+            <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'mainImage')}
+                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
+            />
+            {values.mainImage && (
+                <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />
+            )}
             </div>
 
             {/* Additional Images */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300 font-medium">{t('otherImages')}</label>
-            <input type="file" accept="image/*" multiple onChange={(e) => handleImageUpload(e, 'images')} className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200" />
+            <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleImageUpload(e, 'images')}
+                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
+            />
             <div className="flex flex-wrap gap-3 mt-2">
                 {values.images?.map((img, idx) => (
                 <img key={idx} src={img} alt={`Preview ${idx + 1}`} className="w-28 h-28 object-cover rounded-lg border border-gray-700" />
@@ -176,12 +191,47 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             </div>
         </div>
 
-        <button type="submit" disabled={loading} className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}>
-            {loading ? ((initialValues) ? t('updating') : t('creating')) : ((initialValues) ? t('update') : t('create'))}
+        {/* Sizes & Colors */}
+        <div className="mt-4">
+            <button
+            type="button"
+            onClick={() => setShowVariants((prev) => !prev)}
+            className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium"
+            >
+            {showVariants ? 'Hide Sizes & Colors' : 'Manage Sizes & Colors'}
+            </button>
+
+            {showVariants && (
+            <div className="mt-4">
+                <ProductVariants
+                sizes={values.sizes || []}
+                colors={values.colors || []}
+                onChange={({ sizes, colors }) =>
+                    setValues((prev) => ({ ...prev, sizes, colors }))
+                }
+                />
+            </div>
+            )}
+        </div>
+
+        {/* Submit Button */}
+        <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}
+        >
+            {loading
+            ? initialValues
+                ? t('updating')
+                : t('creating')
+            : initialValues
+            ? t('update')
+            : t('create')}
         </button>
         </form>
     );
 }
+
 
 
     /* Reusable Input */

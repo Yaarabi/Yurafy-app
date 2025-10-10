@@ -220,20 +220,31 @@
         "title": "Welcome to your dashboard",
         "subtitle": "Manage orders, products, and your brand in one place."
     },
+
     "orders": {
         "title": "Orders",
         "columns": {
         "id": "Order ID",
         "customer": "Customer",
-        "total": "Total",
-        "status": "Status"
+        "phone": "Phone",
+        "address": "Address",
+        "products": "Products",
+        "color": "Color",
+        "size": "Size",
+        "quantity": "Quantity",
+        "total": "Total Amount",
+        "status": "Status",
+        "date": "Date"
         },
         "status": {
         "pending": "Pending",
+        "processing": "Processing",
         "shipped": "Shipped",
         "delivered": "Delivered",
         "cancelled": "Cancelled"
-        }
+        },
+        "empty": "No orders found",
+        "loading": "Loading orders..."
     },
     
     "products": {
@@ -299,10 +310,27 @@
         "searchPlaceholder": "Search for products...",
         "noProducts": "No products available."
     },
+    
     "product": {
-        "orderCOD": "Order with Cash on Delivery",
-        "codNote": "Pay when you receive your order."
+        "loadingProduct": "Loading product details...",
+        "placeOrder": "Place Your Order",
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "city": "City",
+        "country": "Country",
+        "quantity": "Quantity",
+        "submitOrder": "Submit Order",
+        "orderSuccess": "Order submitted successfully!",
+        "orderError": "Something went wrong. Please try again.",
+        "price": "Price",
+        "discountedPrice": "Discounted Price",
+        "relatedProducts": "Related Products",
+        "whatsappMessage": "Hello, I want to order:"
     }
+
+
 
 }
 

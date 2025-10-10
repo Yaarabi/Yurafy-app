@@ -1,7 +1,7 @@
 
 
 
-import Header from '@/components/shop/Header';
+
 import Footer from '@/components/home/Footer';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
@@ -33,8 +33,10 @@ export default async function Layout({
 
     return (
             <NextIntlClientProvider locale={locale} messages={messages}>
-                <Header/>
-                {children}
+                {/* <Header/> */}
+                    <div className='min-h-screen'>
+                        {children}
+                    </div>
                 <Footer/>
             </NextIntlClientProvider>
     );

@@ -217,15 +217,25 @@
         "columns": {
         "id": "ID de commande",
         "customer": "Client",
-        "total": "Total",
-        "status": "Statut"
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "products": "Produits",
+        "color": "Couleur",
+        "size": "Taille",
+        "quantity": "Quantité",
+        "total": "Montant total",
+        "status": "Statut",
+        "date": "Date"
         },
         "status": {
         "pending": "En attente",
+        "processing": "En traitement",
         "shipped": "Expédiée",
         "delivered": "Livrée",
         "cancelled": "Annulée"
-        }
+        },
+        "empty": "Aucune commande trouvée",
+        "loading": "Chargement des commandes..."
     },
     "settings": {
         "title": "Paramètres",
@@ -291,10 +301,27 @@
         "searchPlaceholder": "Rechercher des produits...",
         "noProducts": "Aucun produit disponible."
     },
+    
     "product": {
-        "orderCOD": "Commander avec paiement à la livraison",
-        "codNote": "Payez lorsque vous recevez votre commande."
+        "loadingProduct": "Chargement des détails du produit...",
+        "placeOrder": "Passez votre commande",
+        "fullName": "Nom complet",
+        "email": "Email",
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "city": "Ville",
+        "country": "Pays",
+        "quantity": "Quantité",
+        "submitOrder": "Envoyer la commande",
+        "orderSuccess": "Commande envoyée avec succès !",
+        "orderError": "Une erreur s'est produite. Veuillez réessayer.",
+        "price": "Prix",
+        "discountedPrice": "Prix réduit",
+        "relatedProducts": "Produits associés",
+        "whatsappMessage": "Bonjour, je souhaite commander :"
     }
+
+
 
 
 

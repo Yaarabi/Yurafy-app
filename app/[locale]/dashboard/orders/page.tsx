@@ -8,7 +8,7 @@ export default function OrdersPage() {
     
     return (
         <div className="grid gap-4">
-        <h2 className="text-xl font-semibold">{t('title')}</h2>
+        <h2 className="text-xl font-semibold text-white">{t('title')}</h2>
         <OrdersTable/>
         </div>
     );

@@ -1,27 +1,30 @@
 
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IOrder  {
+export interface IOrder {
   _id: string;
-  owner: mongoose.Types.ObjectId; 
+  owner: string; 
   products: {
-    product: mongoose.Types.ObjectId; 
+    product: string;
     quantity: number;
-    price: number; 
+    price: number;
+    color?: string;
+    size?: string;
   }[];
-  totalAmount: number; 
+  totalAmount: number;
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  customer: {
+  shippingAddress: {
     fullName: string;
-    email: string;
-    phone?: string;
+    email?: string;
+    phone: string;
     address: string;
-    city: string;
-    country: string;
+    city?: string;
+    country?: string;
   };
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 const OrderSchema = new Schema(
   {
@@ -31,6 +34,8 @@ const OrderSchema = new Schema(
         product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
         quantity: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true }, 
+        color: { type: String, required: false },
+        size: { type: String, required: false },
       },
     ],
     totalAmount: { type: Number, required: true },
@@ -42,11 +47,11 @@ const OrderSchema = new Schema(
     
     shippingAddress: {
       fullName: { type: String, required: true },
-      email: { type: String, required: true },
-      phone: { type: String },
+      email: { type: String, required: false },
+      phone: { type: String, required: true },
       address: { type: String, required: true },
-      city: { type: String, required: true },
-      country: { type: String, required: true },
+      city: { type: String, required: false },
+      country: { type: String, required: false },
     },
   },
   { timestamps: true }

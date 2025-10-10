@@ -1,56 +1,41 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 
-export default function ProductGrid() {
-    const t = useTranslations('shop');
-    const [products, setProducts] = useState<IProduct[]>([]);
-    const [loading, setLoading] = useState(true);
+async function fetchProducts(): Promise<IProduct[]> {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/products`, {
+        next: { revalidate: 60 }
+        });
 
-    useEffect(() => {
-        // Fetch products when the component mounts
-        async function fetchProducts() {
-        try {
-            const res = await fetch('/api/products');
-            if (!res.ok) throw new Error('Failed to fetch products');
+        if (!res.ok) throw new Error('Failed to fetch products');
 
-            const data = await res.json();
-            setProducts(data.products || []); // Safely handle missing data
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        } finally {
-            setLoading(false);
-        }
-        }
+        const data = await res.json();
+        return data.products || [];
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+}
 
-        fetchProducts();
-    }, []);
+export default async function ProductGrid() {
+    const products = await fetchProducts();
 
-    // Loading state — gives visual feedback while waiting for data
-    if (loading)
+    if (!products.length) {
         return (
-        <p className="text-center text-gray-400 mt-10 animate-pulse">
-            {t('loadingProducts')}
-        </p>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <p className="text-center text-gray-500 text-lg">No products found.</p>
+        </section>
         );
+    }
 
-    // Empty state — appears when no products are found
-    if (!products.length)
-        return (
-        <p className="text-center text-gray-500 mt-10">
-            {t('noProducts')}
-        </p>
-        );
-
-  // Render the product grid
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-        {products.map((p, i) => (
-            <ProductCard key={i} product={p} />
-        ))}
-        </div>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {products.map((p, i) => (
+                <ProductCard key={i} product={p} />
+                ))}
+            </div>
+        </section>
     );
 }

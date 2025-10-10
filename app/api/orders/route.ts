@@ -43,13 +43,39 @@ export async function POST(req: Request) {
     await connectDB();
     try {
         const body = await req.json();
+
+        // Optional: Basic validation
+        if (!body.owner || !body.products || !body.shippingAddress) {
+            return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+        }
+
         const order = new Order(body);
         await order.save();
+
         return NextResponse.json({ message: "Order created successfully", order }, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ message: "Order creation failed", error }, { status: 500 });
+    } catch (err: any) {
+        console.error("Order creation error:", err);
+
+        // Handle Mongoose validation errors
+        if (err.name === "ValidationError") {
+            const errors: Record<string, string> = {};
+            Object.keys(err.errors).forEach((key) => {
+                errors[key] = err.errors[key].message;
+            });
+            return NextResponse.json(
+                { message: "Validation failed", errors },
+                { status: 400 }
+            );
+        }
+
+        // Return generic message for other errors
+        return NextResponse.json(
+            { message: "Order creation failed", error: err.message || "Unknown error" },
+            { status: 500 }
+        );
     }
 }
+
 
 // ✅ PUT Update Order
 export async function PUT(req: Request) {

@@ -22,11 +22,11 @@ export default function Header() {
             <div className="relative">
                 <div className="absolute inset-0 blur-md rounded-full" />
                 <Image
-                src="/logo.png"
-                alt="Yura Logo"
-                width={50}
-                height={50}
-                className="relative z-10"
+                    src="/logo.png"
+                    alt="Yura Logo"
+                    width={50}
+                    height={50}
+                    className="relative z-10"
                 />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">

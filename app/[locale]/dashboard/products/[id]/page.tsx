@@ -47,7 +47,7 @@ export default function EditProductPage() {
             const err = await res.json();
             throw new Error(err.message || 'Something went wrong');
         }
-
+        console.log(values);
         alert(t('updateSuccess'));
         } catch (error: any) {
         console.error(error);

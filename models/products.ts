@@ -14,13 +14,9 @@ export interface IProduct {
     brand?: string;
     mainImage: string;
     images: string[];
-    variants?: {
-        size?: string;
-        color?: string;
-        price?: number;
-        stock?: number;
-    }[];
-    salesCount: number; 
+    sizes?: string[];
+    colors?: string[];
+    salesCount: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -37,14 +33,8 @@ const ProductSchema = new Schema(
         category: { type: String, required: true },
         mainImage: { type: String, required: true },
         images: [{ type: String, required: false }],
-        variants: [
-        {
-            size: { type: String },
-            color: { type: String },
-            price: { type: Number },
-            stock: { type: Number, default: 0 },
-        },
-        ],
+        sizes: [{ type: String }],
+        colors: [{ type: String }],
         salesCount: { type: Number, default: 0 }, 
     },
     { timestamps: true }

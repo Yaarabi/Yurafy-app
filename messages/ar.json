@@ -219,15 +219,25 @@
         "columns": {
         "id": "رقم الطلب",
         "customer": "العميل",
-        "total": "الإجمالي",
-        "status": "الحالة"
+        "phone": "رقم الهاتف",
+        "address": "العنوان",
+        "products": "المنتجات",
+        "color": "اللون",
+        "size": "المقاس",
+        "quantity": "الكمية",
+        "total": "إجمالي المبلغ",
+        "status": "الحالة",
+        "date": "التاريخ"
         },
         "status": {
         "pending": "قيد الانتظار",
+        "processing": "قيد المعالجة",
         "shipped": "تم الشحن",
         "delivered": "تم التسليم",
-        "cancelled": "ملغاة"
-        }
+        "cancelled": "ألغيت"
+        },
+        "empty": "لا توجد طلبات",
+        "loading": "جاري تحميل الطلبات..."
     },
     "settings": {
         "title": "الإعدادات",
@@ -292,10 +302,27 @@
         "searchPlaceholder": "ابحث عن المنتجات...",
         "noProducts": "لا توجد منتجات متاحة."
     },
+    
     "product": {
-        "orderCOD": "اطلب والدفع عند الاستلام",
-        "codNote": "ادفع عند استلام طلبك."
+        "loadingProduct": "جارٍ تحميل تفاصيل المنتج...",
+        "placeOrder": "قم بإجراء الطلب",
+        "fullName": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "address": "العنوان",
+        "city": "المدينة",
+        "country": "الدولة",
+        "quantity": "الكمية",
+        "submitOrder": "إرسال الطلب",
+        "orderSuccess": "تم إرسال الطلب بنجاح!",
+        "orderError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "price": "السعر",
+        "discountedPrice": "السعر بعد الخصم",
+        "relatedProducts": "منتجات ذات صلة",
+        "whatsappMessage": "مرحبًا، أود طلب:"
     }
+
+
 
 
 
