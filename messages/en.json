@@ -310,25 +310,41 @@
         "searchPlaceholder": "Search for products...",
         "noProducts": "No products available."
     },
-    
+
     "product": {
         "loadingProduct": "Loading product details...",
         "placeOrder": "Place Your Order",
         "fullName": "Full Name",
-        "email": "Email",
-        "phone": "Phone",
-        "address": "Address",
-        "city": "City",
-        "country": "Country",
+        "phone": "Phone Number",
+        "address": "Shipping Address",
         "quantity": "Quantity",
+        "selectColor": "Select Color",
+        "selectSize": "Select Size",
         "submitOrder": "Submit Order",
-        "orderSuccess": "Order submitted successfully!",
+        "orderSuccess": "Your order has been submitted successfully!",
         "orderError": "Something went wrong. Please try again.",
         "price": "Price",
         "discountedPrice": "Discounted Price",
-        "relatedProducts": "Related Products",
-        "whatsappMessage": "Hello, I want to order:"
+        "relatedProducts": "You may also like",
+        "whatsappMessage": "Hello! I want to order this product:"
+    },
+    "trustBanner": {
+        "cod": "Cash on Delivery",
+        "fastDelivery": "Fast Delivery 24-48h",
+        "support": "WhatsApp Customer Support"
+    },
+    "footer": {
+        "brandSlogan": "Your trusted online store",
+        "quickLinks": "Quick Links",
+        "home": "Home",
+        "products": "Products",
+        "order": "Order",
+        "contact": "Contact",
+        "followUs": "Follow Us",
+        "rightsReserved": "All rights reserved."
     }
+
+
 
 
 

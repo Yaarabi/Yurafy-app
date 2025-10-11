@@ -1,6 +1,17 @@
 
 import mongoose from "mongoose";
 
+export interface IUser {
+    _id: string;
+    name: string;
+    brandName?: string;
+    logo?: string;
+    email: string;
+    phone?: string;
+    plan: "store" | "insta bot" | "whatsapp bot" | "Pro" | "free";
+    role: "user" | "admin";
+}
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -10,6 +21,7 @@ const userSchema = new mongoose.Schema({
     brandName: {
         type: String,
         required: false,
+        unique: true,
         trim: true
     },
     logo: {

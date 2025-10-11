@@ -304,23 +304,38 @@
     },
     
     "product": {
-        "loadingProduct": "جارٍ تحميل تفاصيل المنتج...",
-        "placeOrder": "قم بإجراء الطلب",
+        "loadingProduct": "جاري تحميل تفاصيل المنتج...",
+        "placeOrder": "قدّم طلبك",
         "fullName": "الاسم الكامل",
-        "email": "البريد الإلكتروني",
         "phone": "رقم الهاتف",
-        "address": "العنوان",
-        "city": "المدينة",
-        "country": "الدولة",
+        "address": "عنوان الشحن",
         "quantity": "الكمية",
+        "selectColor": "اختر اللون",
+        "selectSize": "اختر المقاس",
         "submitOrder": "إرسال الطلب",
-        "orderSuccess": "تم إرسال الطلب بنجاح!",
-        "orderError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "orderSuccess": "تم تقديم طلبك بنجاح!",
+        "orderError": "حدث خطأ ما. الرجاء المحاولة مرة أخرى.",
         "price": "السعر",
         "discountedPrice": "السعر بعد الخصم",
-        "relatedProducts": "منتجات ذات صلة",
-        "whatsappMessage": "مرحبًا، أود طلب:"
+        "relatedProducts": "منتجات مشابهة",
+        "whatsappMessage": "مرحباً! أود طلب هذا المنتج:"
+    },
+    "trustBanner": {
+        "cod": "الدفع عند التسليم",
+        "fastDelivery": "توصيل سريع خلال 24-48 ساعة",
+        "support": "خدمة عملاء عبر WhatsApp"
+    },
+    "footer": {
+        "brandSlogan": "متجرك الموثوق عبر الإنترنت",
+        "quickLinks": "روابط سريعة",
+        "home": "الرئيسية",
+        "products": "المنتجات",
+        "order": "اطلب الآن",
+        "contact": "تواصل معنا",
+        "followUs": "تابعنا",
+        "rightsReserved": "جميع الحقوق محفوظة."
     }
+
 
 
 

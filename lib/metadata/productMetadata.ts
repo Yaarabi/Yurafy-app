@@ -9,8 +9,25 @@ export async function generateProductMetadata(slug: string) {
         return {
         title: 'Product not found | Yura IT',
         description: 'This product could not be found.',
+        openGraph: {
+            title: 'Product not found',
+            description: 'This product could not be found.',
+            url: `${baseUrl}/${slug}`,
+            images: [],
+        },
+        twitter: {
+            card: 'summary',
+            title: 'Product not found',
+            description: 'This product could not be found.',
+            images: [],
+        },
         };
     }
+
+    // Make sure mainImage is a full URL for Open Graph
+    const ogImage = product.mainImage?.startsWith('http')
+        ? product.mainImage
+        : `${baseUrl}${product.mainImage}`;
 
     return {
         title: `${product.name} | ${owner?.brandName || 'Yura IT'}`,
@@ -18,14 +35,14 @@ export async function generateProductMetadata(slug: string) {
         openGraph: {
         title: product.name,
         description: product.description || '',
-        images: product.mainImage ? [product.mainImage] : [],
-        url: `${baseUrl}/shop/${product.slug}`,
+        url: `${baseUrl}/${product.slug}`,
+        images: ogImage ? [{ url: ogImage }] : [],
         },
         twitter: {
         card: 'summary_large_image',
         title: product.name,
         description: product.description || '',
-        images: product.mainImage ? [product.mainImage] : [],
+        images: ogImage ? [ogImage] : [],
         },
     };
 }

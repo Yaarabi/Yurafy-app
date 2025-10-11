@@ -111,7 +111,7 @@ export default function SettingsPage() {
             <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
             <EditableField
             label="Brand Name"
-            value={user.brandName || ''}
+            value={user.brandName.toLowerCase() || ''}
             onSave={(val) => updateField('brandName', val)}
             />
             <EditableField

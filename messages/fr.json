@@ -302,30 +302,47 @@
         "noProducts": "Aucun produit disponible."
     },
     
+
     "product": {
         "loadingProduct": "Chargement des détails du produit...",
-        "placeOrder": "Passez votre commande",
+        "placeOrder": "Passer votre commande",
         "fullName": "Nom complet",
-        "email": "Email",
-        "phone": "Téléphone",
-        "address": "Adresse",
-        "city": "Ville",
-        "country": "Pays",
+        "phone": "Numéro de téléphone",
+        "address": "Adresse de livraison",
         "quantity": "Quantité",
-        "submitOrder": "Envoyer la commande",
-        "orderSuccess": "Commande envoyée avec succès !",
+        "selectColor": "Choisir la couleur",
+        "selectSize": "Choisir la taille",
+        "submitOrder": "Valider la commande",
+        "orderSuccess": "Votre commande a été envoyée avec succès !",
         "orderError": "Une erreur s'est produite. Veuillez réessayer.",
         "price": "Prix",
-        "discountedPrice": "Prix réduit",
-        "relatedProducts": "Produits associés",
-        "whatsappMessage": "Bonjour, je souhaite commander :"
+        "discountedPrice": "Prix remisé",
+        "relatedProducts": "Produits similaires",
+        "whatsappMessage": "Bonjour ! Je souhaite commander ce produit :"
+    },
+    "trustBanner": {
+        "cod": "Paiement à la livraison",
+        "fastDelivery": "Livraison rapide 24-48h",
+        "support": "Service client WhatsApp"
+    },
+    "footer": {
+        "brandSlogan": "Votre boutique de confiance en ligne",
+        "quickLinks": "Liens rapides",
+        "home": "Accueil",
+        "products": "Produits",
+        "order": "Commander",
+        "contact": "Contact",
+        "followUs": "Suivez-nous",
+        "rightsReserved": "Tous droits réservés."
     }
-
-
-
-
-
 }
+
+
+
+
+
+
+
 
 
     

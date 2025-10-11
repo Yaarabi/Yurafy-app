@@ -15,6 +15,7 @@ import {
 } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
 import Image from 'next/image';
+import { capitalizeFirstLetter } from '../shop/productPage/ProductHeader';
 
 const navItems = [
     { href: 'dashboard', icon: <MdDashboard size={20} />, key: 'nav.dashboard' },
@@ -56,6 +57,8 @@ export default function Sidebar() {
         });
     };
 
+    const brandName = user?.brandName && user.brandName.trim() !== '' ? capitalizeFirstLetter(user.brandName) : capitalizeFirstLetter(user?.name || 'User');
+
     return (
         <>
         {/* Mobile toggle button */}
@@ -90,7 +93,7 @@ export default function Sidebar() {
             )}
             <div>
                 <p className="font-semibold text-white">
-                {user?.brandName && user.brandName.trim() !== '' ? user.brandName : user?.name}
+                {brandName && brandName.trim() !== '' ? brandName : user?.name}
                 </p>
                 <p className="text-xs text-gray-400">{user?.email}</p>
             </div>

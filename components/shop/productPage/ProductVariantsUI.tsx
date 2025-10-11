@@ -6,24 +6,17 @@ interface ProductVariantsProps {
     colors?: string[];
 }
 
-export default function ProductVariantsUI({ sizes= [], colors = [] }: ProductVariantsProps) {
+export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVariantsProps) {
     if (sizes.length === 0 && colors.length === 0) return null;
+
     return (
-        <motion.div
-        className="mt-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        >
+        <motion.div className="mt-6 space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         {sizes.length > 0 && (
-            <div className="mb-4">
-            <h3 className="font-semibold text-gray-800 mb-2">Available Sizes</h3>
+            <div>
+            <h3 className="font-semibold text-gray-800 mb-2">Tailles disponibles</h3>
             <div className="flex flex-wrap gap-2">
                 {sizes.map((size, idx) => (
-                <span
-                    key={idx}
-                    className="px-3 py-1 border rounded-lg text-sm text-gray-700 bg-gray-100"
-                >
+                <span key={idx} className="px-3 py-1 border rounded-lg text-sm text-gray-700 bg-gray-100">
                     {size}
                 </span>
                 ))}
@@ -33,7 +26,7 @@ export default function ProductVariantsUI({ sizes= [], colors = [] }: ProductVar
 
         {colors.length > 0 && (
             <div>
-            <h3 className="font-semibold text-gray-800 mb-2">Available Colors</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">Couleurs disponibles</h3>
             <div className="flex flex-wrap gap-2">
                 {colors.map((color, idx) => (
                 <span
