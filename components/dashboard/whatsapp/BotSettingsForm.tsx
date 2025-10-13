@@ -13,7 +13,7 @@ export default function BotSettingsForm() {
 
     useEffect(() => {
         async function fetchSettings() {
-        const res = await axios.get("/api/whatsapp/bot-settings");
+        const res = await axios.get("/api/whatsapp/setting");
         setEnabled(res.data.enabled);
         setTemplate(res.data.template);
         }
@@ -22,7 +22,7 @@ export default function BotSettingsForm() {
 
     const handleSave = async () => {
         setLoading(true);
-        await axios.post("/api/whatsapp/bot-settings", { enabled, template });
+        await axios.post("/api/whatsapp/setting", { enabled, template });
         setLoading(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);

@@ -18,24 +18,24 @@ export default function SettingsPage() {
     // Fetch user + WhatsApp account
     useEffect(() => {
         const fetchData = async () => {
-        if (status === 'authenticated' && session?.user?.id) {
-            try {
-            const [userRes, waRes] = await Promise.all([
-                fetch(`/api/users?id=${session.user.id}`),
-                fetch(`/api/whatsapp/account`)
-            ]);
+            if (status === 'authenticated' && session?.user?.id) {
+                try {
+                    const [userRes, waRes] = await Promise.all([
+                        fetch(`/api/users?id=${session.user.id}`),
+                        fetch(`/api/whatsapp/account`)
+                    ]);
 
-            const userData = await userRes.json();
-            const waData = await waRes.json();
+                    const userData = await userRes.json();
+                    const waData = await waRes.json();
 
-            if (userRes.ok) setUser(userData.user);
-            if (waRes.ok) setWhatsApp(waData.account);
-            } catch (err) {
-            console.error('Error fetching data:', err);
-            } finally {
-            setLoading(false);
+                    if (userRes.ok) setUser(userData.user);
+                    if (waRes.ok) setWhatsApp(waData.account);
+                } catch (err) {
+                    console.error('Error fetching data:', err);
+                } finally {
+                    setLoading(false);
+                }
             }
-        }
         };
         fetchData();
     }, [status, session]);
@@ -47,13 +47,13 @@ export default function SettingsPage() {
         setUser(updated);
 
         try {
-        await fetch(`/api/users?id=${session.user.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [field]: value }),
-        });
+            await fetch(`/api/users?id=${session.user.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: value }),
+            });
         } catch (err) {
-        console.error('Error updating user:', err);
+            console.error('Error updating user:', err);
         }
     };
 
@@ -64,28 +64,28 @@ export default function SettingsPage() {
         setWhatsApp(updated);
 
         try {
-        const res = await fetch(`/api/whatsapp/account`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [field]: value }),
-        });
+            const res = await fetch(`/api/whatsapp/account`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: value }),
+            });
 
-        if (res.ok) {
-            const data = await res.json();
-            setWhatsApp(data.account);
-        }
+            if (res.ok) {
+                const data = await res.json();
+                setWhatsApp(data.account);
+            }
         } catch (err) {
-        console.error('Error updating WhatsApp account:', err);
+            console.error('Error updating WhatsApp account:', err);
         }
     };
 
     // Convert file to base64
     const toBase64 = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
         });
 
     // Handle logo upload
@@ -98,45 +98,67 @@ export default function SettingsPage() {
         if (file.size > 2 * 1024 * 1024) return alert('File too large.');
 
         try {
-        const base64Logo = await toBase64(file);
-        updateField('logo', base64Logo);
+            const base64Logo = await toBase64(file);
+            updateField('logo', base64Logo);
         } catch (err) {
-        console.error('Error uploading logo:', err);
+            console.error('Error uploading logo:', err);
         }
     };
 
-    if (loading) return <p className="text-gray-400">Loading settings...</p>;
+    if (loading) return <p className="text-gray-400 animate-pulse">Loading settings...</p>;
     if (!user) return <p className="text-red-500">User not found</p>;
 
     return (
         <div className="max-w-[80%] mx-auto px-4 py-6 space-y-6">
-        <ProfileHeader name={user.name} email={user.email} logo={user.logo} />
+            <ProfileHeader name={user.name} email={user.email} logo={user.logo} />
 
-        <SettingsSection title="Profile">
-            <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
-            <EditableField label="Brand Name" value={user.brandName || ''} onSave={(val) => updateField('brandName', val)} />
-            <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
-        </SettingsSection>
-
-        <SettingsSection title="Plan">
-            <PlanSelector value={user.plan} onChange={(val) => updateField('plan', val)} />
-        </SettingsSection>
-
-        <SettingsSection title="Logo">
-            <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
-        </SettingsSection>
-
-        {whatsapp && (
-            <SettingsSection title="WhatsApp Account">
-            <EditableField label="Business ID" value={whatsapp.waBusinessId || ''} onSave={(val) => updateWhatsAppField('waBusinessId', val)} />
-            <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => updateWhatsAppField('waNumber', val)} />
-            <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => updateWhatsAppField('waToken', val)} />
+            {/* Profile Section */}
+            <SettingsSection title="Profile">
+                <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
+                <EditableField label="Brand Name" value={user.brandName || ''} onSave={(val) => updateField('brandName', val)} />
+                <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
             </SettingsSection>
-        )}
 
-        <SettingsSection title="Language">
-            <LocaleSwitcher />
-        </SettingsSection>
+            {/* Plan Section */}
+            <SettingsSection title="Plan">
+                <PlanSelector value={user.plan} onChange={(val) => updateField('plan', val)} />
+            </SettingsSection>
+
+            {/* Logo Section */}
+            <SettingsSection title="Logo">
+                <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
+            </SettingsSection>
+
+            {/* WhatsApp Section */}
+            {whatsapp && (
+                <SettingsSection title="WhatsApp Account">
+                    <EditableField
+                        label="Business ID"
+                        value={whatsapp.waBusinessId || ''}
+                        onSave={(val) => updateWhatsAppField('waBusinessId', val)}
+                    />
+                    <EditableField
+                        label="Phone Number ID"
+                        value={whatsapp.waNumberId || ''}
+                        onSave={(val) => updateWhatsAppField('waNumberId', val)}
+                    />
+                    <EditableField
+                        label="Phone Number"
+                        value={whatsapp.waNumber || ''}
+                        onSave={(val) => updateWhatsAppField('waNumber', val)}
+                    />
+                    <EditableField
+                        label="Access Token"
+                        value="••••••••••••••••"
+                        onSave={(val) => updateWhatsAppField('waToken', val)}
+                    />
+                </SettingsSection>
+            )}
+
+            {/* Language Section */}
+            <SettingsSection title="Language">
+                <LocaleSwitcher />
+            </SettingsSection>
         </div>
     );
 }

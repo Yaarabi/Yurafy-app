@@ -1,28 +1,41 @@
-
 import axios from "axios";
 import WhatsAppMessage from "@/models/whatsappMessage";
 import { connectDB } from "@/lib/db/mongoDB";
 
-export async function sendWhatsAppMessage(account: any, to: string, text: string, token: string) {
+/**
+ * Send a WhatsApp message using WhatsApp Cloud API
+ * @param account WhatsApp account object from DB
+ * @param to Recipient phone number in international format
+ * @param text Message body
+ * @param token Decrypted access token
+ */
+export async function sendWhatsAppMessage(
+    account: any,
+    to: string,
+    text: string,
+    token: string
+    ) {
     await connectDB();
 
-    await axios.post(
-        `https://graph.facebook.com/v17.0/${account.waBusinessId}/messages`,
+    try {
+        await axios.post(
+        `https://graph.facebook.com/v17.0/${account.waNumberId}/messages`,
         {
-        messaging_product: "whatsapp",
-        to,
-        type:      "text",
-        text: { body: text },
+            messaging_product: "whatsapp",
+            to,
+            type: "text",
+            text: { body: text },
         },
         {
-        headers: {
+            headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-        },
+            },
         }
-    );
+        );
 
-    await WhatsAppMessage.create({
+        // Store outgoing message
+        await WhatsAppMessage.create({
         owner: account.owner,
         from: account.waNumber,
         to,
@@ -30,6 +43,9 @@ export async function sendWhatsAppMessage(account: any, to: string, text: string
         text,
         timestamp: Date.now(),
         direction: "outgoing",
-    });
+        });
+    } catch (err) {
+        console.error("Failed to send WhatsApp message:", err);
+        throw err;
+    }
 }
-
