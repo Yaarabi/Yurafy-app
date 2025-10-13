@@ -15,24 +15,34 @@ function decryptToken(encrypted: string) {
     return Buffer.concat([decipher.update(Buffer.from(encrypted, "hex")), decipher.final()]).toString();
 }
 
-// GET: webhook verification
+// GET: WhatsApp verification
 export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const mode = url.searchParams.get("hub.mode");
     const token = url.searchParams.get("hub.verify_token");
     const challenge = url.searchParams.get("hub.challenge");
 
-    if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
-        return new NextResponse(challenge, { status: 200 });
+    if (!mode || !token || !challenge) {
+        return new NextResponse("Missing parameters", { status: 400 });
     }
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
+        return new NextResponse(challenge, {
+        status: 200,
+        headers: { "Content-Type": "text/plain" }, // WhatsApp requires plain text
+        });
+    }
+
+    return new NextResponse("Forbidden", { status: 403 });
 }
 
-// POST: incoming messages
+// POST: incoming WhatsApp messages
 export async function POST(req: NextRequest) {
     await connectDB();
+
     try {
         const body = await req.json();
+
         const entry = body.entry?.[0];
         const changes = entry?.changes?.[0];
         const value = changes?.value;
@@ -53,12 +63,12 @@ export async function POST(req: NextRequest) {
             to: value.metadata.display_phone_number,
             type: msg.type,
             text: msg.text?.body,
-            mediaUrl: msg.image?.id || msg.document?.id,
+            mediaUrl: msg.image?.id || msg.document?.id || null,
             timestamp: Number(msg.timestamp),
             direction: "incoming",
         });
 
-        // Auto-reply if bot is enabled
+        // Auto-reply if bot is enabled and message is text
         if (account.botEnabled && msg.type === "text") {
             await sendWhatsAppMessage(account, msg.from, account.botTemplate, decryptedToken);
         }

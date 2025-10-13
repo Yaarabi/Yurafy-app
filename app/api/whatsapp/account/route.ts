@@ -27,20 +27,56 @@ export async function GET(req: NextRequest) {
     }
 
     // POST create/update
-    export async function POST(req: NextRequest) {
+// export async function POST(req: NextRequest) {
+//     await connectDB();
+//     const session = await getServerSession(authOptions);
+//     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+//     try {
+//         const { waBusinessId, waNumber, waToken } = await req.json();
+//         if (!waBusinessId || !waNumber || !waToken) {
+//         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+//         }
+
+//         const waTokenEncrypted = encryptToken(waToken);
+
+//         let account = await WhatsAppAccount.findOne({ owner: session.user.id });
+//         if (account) {
+//         account.waBusinessId = waBusinessId;
+//         account.waNumber = waNumber;
+//         account.waTokenEncrypted = waTokenEncrypted;
+//         await account.save();
+//         } else {
+//         account = await WhatsAppAccount.create({
+//             owner: session.user.id,
+//             waBusinessId,
+//             waNumber,
+//             waTokenEncrypted,
+//             verified: false,
+//         });
+//         }
+
+//         return NextResponse.json({ success: true, account });
+//     } catch (err) {
+//         console.error("Error saving WhatsApp account:", err);
+//         return NextResponse.json({ error: "Server error" }, { status: 500 });
+//     }
+// }
+
+export async function POST(req: NextRequest) {
     await connectDB();
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
-        const { waBusinessId, waNumber, waToken } = await req.json();
-        if (!waBusinessId || !waNumber || !waToken) {
+        const { owner, waBusinessId, waNumber, waToken } = await req.json();
+        if (!owner || !waBusinessId || !waNumber || !waToken) {
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
         }
 
         const waTokenEncrypted = encryptToken(waToken);
 
-        let account = await WhatsAppAccount.findOne({ owner: session.user.id });
+        
+
+        let account = await WhatsAppAccount.findOne({ owner: owner });
         if (account) {
         account.waBusinessId = waBusinessId;
         account.waNumber = waNumber;
@@ -48,7 +84,7 @@ export async function GET(req: NextRequest) {
         await account.save();
         } else {
         account = await WhatsAppAccount.create({
-            owner: session.user.id,
+            owner: owner,
             waBusinessId,
             waNumber,
             waTokenEncrypted,

@@ -12,7 +12,7 @@ function serializeProduct(product: any, owner?: any) {
     const serializedProduct: IProduct = {
         ...product,
         _id: serializeId(product._id),
-        owner: undefined, // remove nested owner object
+        owner: undefined,
         createdAt: product.createdAt?.toISOString(),
         updatedAt: product.updatedAt?.toISOString(),
         images: product.images?.map((img: any) => img) || [],

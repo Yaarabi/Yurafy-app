@@ -12,43 +12,74 @@ import LocaleSwitcher from '@/components/home/LocaleSwitcher';
 export default function SettingsPage() {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<any>(null);
+    const [whatsapp, setWhatsApp] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    // Fetch user info
+    // Fetch user + WhatsApp account
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchData = async () => {
         if (status === 'authenticated' && session?.user?.id) {
-            const res = await fetch(`/api/users?id=${session.user.id}`);
-            const data = await res.json();
-            if (res.ok) setUser(data.user);
+            try {
+            const [userRes, waRes] = await Promise.all([
+                fetch(`/api/users?id=${session.user.id}`),
+                fetch(`/api/whatsapp/account`)
+            ]);
+
+            const userData = await userRes.json();
+            const waData = await waRes.json();
+
+            if (userRes.ok) setUser(userData.user);
+            if (waRes.ok) setWhatsApp(waData.account);
+            } catch (err) {
+            console.error('Error fetching data:', err);
+            } finally {
             setLoading(false);
+            }
         }
         };
-        fetchUser();
+        fetchData();
     }, [status, session]);
 
-    // Update field and persist to backend
+    // Update user field
     const updateField = async (field: string, value: string) => {
         if (!session?.user?.id) return;
-
         const updated = { ...user, [field]: value };
-        setUser(updated); // optimistic update
+        setUser(updated);
 
         try {
-        const res = await fetch(`/api/users?id=${session.user.id}`, {
+        await fetch(`/api/users?id=${session.user.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ [field]: value }),
         });
-        if (!res.ok) {
-            console.error('Failed to update user');
-        }
         } catch (err) {
         console.error('Error updating user:', err);
         }
     };
 
-    // Helper: convert file to base64
+    // Update WhatsApp field
+    const updateWhatsAppField = async (field: string, value: string) => {
+        if (!session?.user?.id) return;
+        const updated = { ...whatsapp, [field]: value };
+        setWhatsApp(updated);
+
+        try {
+        const res = await fetch(`/api/whatsapp/account`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ [field]: value }),
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            setWhatsApp(data.account);
+        }
+        } catch (err) {
+        console.error('Error updating WhatsApp account:', err);
+        }
+    };
+
+    // Convert file to base64
     const toBase64 = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -57,71 +88,24 @@ export default function SettingsPage() {
         reader.onerror = (error) => reject(error);
         });
 
-    // Handle logo upload with validation
+    // Handle logo upload
     const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
         const file = files[0];
-
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-        alert('Invalid file type. Please upload an image.');
-        return;
-        }
-
-        // Validate file size (max 2MB)
-        const maxSize = 2 * 1024 * 1024;
-        if (file.size > maxSize) {
-        alert('File too large. Max size is 2MB.');
-        return;
-        }
+        if (!file.type.startsWith('image/')) return alert('Invalid file type.');
+        if (file.size > 2 * 1024 * 1024) return alert('File too large.');
 
         try {
         const base64Logo = await toBase64(file);
-
-        // Optimistically update UI
         updateField('logo', base64Logo);
-
-        // Persist to backend
-        if (session?.user?.id) {
-            const res = await fetch(`/api/users?id=${session.user.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ logo: base64Logo }),
-            });
-
-            if (!res.ok) {
-            alert('Failed to upload logo');
-            }
-        }
         } catch (err) {
         console.error('Error uploading logo:', err);
         }
     };
-    const updateWhatsAppField = async (field: string, value: string) => {
-        if (!session?.user?.id) return;
 
-        try {
-            const res = await fetch(`/api/whatsapp/account`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [field]: value }),
-            });
-
-            if (res.ok) {
-            const data = await res.json();
-            setUser((prev: any) => ({ ...prev, ...data.account }));
-            } else {
-            console.error('Failed to update WhatsApp account');
-            }
-        } catch (err) {
-            console.error('Error updating WhatsApp account:', err);
-        }
-        };
-
-
-    if (loading) return <p className="text-gray-400">Loading user...</p>;
+    if (loading) return <p className="text-gray-400">Loading settings...</p>;
     if (!user) return <p className="text-red-500">User not found</p>;
 
     return (
@@ -130,16 +114,8 @@ export default function SettingsPage() {
 
         <SettingsSection title="Profile">
             <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
-            <EditableField
-            label="Brand Name"
-            value={user.brandName?.toLowerCase()}
-            onSave={(val) => updateField('brandName', val)}
-            />
-            <EditableField
-            label="Phone"
-            value={user.phone || ''}
-            onSave={(val) => updateField('phone', val)}
-            />
+            <EditableField label="Brand Name" value={user.brandName || ''} onSave={(val) => updateField('brandName', val)} />
+            <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
         </SettingsSection>
 
         <SettingsSection title="Plan">
@@ -147,29 +123,19 @@ export default function SettingsPage() {
         </SettingsSection>
 
         <SettingsSection title="Logo">
-            {/* Pass input handler instead of file */}
             <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
         </SettingsSection>
-        <SettingsSection title="WhatsApp Account">
-        <EditableField
-            label="Business ID"
-            value={user.waBusinessId || ''}
-            onSave={(val) => updateWhatsAppField('waBusinessId', val)}
-        />
-        <EditableField
-            label="Phone Number"
-            value={user.waNumber || ''}
-            onSave={(val) => updateWhatsAppField('waNumber', val)}
-        />
-        <EditableField
-            label="Access Token"
-            value="••••••••••••••••"
-            onSave={(val) => updateWhatsAppField('waToken', val)}
-        />
-        </SettingsSection>
 
-        <SettingsSection title='Language'>
-            <LocaleSwitcher/>
+        {whatsapp && (
+            <SettingsSection title="WhatsApp Account">
+            <EditableField label="Business ID" value={whatsapp.waBusinessId || ''} onSave={(val) => updateWhatsAppField('waBusinessId', val)} />
+            <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => updateWhatsAppField('waNumber', val)} />
+            <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => updateWhatsAppField('waToken', val)} />
+            </SettingsSection>
+        )}
+
+        <SettingsSection title="Language">
+            <LocaleSwitcher />
         </SettingsSection>
         </div>
     );
