@@ -5,22 +5,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
+import { IUser } from '@/models/users';  
 
-interface IOwner {
-    _id: string;
-    name: string;
-    brandName?: string;
-    logo?: string;
-    phone?: string;
-    plan: 'store' | 'insta bot' | 'whatsapp bot' | 'Pro' | 'free';
-    role: 'user' | 'admin';
-}
 
 export function capitalizeFirstLetter(str: string): string {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
-export default function ProductHeader({ owner }: { owner: IOwner }) {
+export default function ProductHeader({ owner }: { owner: IUser }) {
     const [showMobileSearch, setShowMobileSearch] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 

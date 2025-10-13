@@ -9,7 +9,7 @@ import LandingFooter from '@/components/shop/productPage/footerOwner';
 
 export default async function UserStorePage({ params }: { params: Promise<{ brand: string }> }) {
     const { brand } = await params;
-    console.log(brand)
+
     const owner = await getOwnerByBrand(brand);
 
     if (!owner) {
