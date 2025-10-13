@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     try {
-        const { owner, waBusinessId, waNumber, waToken } = await req.json();
-        if (!owner || !waBusinessId || !waNumber || !waToken) {
+        const { owner, waBusinessId, waNumberId, waNumber, waToken } = await req.json();
+        if (!owner || !waBusinessId || !waNumberId || !waNumber || !waToken) {
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
         }
 
@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
         let account = await WhatsAppAccount.findOne({ owner: owner });
         if (account) {
         account.waBusinessId = waBusinessId;
+        account.waNumberId = waNumberId;
         account.waNumber = waNumber;
         account.waTokenEncrypted = waTokenEncrypted;
         await account.save();
@@ -88,6 +89,7 @@ export async function POST(req: NextRequest) {
         account = await WhatsAppAccount.create({
             owner: owner,
             waBusinessId,
+            waNumberId,
             waNumber,
             waTokenEncrypted,
             verified: false,
