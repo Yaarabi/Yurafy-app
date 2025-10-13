@@ -75,3 +75,64 @@ export async function DELETE(req: Request) {
         return NextResponse.json({ message: "Error in DELETE request", error }, { status: 500 });
     }
 }
+
+// 🔹 POST: create a new user
+export async function POST(req: Request) {
+    await connectDB();
+
+    try {
+        const body = await req.json();
+        const { name, email, password, brandName, plan, role } = body;
+
+        // Basic validation
+        if (!name || !email || !password) {
+            return NextResponse.json({ message: "Name, email, and password are required." }, { status: 400 });
+        }
+
+        // Check for existing email
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return NextResponse.json({ message: "Email already exists." }, { status: 409 });
+        }
+
+        // Optional: check for duplicate brandName if provided
+        if (brandName) {
+            const brandConflict = await User.findOne({ brandName });
+            if (brandConflict) {
+                return NextResponse.json({ message: "Brand name already in use." }, { status: 409 });
+            }
+        }
+
+        // Hash password
+        const bcrypt = await import("bcryptjs");
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            brandName: brandName || undefined,
+            plan: plan || "free",
+            role: role || "user"
+        });
+
+        const savedUser = await newUser.save();
+
+        return NextResponse.json({
+            message: "User created successfully",
+            user: {
+                id: savedUser._id,
+                name: savedUser.name,
+                email: savedUser.email,
+                brandName: savedUser.brandName,
+                plan: savedUser.plan,
+                role: savedUser.role
+            }
+        }, { status: 201 });
+    } catch (error) {
+        console.error("POST /api/user error:", error);
+        return NextResponse.json({ message: "Server error", error }, { status: 500 });
+    }
+}
+

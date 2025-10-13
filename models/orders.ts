@@ -41,7 +41,7 @@ const OrderSchema = new Schema(
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+      enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
     
@@ -58,3 +58,8 @@ const OrderSchema = new Schema(
 );
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);
+
+
+
+
+                        

@@ -12,12 +12,14 @@ declare module "next-auth" {
             name?: string;
             email?: string;
             role?: string;
+            plan?: string;
         };
     }
 
     interface User {
         id?:string
         role?: string;
+        plan?: string;
     }
 }
 
@@ -25,6 +27,7 @@ declare module "next-auth/jwt" {
     interface JWT {
         id?:string;
         role?: string;
+        plan?: string;
     }
 }
 
@@ -51,7 +54,8 @@ export const authOptions: NextAuthOptions = {
                     id: user._id.toString(),
                     name: user.name,
                     email: user.email,
-                    role: user.role, 
+                    role: user.role,
+                    plan: user.plan,
                 };
             }
         }),
@@ -64,6 +68,7 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.role = user.role;
                 token.id = user.id
+                token.plan = user.plan;
             }
             return token;
         },
@@ -71,6 +76,7 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 session.user.role = token.role;
                 session.user.id = token.id;
+                session.user.plan = token.plan;
             }
             return session;
         },

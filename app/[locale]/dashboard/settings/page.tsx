@@ -99,6 +99,27 @@ export default function SettingsPage() {
         console.error('Error uploading logo:', err);
         }
     };
+    const updateWhatsAppField = async (field: string, value: string) => {
+        if (!session?.user?.id) return;
+
+        try {
+            const res = await fetch(`/api/whatsapp/account`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ [field]: value }),
+            });
+
+            if (res.ok) {
+            const data = await res.json();
+            setUser((prev: any) => ({ ...prev, ...data.account }));
+            } else {
+            console.error('Failed to update WhatsApp account');
+            }
+        } catch (err) {
+            console.error('Error updating WhatsApp account:', err);
+        }
+        };
+
 
     if (loading) return <p className="text-gray-400">Loading user...</p>;
     if (!user) return <p className="text-red-500">User not found</p>;
@@ -111,7 +132,7 @@ export default function SettingsPage() {
             <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
             <EditableField
             label="Brand Name"
-            value={user.brandName.toLowerCase() || ''}
+            value={user.brandName?.toLowerCase()}
             onSave={(val) => updateField('brandName', val)}
             />
             <EditableField
@@ -129,6 +150,24 @@ export default function SettingsPage() {
             {/* Pass input handler instead of file */}
             <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
         </SettingsSection>
+        <SettingsSection title="WhatsApp Account">
+        <EditableField
+            label="Business ID"
+            value={user.waBusinessId || ''}
+            onSave={(val) => updateWhatsAppField('waBusinessId', val)}
+        />
+        <EditableField
+            label="Phone Number"
+            value={user.waNumber || ''}
+            onSave={(val) => updateWhatsAppField('waNumber', val)}
+        />
+        <EditableField
+            label="Access Token"
+            value="••••••••••••••••"
+            onSave={(val) => updateWhatsAppField('waToken', val)}
+        />
+        </SettingsSection>
+
         <SettingsSection title='Language'>
             <LocaleSwitcher/>
         </SettingsSection>

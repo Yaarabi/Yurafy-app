@@ -110,32 +110,41 @@
     },
     
     "PlansSection": {
-        "title": "Flexible Plans to Fit Your Business",
-        "mostPopular": "⭐ Most Popular",
-        "choosePlan": "Choose Plan",
-        "seller": {
-        "name": "Seller",
+    "title": "Flexible Plans to Fit Your Business",
+    "mostPopular": "⭐ Most Popular",
+    "choosePlan": "Choose Plan",
+    "starter": {
+        "name": "Starter",
         "feature1": "Product pages",
-        "feature2": "AI content",
+        "feature2": "AI-generated content",
         "price": "$5/mo"
-        },
-        "instabot": {
-        "name": "Insta Bot",
-        "feature1": "Seller + Instagram automation",
-        "price": "$10/mo"
-        },
-        "whatsappbot": {
+    },
+    "whatsapp": {
         "name": "WhatsApp Bot",
-        "feature1": "Seller + WhatsApp automation",
+        "feature1": "Starter + WhatsApp automation",
         "price": "$20/mo"
-        },
-        "pro": {
-        "name": "Pro",
+    },
+    "aiAgent": {
+        "name": "Insta Bot",
+        "feature1": "Starter + Instagram automation",
+        "price": "$10/mo"
+    },
+    "creator": {
+        "name": "Creator",
+        "feature1": "Advanced content tools",
+        "price": "$15/mo"
+    },
+    "proSeller": {
+        "name": "Pro Seller",
         "feature1": "All features included",
         "price": "$30/mo"
-        }
     },
-    
+    "visionary": {
+        "name": "Visionary",
+        "feature1": "Pro Seller + priority support",
+        "price": "$50/mo"
+    }
+    }, 
     "TestimonialsSection": {
         "title": "What Our Sellers Say",
         "testimonial1": {
@@ -214,6 +223,7 @@
         "orders": "Orders",
         "products": "Products",
         "settings": "Settings",
+        "whatsapp": "WhatsApp",
         "support": "Support"
     },
     "dashboard": {
@@ -342,6 +352,50 @@
         "contact": "Contact",
         "followUs": "Follow Us",
         "rightsReserved": "All rights reserved."
+    },
+    "whatsappPage": {
+        "title": "WhatsApp Automation",
+        "description": "Automate your customer interactions and order updates with our WhatsApp bot. Send instant messages, order confirmations, and promotional campaigns directly to your customers' WhatsApp.",
+        "currentPlan": "Current Plan: ",
+        "notSubscribed": "You are not subscribed to any WhatsApp plan.",
+        "subscribeCTA": "Subscribe to a plan to enable WhatsApp automation.",
+        "featuresTitle": "WhatsApp Bot Features",
+        "feature1": {
+            "title": "Automated Messages",
+            "description": "Send automatic order confirmations, shipping updates, and delivery notifications."
+        },
+        "feature2": {
+            "title": "Broadcast Campaigns",
+            "description": "Create and send promotional messages to all your customers at once."
+        },
+        "feature3": {
+            "title": "Customer Support",
+            "description": "Use the bot to answer common customer questions instantly."
+        },
+        "feature4": {
+            "title": "Easy Setup",
+            "description": "Connect your WhatsApp Business account in just a few clicks."
+        },
+        "aiAgentTitle": "Upgrade to AI WhatsApp Agent",
+        "aiAgentDescription": "Take your customer interactions to the next level with our AI-powered WhatsApp agent. It can understand and respond to customer inquiries, provide personalized recommendations, and handle complex conversations.",
+        "aiFeature1": {
+            "title": "Natural Language Understanding",
+            "description": "The AI agent can understand customer messages and respond appropriately."
+        },
+        "aiFeature2": {
+            "title": "Personalized Responses",
+            "description": "Provide tailored recommendations based on customer preferences and order history."
+        },
+        "aiFeature3": {
+            "title": "24/7 Availability",
+            "description": "The AI agent is always available to assist your customers, even outside business hours."
+        },
+        "aiFeature4": {
+            "title": "Seamless Integration",
+            "description": "Easily integrate the AI agent with your existing WhatsApp Business account."
+        },
+        "subscribeButton": "Subscribe Now",
+        "manageSubscriptionButton": "Manage Subscription"
     }
 
 

@@ -7,6 +7,14 @@ import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 import CSVExport from './product/CSVexport';
 
+const STATUS_COLORS: Record<string, string> = {
+    pending: 'bg-yellow-400 text-gray-800',
+    confirmed: 'bg-blue-400 text-white',
+    shipped: 'bg-indigo-500 text-white',
+    delivered: 'bg-green-500 text-white',
+    cancelled: 'bg-red-500 text-white',
+};
+
 export default function OrdersTable() {
     const t = useTranslations('orders');
     const { data: session } = useSession();
@@ -190,16 +198,16 @@ export default function OrdersTable() {
                 <th />
                 <th>
                     <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded px-2 py-1"
-                    >
-                    <option value="">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded px-2 py-1"
+                        >
+                        <option value="">All</option>
+                        <option value="pending"><strong className='bg-yellow-400'>Pending</strong></option>
+                        <option value="confirmed"><strong className='bg-blue-400'>Confirmed</strong></option>
+                        <option value="shipped"><strong className='bg-green-400'>Shipped</strong></option>
+                        <option value="delivered"><strong className='bg-purple-400'>Delivered</strong></option>
+                        <option value="cancelled"><strong className='bg-red-400'>Cancelled</strong></option>
                     </select>
                 </th>
                 <th>
@@ -275,15 +283,15 @@ export default function OrdersTable() {
                     <td className="px-4 py-2">{order.totalAmount} MAD</td>
                     <td className="px-4 py-2">
                         <select
-                        value={order.status}
-                        onChange={(e) => updateStatus(order._id, e.target.value)}
-                        className="bg-gray-700 text-gray-200 px-2 py-1 rounded border border-gray-600 text-sm"
-                        >
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                            value={order.status}
+                            onChange={(e) => updateStatus(order._id, e.target.value)}
+                            className={`px-2 py-1 rounded border border-gray-600 text-sm font-semibold ${STATUS_COLORS[order.status]}`}
+                            >
+                            {Object.keys(STATUS_COLORS).map((status) => (
+                                <option key={status} value={status}>
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </option>
+                            ))}
                         </select>
                     </td>
                     <td className="px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>

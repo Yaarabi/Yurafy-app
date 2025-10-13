@@ -104,30 +104,40 @@
         }
     },
     "PlansSection": {
-        "title": "Plans Flexibles pour Votre Entreprise",
-        "mostPopular": "⭐ Le Plus Populaire",
-        "choosePlan": "Choisir un Plan",
-        "seller": {
-        "name": "Vendeur",
+    "title": "Des offres flexibles pour votre entreprise",
+    "mostPopular": "⭐ Le plus populaire",
+    "choosePlan": "Choisir ce plan",
+    "starter": {
+        "name": "Départ",
         "feature1": "Pages produits",
-        "feature2": "Contenu IA",
+        "feature2": "Contenu généré par IA",
         "price": "5$/mois"
-        },
-        "instabot": {
-        "name": "Insta Bot",
-        "feature1": "Vendeur + automatisation Instagram",
-        "price": "10$/mois"
-        },
-        "whatsappbot": {
-        "name": "WhatsApp Bot",
-        "feature1": "Vendeur + automatisation WhatsApp",
+    },
+    "whatsapp": {
+        "name": "Bot WhatsApp",
+        "feature1": "Départ + automatisation WhatsApp",
         "price": "20$/mois"
-        },
-        "pro": {
-        "name": "Pro",
+    },
+    "aiAgent": {
+        "name": "Bot Insta",
+        "feature1": "Départ + automatisation Instagram",
+        "price": "10$/mois"
+    },
+    "creator": {
+        "name": "Créateur",
+        "feature1": "Outils de contenu avancés",
+        "price": "15$/mois"
+    },
+    "proSeller": {
+        "name": "Vendeur Pro",
         "feature1": "Toutes les fonctionnalités incluses",
         "price": "30$/mois"
-        }
+    },
+    "visionary": {
+        "name": "Visionnaire",
+        "feature1": "Vendeur Pro + support prioritaire",
+        "price": "50$/mois"
+    }
     },
     "TestimonialsSection": {
         "title": "Ce Que Nos Vendeurs Disent",
@@ -206,6 +216,7 @@
         "orders": "Commandes",
         "products": "Produits",
         "settings": "Paramètres",
+        "whatsapp": "WhatsApp",
         "support": "Support"
     },
     "dashboard": {
@@ -334,6 +345,25 @@
         "contact": "Contact",
         "followUs": "Suivez-nous",
         "rightsReserved": "Tous droits réservés."
+    },
+    "whatsappPage": {
+        "title": "Paramètres WhatsApp",
+        "subtitle": "Gérez votre automatisation WhatsApp et les agents IA.",
+        "noPlan": {
+            "title": "Aucun plan WhatsApp actif",
+            "description": "Pour accéder aux fonctionnalités WhatsApp, veuillez sélectionner un plan incluant le bot WhatsApp.",
+            "cta": "Voir les plans"
+        },
+        "automation": {
+            "title": "Automatisation WhatsApp",
+            "description": "Configurez des messages automatisés pour les mises à jour de commandes, les promotions et plus encore.",
+            "setupCta": "Configurer l'automatisation"
+        },
+        "aiAgent": {
+            "title": "Agent IA WhatsApp",
+            "description": "Utilisez l'IA pour répondre automatiquement aux questions des clients et fournir une assistance 24/7.",
+            "setupCta": "Configurer l'agent IA"
+        }
     }
 }
 

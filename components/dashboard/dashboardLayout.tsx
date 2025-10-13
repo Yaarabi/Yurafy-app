@@ -4,8 +4,8 @@ import { ReactNode, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import Sidebar from "@/components/dashboard/sideBar";
-import Providers from "@/components/home/provider"; 
+import Providers from "@/components/home/provider";
+import Sidebar from "./sidebar/Sidebar";
 
 interface Props {
     children: ReactNode;
