@@ -7,10 +7,10 @@ import WhatsAppButton from '@/components/shop/productPage/ProductActions';
 import ProductHeader from '@/components/shop/productPage/ProductHeader';
 import { getProductWithOwnerBySlug } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
-import OwnerProductsGrid from '@/components/shop/productPage/OwnerProductsGrid';
 import TrustBanner from '@/components/shop/productPage/TrustBanner';
 import OfferBar from '@/components/shop/productPage/OfferBar';
 import LandingFooter from '@/components/shop/productPage/footerOwner';
+
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

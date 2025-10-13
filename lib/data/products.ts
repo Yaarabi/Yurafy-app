@@ -2,17 +2,7 @@ import { connectDB } from '../db/mongoDB';
 import Product from '@/models/products';
 import User from '@/models/users';
 import { IProduct } from '@/models/products';
-
-export interface IOwner {
-    _id: string;
-    name: string;
-    brandName?: string;
-    logo?: string;
-    email?: string;
-    phone?: string;
-    plan: 'store' | 'insta bot' | 'whatsapp bot' | 'Pro' | 'free';
-    role: 'user' | 'admin';
-}
+import { IUser } from '@/models/users';
 
 function serializeId(id: any) {
     return id?.toString();
@@ -31,7 +21,7 @@ function serializeProduct(product: any, owner?: any) {
         colors: product.colors || [],
     };
 
-    const serializedOwner: IOwner | null = owner
+    const serializedOwner: IUser | null = owner
         ? {
             _id: serializeId(owner._id),
             name: owner.name,
@@ -49,16 +39,16 @@ function serializeProduct(product: any, owner?: any) {
 
 export async function getProductWithOwnerBySlug(slug: string): Promise<{
     product: IProduct | null;
-    owner: IOwner | null;
+    owner: IUser | null;
     }> {
     await connectDB();
 
     const productDoc = await Product.findOne({ slug }).lean<IProduct>();
     if (!productDoc) return { product: null, owner: null };
 
-    let ownerDoc: IOwner | null = null;
+    let ownerDoc: IUser | null = null;
     if (productDoc.owner) {
-        ownerDoc = await User.findById(productDoc.owner).lean<IOwner>();
+        ownerDoc = await User.findById(productDoc.owner).lean<IUser>();
     }
 
     return serializeProduct(productDoc, ownerDoc);
