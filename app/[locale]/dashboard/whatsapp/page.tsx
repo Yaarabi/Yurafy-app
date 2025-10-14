@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import WhatsAppBotPanel from "@/components/dashboard/whatsapp/WhatsAppBotPanel";
 import AIWhatsAppAgent from "@/components/dashboard/whatsapp/AIWhatsAppAgent";
+import WhatsAppIntegrationPage from "@/components/dashboard/whatsapp/tabs/TabsPages";
 import { useTranslations } from "next-intl";
 
 type WhatsAppPlan = "automation" | "aiAgent" | "none";
@@ -41,10 +41,11 @@ export default function WhatsAppSettingsPage() {
     return (
         <div className="min-h-screen bg-gray-800 flex flex-col items-center p-4 space-y-6">
         <div className="w-full max-w-4xl space-y-6">
-            <h1 className="text-4xl font-bold text-white">{t("title")}</h1>
-            <p className="text-gray-300">{t("description")}</p>
+            
 
-            {whatsAppPlan === "automation" && <WhatsAppBotPanel />}
+            {whatsAppPlan === "automation" && <WhatsAppIntegrationPage/>
+            // <WhatsAppBotPanel />
+            }
             {whatsAppPlan === "aiAgent" && <AIWhatsAppAgent />}
         </div>
         </div>

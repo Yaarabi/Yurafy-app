@@ -34,7 +34,8 @@ export async function GET(req: NextRequest) {
     const mode = url.searchParams.get("hub.mode");
     const token = url.searchParams.get("hub.verify_token");
     const challenge = url.searchParams.get("hub.challenge");
-
+    
+    console.log("HI")
     if (!mode || !token || !challenge) {
         return new NextResponse("Missing parameters", { status: 400 });
     }
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest) {
 // ------------------------
 export async function POST(req: NextRequest) {
     await connectDB();
-
+    console.log("✅ New message webhook received");
     try {
         const body = await req.json();
 

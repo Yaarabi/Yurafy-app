@@ -58,26 +58,33 @@ export default function SettingsPage() {
     };
 
     // Update WhatsApp field
-    const updateWhatsAppField = async (field: string, value: string) => {
-        if (!session?.user?.id) return;
-        const updated = { ...whatsapp, [field]: value };
-        setWhatsApp(updated);
+const updateWhatsAppField = async (field: string, value: string) => {
+    if (!session?.user?.id) return;
 
-        try {
-            const res = await fetch(`/api/whatsapp/account`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [field]: value }),
-            });
+    // Update local state immediately for better UX
+    const updated = { ...whatsapp, [field]: value };
+    setWhatsApp(updated);
 
-            if (res.ok) {
-                const data = await res.json();
-                setWhatsApp(data.account);
+    try {
+        const res = await fetch(`/api/whatsapp/account`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ [field]: value }), 
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data?.account) {
+                setWhatsApp(data.account); // update state with server response
             }
-        } catch (err) {
-            console.error('Error updating WhatsApp account:', err);
+        } else {
+            console.error('Failed to update WhatsApp field:', await res.text());
         }
-    };
+    } catch (err) {
+        console.error('Error updating WhatsApp account:', err);
+    }
+};
+
 
     // Convert file to base64
     const toBase64 = (file: File): Promise<string> =>

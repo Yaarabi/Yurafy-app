@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import ProtectedDashboardClient from "@/components/dashboard/dashboardLayout";
+import { Toaster } from "react-hot-toast";
 
 
 
@@ -29,6 +30,7 @@ export default async function DashboardLayoutServer({
     return (
         <ProtectedDashboardClient locale={locale} messages={messages}>
         {children}
+        <Toaster/>
         </ProtectedDashboardClient>
     );
 }

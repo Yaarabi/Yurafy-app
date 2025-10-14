@@ -12,7 +12,7 @@ export interface IOrder {
     size?: string;
   }[];
   totalAmount: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  status: "new" | "processing" | "shipped" | "delivered" | "cancelled";
   shippingAddress: {
     fullName: string;
     email?: string;
@@ -41,7 +41,7 @@ const OrderSchema = new Schema(
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
+      enum: ["new", "confirmed", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
     

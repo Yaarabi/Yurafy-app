@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import CSVExport from './product/CSVexport';
 
 const STATUS_COLORS: Record<string, string> = {
-    pending: 'bg-yellow-400 text-gray-800',
+    new: 'bg-yellow-400 text-gray-800',
     confirmed: 'bg-blue-400 text-white',
     shipped: 'bg-indigo-500 text-white',
     delivered: 'bg-green-500 text-white',
@@ -203,7 +203,7 @@ export default function OrdersTable() {
                         className="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded px-2 py-1"
                         >
                         <option value="">All</option>
-                        <option value="pending"><strong className='bg-yellow-400'>Pending</strong></option>
+                        <option value="new"><strong className='bg-yellow-400'>New</strong></option>
                         <option value="confirmed"><strong className='bg-blue-400'>Confirmed</strong></option>
                         <option value="shipped"><strong className='bg-green-400'>Shipped</strong></option>
                         <option value="delivered"><strong className='bg-purple-400'>Delivered</strong></option>

@@ -1,6 +1,7 @@
 
 'use client'
-import OrdersTable from '@/components/dashboard/ordersTable';
+// import OrdersTable from '@/components/dashboard/ordersTable';
+import OrdersTable from '@/components/dashboard/whatsapp/order/OrdersTableWha';
 import {useTranslations} from 'next-intl';
 
 export default function OrdersPage() {
