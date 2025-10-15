@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import InputField from './inputFailed';
 import Button from './button';
 import { useSignUp } from '@/hooks/auth/login';
+import toast from 'react-hot-toast';
 
 export default function SignupForm() {
     const t = useTranslations('Auth');
@@ -12,7 +13,6 @@ export default function SignupForm() {
     const params = useParams();
     const { signUpUser } = useSignUp();
 
-    // ✅ Form states
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -21,8 +21,6 @@ export default function SignupForm() {
     });
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [formError, setFormError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
 
     // 🧠 Validate inputs before submission
@@ -40,6 +38,11 @@ export default function SignupForm() {
         newErrors.confirmPassword = t('errorPasswordMismatch');
 
         setErrors(newErrors);
+
+        if (Object.values(newErrors).length > 0) {
+        toast.error(Object.values(newErrors)[0]); // show first error
+        }
+
         return Object.keys(newErrors).length === 0;
     };
 
@@ -48,13 +51,11 @@ export default function SignupForm() {
         ...form,
         [e.target.name]: e.target.value,
         });
-        setErrors((prev) => ({ ...prev, [e.target.name]: '' })); // clear error
+        setErrors((prev) => ({ ...prev, [e.target.name]: '' }));
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setFormError(null);
-        setSuccess(false);
 
         if (!validate()) return;
 
@@ -68,13 +69,13 @@ export default function SignupForm() {
         const result = await signUpUser(formData);
 
         if (typeof result === 'string') {
-            setFormError(result);
+            toast.error(result);
         } else {
-            setSuccess(true);
+            toast.success(t('successSignup') || 'Account created successfully! Redirecting...');
         }
         } catch (err) {
         console.error('Signup error:', err);
-        setFormError(t('unexpectedError') || 'Something went wrong. Please try again.');
+        toast.error(t('unexpectedError') || 'Something went wrong. Please try again.');
         } finally {
         setLoading(false);
         }
@@ -130,16 +131,6 @@ export default function SignupForm() {
             error={errors.confirmPassword}
             required
         />
-
-        {/* 🔴 Form Errors */}
-        {formError && (
-            <p className="text-red-400 text-sm text-center">{formError}</p>
-        )}
-        {success && (
-            <p className="text-green-400 text-sm text-center">
-            {t('successSignup') || 'Account created successfully! Redirecting...'}
-            </p>
-        )}
 
         <Button text={loading ? t('loadingSignup') : t('submitSignup')} disabled={loading} />
 

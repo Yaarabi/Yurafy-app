@@ -1,7 +1,7 @@
 
 'use client'
 // import OrdersTable from '@/components/dashboard/ordersTable';
-import OrdersTable from '@/components/dashboard/whatsapp/order/OrdersTableWha';
+import OrdersTableW from '@/components/dashboard/whatsapp/order/OrdersTableWha';
 import {useTranslations} from 'next-intl';
 
 export default function OrdersPage() {
@@ -10,7 +10,7 @@ export default function OrdersPage() {
     return (
         <div className="grid gap-4">
         <h2 className="text-xl font-semibold text-white">{t('title')}</h2>
-        <OrdersTable/>
+        <OrdersTableW/>
         </div>
     );
 }

@@ -1,28 +1,82 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IWhatsAppMessage {
-    owner: string;
+    waMessageId?: string;
     from: string;
     to: string;
-    type: string;
+    type: "text" | "image" | "document" | "audio" | "video" | "location" | "unknown";
     text?: string;
     mediaUrl?: string;
-    timestamp: number;
     direction: "incoming" | "outgoing";
+    status: "sent" | "delivered" | "read" | "failed";
+    isAIResponse?: boolean;
+    timestamp: number;
 }
 
-const WhatsAppMessageSchema = new Schema(
+export interface IWhatsAppConversation {
+    _id: string;
+    owner: string; 
+    customer: {
+        name?: string;
+        phone: string; 
+    };
+    messages: IWhatsAppMessage[];
+    lastMessage?: string;
+    lastTimestamp?: number;
+    unreadCount?: number;
+    status: "open" | "closed";
+    aiEnabled?: boolean; 
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const WhatsAppMessageSchema = new Schema<IWhatsAppMessage>(
     {
-        owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        waMessageId: String,
         from: String,
         to: String,
-        type: String,
+        type: {
+            type: String,
+            enum: ["text", "image", "document", "audio", "video", "location", "unknown"],
+            default: "text",
+        },
         text: String,
         mediaUrl: String,
-        timestamp: Number,
-        direction: { type: String, enum: ["incoming", "outgoing"], required: true },
+        direction: {
+            type: String,
+            enum: ["incoming", "outgoing"],
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: ["sent", "delivered", "read", "failed"],
+            default: "sent",
+        },
+        isAIResponse: { type: Boolean, default: false },
+        timestamp: { type: Number, required: true },
+    },
+);
+
+const WhatsAppConversationSchema = new Schema(
+    {
+        owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        customer: {
+            name: String,
+            phone: { type: String, required: true },
+            profilePic: String,
+        },
+        messages: [WhatsAppMessageSchema],
+        lastMessage: String,
+        lastTimestamp: Number,
+        unreadCount: { type: Number, default: 0 },
+        status: {
+            type: String,
+            enum: ["open", "closed"],
+            default: "open",
+        },
+        aiEnabled: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
 
-export default mongoose.models.WhatsAppMessage || mongoose.model("WhatsAppMessage", WhatsAppMessageSchema);
+export default mongoose.models.WhatsAppConversation || mongoose.model("WhatsAppConversation", WhatsAppConversationSchema);

@@ -33,9 +33,8 @@ export default function OrdersTable() {
     // Fetch orders
     useEffect(() => {
         async function fetchOrders() {
-        if (!session?.user?.id) return;
         try {
-            const res = await fetch(`/api/orders?owner=${session.user.id}`);
+            const res = await fetch(`/api/orders`);
             const data = await res.json();
             setOrders(data.orders || []);
         } catch (err) {

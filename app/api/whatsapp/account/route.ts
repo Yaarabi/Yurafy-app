@@ -5,21 +5,23 @@ import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import crypto from "crypto";
 
+// ------------------------
+// Encrypt WhatsApp token
+// ------------------------
 function encryptToken(token: string) {
-    const iv = crypto.randomBytes(16); 
+    const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv(
         "aes-256-ctr",
         Buffer.from(process.env.ENCRYPTION_KEY!, "hex"),
         iv
     );
     const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);
-
-    // store as iv:ciphertext
     return `${iv.toString("hex")}:${encrypted.toString("hex")}`;
 }
 
-
+// ------------------------
 // GET account
+// ------------------------
 export async function GET(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
@@ -31,16 +33,27 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ account });
 }
 
-// POST create/update (create or replace)
+// ------------------------
+// POST: create or replace
+// ------------------------
 export async function POST(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
-        const { waBusinessId, waNumberId, waNumber, waToken } = await req.json();
+        const {
+            waBusinessId,
+            waNumberId,
+            waNumber,
+            waToken,
+            settings,
+            templates,
+            aiConfig,
+        } = await req.json();
+
         if (!waBusinessId || !waNumber || !waToken) {
-            return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         const waTokenEncrypted = encryptToken(waToken);
@@ -51,6 +64,9 @@ export async function POST(req: NextRequest) {
             account.waNumberId = waNumberId;
             account.waNumber = waNumber;
             account.waTokenEncrypted = waTokenEncrypted;
+            if (settings) account.settings = { ...account.settings, ...settings };
+            if (templates) account.templates = { ...account.templates, ...templates };
+            if (aiConfig) account.aiConfig = { ...account.aiConfig, ...aiConfig };
             await account.save();
         } else {
             account = await WhatsAppAccount.create({
@@ -60,6 +76,10 @@ export async function POST(req: NextRequest) {
                 waNumber,
                 waTokenEncrypted,
                 verified: false,
+                status: "disconnected",
+                settings: settings || {},
+                templates: templates || {},
+                aiConfig: aiConfig || {},
             });
         }
 
@@ -70,41 +90,39 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// PUT: update existing account (partial or full replace semantics as you wish)
+// ------------------------
+// PUT: update account partially
+// ------------------------
 export async function PUT(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
-        // parse incoming JSON (only update fields provided)
         const {
             waBusinessId,
             waNumberId,
             waNumber,
             waToken,
             verified,
-            botEnabled,
-            botTemplate,
+            status,
+            settings,
+            templates,
+            aiConfig,
         } = await req.json();
 
-        // Find existing account
         const account = await WhatsAppAccount.findOne({ owner: session.user.id });
         if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
-        // Update provided fields
-        if (typeof waBusinessId === "string" && waBusinessId.trim() !== "") account.waBusinessId = waBusinessId;
-        if (typeof waNumberId === "string" && waNumberId.trim() !== "") account.waNumberId = waNumberId;
-        if (typeof waNumber === "string" && waNumber.trim() !== "") account.waNumber = waNumber;
-
-        // Re-encrypt token if provided
-        if (typeof waToken === "string" && waToken.trim() !== "") {
-            account.waTokenEncrypted = encryptToken(waToken);
-        }
-
+        if (waBusinessId) account.waBusinessId = waBusinessId;
+        if (waNumberId) account.waNumberId = waNumberId;
+        if (waNumber) account.waNumber = waNumber;
+        if (waToken) account.waTokenEncrypted = encryptToken(waToken);
         if (typeof verified === "boolean") account.verified = verified;
-        if (typeof botEnabled === "boolean") account.botEnabled = botEnabled;
-        if (typeof botTemplate === "string") account.botTemplate = botTemplate;
+        if (status) account.status = status;
+        if (settings) account.settings = { ...account.settings, ...settings };
+        if (templates) account.templates = { ...account.templates, ...templates };
+        if (aiConfig) account.aiConfig = { ...account.aiConfig, ...aiConfig };
 
         await account.save();
 
@@ -115,8 +133,9 @@ export async function PUT(req: NextRequest) {
     }
 }
 
-// -------------------
-// PATCH verification
+// ------------------------
+// PATCH: update verified status
+// ------------------------
 export async function PATCH(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);

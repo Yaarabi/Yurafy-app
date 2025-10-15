@@ -1,44 +1,62 @@
+"use client";
 
 import { useEffect, useState } from "react";
+import ConversationList from "./ConversationList";
+import ChatWindow from "./ChatWindow";
+import { IWhatsAppConversation } from "@/models/whatsappMessage";
 
 export default function LogsTab() {
-    const [messages, setMessages] = useState([]);
+    const [conversations, setConversations] = useState<IWhatsAppConversation[]>([]);
+    const [activeConv, setActiveConv] = useState<IWhatsAppConversation | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // Fetch all conversations for the logged-in owner
+    const fetchConversations = async () => {
+        setLoading(true);
+        try {
+        const res = await fetch("/api/whatsapp/conversations");
+        if (!res.ok) throw new Error("Failed to fetch conversations");
+
+        const data = await res.json();
+        setConversations(data.conversations || []);
+        } catch (err) {
+        console.error(err);
+        } finally {
+        setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        fetch("/api/whatsapp/messages")
-        .then((res) => res.json())
-        .then((data) => setMessages(data));
+        fetchConversations();
     }, []);
 
     return (
-        <div className="bg-gray-700 rounded p-4 h-[70vh] overflow-y-auto space-y-4">
-        {messages.length === 0 ? (
-            <p className="text-gray-300 text-center">No messages yet.</p>
-        ) : (
-            messages.map((msg: any, idx: number) => {
-            const isOutgoing = msg.direction === "outgoing";
-            return (
-                <div
-                key={idx}
-                className={`flex flex-col max-w-[80%] ${
-                    isOutgoing ? "ml-auto items-end" : "items-start"
-                }`}
-                >
-                <div
-                    className={`px-4 py-2 rounded-lg ${
-                    isOutgoing ? "bg-green-600" : "bg-gray-600"
-                    } text-white`}
-                >
-                    <p className="text-sm">{msg.text}</p>
-                </div>
-                <span className="text-xs text-gray-400 mt-1">
-                    {isOutgoing ? "You → " + msg.to : msg.from + " → You"} ·{" "}
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                </span>
-                </div>
-            );
-            })
-        )}
+        <div className="flex h-[70vh] bg-gray-700 rounded overflow-hidden">
+        {/* Sidebar */}
+        <div className={`w-full md:w-1/3 border-r border-gray-600 ${activeConv ? "hidden md:block" : "block"}`}>
+            {loading ? (
+            <p className="text-gray-300 text-center mt-6">Loading...</p>
+            ) : (
+            <ConversationList
+                conversations={conversations}
+                onSelect={(conv) => setActiveConv(conv)}
+            />
+            )}
+        </div>
+
+        {/* Chat window */}
+        <div className={`flex-1 ${!activeConv ? "hidden md:flex" : "flex"}`}>
+            {activeConv ? (
+            <ChatWindow
+                conversation={activeConv}
+                onBack={() => setActiveConv(null)}
+            />
+            ) : (
+            <div className="flex-1 flex items-center justify-center text-gray-400">
+                Select a conversation
+            </div>
+            )}
+        </div>
         </div>
     );
 }

@@ -1,33 +1,59 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ConnectionTab() {
     const [connected, setConnected] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    const fetchStatus = async () => {
+        try {
+        const res = await fetch("/api/whatsapp/account");
+        if (!res.ok) throw new Error("Failed to fetch account");
+        const data = await res.json();
 
-    // Fetch initial state from backend
+        const isConnected =
+            data?.account?.status === "connected" && data?.account?.verified;
+
+        setConnected(isConnected);
+        } catch (err) {
+        console.error(err);
+        toast.error("Could not fetch WhatsApp status");
+        }
+    };
+
     useEffect(() => {
-        fetch("/api/whatsapp/account")
-        .then((res) => res.json())
-        .then((data) => setConnected(Boolean(data?.enabled)))
-        .catch(() => {});
+        fetchStatus();
     }, []);
 
+    // Toggle connection
     const toggleConnection = async () => {
         setLoading(true);
         try {
-        const endpoint = connected
-            ? "/api/whatsapp/disconnect"
-            : "/api/whatsapp/connect";
+        const res = await fetch("/api/whatsapp/account", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+            status: connected ? "disconnected" : "connected",
+            }),
+        });
 
-        const res = await fetch(endpoint, { method: "POST" });
         if (!res.ok) throw new Error("Request failed");
 
-        setConnected(!connected);
+        const data = await res.json();
+        const isConnected =
+            data?.account?.status === "connected" && data?.account?.verified;
+
+        setConnected(isConnected);
+
         toast.success(
-            connected ? "Disconnected successfully" : "Connected successfully"
+            isConnected
+            ? "WhatsApp connected successfully"
+            : "WhatsApp disconnected successfully"
         );
         } catch (err) {
+        console.error(err);
         toast.error("Action failed");
         } finally {
         setLoading(false);
@@ -52,9 +78,7 @@ export default function ConnectionTab() {
             />
             <div
                 className={`w-14 h-7 rounded-full transition-colors ${
-                connected
-                    ? "bg-green-600 peer-checked:bg-green-600"
-                    : "bg-gray-600 peer"
+                connected ? "bg-green-600" : "bg-gray-600"
                 }`}
             ></div>
             <div

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import InputField from './inputFailed';
 import Button from './button';
 import { useSignIn } from '@/hooks/auth/login';
+import toast from 'react-hot-toast';
 
 export default function LoginForm() {
     const tAuth = useTranslations('Auth');
@@ -12,11 +13,9 @@ export default function LoginForm() {
     const params = useParams();
     const { signInUser } = useSignIn();
 
-    // ✅ Local state for inputs & validation
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-    const [formError, setFormError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     // 🧠 Basic client-side validation
@@ -30,14 +29,19 @@ export default function LoginForm() {
         if (!password) newErrors.password = tAuth('errorRequired');
 
         setErrors(newErrors);
+
+        // Show toast for first error if exists
+        if (Object.values(newErrors).length > 0) {
+        toast.error(Object.values(newErrors)[0]);
+        }
+
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setFormError(null);
 
-        if (!validate()) return; // ❌ stop if inputs invalid
+        if (!validate()) return;
 
         setLoading(true);
         const formData = new FormData();
@@ -47,12 +51,13 @@ export default function LoginForm() {
         const res = await signInUser(formData);
 
         if (typeof res === 'string') {
-        // Hook returned an error message
-        setFormError(
+        toast.error(
             res === 'CredentialsSignin'
             ? tAuth('errorInvalidCredentials')
             : res
         );
+        } else {
+        toast.success(tAuth('loginSuccess'));
         }
 
         setLoading(false);
@@ -90,11 +95,6 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
         />
-
-        {/* 🔴 Global form-level error */}
-        {formError && (
-            <p className="text-red-400 text-sm text-center">{formError}</p>
-        )}
 
         <Button
             text={loading ? tAuth('loadingLogin') : tAuth('submitLogin')}

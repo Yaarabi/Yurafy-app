@@ -1,42 +1,78 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function AutomationTab() {
-    const [autoReplyEnabled, setAutoReplyEnabled] = useState(false);
-    const [greetingTemplate, setGreetingTemplate] = useState("");
-    const [orderConfirmEnabled, setOrderConfirmEnabled] = useState(false);
-    const [orderTemplate, setOrderTemplate] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(true);
 
-    useEffect(() => {
-        fetch("/api/whatsapp/account")
-        .then((res) => res.json())
-        .then((data) => {
-            setAutoReplyEnabled(Boolean(data.enabled));
-            setGreetingTemplate(data.template || "");
-            setOrderConfirmEnabled(Boolean(data.orderConfirmEnabled));
-            setOrderTemplate(data.orderTemplate || "");
-        })
-        .catch(() => {});
-    }, []);
+    const [settings, setSettings] = useState({
+        autoReply: false,
+        orderConfirmation: false,
+        aiAgent: false,
+    });
 
-    const handleSave = async () => {
+    const [templates, setTemplates] = useState({
+        greeting: "",
+        orderConfirmation: "",
+        fallback: "",
+    });
+
+    // Fetch settings from backend
+    const fetchSettings = async () => {
+        setFetching(true);
         try {
-        const res = await fetch("/api/whatsapp/account", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-            enabled: autoReplyEnabled,
-            template: greetingTemplate,
-            orderConfirmEnabled,
-            orderTemplate,
-            }),
-        });
-        if (!res.ok) throw new Error("Failed to save");
-        toast.success("Settings updated");
+        const res = await fetch("/api/whatsapp/account", { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch settings");
+        const data = await res.json();
+        // console.log(data.account.settings)
+
+        setSettings(data.account.settings || {});
+        setTemplates(data.account.templates || {});
         } catch (err) {
-        toast.error("Update failed");
+        console.error(err);
+        toast.error("Could not load automation settings");
+        } finally {
+        setFetching(false);
         }
     };
+
+    // 🔁 Re-fetch when user navigates back or refocuses tab
+    useEffect(() => {
+        fetchSettings();
+
+        const handleVisibility = () => {
+        if (document.visibilityState === "visible") fetchSettings();
+        };
+        window.addEventListener("visibilitychange", handleVisibility);
+        return () => window.removeEventListener("visibilitychange", handleVisibility);
+    }, []);
+
+    // Save updated settings
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+        const res = await fetch("/api/whatsapp/account", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ settings, templates }),
+        });
+
+        if (!res.ok) throw new Error("Failed to save");
+
+        toast.success("Automation settings updated");
+        await fetchSettings(); // 🔄 immediately refresh after save
+        } catch (err) {
+        console.error(err);
+        toast.error("Update failed");
+        } finally {
+        setLoading(false);
+        }
+    };
+
+    if (fetching)
+        return <p className="text-gray-400 text-center">Loading settings...</p>;
 
     return (
         <div className="space-y-6">
@@ -45,9 +81,12 @@ export default function AutomationTab() {
             <label className="text-white">Enable Auto Reply</label>
             <input
             type="checkbox"
-            checked={autoReplyEnabled}
-            onChange={(e) => setAutoReplyEnabled(e.target.checked)}
+            checked={settings.autoReply}
+            onChange={(e) =>
+                setSettings({ ...settings, autoReply: e.target.checked })
+            }
             className="toggle toggle-success"
+            disabled={loading}
             />
         </div>
         <div>
@@ -55,8 +94,10 @@ export default function AutomationTab() {
             <textarea
             className="w-full p-2 rounded bg-gray-600 text-white"
             rows={3}
-            value={greetingTemplate}
-            onChange={(e) => setGreetingTemplate(e.target.value)}
+            value={templates.greeting}
+            onChange={(e) =>
+                setTemplates({ ...templates, greeting: e.target.value })
+            }
             placeholder="Hi there! How can I help you today?"
             />
         </div>
@@ -66,9 +107,15 @@ export default function AutomationTab() {
             <label className="text-white">Enable Order Confirmation</label>
             <input
             type="checkbox"
-            checked={orderConfirmEnabled}
-            onChange={(e) => setOrderConfirmEnabled(e.target.checked)}
+            checked={settings.orderConfirmation}
+            onChange={(e) =>
+                setSettings({
+                ...settings,
+                orderConfirmation: e.target.checked,
+                })
+            }
             className="toggle toggle-success"
+            disabled={loading}
             />
         </div>
         <div>
@@ -76,17 +123,37 @@ export default function AutomationTab() {
             <textarea
             className="w-full p-2 rounded bg-gray-600 text-white"
             rows={3}
-            value={orderTemplate}
-            onChange={(e) => setOrderTemplate(e.target.value)}
+            value={templates.orderConfirmation}
+            onChange={(e) =>
+                setTemplates({
+                ...templates,
+                orderConfirmation: e.target.value,
+                })
+            }
             placeholder="Thank you for your order! We’ll confirm shortly."
+            />
+        </div>
+
+        {/* AI Agent */}
+        <div className="flex items-center justify-between">
+            <label className="text-white">Enable AI WhatsApp Agent</label>
+            <input
+            type="checkbox"
+            checked={settings.aiAgent}
+            onChange={(e) =>
+                setSettings({ ...settings, aiAgent: e.target.checked })
+            }
+            className="toggle toggle-success"
+            disabled={loading}
             />
         </div>
 
         <button
             onClick={handleSave}
+            disabled={loading}
             className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white"
         >
-            Save Settings
+            {loading ? "Saving..." : "Save Settings"}
         </button>
         </div>
     );

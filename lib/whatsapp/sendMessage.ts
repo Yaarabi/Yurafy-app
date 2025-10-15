@@ -1,6 +1,6 @@
 import axios from "axios";
-import WhatsAppMessage from "@/models/whatsappMessage";
 import { connectDB } from "@/lib/db/mongoDB";
+import WhatsAppConversation from "@/models/whatsappMessage";
 
 /**
  * Send a WhatsApp message using WhatsApp Cloud API
@@ -8,16 +8,19 @@ import { connectDB } from "@/lib/db/mongoDB";
  * @param to Recipient phone number in international format
  * @param text Message body
  * @param token Decrypted access token
+ * @param options Additional options like isAIResponse
  */
 export async function sendWhatsAppMessage(
     account: any,
     to: string,
     text: string,
-    token: string
+    token: string,
+    options: { isAIResponse?: boolean } = {}
     ) {
     await connectDB();
 
     try {
+        // Send message via WhatsApp Cloud API
         await axios.post(
         `https://graph.facebook.com/v17.0/${account.waNumberId}/messages`,
         {
@@ -34,16 +37,33 @@ export async function sendWhatsAppMessage(
         }
         );
 
-        // Store outgoing message
-        await WhatsAppMessage.create({
-        owner: account.owner,
+        // Prepare message object for conversation
+        const newMessage = {
         from: account.waNumber,
         to,
         type: "text",
         text,
-        timestamp: Date.now(),
         direction: "outgoing",
-        });
+        status: "sent",
+        timestamp: Date.now(),
+        isAIResponse: options.isAIResponse || false,
+        };
+
+        // Add message to conversation or create new conversation if not exists
+        await WhatsAppConversation.findOneAndUpdate(
+        { owner: account.owner, "customer.phone": to },
+        {
+            $setOnInsert: {
+            owner: account.owner,
+            customer: { phone: to },
+            status: "open",
+            aiEnabled: account.settings.aiAgent || false,
+            },
+            $push: { messages: newMessage },
+            $set: { lastMessage: text, lastTimestamp: newMessage.timestamp },
+        },
+        { upsert: true, new: true }
+        );
     } catch (err) {
         console.error("Failed to send WhatsApp message:", err);
         throw err;

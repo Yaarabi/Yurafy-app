@@ -4,6 +4,7 @@ import { FaFileUpload, FaPlus } from 'react-icons/fa';
 import Papa from 'papaparse';
 import { IOrder } from '@/models/orders';
 import { useSession } from 'next-auth/react';
+import toast from 'react-hot-toast';
 
 interface OrdersActionsProps {
     orders: IOrder[];
@@ -23,7 +24,11 @@ interface CSVRow {
     status?: string;
 }
 
-export default function OrdersActions({ orders, setOrders, setShowAddModal }: OrdersActionsProps) {
+export default function OrdersActions({
+    orders,
+    setOrders,
+    setShowAddModal,
+    }: OrdersActionsProps) {
     const { data: session } = useSession();
 
     const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +59,7 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
             }
 
             return {
-                owner: session?.user?.id || '', // must be string
+                owner: session?.user?.id || '',
                 shippingAddress: {
                 fullName: row.fullName || '',
                 phone: row.phone || '',
@@ -72,24 +77,23 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
             });
 
             try {
-            const res = await fetch('/api/orders', {
+            const res = await fetch('/api/orders/import', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ orders: parsedOrders }),
             });
 
+            const data = await res.json();
+
             if (res.ok) {
-                const data = await res.json();
                 setOrders((prev) => [...prev, ...data.orders]);
-                alert('Orders uploaded successfully!');
+                toast.success(`✅ ${data.message || 'Orders uploaded successfully!'}`);
             } else {
-                const errorData = await res.json();
-                console.error('CSV Upload failed:', errorData);
-                alert('Failed to upload orders');
+                toast.error(`❌ ${data.error || 'Failed to upload orders'}`);
             }
             } catch (err) {
             console.error('CSV Upload Error:', err);
-            alert('Server error while uploading orders');
+            toast.error('⚠️ Server error while uploading orders');
             }
         },
         });
