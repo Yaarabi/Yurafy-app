@@ -224,6 +224,7 @@
         "products": "Products",
         "settings": "Settings",
         "whatsapp": "WhatsApp",
+        "conversations": "My chats", 
         "support": "Support"
     },
     "dashboard": {

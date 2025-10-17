@@ -4,7 +4,23 @@ import WhatsAppAccount from "@/models/whatsappAccount";
 import WhatsAppConversation from "@/models/whatsappMessage";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import crypto from "crypto";
-// import { generateAIResponse } from "@/lib/whatsapp/aiAgent"; // optional AI handler
+import Template from "@/models/templates";
+
+
+
+
+// ------------------------
+// Search template
+// ------------------------
+async function getTemplate(ownerId: string, name: string) {
+    const template = await Template.findOne({
+        owner: ownerId,
+        name,
+    });
+
+    return template?.content || null;
+}
+
 
 // ------------------------
 // Decrypt WhatsApp token
@@ -50,109 +66,73 @@ export async function GET(req: NextRequest) {
     return new NextResponse("Forbidden", { status: 403 });
 }
 
+
 // ------------------------
 // POST: Incoming WhatsApp messages
 // ------------------------
 export async function POST(req: NextRequest) {
     await connectDB();
-    console.log("✅ Incoming WhatsApp message webhook");
 
     try {
         const body = await req.json();
-        const entry = body.entry?.[0];
-        const changes = entry?.changes?.[0];
-        const value = changes?.value;
-        const messages = value?.messages;
+        const message = body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+        if (!message) return NextResponse.json({ received: true });
 
-        if (!messages) return NextResponse.json({ received: true });
-
-        const phoneNumberId = value.metadata.phone_number_id;
+        const phoneNumberId = body.entry[0].changes[0].value.metadata.phone_number_id;
         const account = await WhatsAppAccount.findOne({ waNumberId: phoneNumberId });
 
-        if (!account) {
-            console.warn("⚠️ WhatsApp account not found for phone number:", phoneNumberId);
-            return NextResponse.json({ error: "Account not found" }, { status: 404 });
-        }
-
-        // 🔒 Check if account is connected and verified
-        if (account.status !== "connected" || !account.verified) {
-            console.warn(`⚠️ Account ${account.waNumber} is not connected or verified`);
-            return NextResponse.json({ ignored: true });
-        }
+        if (!account || account.status !== "connected" || !account.verified)
+        return NextResponse.json({ ignored: true });
 
         const decryptedToken = decryptToken(account.waTokenEncrypted);
+        const from = message.from;
+        const messageText = message.text?.body || "";
 
-        for (const msg of messages) {
-            const from = msg.from;
-            const messageText = msg.text?.body || "";
-
-            // 🗃️ Add or update conversation
-            const newMessage = {
-                waMessageId: msg.id,
+        // 1️⃣ Save message
+        await WhatsAppConversation.findOneAndUpdate(
+        { owner: account.owner, "customer.phone": from },
+        {
+            $push: {
+            messages: {
+                waMessageId: message.id,
                 from,
-                to: value.metadata.display_phone_number,
-                type: msg.type,
+                to: body.entry[0].changes[0].value.metadata.display_phone_number,
+                type: message.type,
                 text: messageText,
-                mediaUrl: msg.image?.id || msg.document?.id || null,
                 direction: "incoming",
                 status: "sent",
-                timestamp: Number(msg.timestamp),
+                timestamp: Number(message.timestamp),
                 isAIResponse: false,
-            };
+            },
+            },
+            $set: {
+            lastMessage: messageText,
+            lastTimestamp: Number(message.timestamp),
+            status: "open",
+            },
+            $inc: { unreadCount: 1 },
+        },
+        { upsert: true, new: true }
+        );
 
-            const conversation = await WhatsAppConversation.findOneAndUpdate(
-                { owner: account.owner, "customer.phone": from },
-                {
-                    $push: { messages: newMessage },
-                    $set: {
-                        lastMessage: messageText,
-                        lastTimestamp: Number(msg.timestamp),
-                        status: "open",
-                    },
-                    $inc: { unreadCount: 1 },
-                },
-                { upsert: true, new: true }
-            );
 
-            // ------------------------
-            // 🧠 Handle Automation Logic
-            // ------------------------
 
-            // 1️⃣ Auto Reply
-            if (account.settings.autoReply) {
-                console.log("🤖 Auto reply active");
-                await sendWhatsAppMessage(account, from, account.templates.greeting, decryptedToken);
-            }
-            // 2️⃣ Order Confirmation
-            else if (
-                account.settings.orderConfirmation &&
-                /order|commande|pedido/i.test(messageText)
-            ) {
-                console.log("📦 Order confirmation triggered");
-                await sendWhatsAppMessage(account, from, account.templates.orderConfirmation, decryptedToken);
-            }
-            // 3️⃣ AI Agent
-            else if (account.settings.aiAgent) {
-                console.log("🧠 AI agent active");
-                try {
-                    // const aiReply = await generateAIResponse(account.aiConfig, messageText);
-                    const aiReply = `AI (${account.aiConfig.personality}): ${messageText}`;
-                    await sendWhatsAppMessage(account, from, aiReply, decryptedToken);
-                } catch (err) {
-                    console.error("AI reply failed:", err);
-                    await sendWhatsAppMessage(account, from, account.templates.fallback, decryptedToken);
-                }
-            }
-            // 4️⃣ Fallback
-            else {
-                console.log("💤 No automation active");
-                await sendWhatsAppMessage(account, from, account.templates.fallback, decryptedToken);
-            }
+        let reply: string | null = null;
+
+        if (account.settings.autoReply) {
+        reply = await getTemplate( account.owner, account.preferredTemplates?.greeting || "greeting");
+        } else if (account.settings.aiAgent) {
+        reply = `AI (${account.aiConfig.personality}): ${messageText}`;
+        } else {
+        reply = await getTemplate( account.owner,account.preferredTemplates?.fallback || "fallback");
         }
+
+        if (reply) await sendWhatsAppMessage(account, from, reply, decryptedToken);
 
         return NextResponse.json({ success: true });
     } catch (err) {
         console.error("Webhook error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-}
+    }
+

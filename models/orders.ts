@@ -1,18 +1,18 @@
-
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder {
   _id: string;
-  owner: string; 
+  owner: string;
   products: {
-    product: string;
+    product?: string; // product ID (ObjectId)
+    name: string;    // cached name
     quantity: number;
     price: number;
     color?: string;
     size?: string;
   }[];
   totalAmount: number;
-  status: "new" | "processing" | "shipped" | "delivered" | "cancelled";
+  status: "new" | "confirmed" | "shipped" | "delivered" | "cancelled";
   shippingAddress: {
     fullName: string;
     email?: string;
@@ -25,41 +25,35 @@ export interface IOrder {
   updatedAt: Date;
 }
 
-
 const OrderSchema = new Schema(
   {
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
     products: [
       {
-        product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+        product: { type: Schema.Types.ObjectId, ref: "Product", required: false },
+        name: { type: String, required: true }, // ✅ added
         quantity: { type: Number, required: true, min: 1 },
-        price: { type: Number, required: true }, 
-        color: { type: String, required: false },
-        size: { type: String, required: false },
+        price: { type: Number, required: true },
+        color: { type: String },
+        size: { type: String },
       },
     ],
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
       enum: ["new", "confirmed", "shipped", "delivered", "cancelled"],
-      default: "pending",
+      default: "new",
     },
-    
     shippingAddress: {
       fullName: { type: String, required: true },
-      email: { type: String, required: false },
+      email: { type: String },
       phone: { type: String, required: true },
       address: { type: String, required: true },
-      city: { type: String, required: false },
-      country: { type: String, required: false },
+      city: { type: String },
+      country: { type: String },
     },
   },
   { timestamps: true }
 );
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);
-
-
-
-
-                        

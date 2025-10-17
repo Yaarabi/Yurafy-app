@@ -3,33 +3,77 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+interface Settings {
+    autoReply: boolean;
+    orderConfirmation: boolean;
+    aiAgent: boolean;
+}
+
+interface Template {
+    _id: string;
+    name: string;
+    content: string;
+}
+
+interface KeywordRule {
+    keyword: string;
+    response: string;
+}
+
 export default function AutomationTab() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
 
-    const [settings, setSettings] = useState({
+    const [settings, setSettings] = useState<Settings>({
         autoReply: false,
         orderConfirmation: false,
         aiAgent: false,
     });
 
-    const [templates, setTemplates] = useState({
-        greeting: "",
-        orderConfirmation: "",
-        fallback: "",
+    const [selectedGreeting, setSelectedGreeting] = useState<string>("");
+    const [selectedOrderConfirmation, setSelectedOrderConfirmation] = useState<string>("");
+    const [selectedFallback, setSelectedFallback] = useState<string>("");
+
+    const [rules, setRules] = useState<KeywordRule[]>([]);
+    const [newRule, setNewRule] = useState<KeywordRule>({
+        keyword: "",
+        response: "",
     });
 
-    // Fetch settings from backend
+    const [templates, setTemplates] = useState<Template[]>([]);
+
     const fetchSettings = async () => {
         setFetching(true);
         try {
-        const res = await fetch("/api/whatsapp/account", { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to fetch settings");
-        const data = await res.json();
-        // console.log(data.account.settings)
+        const [accountRes, templatesRes] = await Promise.all([
+            fetch("/api/whatsapp/account", { cache: "no-store" }),
+            fetch("/api/whatsapp/templates", { cache: "no-store" }),
+        ]);
 
-        setSettings(data.account.settings || {});
-        setTemplates(data.account.templates || {});
+        if (!accountRes.ok || !templatesRes.ok)
+            throw new Error("Failed to fetch");
+
+        const accountData = await accountRes.json();
+        const templatesData = await templatesRes.json();
+
+        setSettings(accountData.account.settings || {});
+        setRules(accountData.account.rules || []);
+
+        const safeTemplates = Array.isArray(templatesData.templates)
+            ? templatesData.templates
+            : [];
+        setTemplates(safeTemplates);
+
+        // pre-fill template names
+        setSelectedGreeting(
+            accountData.account.preferredTemplates?.greeting || ""
+        );
+        setSelectedOrderConfirmation(
+            accountData.account.preferredTemplates?.orderConfirmation || ""
+        );
+        setSelectedFallback(
+            accountData.account.preferredTemplates?.fallback || ""
+        );
         } catch (err) {
         console.error(err);
         toast.error("Could not load automation settings");
@@ -38,123 +82,209 @@ export default function AutomationTab() {
         }
     };
 
-    // 🔁 Re-fetch when user navigates back or refocuses tab
     useEffect(() => {
         fetchSettings();
-
-        const handleVisibility = () => {
-        if (document.visibilityState === "visible") fetchSettings();
-        };
-        window.addEventListener("visibilitychange", handleVisibility);
-        return () => window.removeEventListener("visibilitychange", handleVisibility);
     }, []);
 
-    // Save updated settings
-    const handleSave = async () => {
-        setLoading(true);
-        try {
+    const autoPatch = async (payload: object) => {
+    try {
         const res = await fetch("/api/whatsapp/account", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ settings, templates }),
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
         });
 
-        if (!res.ok) throw new Error("Failed to save");
+        const data = await res.json();
 
-        toast.success("Automation settings updated");
-        await fetchSettings(); // 🔄 immediately refresh after save
-        } catch (err) {
+        if (!res.ok) {
+        toast.error(data.error || "Update failed");
+        throw new Error(data.error || "Update failed");
+        } else {
+        toast.success("Updated successfully");
+        }
+    } catch (err) {
         console.error(err);
         toast.error("Update failed");
-        } finally {
-        setLoading(false);
-        }
+    }
     };
 
-    if (fetching)
+
+    const handleSettingChange = (field: keyof Settings, value: boolean) => {
+        const newSettings = { ...settings, [field]: value };
+        setSettings(newSettings);
+        autoPatch({ settings: newSettings });
+    };
+
+    const handleTemplateChange = (
+        field: "greeting" | "orderConfirmation" | "fallback",
+        value: string
+    ) => {
+        if (field === "greeting") setSelectedGreeting(value);
+        else if (field === "orderConfirmation") setSelectedOrderConfirmation(value);
+        else setSelectedFallback(value);
+
+        autoPatch({ preferredTemplates: { [field]: value } });
+    };
+
+    const addRule = () => {
+        if (!newRule.keyword.trim() || !newRule.response.trim()) {
+        toast.error("Keyword and response required");
+        return;
+        }
+        const updatedRules = [...rules, newRule];
+        setRules(updatedRules);
+        setNewRule({ keyword: "", response: "" });
+        autoPatch({ rules: updatedRules });
+    };
+
+    const removeRule = (idx: number) => {
+        const updatedRules = rules.filter((_, i) => i !== idx);
+        setRules(updatedRules);
+        autoPatch({ rules: updatedRules });
+    };
+
+    if (fetching) {
         return <p className="text-gray-400 text-center">Loading settings...</p>;
+    }
+
+    const renderTemplateSelect = (
+        label: string,
+        selected: string,
+        field: "greeting" | "orderConfirmation" | "fallback"
+    ) => (
+        <div className="space-y-1">
+        <label className="text-white block mb-1">{label}</label>
+        <select
+            className="w-full p-2 rounded bg-gray-600 text-white"
+            value={selected}
+            onChange={(e) => handleTemplateChange(field, e.target.value)}
+        >
+            <option value="">-- Select Template --</option>
+            {templates.map((tpl) => (
+            <option key={tpl._id} value={tpl.name}>
+                {tpl.name}
+            </option>
+            ))}
+        </select>
+        </div>
+    );
 
     return (
         <div className="space-y-6">
         {/* Auto Reply */}
-        <div className="flex items-center justify-between">
-            <label className="text-white">Enable Auto Reply</label>
+        <div className="bg-gray-700 p-4 rounded space-y-3">
+            <div className="flex items-center justify-between">
+            <label className="text-white font-medium">Enable Auto Reply</label>
             <input
-            type="checkbox"
-            checked={settings.autoReply}
-            onChange={(e) =>
-                setSettings({ ...settings, autoReply: e.target.checked })
-            }
-            className="toggle toggle-success"
-            disabled={loading}
+                type="checkbox"
+                checked={settings.autoReply}
+                onChange={(e) => handleSettingChange("autoReply", e.target.checked)}
+                disabled={loading}
             />
-        </div>
-        <div>
-            <label className="text-white block mb-1">Greeting Message</label>
-            <textarea
-            className="w-full p-2 rounded bg-gray-600 text-white"
-            rows={3}
-            value={templates.greeting}
-            onChange={(e) =>
-                setTemplates({ ...templates, greeting: e.target.value })
-            }
-            placeholder="Hi there! How can I help you today?"
-            />
+            </div>
+            {renderTemplateSelect("Greeting Template", selectedGreeting, "greeting")}
         </div>
 
         {/* Order Confirmation */}
-        <div className="flex items-center justify-between">
-            <label className="text-white">Enable Order Confirmation</label>
+        <div className="bg-gray-700 p-4 rounded space-y-3">
+            <div className="flex items-center justify-between">
+            <label className="text-white font-medium">
+                Enable Order Confirmation
+            </label>
             <input
-            type="checkbox"
-            checked={settings.orderConfirmation}
-            onChange={(e) =>
-                setSettings({
-                ...settings,
-                orderConfirmation: e.target.checked,
-                })
-            }
-            className="toggle toggle-success"
-            disabled={loading}
+                type="checkbox"
+                checked={settings.orderConfirmation}
+                onChange={(e) =>
+                handleSettingChange("orderConfirmation", e.target.checked)
+                }
+                disabled={loading}
             />
+            </div>
+            {renderTemplateSelect(
+            "Order Confirmation Template",
+            selectedOrderConfirmation,
+            "orderConfirmation"
+            )}
         </div>
-        <div>
-            <label className="text-white block mb-1">Order Confirmation Message</label>
-            <textarea
-            className="w-full p-2 rounded bg-gray-600 text-white"
-            rows={3}
-            value={templates.orderConfirmation}
-            onChange={(e) =>
-                setTemplates({
-                ...templates,
-                orderConfirmation: e.target.value,
-                })
-            }
-            placeholder="Thank you for your order! We’ll confirm shortly."
-            />
+
+        {/* Fallback */}
+        <div className="bg-gray-700 p-4 rounded space-y-3">
+            {renderTemplateSelect("Fallback Template", selectedFallback, "fallback")}
         </div>
 
         {/* AI Agent */}
-        <div className="flex items-center justify-between">
-            <label className="text-white">Enable AI WhatsApp Agent</label>
+        <div className="bg-gray-700 p-4 rounded flex items-center justify-between">
+            <label className="text-white font-medium">
+            Enable AI WhatsApp Agent
+            </label>
             <input
             type="checkbox"
             checked={settings.aiAgent}
-            onChange={(e) =>
-                setSettings({ ...settings, aiAgent: e.target.checked })
-            }
-            className="toggle toggle-success"
+            onChange={(e) => handleSettingChange("aiAgent", e.target.checked)}
             disabled={loading}
             />
         </div>
 
-        <button
-            onClick={handleSave}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white"
-        >
-            {loading ? "Saving..." : "Save Settings"}
-        </button>
+        {/* Keyword Rules */}
+        <div className="bg-gray-700 p-4 rounded space-y-3">
+            <h3 className="text-white font-semibold">Keyword Auto-Replies</h3>
+            <p className="text-sm text-gray-400">
+            Define keywords and their automatic responses. When a customer’s
+            message contains the keyword, the response will be sent.
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-2">
+            <input
+                type="text"
+                placeholder="Keyword"
+                className="flex-1 p-2 rounded bg-gray-600 text-white"
+                value={newRule.keyword}
+                onChange={(e) =>
+                setNewRule({ ...newRule, keyword: e.target.value })
+                }
+            />
+            <input
+                type="text"
+                placeholder="Response"
+                className="flex-1 p-2 rounded bg-gray-600 text-white"
+                value={newRule.response}
+                onChange={(e) =>
+                setNewRule({ ...newRule, response: e.target.value })
+                }
+            />
+            <button
+                onClick={addRule}
+                className="bg-green-600 hover:bg-green-500 px-3 py-1 rounded text-white"
+            >
+                Add
+            </button>
+            </div>
+
+            <ul className="space-y-2 mt-3">
+            {rules.length === 0 && (
+                <li className="text-sm text-gray-400">No rules defined yet.</li>
+            )}
+            {rules.map((rule, idx) => (
+                <li
+                key={idx}
+                className="flex items-center justify-between bg-gray-600 p-2 rounded"
+                >
+                <div>
+                    <span className="font-semibold text-white">{rule.keyword}</span>
+                    <span className="text-gray-300 text-sm ml-2">
+                    → {rule.response}
+                    </span>
+                </div>
+                <button
+                    onClick={() => removeRule(idx)}
+                    className="text-xs bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-white"
+                >
+                    Remove
+                </button>
+                </li>
+            ))}
+            </ul>
+        </div>
         </div>
     );
 }

@@ -20,67 +20,79 @@ function encryptToken(token: string) {
 }
 
 // ------------------------
-// GET account
+// GET: Retrieve account for logged-in user
 // ------------------------
 export async function GET(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.id)
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const account = await WhatsAppAccount.findOne({ owner: session.user.id });
-    if (!account) return NextResponse.json({ error: "No account found" }, { status: 404 });
+    if (!account)
+        return NextResponse.json({ error: "No account found" }, { status: 404 });
 
     return NextResponse.json({ account });
-}
+    }
 
-// ------------------------
-// POST: create or replace
-// ------------------------
-export async function POST(req: NextRequest) {
+    // ------------------------
+    // POST: Create or replace account
+    // ------------------------
+    export async function POST(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.id)
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
         const {
-            waBusinessId,
-            waNumberId,
-            waNumber,
-            waToken,
-            settings,
-            templates,
-            aiConfig,
+        waBusinessId,
+        waNumberId,
+        waNumber,
+        waToken,
+        settings,
+        aiConfig,
+        preferredTemplates,
         } = await req.json();
 
         if (!waBusinessId || !waNumber || !waToken) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        return NextResponse.json(
+            { error: "Missing required fields" },
+            { status: 400 }
+        );
         }
 
         const waTokenEncrypted = encryptToken(waToken);
 
         let account = await WhatsAppAccount.findOne({ owner: session.user.id });
         if (account) {
-            account.waBusinessId = waBusinessId;
-            account.waNumberId = waNumberId;
-            account.waNumber = waNumber;
-            account.waTokenEncrypted = waTokenEncrypted;
-            if (settings) account.settings = { ...account.settings, ...settings };
-            if (templates) account.templates = { ...account.templates, ...templates };
-            if (aiConfig) account.aiConfig = { ...account.aiConfig, ...aiConfig };
-            await account.save();
+        account.waBusinessId = waBusinessId;
+        account.waNumberId = waNumberId;
+        account.waNumber = waNumber;
+        account.waTokenEncrypted = waTokenEncrypted;
+        if (settings)
+            account.settings = { ...account.settings, ...settings };
+        if (aiConfig)
+            account.aiConfig = { ...account.aiConfig, ...aiConfig };
+        if (preferredTemplates)
+            account.preferredTemplates = {
+            ...account.preferredTemplates,
+            ...preferredTemplates,
+            };
+        await account.save();
         } else {
-            account = await WhatsAppAccount.create({
-                owner: session.user.id,
-                waBusinessId,
-                waNumberId,
-                waNumber,
-                waTokenEncrypted,
-                verified: false,
-                status: "disconnected",
-                settings: settings || {},
-                templates: templates || {},
-                aiConfig: aiConfig || {},
-            });
+        account = await WhatsAppAccount.create({
+            owner: session.user.id,
+            waBusinessId,
+            waNumberId,
+            waNumber,
+            waTokenEncrypted,
+            verified: false,
+            status: "disconnected",
+            settings: settings || {},
+            aiConfig: aiConfig || {},
+            preferredTemplates: preferredTemplates || {},
+        });
         }
 
         return NextResponse.json({ success: true, account });
@@ -91,28 +103,30 @@ export async function POST(req: NextRequest) {
 }
 
 // ------------------------
-// PUT: update account partially
+// PUT: Partial update (settings, aiConfig, templates, etc.)
 // ------------------------
 export async function PUT(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.id)
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
         const {
-            waBusinessId,
-            waNumberId,
-            waNumber,
-            waToken,
-            verified,
-            status,
-            settings,
-            templates,
-            aiConfig,
+        waBusinessId,
+        waNumberId,
+        waNumber,
+        waToken,
+        verified,
+        status,
+        settings,
+        aiConfig,
+        preferredTemplates,
         } = await req.json();
 
         const account = await WhatsAppAccount.findOne({ owner: session.user.id });
-        if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });
+        if (!account)
+        return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
         if (waBusinessId) account.waBusinessId = waBusinessId;
         if (waNumberId) account.waNumberId = waNumberId;
@@ -120,9 +134,15 @@ export async function PUT(req: NextRequest) {
         if (waToken) account.waTokenEncrypted = encryptToken(waToken);
         if (typeof verified === "boolean") account.verified = verified;
         if (status) account.status = status;
-        if (settings) account.settings = { ...account.settings, ...settings };
-        if (templates) account.templates = { ...account.templates, ...templates };
-        if (aiConfig) account.aiConfig = { ...account.aiConfig, ...aiConfig };
+        if (settings)
+        account.settings = { ...account.settings, ...settings };
+        if (aiConfig)
+        account.aiConfig = { ...account.aiConfig, ...aiConfig };
+        if (preferredTemplates)
+        account.preferredTemplates = {
+            ...account.preferredTemplates,
+            ...preferredTemplates,
+        };
 
         await account.save();
 
@@ -134,25 +154,52 @@ export async function PUT(req: NextRequest) {
 }
 
 // ------------------------
-// PATCH: update verified status
+// PATCH: Update only verification status
 // ------------------------
+
 export async function PATCH(req: NextRequest) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     try {
-        const { verified } = await req.json();
-        const account = await WhatsAppAccount.findOneAndUpdate(
-            { owner: session.user.id },
-            { $set: { verified } },
-            { new: true }
-        );
-        if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });
+        const updates = await req.json();
+        if (!updates || typeof updates !== "object") {
+        return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
 
-        return NextResponse.json({ success: true, account });
+        const account = await WhatsAppAccount.findOne({ owner: session.user.id });
+        if (!account) {
+        return NextResponse.json({ error: "Account not found" }, { status: 404 });
+        }
+
+        // Dynamically merge top-level objects
+        const mergeFields = ["settings", "aiConfig", "preferredTemplates"];
+        mergeFields.forEach((field) => {
+        if (updates[field] && typeof updates[field] === "object") {
+            account[field] = { ...account[field], ...updates[field] };
+            delete updates[field]; // remove so it doesn’t overwrite as top-level
+        }
+        });
+
+        // Update any remaining fields directly (for strings, booleans, arrays)
+        Object.keys(updates).forEach((key) => {
+        account[key] = updates[key];
+        });
+
+        await account.save();
+
+        return NextResponse.json({
+        success: true,
+        account,
+        message: "WhatsApp account updated successfully",
+        });
     } catch (err) {
-        console.error("Error updating WhatsApp account:", err);
+        console.error("PATCH /api/whatsapp/account error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-}
+    }
+

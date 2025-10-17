@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-export interface IWhatsAppAccount {
+export interface IWhatsAppAccount extends Document {
     owner: string;
     waBusinessId: string;
     waNumberId: string;
@@ -13,10 +13,10 @@ export interface IWhatsAppAccount {
         orderConfirmation: boolean;
         aiAgent: boolean;
     };
-    templates: {
-        greeting: string;
-        orderConfirmation: string;
-        fallback: string;
+    preferredTemplates?: {
+        greeting?: string;
+        orderConfirmation?: string;
+        fallback?: string;
     };
     aiConfig?: {
         personality: string;
@@ -24,7 +24,7 @@ export interface IWhatsAppAccount {
     };
     createdAt: Date;
     updatedAt: Date;
-}
+    }
 
 const WhatsAppAccountSchema = new Schema(
     {
@@ -35,29 +35,27 @@ const WhatsAppAccountSchema = new Schema(
         waTokenEncrypted: { type: String, required: true },
         verified: { type: Boolean, default: false },
         status: {
-            type: String,
-            enum: ["disconnected", "connected"],
-            default: "disconnected",
+        type: String,
+        enum: ["disconnected", "connected"],
+        default: "disconnected",
         },
         settings: {
-            autoReply: { type: Boolean, default: false },
-            orderConfirmation: { type: Boolean, default: false },
-            aiAgent: { type: Boolean, default: false },
+        autoReply: { type: Boolean, default: false },
+        orderConfirmation: { type: Boolean, default: false },
+        aiAgent: { type: Boolean, default: false },
         },
-        templates: {
-            greeting: { type: String, default: "Hi 👋 How can we help you today?" },
-            orderConfirmation: {
-                type: String,
-                default: "Your order has been confirmed ✅",
-            },
-            fallback: { type: String, default: "Our team will reply soon." },
+        preferredTemplates: {
+        greeting: { type: String, default: "greeting" }, // name of the Template
+        orderConfirmation: { type: String, default: "order_confirmation" },
+        fallback: { type: String, default: "fallback" },
         },
         aiConfig: {
-            personality: { type: String, default: "friendly assistant" },
-            knowledgeBaseId: { type: String },
+        personality: { type: String, default: "friendly assistant" },
+        knowledgeBaseId: { type: String },
         },
     },
     { timestamps: true }
 );
 
-export default mongoose.models.WhatsAppAccount || mongoose.model("WhatsAppAccount", WhatsAppAccountSchema);
+export default
+    mongoose.models.WhatsAppAccount || mongoose.model("WhatsAppAccount", WhatsAppAccountSchema);

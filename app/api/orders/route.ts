@@ -51,7 +51,7 @@ export async function POST(req: Request) {
 
         const order = new Order({
         ...body,
-        owner: userId, // 👈 enforce owner from session
+        owner: userId, 
         });
         await order.save();
 

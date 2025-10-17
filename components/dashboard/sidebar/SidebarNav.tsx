@@ -1,5 +1,5 @@
 
-import { MdDashboard, MdShoppingCart, MdInventory2, MdSettings, MdSupportAgent, MdWhatsapp } from "react-icons/md";
+import { MdDashboard, MdShoppingCart, MdInventory2, MdSettings, MdSupportAgent, MdWhatsapp, MdMessage } from "react-icons/md";
 import { useParams, useRouter } from "next/navigation";
 
 const NAV_ITEMS = {
@@ -7,17 +7,18 @@ const NAV_ITEMS = {
     orders: { href: "dashboard/orders", icon: <MdShoppingCart size={20} />, key: "nav.orders" },
     products: { href: "dashboard/products", icon: <MdInventory2 size={20} />, key: "nav.products" },
     whatsapp: { href: "dashboard/whatsapp", icon: <MdWhatsapp size={20} />, key: "nav.whatsapp" },
+    conversations: { href: "dashboard/conversations", icon: <MdMessage size={20} />, key: "nav.conversations" },
     settings: { href: "dashboard/settings", icon: <MdSettings size={20} />, key: "nav.settings" },
     support: { href: "dashboard/support", icon: <MdSupportAgent size={20} />, key: "nav.support" },
 };
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
-    "Starter": ["dashboard", "products","orders","support", "settings"], 
-    "WhatsApp Automation": ["dashboard", "orders", "whatsapp", "support", "settings"],
-    "AI WhatsApp Agent": ["dashboard", "whatsapp", "support", "settings"],
-    "Creator": ["dashboard", "products", "support", "settings"],
-    "Pro Seller": ["dashboard", "orders", "products", "whatsapp", "support", "settings"],
-    "Visionary": ["dashboard", "orders", "products", "whatsapp", "support", "settings"],
+    "Starter": ["dashboard", "products","orders","settings", "support"], 
+    "WhatsApp Automation": ["dashboard", "orders", "whatsapp","conversations", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "whatsapp", "conversations", "settings", "support"],
+    "Creator": ["dashboard", "products", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "products", "whatsapp", "conversations", "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products", "whatsapp", "conversations", "settings", "support"],
     "free": ["dashboard", "settings", "support"],
 };
 

@@ -1,11 +1,10 @@
-// OrdersFilters.tsx
 'use client';
 import { IOrder } from '@/models/orders';
 
 export type OrdersFiltersType = {
     product: string;
     address: string;
-    status: "" | "new" | "processing" | "shipped" | "delivered" | "cancelled";
+    status: "" | "new" | "confirmed" | "shipped" | "delivered" | "cancelled";
     date: string;
 };
 
@@ -17,18 +16,22 @@ interface OrdersFiltersProps {
 
 export default function OrdersFilters({ filters, setFilters }: OrdersFiltersProps) {
     return (
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 text-gray-200 flex-wrap">
         <input
-            placeholder="Product"
+            placeholder="Filter by product name"
             value={filters.product}
-            onChange={(e) => setFilters((prev) => ({ ...prev, product: e.target.value }))}
-            className="p-2 rounded bg-gray-700 border border-gray-600"
+            onChange={(e) =>
+            setFilters((prev) => ({ ...prev, product: e.target.value }))
+            }
+            className="p-2 rounded bg-gray-700 text-gray-200 border border-gray-600"
         />
         <input
-            placeholder="Address"
+            placeholder="Filter by address"
             value={filters.address}
-            onChange={(e) => setFilters((prev) => ({ ...prev, address: e.target.value }))}
-            className="p-2 rounded bg-gray-700 border border-gray-600"
+            onChange={(e) =>
+            setFilters((prev) => ({ ...prev, address: e.target.value }))
+            }
+            className="p-2 rounded bg-gray-700 text-gray-200 border border-gray-600"
         />
         <select
             value={filters.status}
@@ -42,7 +45,7 @@ export default function OrdersFilters({ filters, setFilters }: OrdersFiltersProp
         >
             <option value="">All</option>
             <option value="new">New</option>
-            <option value="processing">Processing</option>
+            <option value="confirmed">Confirmed</option>
             <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
@@ -50,7 +53,9 @@ export default function OrdersFilters({ filters, setFilters }: OrdersFiltersProp
         <input
             type="date"
             value={filters.date}
-            onChange={(e) => setFilters((prev) => ({ ...prev, date: e.target.value }))}
+            onChange={(e) =>
+            setFilters((prev) => ({ ...prev, date: e.target.value }))
+            }
             className="p-2 rounded bg-gray-700 border border-gray-600"
         />
         </div>

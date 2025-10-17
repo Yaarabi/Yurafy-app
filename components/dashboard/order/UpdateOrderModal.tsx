@@ -1,0 +1,250 @@
+'use client';
+import { useState } from 'react';
+import { FaTimes, FaPlus, FaTrash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import { IOrder } from '@/models/orders';
+
+interface ProductItem {
+    product?: string; // optional
+    name: string;     // required
+    quantity: number;
+    price: number;
+    color?: string;
+    size?: string;
+}
+
+interface UpdateOrderModalProps {
+    show: boolean;
+    order: IOrder;
+    onClose: () => void;
+    onUpdateOrder: (order: IOrder) => void;
+}
+
+export default function UpdateOrderModal({
+    show,
+    order,
+    onClose,
+    onUpdateOrder,
+}: UpdateOrderModalProps) {
+    const [fullName, setFullName] = useState(order.shippingAddress.fullName);
+    const [phone, setPhone] = useState(order.shippingAddress.phone);
+    const [address, setAddress] = useState(order.shippingAddress.address);
+    const [products, setProducts] = useState<ProductItem[]>(order.products);
+    const [status, setStatus] = useState<IOrder['status']>(order.status);
+    const [totalAmount, setTotalAmount] = useState(order.totalAmount);
+
+    if (!show) return null;
+
+    const addProduct = () =>
+        setProducts([...products, { product: undefined, name: '', quantity: 1, price: 0 }]);
+
+    const updateProduct = (
+        index: number,
+        field: keyof ProductItem,
+        value: string | number
+    ) => {
+        const updated = [...products];
+        const product = { ...updated[index] };
+        if (field === 'quantity' || field === 'price') {
+            product[field] = Number(value);
+        } else {
+            product[field] = String(value);
+        }
+        updated[index] = product;
+        setProducts(updated);
+
+        const total = updated.reduce((sum, p) => sum + p.price * p.quantity, 0);
+        setTotalAmount(total);
+    };
+
+    const removeProduct = (index: number) => {
+        const updated = [...products];
+        updated.splice(index, 1);
+        setProducts(updated);
+
+        const total = updated.reduce((sum, p) => sum + p.price * p.quantity, 0);
+        setTotalAmount(total);
+    };
+
+    const handleUpdate = async () => {
+        if (!fullName || !address || products.length === 0) {
+            toast.error('Please fill all required fields and add at least one product.');
+            return;
+        }
+
+        // Validate product names
+        const missingName = products.find(p => !p.name || p.name.trim() === '');
+        if (missingName) {
+            toast.error('Please provide a name for all products.');
+            return;
+        }
+
+        const updatedOrder: Partial<IOrder> = {
+            shippingAddress: { fullName, phone, address },
+            products, 
+            totalAmount,
+            status,
+        };
+        console.log({
+            shippingAddress: { fullName, phone, address },
+            products, 
+            totalAmount,
+            status,
+        })
+        try {
+            const res = await fetch(`/api/orders?id=${order._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedOrder),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                onUpdateOrder(data.order);
+                toast.success('Order updated successfully!');
+                onClose();
+            } else {
+                toast.error(data.error?.message || data.error || 'Failed to update order');
+            }
+        } catch (err: any) {
+            console.error(err);
+            toast.error(err?.message || 'Server error while updating order');
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-start pt-20 z-50 overflow-auto">
+            <div className="bg-gray-800 text-gray-200 rounded-lg p-6 w-full max-w-3xl relative shadow-lg">
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
+                >
+                    <FaTimes />
+                </button>
+
+                <h2 className="text-xl font-semibold mb-4">Update Order</h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input
+                        className="p-2 rounded bg-gray-700 border border-gray-600"
+                        placeholder="Full Name"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                    />
+                    <input
+                        className="p-2 rounded bg-gray-700 border border-gray-600"
+                        placeholder="Phone"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <input
+                        className="p-2 rounded bg-gray-700 border border-gray-600"
+                        placeholder="Address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold">Products</span>
+                        <button
+                            onClick={addProduct}
+                            className="flex items-center gap-1 px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 transition"
+                        >
+                            <FaPlus /> Add Product
+                        </button>
+                    </div>
+
+                    {products.map((p, i) => (
+                        <div key={i} className="flex gap-2 mb-2 items-center flex-wrap">
+                            <input
+                                className="p-2 rounded bg-gray-700 border border-gray-600 flex-1"
+                                placeholder="Product ID (optional)"
+                                value={p.product || ''}
+                                onChange={(e) => updateProduct(i, 'product', e.target.value)}
+                            />
+                            <input
+                                className="p-2 rounded bg-gray-700 border border-gray-600 flex-1"
+                                placeholder="Product Name"
+                                value={p.name}
+                                onChange={(e) => updateProduct(i, 'name', e.target.value)}
+                            />
+                            <input
+                                type="number"
+                                className="p-2 rounded bg-gray-700 border border-gray-600 w-20"
+                                placeholder="Qty"
+                                value={p.quantity}
+                                min={1}
+                                onChange={(e) => updateProduct(i, 'quantity', Number(e.target.value))}
+                            />
+                            <input
+                                type="number"
+                                className="p-2 rounded bg-gray-700 border border-gray-600 w-24"
+                                placeholder="Price"
+                                value={p.price}
+                                min={0}
+                                onChange={(e) => updateProduct(i, 'price', Number(e.target.value))}
+                            />
+                            <input
+                                className="p-2 rounded bg-gray-700 border border-gray-600 w-20"
+                                placeholder="Color"
+                                value={p.color || ''}
+                                onChange={(e) => updateProduct(i, 'color', e.target.value)}
+                            />
+                            <input
+                                className="p-2 rounded bg-gray-700 border border-gray-600 w-20"
+                                placeholder="Size"
+                                value={p.size || ''}
+                                onChange={(e) => updateProduct(i, 'size', e.target.value)}
+                            />
+                            <button
+                                onClick={() => removeProduct(i)}
+                                className="text-red-500 hover:text-red-400"
+                            >
+                                <FaTrash />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <input
+                        type="number"
+                        className="p-2 rounded bg-gray-700 border border-gray-600"
+                        placeholder="Total Amount"
+                        value={totalAmount}
+                        onChange={(e) => setTotalAmount(Number(e.target.value))}
+                    />
+                    <select
+                        className="p-2 rounded bg-gray-700 border border-gray-600"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value as IOrder['status'])}
+                    >
+                        <option value="new">New</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500 transition"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleUpdate}
+                        className="px-4 py-2 rounded bg-yellow-600 hover:bg-yellow-500 text-white transition"
+                    >
+                        Update Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

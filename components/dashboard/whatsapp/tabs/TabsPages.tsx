@@ -1,13 +1,19 @@
 
-
 "use client";
 import { useState } from "react";
 import ConnectionTab from "./ConnectionTab";
 import AutomationTab from "./AutomationTab";
-import LogsTab from "./LogsTab";
+import TemplatesTab from "./TemplatesTab";
+import AnalyticsTab from "./AnalyticsTab";
 import TestPanelTab from "./TestPanelTab";
 
-const tabs = ["Connection", "Automation Settings", "Message Logs", "Test Panel"];
+const tabs = [
+    "Connection",
+    "Automation Settings",
+    "Templates",
+    "Analytics",
+    "Test Panel",
+];
 
 export default function WhatsAppIntegrationPage() {
     const [activeTab, setActiveTab] = useState("Connection");
@@ -15,6 +21,8 @@ export default function WhatsAppIntegrationPage() {
     return (
         <div className="bg-gray-800 text-white min-h-screen p-4">
         <h1 className="text-2xl font-bold mb-4">WhatsApp Integration</h1>
+
+        {/* Tab buttons */}
         <div className="flex flex-wrap gap-2 mb-6">
             {tabs.map((tab) => (
             <button
@@ -29,10 +37,12 @@ export default function WhatsAppIntegrationPage() {
             ))}
         </div>
 
+        {/* Active tab content */}
         <div className="bg-gray-700 p-4 rounded shadow-md">
             {activeTab === "Connection" && <ConnectionTab />}
             {activeTab === "Automation Settings" && <AutomationTab />}
-            {activeTab === "Message Logs" && <LogsTab />}
+            {activeTab === "Templates" && <TemplatesTab />}
+            {activeTab === "Analytics" && <AnalyticsTab />}
             {activeTab === "Test Panel" && <TestPanelTab />}
         </div>
         </div>
