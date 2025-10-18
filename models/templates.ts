@@ -1,10 +1,14 @@
+import mongoose, { Schema } from "mongoose";
 
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface ITemplate extends Document {
-    owner: mongoose.Types.ObjectId; // user or WhatsAppAccount ID
+export interface ITemplate {
+    _id: string;
+    owner: mongoose.Types.ObjectId;
     name: string;
-    content: string;
+    type: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
+    content?: string; // for TEXT templates
+    variables?: string[]; // e.g. ["customerName", "orderId"]
+    mediaUrl?: string; // for media templates
+    caption?: string; // optional caption for media
     status: "PENDING" | "APPROVED" | "REJECTED";
     rejectionReason?: string;
     createdAt: Date;
@@ -15,11 +19,19 @@ const TemplateSchema = new Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
         name: { type: String, required: true },
-        content: { type: String, required: true },
+        type: {
+            type: String,
+            enum: ["TEXT", "IMAGE", "AUDIO", "VIDEO", "DOCUMENT"],
+            default: "TEXT",
+        },
+        content: { type: String }, 
+        variables: [{ type: String }],
+        mediaUrl: { type: String }, 
+        caption: { type: String },
         status: {
-        type: String,
-        enum: ["PENDING", "APPROVED", "REJECTED"],
-        default: "PENDING",
+            type: String,
+            enum: ["PENDING", "APPROVED", "REJECTED"],
+            default: "PENDING",
         },
         rejectionReason: { type: String },
     },

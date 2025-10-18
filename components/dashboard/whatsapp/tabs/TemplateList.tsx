@@ -1,5 +1,4 @@
-
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -8,15 +7,33 @@ interface Template {
     _id: string;
     name: string;
     content: string;
+    type: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
     status: "PENDING" | "APPROVED" | "REJECTED";
     rejectionReason?: string;
+    mediaUrl?: string;
+    caption?: string;
+    variables?: string[];
 }
 
 export default function TemplateList() {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editData, setEditData] = useState({ name: "", content: "" });
+    const [editData, setEditData] = useState<{
+        name: string;
+        content: string;
+        type: string;
+        mediaUrl?: string;
+        caption?: string;
+        variables?: string[];
+    }>({
+        name: "",
+        content: "",
+        type: "TEXT",
+        mediaUrl: "",
+        caption: "",
+        variables: [],
+    });
 
     const fetchTemplates = async () => {
         try {
@@ -35,7 +52,7 @@ export default function TemplateList() {
     }, []);
 
     const handleUpdate = async (id: string) => {
-        if (!editData.name.trim() || !editData.content.trim()) {
+        if (!editData.name.trim() || (editData.type === "TEXT" && !editData.content.trim())) {
             toast.error("Name and content required");
             return;
         }
@@ -51,7 +68,7 @@ export default function TemplateList() {
 
             toast.success("Template updated");
             setEditingId(null);
-            setEditData({ name: "", content: "" });
+            setEditData({ name: "", content: "", type: "TEXT", mediaUrl: "", caption: "", variables: [] });
             fetchTemplates();
         } catch (err: any) {
             console.error(err);
@@ -106,11 +123,29 @@ export default function TemplateList() {
                                     value={editData.name}
                                     onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                 />
-                                <textarea
+                                {editData.type === "TEXT" && (
+                                    <textarea
+                                        className="w-full p-2 rounded bg-gray-600 text-white"
+                                        rows={3}
+                                        value={editData.content}
+                                        onChange={(e) => setEditData({ ...editData, content: e.target.value })}
+                                    />
+                                )}
+                                {editData.type !== "TEXT" && (
+                                    <input
+                                        type="text"
+                                        placeholder="Media URL"
+                                        className="w-full p-2 rounded bg-gray-600 text-white"
+                                        value={editData.mediaUrl}
+                                        onChange={(e) => setEditData({ ...editData, mediaUrl: e.target.value })}
+                                    />
+                                )}
+                                <input
+                                    type="text"
+                                    placeholder="Caption"
                                     className="w-full p-2 rounded bg-gray-600 text-white"
-                                    rows={3}
-                                    value={editData.content}
-                                    onChange={(e) => setEditData({ ...editData, content: e.target.value })}
+                                    value={editData.caption}
+                                    onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
                                 />
                                 <div className="flex gap-2">
                                     <button
@@ -123,7 +158,7 @@ export default function TemplateList() {
                                     <button
                                         onClick={() => {
                                             setEditingId(null);
-                                            setEditData({ name: "", content: "" });
+                                            setEditData({ name: "", content: "", type: "TEXT", mediaUrl: "", caption: "", variables: [] });
                                         }}
                                         className="bg-gray-500 hover:bg-gray-400 px-3 py-1 rounded text-white"
                                     >
@@ -138,7 +173,7 @@ export default function TemplateList() {
                                         {tpl.name}
                                         {renderStatusBadge(tpl.status, tpl.rejectionReason)}
                                     </p>
-                                    <p className="text-sm text-gray-300">{tpl.content}</p>
+                                    <p className="text-sm text-gray-300">{tpl.content || tpl.mediaUrl}</p>
                                     {tpl.status === "REJECTED" && tpl.rejectionReason && (
                                         <p className="text-xs text-red-400 mt-1">Reason: {tpl.rejectionReason}</p>
                                     )}
@@ -147,7 +182,14 @@ export default function TemplateList() {
                                     <button
                                         onClick={() => {
                                             setEditingId(tpl._id);
-                                            setEditData({ name: tpl.name, content: tpl.content });
+                                            setEditData({
+                                                name: tpl.name,
+                                                content: tpl.content || "",
+                                                type: tpl.type,
+                                                mediaUrl: tpl.mediaUrl || "",
+                                                caption: tpl.caption || "",
+                                                variables: tpl.variables || [],
+                                            });
                                         }}
                                         className="bg-yellow-600 hover:bg-yellow-500 px-3 py-1 rounded text-white text-sm"
                                     >

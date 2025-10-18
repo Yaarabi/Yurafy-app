@@ -11,13 +11,21 @@ export interface IWhatsAppAccount extends Document {
     settings: {
         autoReply: boolean;
         orderConfirmation: boolean;
+        ad:boolean;
         aiAgent: boolean;
     };
     preferredTemplates?: {
         greeting?: string;
         orderConfirmation?: string;
-        fallback?: string;
+        ad?: string;
     };
+    detectionRules?: [
+    {
+        keywords?: string[];
+        template?: string;  
+        active?: Boolean;
+    },
+    ];
     aiConfig?: {
         personality: string;
         knowledgeBaseId?: string;
@@ -42,13 +50,21 @@ const WhatsAppAccountSchema = new Schema(
         settings: {
         autoReply: { type: Boolean, default: false },
         orderConfirmation: { type: Boolean, default: false },
+        ad: { type: Boolean, default: false },
         aiAgent: { type: Boolean, default: false },
         },
         preferredTemplates: {
-        greeting: { type: String, default: "greeting" }, // name of the Template
-        orderConfirmation: { type: String, default: "order_confirmation" },
-        fallback: { type: String, default: "fallback" },
+        greeting: { type: String, default: null },
+        orderConfirmation: { type: String, default: null },
+        ad: { type: String, default: null },
         },
+        detectionRules: [
+            {
+                keywords: [{ type: String }], // e.g. ["facebook", "promo", "insta"]
+                template: { type: String },   // name of template to send
+                active: { type: Boolean, default: false },
+            },
+        ],
         aiConfig: {
         personality: { type: String, default: "friendly assistant" },
         knowledgeBaseId: { type: String },

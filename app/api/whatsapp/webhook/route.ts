@@ -12,7 +12,7 @@ import Template from "@/models/templates";
 // ------------------------
 // Search template
 // ------------------------
-async function getTemplate(ownerId: string, name: string) {
+export async function getTemplate(ownerId: string, name: string) {
     const template = await Template.findOne({
         owner: ownerId,
         name,
@@ -67,9 +67,8 @@ export async function GET(req: NextRequest) {
 }
 
 
-// ------------------------
-// POST: Incoming WhatsApp messages
-// ------------------------
+
+// app/api/whatsapp/webhook/route.ts
 export async function POST(req: NextRequest) {
     await connectDB();
 
@@ -80,15 +79,13 @@ export async function POST(req: NextRequest) {
 
         const phoneNumberId = body.entry[0].changes[0].value.metadata.phone_number_id;
         const account = await WhatsAppAccount.findOne({ waNumberId: phoneNumberId });
-
         if (!account || account.status !== "connected" || !account.verified)
         return NextResponse.json({ ignored: true });
 
-        const decryptedToken = decryptToken(account.waTokenEncrypted);
         const from = message.from;
         const messageText = message.text?.body || "";
 
-        // 1️⃣ Save message
+        // Save conversation
         await WhatsAppConversation.findOneAndUpdate(
         { owner: account.owner, "customer.phone": from },
         {
@@ -96,13 +93,9 @@ export async function POST(req: NextRequest) {
             messages: {
                 waMessageId: message.id,
                 from,
-                to: body.entry[0].changes[0].value.metadata.display_phone_number,
-                type: message.type,
                 text: messageText,
                 direction: "incoming",
-                status: "sent",
                 timestamp: Number(message.timestamp),
-                isAIResponse: false,
             },
             },
             $set: {
@@ -115,24 +108,24 @@ export async function POST(req: NextRequest) {
         { upsert: true, new: true }
         );
 
-
-
-        let reply: string | null = null;
-
-        if (account.settings.autoReply) {
-        reply = await getTemplate( account.owner, account.preferredTemplates?.greeting || "greeting");
-        } else if (account.settings.aiAgent) {
-        reply = `AI (${account.aiConfig.personality}): ${messageText}`;
-        } else {
-        reply = await getTemplate( account.owner,account.preferredTemplates?.fallback || "fallback");
-        }
-
-        if (reply) await sendWhatsAppMessage(account, from, reply, decryptedToken);
+        // 🔄 Trigger automation
+        await fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/automation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            accountId: account._id,
+            from,
+            messageText,
+        }),
+        });
 
         return NextResponse.json({ success: true });
     } catch (err) {
         console.error("Webhook error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-    }
+}
+
+
+
 

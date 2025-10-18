@@ -2,7 +2,7 @@
 "use client";
 import { useState } from "react";
 import ConnectionTab from "./ConnectionTab";
-import AutomationTab from "./AutomationTab";
+import AutomationTab from "./automation/AutomationTab";
 import TemplatesTab from "./TemplatesTab";
 import AnalyticsTab from "./AnalyticsTab";
 import TestPanelTab from "./TestPanelTab";
