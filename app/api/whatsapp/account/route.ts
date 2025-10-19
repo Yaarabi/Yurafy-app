@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
     const account = await WhatsAppAccount.findOne({ owner: session.user.id });
     if (!account)
         return NextResponse.json({ error: "No account found" }, { status: 404 });
-
     return NextResponse.json({ account });
 }
 

@@ -1,48 +1,144 @@
+'use client';
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { getSession } from "next-auth/react";
 
-"use client";
-import { useState } from "react";
-import ConnectionTab from "./ConnectionTab";
-import AutomationTab from "./automation/AutomationTab";
-import TemplatesTab from "./TemplatesTab";
-import AnalyticsTab from "./AnalyticsTab";
-import TestPanelTab from "./TestPanelTab";
-
-const tabs = [
-    "Connection",
-    "Automation Settings",
-    "Templates",
-    "Analytics",
-    "Test Panel",
-];
+import ConnectionTab from "@/components/dashboard/whatsapp/tabs/ConnectionTab";
+import AutomationTab from "@/components/dashboard/whatsapp/tabs/automation/AutomationTab";
+import TemplatesTab from "@/components/dashboard/whatsapp/tabs/TemplatesTab";
+import TestPanelTab from "@/components/dashboard/whatsapp/tabs/TestPanelTab";
+import SettingsSection from "@/components/dashboard/setting/settingSection";
+import WorkflowToggle from "@/components/dashboard/whatsapp/tabs/automation/WorkflowToggle";
+import EditableField from "@/components/dashboard/setting/SettingsField";
 
 export default function WhatsAppIntegrationPage() {
     const [activeTab, setActiveTab] = useState("Connection");
+    const [agent, setAgent] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    const tabs = [
+        "Connection",
+        "Ai Agent",
+        "Tools",
+        "Automation Settings",
+        "Templates",
+        "Test Panel",
+    ];
+
+    useEffect(() => {
+        const fetchAgent = async () => {
+        setLoading(true);
+        try {
+            const session = await getSession();
+            const userId = session?.user?.id;
+            if (!userId) {
+            toast.error("User not authenticated");
+            setLoading(false);
+            return;
+            }
+
+            const res = await fetch(`/api/ai-agent?owner=${userId}`);
+            const data = await res.json();
+            setAgent(data.agent || null);
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to load agent settings");
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchAgent();
+    }, []);
+
+    const updateAgent = async (payload: any) => {
+        if (!agent) return;
+        setLoading(true);
+        try {
+        const res = await fetch(`/api/ai-agent`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...agent, ...payload }),
+        });
+        const data = await res.json();
+        setAgent(data.agent);
+        toast.success("Agent updated");
+        } catch (err) {
+        console.error(err);
+        toast.error("Update failed");
+        } finally {
+        setLoading(false);
+        }
+    };
+
+    if (loading)
+        return <p className="text-gray-400 text-center mt-10">Loading...</p>;
 
     return (
-        <div className="bg-gray-800 text-white min-h-screen p-4">
-        <h1 className="text-2xl font-bold mb-4">WhatsApp Integration</h1>
-
-        {/* Tab buttons */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="max-w-6xl mx-auto p-6 text-white">
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-600 pb-2">
             {tabs.map((tab) => (
             <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded ${
-                activeTab === tab ? "bg-green-600" : "bg-gray-700"
-                } hover:bg-green-500 transition`}
+                className={`px-5 py-2 rounded-t-lg font-medium transition-all duration-200 ${
+                activeTab === tab
+                    ? "bg-green-600 text-white shadow-md"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
             >
                 {tab}
             </button>
             ))}
         </div>
 
-        {/* Active tab content */}
-        <div className="bg-gray-700 p-4 rounded shadow-md">
+        {/* Active Tab Content */}
+        <div className="bg-gray-700 p-6 rounded-lg shadow-inner min-h-[400px] transition-colors duration-300">
             {activeTab === "Connection" && <ConnectionTab />}
+
+            {activeTab === "Ai Agent" && agent && (
+            <SettingsSection title="AI Agent Connection">
+                <WorkflowToggle
+                label="Enable AI Agent"
+                enabled={agent.enabled}
+                onChange={(v) => updateAgent({ enabled: v })}
+                />
+                <p className="text-sm text-gray-400 mt-2">
+                Status: {agent.enabled ? "Connected" : "Disconnected"}
+                </p>
+                <EditableField
+                label="Prompt / Personality"
+                value={agent.prompt}
+                onSave={(val) => updateAgent({ prompt: val })}
+                />
+            </SettingsSection>
+            )}
+
+            {activeTab === "Tools" && agent && (
+            <SettingsSection title="AI Agent Tools">
+                <WorkflowToggle
+                label="Order Confirmation"
+                enabled={agent.tools.orderConfirmation}
+                onChange={(v) =>
+                    updateAgent({ tools: { ...agent.tools, orderConfirmation: v } })
+                }
+                />
+                <WorkflowToggle
+                label="Seller Messaging"
+                enabled={agent.tools.sellerMessaging}
+                onChange={(v) =>
+                    updateAgent({ tools: { ...agent.tools, sellerMessaging: v } })
+                }
+                />
+                <div className="mt-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                <p className="text-gray-400">Audio assets will appear here</p>
+                </div>
+            </SettingsSection>
+            )}
+
             {activeTab === "Automation Settings" && <AutomationTab />}
             {activeTab === "Templates" && <TemplatesTab />}
-            {activeTab === "Analytics" && <AnalyticsTab />}
             {activeTab === "Test Panel" && <TestPanelTab />}
         </div>
         </div>

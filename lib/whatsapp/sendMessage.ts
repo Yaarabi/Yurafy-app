@@ -13,13 +13,15 @@ import WhatsAppConversation from "@/models/whatsappMessage";
 export async function sendWhatsAppMessage(
     account: any,
     to: string,
-    text: string,
+    text: string | any,
     token: string,
     options: { isAIResponse?: boolean } = {}
     ) {
     await connectDB();
 
     try {
+
+        const messageText = typeof text === "string" ? text : JSON.stringify(text);
         // Send message via WhatsApp Cloud API
         await axios.post(
         `https://graph.facebook.com/v17.0/${account.waNumberId}/messages`,
@@ -27,7 +29,7 @@ export async function sendWhatsAppMessage(
             messaging_product: "whatsapp",
             to,
             type: "text",
-            text: { body: text },
+            text: { body: messageText },
         },
         {
             headers: {
@@ -42,7 +44,7 @@ export async function sendWhatsAppMessage(
         from: account.waNumber,
         to,
         type: "text",
-        text,
+        text: messageText,
         direction: "outgoing",
         status: "sent",
         timestamp: Date.now(),

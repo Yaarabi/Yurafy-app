@@ -1,7 +1,7 @@
 
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IAIAgent extends Document {
+export interface IAIAgent {
     owner: string; // User ID
     account: string; // WhatsAppAccount ID
     enabled: boolean; // connect/disconnect
@@ -16,18 +16,7 @@ export interface IAIAgent extends Document {
             active: boolean;
         }[];
     };
-    memory: {
-        short: {
-            customer: string; // phone number
-            messages: { role: "user" | "agent"; text: string; ts: number }[];
-            state?: string;
-        }[];
-        long: {
-            customer: string;
-            profile: { name?: string; preferences?: string[]; lastOrderId?: string };
-            notes?: { text: string; ts: number }[];
-        }[];
-    };
+    memory?: string; // single string summary
     createdAt: Date;
     updatedAt: Date;
 }
@@ -35,7 +24,7 @@ export interface IAIAgent extends Document {
 const AIAgentSchema = new Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        account: { type: Schema.Types.ObjectId, ref: "WhatsAppAccount", required: true },
+        account: { type: Schema.Types.ObjectId, ref: "WhatsAppAccount", default: null, required: false },
         enabled: { type: Boolean, default: false },
         prompt: { type: String, default: "You are a helpful sales assistant." },
         tools: {
@@ -50,32 +39,8 @@ const AIAgentSchema = new Schema(
             },
         ],
         },
-        memory: {
-        short: [
-            {
-            customer: String,
-            messages: [
-                {
-                role: { type: String, enum: ["user", "agent"] },
-                text: String,
-                ts: Number,
-                },
-            ],
-            state: String,
-            },
-        ],
-        long: [
-            {
-            customer: String,
-            profile: {
-                name: String,
-                preferences: [String],
-                lastOrderId: String,
-            },
-            notes: [{ text: String, ts: Number }],
-            },
-        ],
-        },
+        memory: { type: String, default: "" }, 
+
     },
     { timestamps: true }
 );

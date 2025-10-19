@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-export interface IWhatsAppAccount extends Document {
+export interface IWhatsAppAccount{
+    _id: string;
     owner: string;
     waBusinessId: string;
     waNumberId: string;

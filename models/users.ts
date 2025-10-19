@@ -26,9 +26,9 @@ const userSchema = new mongoose.Schema({
     },
     brandName: {
         type: String,
-        required: false,
         lowercase: true,
-        trim: true
+        trim: true,
+        default: null
     },
     logo: {
         type: String,
