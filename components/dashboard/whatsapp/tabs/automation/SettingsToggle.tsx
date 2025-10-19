@@ -1,8 +1,16 @@
+interface SettingsToggleProps {
+    label: string;
+    value: boolean;
+    onChange: (value: boolean) => void;
+    disabled?: boolean;
+}
 
-"use client";
-import React from "react";
-
-export default function SettingsToggle({ label, value, onChange, disabled }: any) {
+export default function SettingsToggle({
+    label,
+    value,
+    onChange,
+    disabled,
+    }: SettingsToggleProps) {
     return (
         <div className="bg-gray-700 p-4 rounded flex items-center justify-between">
         <label className="text-white font-medium">{label}</label>
