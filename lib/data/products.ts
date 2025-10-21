@@ -1,14 +1,45 @@
 import { connectDB } from '../db/mongoDB';
 import Product from '@/models/products';
-import User from '@/models/users';
+import Store, { IStore } from '@/models/store';
 import { IProduct } from '@/models/products';
-import { IUser } from '@/models/users';
 
-function serializeId(id: any) {
+
+// Custom type for serialized store (safe for frontend use)
+export interface SerializedStore {
+    _id: string;
+    owner?: string;
+    brandName: string;
+    domain: string;
+    description?: string;
+    logoUrl?: string;
+    coverImageUrl?: string;
+    whoWeAre?: string;
+    socialLinks?: {
+        facebook?: string;
+        instagram?: string;
+        twitter?: string;
+        linkedin?: string;
+    };
+    theme?: {
+        primaryColor?: string;
+        secondaryColor?: string;
+        backgroundColor?: string;
+        textColor?: string;
+        buttonColor?: string;
+        headerColor?: string;
+    };
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+function serializeId(id: any): string {
     return id?.toString();
 }
 
-function serializeProduct(product: any, owner?: any) {
+function serializeProductWithStore(product: any, store?: any): {
+    product: IProduct;
+    store: SerializedStore | null;
+} {
     const serializedProduct: IProduct = {
         ...product,
         _id: serializeId(product._id),
@@ -21,35 +52,51 @@ function serializeProduct(product: any, owner?: any) {
         colors: product.colors || [],
     };
 
-    const serializedOwner: IUser | null = owner
+    const serializedStore: SerializedStore | null = store
         ? {
-            _id: serializeId(owner._id),
-            name: owner.name,
-            brandName: owner.brandName || undefined,
-            logo: owner.logo || undefined,
-            email: owner.email || undefined,
-            phone: owner.phone || undefined,
-            plan: owner.plan,
-            role: owner.role,
-        }
+                _id: serializeId(store._id),
+                owner: store.owner ? serializeId(store.owner) : undefined,
+                brandName: store.brandName,
+                domain: store.domain,
+                description: store.description,
+                logoUrl: store.logoUrl,
+                coverImageUrl: store.coverImageUrl,
+                whoWeAre: store.whoWeAre,
+                socialLinks: {
+                    facebook: store.socialLinks?.facebook,
+                    instagram: store.socialLinks?.instagram,
+                    twitter: store.socialLinks?.twitter,
+                    linkedin: store.socialLinks?.linkedin,
+                },
+                theme: {
+                    primaryColor: store.theme?.primaryColor,
+                    secondaryColor: store.theme?.secondaryColor,
+                    backgroundColor: store.theme?.backgroundColor,
+                    textColor: store.theme?.textColor,
+                    buttonColor: store.theme?.buttonColor,
+                    headerColor: store.theme?.headerColor,
+                },
+                createdAt: store.createdAt?.toISOString(),
+                updatedAt: store.updatedAt?.toISOString(),
+            }
         : null;
 
-    return { product: serializedProduct, owner: serializedOwner };
-    }
+    return { product: serializedProduct, store: serializedStore };
+}
 
-export async function getProductWithOwnerBySlug(slug: string): Promise<{
+export async function getProductWithStoreBySlug(slug: string): Promise<{
     product: IProduct | null;
-    owner: IUser | null;
-    }> {
+    store: SerializedStore | null;
+}> {
     await connectDB();
 
     const productDoc = await Product.findOne({ slug }).lean<IProduct>();
-    if (!productDoc) return { product: null, owner: null };
+    if (!productDoc) return { product: null, store: null };
 
-    let ownerDoc: IUser | null = null;
+    let storeDoc = null;
     if (productDoc.owner) {
-        ownerDoc = await User.findById(productDoc.owner).lean<IUser>();
+        storeDoc = await Store.findOne({ owner: productDoc.owner }).lean<IStore>();
     }
 
-    return serializeProduct(productDoc, ownerDoc);
+    return serializeProductWithStore(productDoc, storeDoc);
 }

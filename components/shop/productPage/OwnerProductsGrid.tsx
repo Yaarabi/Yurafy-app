@@ -22,10 +22,8 @@ export default async function OwnerProductsGrid({ ownerId }: OwnerProductsGridPr
         );
     }
 
-    // Limit to 16
     products = products.slice(0, 16);
 
-    // ✅ Serialize _id and other values for client safety
     const serializedProducts = products.map((p) => ({
         _id: p._id?.toString() || '',
         name: p.name,
@@ -46,31 +44,21 @@ export default async function OwnerProductsGrid({ ownerId }: OwnerProductsGridPr
 
     return (
         <section className="max-w-7xl mx-auto w-full">
-        
-            <Description />
-        
-
-        {/* Products Grid */}
+        <Description />
         <div
             id="products"
-            className="
-            grid gap-6 sm:gap-8
-            grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4
-            px-2 sm:px-4
-            "
+            className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-2 sm:px-4"
         >
             {serializedProducts.map((product) => (
             <div
                 key={product._id}
                 className="transform transition-all duration-300 hover:scale-[1.02]"
             >
-                <ProductCard product={product} />
+                <ProductCard product={product} style={{ '--primary-color': 'var(--primary-color)' } as any} />
             </div>
             ))}
         </div>
-
-        {/* Subtle fade gradient for long product lists */}
-        <div className="mt-20 h-16 bg-gradient-to-b from-transparent via-white/60 to-white" />
+        <div className="mt-20 h-16 bg-gradient-to-b from-transparent via-[var(--background-color)] to-[var(--background-color)]" />
         </section>
     );
 }

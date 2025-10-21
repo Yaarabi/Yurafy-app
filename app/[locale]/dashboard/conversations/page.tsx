@@ -1,5 +1,5 @@
 
-import WhatsAppDashboard from "@/components/dashboard/whatsapp/tabs/chats/WhatsAppDashboard";
+import WhatsAppDashboard from "@/components/dashboard/whatsapp/chats/WhatsAppDashboard";
 
 
 export default function DashboardPage() {

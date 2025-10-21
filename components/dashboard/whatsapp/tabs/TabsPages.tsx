@@ -4,11 +4,11 @@ import toast from "react-hot-toast";
 import { getSession } from "next-auth/react";
 
 import ConnectionTab from "@/components/dashboard/whatsapp/tabs/ConnectionTab";
-import AutomationTab from "@/components/dashboard/whatsapp/tabs/automation/AutomationTab";
+import AutomationTab from "../automation/AutomationTab";
 import TemplatesTab from "@/components/dashboard/whatsapp/tabs/TemplatesTab";
 import TestPanelTab from "@/components/dashboard/whatsapp/tabs/TestPanelTab";
 import SettingsSection from "@/components/dashboard/setting/settingSection";
-import WorkflowToggle from "@/components/dashboard/whatsapp/tabs/automation/WorkflowToggle";
+import WorkflowToggle from "../automation/WorkflowToggle";
 import EditableField from "@/components/dashboard/setting/SettingsField";
 
 export default function WhatsAppIntegrationPage() {

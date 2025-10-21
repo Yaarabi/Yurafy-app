@@ -1,34 +1,38 @@
-"use client";
-
+'use client';
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useWhatsappStore } from "@/lib/zustand/whatsapp/useWhatsappStore"; 
 
 export default function ConnectionTab() {
-    const [connected, setConnected] = useState(false);
+    const connected = useWhatsappStore((state) => state.connected);
+    const setConnected = useWhatsappStore((state) => state.setConnected);
     const [loading, setLoading] = useState(false);
-    
-    const fetchStatus = async () => {
-        try {
-        const res = await fetch("/api/whatsapp/account");
-        if (!res.ok) throw new Error("Failed to fetch account");
-        const data = await res.json();
 
-        const isConnected =
-            data?.account?.status === "connected" && data?.account?.verified;
-
-        setConnected(isConnected);
-        } catch (err) {
-        console.error(err);
-        toast.error("Could not fetch WhatsApp status");
-        }
-    };
-
+  // Fetch status **only if not loaded**
     useEffect(() => {
+        if (connected !== null) return; // already loaded
+
+        const fetchStatus = async () => {
+        try {
+            const res = await fetch("/api/whatsapp/account");
+            if (!res.ok) throw new Error("Failed to fetch account");
+            const data = await res.json();
+
+            const isConnected =
+            data?.account?.status === "connected" && data?.account?.verified;
+            setConnected(isConnected);
+        } catch (err) {
+            console.error(err);
+            toast.error("Could not fetch WhatsApp status");
+        }
+        };
+
         fetchStatus();
-    }, []);
+    }, [connected, setConnected]);
 
     // Toggle connection
     const toggleConnection = async () => {
+        if (connected === null) return;
         setLoading(true);
         try {
         const res = await fetch("/api/whatsapp/account", {
@@ -44,7 +48,6 @@ export default function ConnectionTab() {
         const data = await res.json();
         const isConnected =
             data?.account?.status === "connected" && data?.account?.verified;
-
         setConnected(isConnected);
 
         toast.success(
@@ -72,8 +75,8 @@ export default function ConnectionTab() {
             <input
                 type="checkbox"
                 className="sr-only peer"
-                checked={connected}
-                disabled={loading}
+                checked={!!connected}
+                disabled={loading || connected === null}
                 onChange={toggleConnection}
             />
             <div

@@ -41,7 +41,8 @@ export async function loadAgent(ownerId: string) {
         llm: model,
         tools,
         checkpointSaver: ownerCheckpoint,
-        prompt: `You are talking directly with your OWNER. Base your replies on the owner system prompt: "${agentData.prompt}". Be helpful, professional, and concise.`,
+        prompt: `You are talking directly with your OWNER. Base your replies on the owner system prompt: "${agentData.prompt}".
+                Your owner id ${agentData.owner}. Be helpful, professional, and concise.`,
     });
 
     return { agent, agentData };
@@ -90,8 +91,9 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
         llm: model,
         tools,
         checkpointSaver: checkpoint,
-        prompt: `You are talking directly with a CUSTOMER of the owner with the number phone ${customerPhone}. 
-        Base your replies on the owner system prompt: "${agentData.prompt}". Be polite, helpful, and concise.`,
+        prompt: `You are talking directly with a CUSTOMER of your owner with the number phone ${customerPhone}. 
+            Base your replies on the owner system prompt: "${agentData.prompt}". 
+            Your owner id ${agentData.owner}. Be polite, helpful, and concise.`,
     });
 
     const res = await agent.invoke(

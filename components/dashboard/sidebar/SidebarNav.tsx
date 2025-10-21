@@ -15,11 +15,11 @@ const NAV_ITEMS = {
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
     "Starter": ["dashboard", "products","orders","settings", "support"], 
-    "WhatsApp Automation": ["dashboard", "orders", "whatsapp","conversations", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard", "whatsapp", "agent", "conversations", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders","conversations", "whatsapp", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard","orders","agent", "conversations", "whatsapp", "settings", "support"],
     "Creator": ["dashboard", "products", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "products", "whatsapp", "conversations", "settings", "support"],
-    "Visionary": ["dashboard", "orders", "products", "whatsapp", "agent", "conversations", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "products","conversations", "whatsapp",  "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products","agent", "conversations", "whatsapp", "settings", "support"],
     "free": ["dashboard", "settings", "support"],
 };
 

@@ -10,35 +10,55 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
     if (sizes.length === 0 && colors.length === 0) return null;
 
     return (
-        <motion.div className="mt-6 space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        {sizes.length > 0 && (
-            <div>
-            <h3 className="font-semibold text-gray-800 mb-2">Tailles disponibles</h3>
-            <div className="flex flex-wrap gap-2">
-                {sizes.map((size, idx) => (
-                <span key={idx} className="px-3 py-1 border rounded-lg text-sm text-gray-700 bg-gray-100">
-                    {size}
-                </span>
-                ))}
-            </div>
-            </div>
-        )}
+        <motion.div
+            className="mt-6 space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+        >
+            {sizes.length > 0 && (
+                <div>
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
+                        Tailles disponibles
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {sizes.map((size, idx) => (
+                            <span
+                                key={idx}
+                                className="px-3 py-1 border rounded-lg text-sm"
+                                style={{
+                                    color: 'var(--text-color)',
+                                    backgroundColor: 'var(--secondary-color)',
+                                    borderColor: 'var(--primary-color)',
+                                }}
+                            >
+                                {size}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
-        {colors.length > 0 && (
-            <div>
-            <h3 className="font-semibold text-gray-800 mb-2">Couleurs disponibles</h3>
-            <div className="flex flex-wrap gap-2">
-                {colors.map((color, idx) => (
-                <span
-                    key={idx}
-                    className="w-6 h-6 rounded-full border"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                />
-                ))}
-            </div>
-            </div>
-        )}
+            {colors.length > 0 && (
+                <div>
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
+                        Couleurs disponibles
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {colors.map((color, idx) => (
+                            <span
+                                key={idx}
+                                className="w-6 h-6 rounded-full border"
+                                style={{
+                                    backgroundColor: color,
+                                    borderColor: 'var(--primary-color)',
+                                }}
+                                title={color}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
         </motion.div>
     );
 }
