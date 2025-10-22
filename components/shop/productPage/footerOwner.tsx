@@ -1,79 +1,123 @@
-'use client';
+
+
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 import Image from 'next/image';
+import { Theme, sanitizeTheme } from '@/models/store';
 
-export default function LandingFooter({ store }: { store: any }) {
+export interface SerializedStoreForFooter {
+    brandName?: string;
+    logoUrl?: string;
+    whoWeAre?: string;
+    theme?: Theme;
+    socialLinks?: {
+        facebook?: string;
+        instagram?: string;
+        twitter?: string;
+        linkedin?: string;
+    };
+}
+
+interface LandingFooterProps {
+    store: SerializedStoreForFooter;
+    style?: React.CSSProperties;
+}
+
+export default function LandingFooter({ store, style }: LandingFooterProps) {
+    const theme = sanitizeTheme(store.theme || {});
+
+    const footerGradient =
+        theme.gradient
+            ? `linear-gradient(135deg, ${theme.gradient.from}, ${theme.gradient.via || theme.gradient.from}, ${theme.gradient.to})`
+            : `linear-gradient(135deg, var(--secondary-color, #16a34a), var(--primary-color, #22c55e))`;
+
     return (
         <footer
-            className="mt-12 border-t border-gray-200"
+            id="footer"
+            className="mt-20 relative text-sm"
             style={{
-                backgroundColor: 'var(--background-color)',
-                color: 'var(--text-color)',
+                background: footerGradient,
+                color: '#ffffff',
+                fontFamily: theme.fontFamily || 'Inter, sans-serif',
+                borderTop: '1px solid var(--border-color, #111827)',
+                ...style,
             }}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="absolute inset-0 opacity-10 bg-black"></div>
+
+            <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                 {/* Brand */}
-                <div className="flex flex-col items-start space-y-3">
+                <div className="flex flex-col items-start space-y-4">
                     {store.logoUrl ? (
-                        <div className="relative w-12 h-12">
+                        <div className="relative w-14 h-14">
                             <Image
-                                src={"/logo.png"} // here !!!!!!!!!!!!
-                                alt={store.brandName}
+                                src={'/logo.png'}
+                                alt={store.brandName || 'logo'}
                                 fill
-                                className="object-cover rounded-full"
+                                className="object-cover rounded-full shadow-md bg-white/20 backdrop-blur-sm"
                             />
                         </div>
                     ) : (
-                        <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold bg-white/20 backdrop-blur-sm">
                             {store.brandName?.charAt(0) || 'S'}
                         </div>
                     )}
-                    <span className="text-lg font-bold">{store.brandName}</span>
-                    <p className="text-gray-600 text-sm">
+                    <h2
+                        className="text-xl font-extrabold tracking-wide"
+                        style={{ fontWeight: 'var(--heading-weight, 700)' }}
+                    >
+                        {store.brandName}
+                    </h2>
+                    <p className="text-white/80 leading-relaxed">
                         {store.whoWeAre || 'Your trusted online store'}
                     </p>
                 </div>
 
-                {/* Links */}
-                <div className="flex flex-col space-y-2">
-                    <h3 className="font-semibold text-gray-800">Links</h3>
-                    <a href="#header" className="hover:text-[var(--primary-color)] transition">Home</a>
-                    <a href="#products" className="hover:text-[var(--primary-color)] transition">Products</a>
-                    <a href="#order-form" className="hover:text-[var(--primary-color)] transition">Order</a>
-                    <a href="#footer" className="hover:text-[var(--primary-color)] transition">Contact</a>
+                {/* Quick Links */}
+                <div>
+                    <h3 className="font-semibold text-white mb-3">Quick Links</h3>
+                    <ul className="space-y-2">
+                        {['Home', 'Products', 'Order', 'Contact'].map((link, i) => (
+                            <li key={i}>
+                                <a
+                                    href={`#${link.toLowerCase().replace(' ', '-')}`}
+                                    className="text-white/70 hover:text-white transition-all duration-200"
+                                >
+                                    {link}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
                 {/* Contact */}
-                <div className="flex flex-col space-y-2">
-                    <h3 className="font-semibold text-gray-800">Contact</h3>
-                    {store.socialLinks?.email && (
-                        <a
-                            href={`mailto:${store.socialLinks.email}`}
-                            className="flex items-center gap-2 hover:text-[var(--primary-color)] transition"
-                        >
-                            <FaEnvelope /> {store.socialLinks.email}
-                        </a>
-                    )}
-                    {store.socialLinks?.whatsapp && (
-                        <a
-                            href={`tel:${store.socialLinks.whatsapp}`}
-                            className="flex items-center gap-2 hover:text-[var(--primary-color)] transition"
-                        >
-                            <FaWhatsapp /> {store.socialLinks.whatsapp}
-                        </a>
-                    )}
+                <div>
+                    <h3 className="font-semibold text-white mb-3">Contact</h3>
+                    <ul className="space-y-2">
+                        {store.socialLinks?.twitter && (
+                            <li>
+                                <a
+                                    href={`https://twitter.com/${store.socialLinks.twitter}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-white/80 hover:text-white transition-all"
+                                >
+                                    <FaEnvelope /> {store.socialLinks.twitter}
+                                </a>
+                            </li>
+                        )}
+                    </ul>
                 </div>
 
                 {/* Socials */}
-                <div className="flex flex-col space-y-2">
-                    <h3 className="font-semibold text-gray-800">Follow Us</h3>
-                    <div className="flex space-x-3 mt-2">
+                <div>
+                    <h3 className="font-semibold text-white mb-3">Follow Us</h3>
+                    <div className="flex space-x-4 mt-2">
                         {store.socialLinks?.facebook && (
                             <a
                                 href={store.socialLinks.facebook}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2 rounded-full bg-white shadow-sm hover:shadow-md hover:text-blue-500 transition"
+                                className="p-3 rounded-full bg-white/15 hover:bg-white/25 transition-all duration-200 text-white flex items-center justify-center"
                             >
                                 <FaFacebookF />
                             </a>
@@ -83,17 +127,17 @@ export default function LandingFooter({ store }: { store: any }) {
                                 href={store.socialLinks.instagram}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2 rounded-full bg-white shadow-sm hover:shadow-md hover:text-pink-500 transition"
+                                className="p-3 rounded-full bg-white/15 hover:bg-white/25 transition-all duration-200 text-white flex items-center justify-center"
                             >
                                 <FaInstagram />
                             </a>
                         )}
-                        {store.socialLinks?.whatsapp && (
+                        {store.socialLinks?.twitter && (
                             <a
-                                href={`https://wa.me/${store.socialLinks.whatsapp}`}
+                                href={`https://twitter.com/${store.socialLinks.twitter}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2 rounded-full bg-white shadow-sm hover:shadow-md hover:text-green-500 transition"
+                                className="p-3 rounded-full bg-white/15 hover:bg-white/25 transition-all duration-200 text-white flex items-center justify-center"
                             >
                                 <FaWhatsapp />
                             </a>
@@ -102,8 +146,12 @@ export default function LandingFooter({ store }: { store: any }) {
                 </div>
             </div>
 
-            <div className="border-t border-gray-200 mt-6 pt-4 text-center text-gray-500 text-sm">
-                &copy; {new Date().getFullYear()} Yura IT. All rights reserved.
+            {/* Bottom Line */}
+            <div
+                className="relative mt-6 pt-5 text-center text-white/70 text-sm"
+                style={{ borderTop: '1px solid var(--border-color, #111827)' }}
+            >
+                &copy; {new Date().getFullYear()} {store.brandName || 'Yura IT'}. All rights reserved.
             </div>
         </footer>
     );

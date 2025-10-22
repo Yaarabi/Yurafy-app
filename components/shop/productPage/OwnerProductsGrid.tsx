@@ -17,7 +17,7 @@ export default async function OwnerProductsGrid({ ownerId }: OwnerProductsGridPr
     if (!products || products.length === 0) {
         return (
         <p className="text-center text-gray-500 mt-16 text-lg animate-pulse">
-            No products found.
+            Aucun produit trouvé.
         </p>
         );
     }
@@ -43,18 +43,18 @@ export default async function OwnerProductsGrid({ ownerId }: OwnerProductsGridPr
     }));
 
     return (
-        <section className="max-w-7xl mx-auto w-full">
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         <Description />
         <div
             id="products"
-            className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-2 sm:px-4"
+            className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
             {serializedProducts.map((product) => (
             <div
                 key={product._id}
                 className="transform transition-all duration-300 hover:scale-[1.02]"
             >
-                <ProductCard product={product} style={{ '--primary-color': 'var(--primary-color)' } as any} />
+                <ProductCard product={product} />
             </div>
             ))}
         </div>

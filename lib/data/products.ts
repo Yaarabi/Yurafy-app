@@ -3,8 +3,9 @@ import Product from '@/models/products';
 import Store, { IStore } from '@/models/store';
 import { IProduct } from '@/models/products';
 
-
-// Custom type for serialized store (safe for frontend use)
+// ----------------------
+// Serialized Store Interface
+// ----------------------
 export interface SerializedStore {
     _id: string;
     owner?: string;
@@ -27,19 +28,42 @@ export interface SerializedStore {
         textColor?: string;
         buttonColor?: string;
         headerColor?: string;
+        footerColor?: string;
+        borderColor?: string; 
+        gradient?: {
+        from?: string;
+        via?: string;
+        to?: string;
+        };
+        borderRadius?: string;
+        shadow?: boolean;
+        fontFamily?: string;
+        headingWeight?: string;
+        buttonStyle?: 'solid' | 'outline' | 'ghost';
+    };
+    hero?: {
+        title?: string;
+        subtitle?: string;
+        imageUrl?: string;
     };
     createdAt?: string;
     updatedAt?: string;
-}
+    }
 
+// ----------------------
+// Helper: Serialize ID
+// ----------------------
 function serializeId(id: any): string {
     return id?.toString();
 }
 
+// ----------------------
+// Serialize Product + Store
+// ----------------------
 function serializeProductWithStore(product: any, store?: any): {
     product: IProduct;
     store: SerializedStore | null;
-} {
+    } {
     const serializedProduct: IProduct = {
         ...product,
         _id: serializeId(product._id),
@@ -54,40 +78,60 @@ function serializeProductWithStore(product: any, store?: any): {
 
     const serializedStore: SerializedStore | null = store
         ? {
-                _id: serializeId(store._id),
-                owner: store.owner ? serializeId(store.owner) : undefined,
-                brandName: store.brandName,
-                domain: store.domain,
-                description: store.description,
-                logoUrl: store.logoUrl,
-                coverImageUrl: store.coverImageUrl,
-                whoWeAre: store.whoWeAre,
-                socialLinks: {
-                    facebook: store.socialLinks?.facebook,
-                    instagram: store.socialLinks?.instagram,
-                    twitter: store.socialLinks?.twitter,
-                    linkedin: store.socialLinks?.linkedin,
-                },
-                theme: {
-                    primaryColor: store.theme?.primaryColor,
-                    secondaryColor: store.theme?.secondaryColor,
-                    backgroundColor: store.theme?.backgroundColor,
-                    textColor: store.theme?.textColor,
-                    buttonColor: store.theme?.buttonColor,
-                    headerColor: store.theme?.headerColor,
-                },
-                createdAt: store.createdAt?.toISOString(),
-                updatedAt: store.updatedAt?.toISOString(),
-            }
+            _id: serializeId(store._id),
+            owner: store.owner ? serializeId(store.owner) : undefined,
+            brandName: store.brandName,
+            domain: store.domain,
+            description: store.description,
+            logoUrl: store.logoUrl,
+            coverImageUrl: store.coverImageUrl,
+            whoWeAre: store.whoWeAre,
+            socialLinks: {
+            facebook: store.socialLinks?.facebook,
+            instagram: store.socialLinks?.instagram,
+            twitter: store.socialLinks?.twitter,
+            linkedin: store.socialLinks?.linkedin,
+            },
+            theme: {
+            primaryColor: store.theme?.primaryColor,
+            secondaryColor: store.theme?.secondaryColor,
+            backgroundColor: store.theme?.backgroundColor,
+            textColor: store.theme?.textColor,
+            buttonColor: store.theme?.buttonColor,
+            headerColor: store.theme?.headerColor,
+            footerColor: store.theme?.footerColor,
+            borderColor: store.theme?.borderColor,
+            gradient: {
+                from: store.theme?.gradient?.from,
+                via: store.theme?.gradient?.via,
+                to: store.theme?.gradient?.to,
+            },
+            borderRadius: store.theme?.borderRadius,
+            shadow: store.theme?.shadow,
+            fontFamily: store.theme?.fontFamily,
+            headingWeight: store.theme?.headingWeight,
+            buttonStyle: store.theme?.buttonStyle,
+            },
+            hero: {
+            title: store.hero?.title,
+            subtitle: store.hero?.subtitle,
+            imageUrl: store.hero?.imageUrl,
+            },
+            createdAt: store.createdAt?.toISOString(),
+            updatedAt: store.updatedAt?.toISOString(),
+        }
         : null;
 
     return { product: serializedProduct, store: serializedStore };
 }
 
+// ----------------------
+// Main Function
+// ----------------------
 export async function getProductWithStoreBySlug(slug: string): Promise<{
     product: IProduct | null;
     store: SerializedStore | null;
-}> {
+    }> {
     await connectDB();
 
     const productDoc = await Product.findOne({ slug }).lean<IProduct>();

@@ -1,5 +1,5 @@
-
 'use client';
+
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -12,11 +12,13 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ mainImage, images = [], alt }: ProductGalleryProps) {
     const [selected, setSelected] = useState(mainImage);
-
     const allImages = [mainImage, ...images];
 
     return (
-        <div className="flex flex-col gap-4 w-full md:w-1/2">
+        <div
+        className="flex flex-col gap-4 w-full md:w-1/2"
+        style={{ fontFamily: 'var(--font-family, Inter)' }}
+        >
         {/* Main Preview */}
         <motion.div
             key={selected}
@@ -24,6 +26,9 @@ export default function ProductGallery({ mainImage, images = [], alt }: ProductG
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
+            style={{
+            border: '2px solid var(--primary-color)',
+            }}
         >
             <Image
             src={selected}
@@ -40,8 +45,11 @@ export default function ProductGallery({ mainImage, images = [], alt }: ProductG
                 <button
                 key={idx}
                 onClick={() => setSelected(img)}
-                className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition 
-                    ${selected === img ? 'border-blue-500' : 'border-transparent hover:border-gray-300'}`}
+                className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
+                    selected === img
+                    ? 'border-[var(--primary-color)]'
+                    : 'border-transparent hover:border-[var(--primary-color)/40]'
+                }`}
                 >
                 <Image
                     src={img}
