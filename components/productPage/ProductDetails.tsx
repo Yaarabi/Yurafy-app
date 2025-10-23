@@ -1,3 +1,4 @@
+
 'use client';
 
 import { IProduct } from '@/models/products';
@@ -31,11 +32,7 @@ export default function ProductDetails({ product }: { product: IProduct }) {
         >
         <motion.h1
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-            className="text-3xl sm:text-4xl drop-shadow-sm"
-            style={{
-            color: 'var(--text-color)',
-            fontWeight: 'var(--heading-weight, 700)',
-            }}
+            className="text-3xl sm:text-4xl drop-shadow-sm text-[var(--secondary-color)]"
         >
             {product.name}
         </motion.h1>
@@ -43,7 +40,6 @@ export default function ProductDetails({ product }: { product: IProduct }) {
         <motion.p
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
             className="mt-2 text-lg sm:text-xl leading-relaxed"
-            style={{ color: 'var(--text-color)' }}
         >
             {product.description}
         </motion.p>
@@ -56,7 +52,6 @@ export default function ProductDetails({ product }: { product: IProduct }) {
             <div className="flex items-center gap-3">
                 <span
                 className="line-through text-lg"
-                style={{ color: 'var(--text-color)' }}
                 >
                 {originalPrice}
                 </span>
@@ -70,7 +65,7 @@ export default function ProductDetails({ product }: { product: IProduct }) {
             ) : (
             <p
                 className="text-2xl font-bold"
-                style={{ color: 'var(--primary-color)' }}
+                style={{ color: 'var(--secondary-color)' }}
             >
                 {formattedPrice}
             </p>

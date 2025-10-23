@@ -65,16 +65,9 @@ export default function OrderForm({ product }: { product: IProduct }) {
         <form
         onSubmit={handleSubmit}
         id="order-form"
-        className="mt-8 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4"
-        style={{ fontFamily: 'var(--font-family, Inter)' }}
+        className="mt-12 bg-white/90 text-[var(--primary-color)] backdrop-blur-md p-8 rounded-2xl shadow-lg space-y-6 max-w-2xl mx-auto"
         >
-        <h3
-            className="text-xl font-bold"
-            style={{
-            color: 'var(--text-color)',
-            fontWeight: 'var(--heading-weight, 700)',
-            }}
-        >
+        <h3 className="text-3xl font-bold text-center">
             Passer votre commande
         </h3>
 
@@ -85,7 +78,7 @@ export default function OrderForm({ product }: { product: IProduct }) {
             value={form.fullName}
             onChange={handleChange}
             required
-            className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
         />
 
         <input
@@ -95,7 +88,7 @@ export default function OrderForm({ product }: { product: IProduct }) {
             placeholder="Numéro de téléphone"
             value={form.phone}
             onChange={handleChange}
-            className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
         />
 
         <input
@@ -105,19 +98,19 @@ export default function OrderForm({ product }: { product: IProduct }) {
             value={form.address}
             onChange={handleChange}
             required
-            className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
         />
 
         {Array.isArray(product.colors) && product.colors.length > 0 && (
             <div>
-            <label className="block font-medium mb-1" style={{ color: 'var(--text-color)' }}>
+            <label className="block font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
                 Couleur
             </label>
             <select
                 name="color"
                 value={form.color}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+                className="w-full border rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
                 required
             >
                 <option value="">Sélectionner une couleur</option>
@@ -132,14 +125,14 @@ export default function OrderForm({ product }: { product: IProduct }) {
 
         {Array.isArray(product.sizes) && product.sizes.length > 0 && (
             <div>
-            <label className="block font-medium mb-1" style={{ color: 'var(--text-color)' }}>
+            <label className="block font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
                 Taille
             </label>
             <select
                 name="size"
                 value={form.size}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+                className="w-full border rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
                 required
             >
                 <option value="">Sélectionner une taille</option>
@@ -152,8 +145,8 @@ export default function OrderForm({ product }: { product: IProduct }) {
             </div>
         )}
 
-        <div className="flex items-center gap-4 mt-2">
-            <span className="font-medium" style={{ color: 'var(--text-color)' }}>
+        <div className="flex items-center gap-4 mt-4">
+            <span className="font-semibold" style={{ color: 'var(--text-color)' }}>
             Quantité :
             </span>
             <button
@@ -175,9 +168,9 @@ export default function OrderForm({ product }: { product: IProduct }) {
 
         <button
             type="submit"
-            className="w-full py-3 rounded-lg transition font-medium mt-4"
+            className="w-full py-3 rounded-lg transition font-semibold text-lg"
             style={{
-            backgroundColor: 'var(--button-color)',
+            backgroundColor: 'var(--primary-color)',
             color: 'white',
             }}
         >

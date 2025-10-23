@@ -1,14 +1,14 @@
+
 'use client';
 import { FaWhatsapp } from 'react-icons/fa';
 
 interface WhatsAppButtonProps {
-    productName: string;
     ownerPhone?: string;
 }
 
-export default function WhatsAppButton({ productName, ownerPhone }: WhatsAppButtonProps) {
+export default function WhatsAppButton({ ownerPhone }: WhatsAppButtonProps) {
     const phone = ownerPhone || '212600000000'; // fallback phone
-    const url = `https://wa.me/${phone}?text=Bonjour,%20je%20veux%20commander%20le%20produit:%20${encodeURIComponent(productName)}`;
+    const url = `https://wa.me/${phone}?text=Bonjour,%20je%20veux%20commander%20le%20produit:%20`;
 
     return (
         <a

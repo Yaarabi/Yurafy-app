@@ -1,5 +1,6 @@
 
 
+import Footer from '@/components/store/Footer';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -30,11 +31,10 @@ export default async function Layout({
 
     return (
             <NextIntlClientProvider locale={locale} messages={messages}>
-                {/* <Header/> */}
                     <div className='min-h-screen'>
                         {children}
                     </div>
-                {/* <Footer/> */}
+                <Footer/>
             </NextIntlClientProvider>
     );
 }

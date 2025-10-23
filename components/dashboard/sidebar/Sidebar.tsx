@@ -45,7 +45,7 @@ export default function Sidebar() {
             ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:shadow-none`}
         >
             <SidebarProfile user={user} />
-            <SidebarNav userPlan={user.plan || "free"} pathname={pathname} router={router} t={t} />
+            <SidebarNav userPlan={user.plan || "free"} pathname={pathname} t={t} />
             <SidebarLogout handleSignOut={handleSignOut} t={t} />
         </aside>
 

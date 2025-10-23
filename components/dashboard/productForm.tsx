@@ -4,7 +4,7 @@ import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
-import ProductVariants from './product/ProductVariant'; // 👈 Updated component
+import ProductVariants from './product/ProductVariant';
 
 interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
@@ -60,7 +60,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         }
     }, [session]);
 
-    /** Convert uploaded files to Base64 */
+    /** Upload images to server and store URLs */
     const handleImageUpload = async (
         e: ChangeEvent<HTMLInputElement>,
         field: 'mainImage' | 'images'
@@ -68,26 +68,33 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         const files = e.target.files;
         if (!files) return;
 
-        const base64Images: string[] = [];
+        const uploadedUrls: string[] = [];
+
         for (const file of Array.from(files)) {
-        const base64 = await toBase64(file);
-        base64Images.push(base64 as string);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await res.json();
+        if (res.ok && data.url) {
+            uploadedUrls.push(data.url);
+        } else {
+            console.error('Upload failed:', data.message);
+        }
         }
 
         setValues((prev) => ({
         ...prev,
-        [field]: field === 'mainImage' ? base64Images[0] : base64Images,
+        [field]:
+            field === 'mainImage'
+            ? uploadedUrls[0]
+            : [...(prev.images || []), ...uploadedUrls],
         }));
     };
-
-    function toBase64(file: File) {
-        return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        });
-    }
 
     function handleChange(
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

@@ -26,20 +26,11 @@ export interface SerializedStore {
         secondaryColor?: string;
         backgroundColor?: string;
         textColor?: string;
-        buttonColor?: string;
-        headerColor?: string;
-        footerColor?: string;
-        borderColor?: string; 
         gradient?: {
         from?: string;
         via?: string;
         to?: string;
         };
-        borderRadius?: string;
-        shadow?: boolean;
-        fontFamily?: string;
-        headingWeight?: string;
-        buttonStyle?: 'solid' | 'outline' | 'ghost';
     };
     hero?: {
         title?: string;
@@ -97,20 +88,11 @@ function serializeProductWithStore(product: any, store?: any): {
             secondaryColor: store.theme?.secondaryColor,
             backgroundColor: store.theme?.backgroundColor,
             textColor: store.theme?.textColor,
-            buttonColor: store.theme?.buttonColor,
-            headerColor: store.theme?.headerColor,
-            footerColor: store.theme?.footerColor,
-            borderColor: store.theme?.borderColor,
             gradient: {
                 from: store.theme?.gradient?.from,
                 via: store.theme?.gradient?.via,
                 to: store.theme?.gradient?.to,
             },
-            borderRadius: store.theme?.borderRadius,
-            shadow: store.theme?.shadow,
-            fontFamily: store.theme?.fontFamily,
-            headingWeight: store.theme?.headingWeight,
-            buttonStyle: store.theme?.buttonStyle,
             },
             hero: {
             title: store.hero?.title,

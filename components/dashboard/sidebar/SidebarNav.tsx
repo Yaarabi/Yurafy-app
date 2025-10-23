@@ -1,5 +1,13 @@
-
-import { MdDashboard, MdShoppingCart, MdInventory2, MdSettings, MdSupportAgent, MdWhatsapp, MdMessage, MdSupervisorAccount } from "react-icons/md";
+import {
+    MdDashboard,
+    MdShoppingCart,
+    MdInventory2,
+    MdSettings,
+    MdSupportAgent,
+    MdWhatsapp,
+    MdMessage,
+    MdSupervisorAccount,
+} from "react-icons/md";
 import { useParams, useRouter } from "next/navigation";
 
 const NAV_ITEMS = {
@@ -14,18 +22,24 @@ const NAV_ITEMS = {
 };
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
-    "Starter": ["dashboard", "products","orders","settings", "support"], 
-    "WhatsApp Automation": ["dashboard", "orders","conversations", "whatsapp", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard","orders","agent", "conversations", "whatsapp", "settings", "support"],
-    "Creator": ["dashboard", "products", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "products","conversations", "whatsapp",  "settings", "support"],
-    "Visionary": ["dashboard", "orders", "products","agent", "conversations", "whatsapp", "settings", "support"],
-    "free": ["dashboard", "settings", "support"],
+    Starter: ["dashboard", "products", "orders", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders", "conversations", "whatsapp", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "orders", "agent", "conversations", "whatsapp", "settings", "support"],
+    Creator: ["dashboard", "products", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "products", "conversations", "whatsapp", "settings", "support"],
+    Visionary: ["dashboard", "orders", "products", "agent", "conversations", "whatsapp", "settings", "support"],
+    free: ["dashboard", "settings", "support"],
 };
 
-
-
-export default function SidebarNav({ userPlan, pathname, t }: { userPlan: string ; pathname: string | null; router: any; t: any }) {
+export default function SidebarNav({
+    userPlan,
+    pathname,
+    t,
+    }: {
+    userPlan: string;
+    pathname: string | null;
+    t: any;
+    }) {
     const allowedNav = PLAN_NAV_MAP[userPlan] || PLAN_NAV_MAP["free"];
     const params = useParams();
     const router = useRouter();
@@ -35,12 +49,17 @@ export default function SidebarNav({ userPlan, pathname, t }: { userPlan: string
         {allowedNav.map((key) => {
             const { href, icon, key: tKey } = NAV_ITEMS[key];
             const active = pathname?.includes(href);
+
             return (
             <div
                 key={href}
                 onClick={() => router.push(`/${params.locale}/${href}`)}
                 className={`cursor-pointer flex items-center gap-3 px-3 py-2 rounded-md transition
-                ${active ? "bg-indigo-600/20 text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white"}`}
+                ${
+                    active
+                    ? "bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] dark:text-[var(--brand-blue)] font-semibold"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-[var(--brand-blue)] dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-[var(--brand-blue)]"
+                }`}
             >
                 {icon}
                 <span className="font-medium truncate">{t(tKey)}</span>

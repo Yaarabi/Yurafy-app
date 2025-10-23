@@ -13,14 +13,17 @@ interface Props {
     messages: any;
 }
 
-export default function ProtectedDashboardClient({ children, locale, messages }: Props) {
+export default function ProtectedDashboardClient({
+    children,
+    locale,
+    messages,
+    }: Props) {
     const { data: session, status } = useSession();
     const router = useRouter();
 
     useEffect(() => {
         if (status === "unauthenticated") router.push(`/${locale}/login`);
-        // router.push(`/${locale}/shop`);
-    }, [status, session, router]);
+    }, [status, session, router, locale]);
 
     if (status === "loading") return <h2>Loading...</h2>;
 
@@ -28,7 +31,13 @@ export default function ProtectedDashboardClient({ children, locale, messages }:
         return (
         <Providers session={session}>
             <NextIntlClientProvider locale={locale} messages={messages}>
-            <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen bg-gray-800">
+            <div
+                className="
+                flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen
+                bg-gray-50 text-gray-900
+                dark:bg-gray-900 dark:text-gray-100
+                "
+            >
                 <Sidebar />
                 <div className="flex flex-col flex-1">
                 <main className="p-4 flex-1">{children}</main>

@@ -9,7 +9,7 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
         const category = searchParams.get("category");
-        const owner = searchParams.get("owner"); // 🔹 new owner filter
+        const owner = searchParams.get("owner"); 
 
         // Fetch single product by ID
         if (id) {
