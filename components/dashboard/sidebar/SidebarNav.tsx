@@ -54,11 +54,11 @@ export default function SidebarNav({
             <div
                 key={href}
                 onClick={() => router.push(`/${params.locale}/${href}`)}
-                className={`cursor-pointer flex items-center gap-3 px-3 py-2 rounded-md transition
+                className={`cursor-pointer flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150
                 ${
                     active
-                    ? "bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] dark:text-[var(--brand-blue)] font-semibold"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-[var(--brand-blue)] dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-[var(--brand-blue)]"
+                    ? "bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] font-semibold"
+                    : "text-gray-800 dark:text-gray-200 hover:bg-[var(--brand-blue)]/10 hover:text-[var(--brand-blue)] dark:hover:bg-[var(--brand-blue)]/10"
                 }`}
             >
                 {icon}

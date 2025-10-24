@@ -58,20 +58,26 @@ export default function EditProductPage() {
     }
 
     if (fetching) {
-        return <p className="text-gray-400">{t('loading')}</p>;
+        return <p className="text-gray-500 dark:text-gray-400">{t('loading')}</p>;
     }
 
     return (
-        <div className="grid gap-6">
-        <h2 className="text-2xl font-semibold">{t('editTitle')}</h2>
-        {product && (
-            <ProductForm
-            onSubmit={update}
-            loading={loading}
-            // 👇 this will prefill the form with existing product data
-            initialValues={product}
-            />
-        )}
+        <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
+        <div className="max-w-4xl mx-auto">
+            <div className="mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('editTitle')}</h2>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+            {product && (
+                <ProductForm
+                onSubmit={update}
+                loading={loading}
+                initialValues={product}
+                />
+            )}
+            </div>
+        </div>
         </div>
     );
 }

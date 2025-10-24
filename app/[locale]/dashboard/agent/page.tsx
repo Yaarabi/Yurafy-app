@@ -73,7 +73,7 @@ export default function ChatWithAgentPage() {
   };
 
   return (
-    <div className="bg-gray-900 h-screen flex flex-col justify-between p-3 sm:p-6 max-w-full mx-auto">
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col justify-between p-4 sm:p-6 max-w-full mx-auto">
       <ChatHeader onClear={clearChat} />
       <ChatMessages messages={messages} typing={typing} />
       <ChatInput input={input} setInput={setInput} loading={loading} onSend={sendMessage} />

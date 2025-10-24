@@ -101,7 +101,8 @@ export default function TemplateList() {
         if (status === "APPROVED") color = "bg-green-600";
         if (status === "PENDING") color = "bg-yellow-600";
         if (status === "REJECTED") color = "bg-red-600";
-        return (
+        color = "bg-blue-500"; // Updated to reflect brand blue accent
+        return ( 
             <span className={`${color} text-white text-xs px-2 py-1 rounded ml-2`} title={reason || ""}>
                 {status}
             </span>

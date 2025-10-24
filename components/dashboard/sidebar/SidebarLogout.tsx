@@ -9,11 +9,9 @@ export default function SidebarLogout({
         <div className="mt-auto">
         <button
             onClick={handleSignOut}
-            className="
-            w-full px-3 py-2 rounded-md font-medium transition
+            className="w-full px-3 py-2 rounded-md font-medium transition-colors duration-150
             bg-gray-100 text-gray-800 hover:bg-[var(--brand-blue)] hover:text-white
-            dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-[var(--brand-blue)]
-            "
+            dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-[var(--brand-blue)]"
         >
             {t("common.logout")}
         </button>

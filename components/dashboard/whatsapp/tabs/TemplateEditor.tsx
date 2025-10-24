@@ -30,7 +30,7 @@ export default function VariableDropdown({ onSelect }: VariableDropdownProps) {
         <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-500 rounded transition text-white"
+            className="flex items-center justify-center w-10 h-10 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 rounded transition text-white"
             title="Add Variable"
         >
             <FaPlus />
@@ -38,7 +38,7 @@ export default function VariableDropdown({ onSelect }: VariableDropdownProps) {
 
         {/* Dropdown */}
         {open && (
-            <div className="absolute z-10 mt-2 w-48 bg-gray-700 rounded shadow-lg overflow-hidden">
+            <div className="absolute z-10 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
             {VARIABLES.map((v) => (
                 <button
                 key={v.value}
@@ -47,7 +47,7 @@ export default function VariableDropdown({ onSelect }: VariableDropdownProps) {
                     onSelect(v.value);
                     setOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-600"
+                className="w-full text-left px-3 py-2 text-sm text-gray-800 dark:text-gray-100 hover:bg-[var(--brand-blue)]/10 hover:text-[var(--brand-blue)]"
                 >
                 {v.label}
                 </button>

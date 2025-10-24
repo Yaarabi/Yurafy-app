@@ -34,8 +34,8 @@ export default function ProtectedDashboardClient({
             <div
                 className="
                 flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen
-                bg-gray-50 text-gray-900
-                dark:bg-gray-900 dark:text-gray-100
+                bg-[var(--color-bg)] text-[var(--color-text)]
+                dark:bg-[var(--color-bg)] dark:text-[var(--color-text)]
                 "
             >
                 <Sidebar />

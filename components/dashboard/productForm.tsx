@@ -127,7 +127,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
     return (
         <form
         onSubmit={handleSubmit}
-        className="w-full p-6 bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6"
+        className="w-full p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6 border border-gray-200 dark:border-gray-700"
         >
         {/* Name & Slug */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -148,12 +148,12 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label={t('brand')} name="brand" value={values.brand || ''} onChange={handleChange} />
             <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-300 font-medium">{t('category')}</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('category')}</label>
             <select
                 name="category"
                 value={values.category}
                 onChange={handleChange}
-                className={`px-4 py-2 rounded-lg bg-gray-800 border ${errors.category ? 'border-red-500' : 'border-gray-700'} text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition`}
+                className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition`}
             >
                 <option value="" disabled>{t('selectCategory')}</option>
                 {PRODUCT_CATEGORIES.map((cat) => (
@@ -168,12 +168,12 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Main Image */}
             <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300 font-medium">{t('mainImage')}</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('mainImage')}</label>
             <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e, 'mainImage')}
-                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
+                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
             />
             {values.mainImage && (
                 <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />
@@ -182,13 +182,13 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
 
             {/* Additional Images */}
             <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300 font-medium">{t('otherImages')}</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('otherImages')}</label>
             <input
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={(e) => handleImageUpload(e, 'images')}
-                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-gray-200"
+                className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
             />
             <div className="flex flex-wrap gap-3 mt-2">
                 {values.images?.map((img, idx) => (
@@ -203,7 +203,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             <button
             type="button"
             onClick={() => setShowVariants((prev) => !prev)}
-            className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium"
+            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-medium"
             >
             {showVariants ? 'Hide Sizes & Colors' : 'Manage Sizes & Colors'}
             </button>
@@ -225,7 +225,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 shadow-md'}`}
+            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' : 'bg-brand-blue hover:opacity-90 shadow-md'}`}
         >
             {loading
             ? initialValues
@@ -250,9 +250,9 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
     function Input({ label, error, ...props }: InputProps) {
     return (
         <label className="flex flex-col gap-1">
-        <span className="text-sm text-gray-300 font-medium">{label}</span>
+        <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">{label}</span>
         <input
-            className={`px-4 py-2 rounded-lg bg-gray-800 border ${error ? 'border-red-500' : 'border-gray-700'} text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition`}
+            className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${error ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition`}
             {...props}
         />
         {error && <span className="text-red-500 text-sm">{error}</span>}
@@ -268,9 +268,9 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
     function Textarea({ label, ...props }: TextareaProps) {
     return (
         <label className="flex flex-col gap-1">
-        <span className="text-sm text-gray-300 font-medium">{label}</span>
+        <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">{label}</span>
         <textarea
-            className="px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+            className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition resize-none"
             rows={4}
             {...props}
         />

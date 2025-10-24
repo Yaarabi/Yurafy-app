@@ -144,7 +144,7 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
     return (
         <div className="flex flex-wrap justify-end items-center gap-3 mb-4">
             {/* Upload CSV */}
-            <label className="flex items-center gap-2 cursor-pointer bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded transition h-10">
+            <label className="flex items-center gap-2 cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-4 py-2 rounded border border-gray-200 dark:border-gray-700 hover:shadow transition h-10">
                 <FaFileUpload />
                 Upload CSV
                 <input type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} />
@@ -153,7 +153,7 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
             {/* Add Order */}
             <button
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition h-10"
+                className="flex items-center gap-2 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 text-white px-4 py-2 rounded transition h-10"
             >
                 <FaPlus />
                 Add Order
@@ -162,6 +162,7 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
             {/* Export CSV */}
             <CSVExport
                 orders={orders}
+                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
             />
         </div>
     );

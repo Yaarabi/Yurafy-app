@@ -21,17 +21,17 @@ export default function TestPanelTab() {
 
     return (
         <div className="space-y-4">
-        <label className="block text-white">Send Test Message</label>
+        <label className="block text-gray-800 dark:text-gray-100">Send Test Message</label>
         <input
             type="text"
             value={testMessage}
             onChange={(e) => setTestMessage(e.target.value)}
-            className="w-full p-2 rounded bg-gray-600 text-white"
+            className="w-full p-2 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700"
             placeholder="Type your test message..."
         />
         <button
             onClick={handleSend}
-            className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white"
+            className="bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 px-4 py-2 rounded text-white"
         >
             Send Test
         </button>

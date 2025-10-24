@@ -72,20 +72,20 @@ export default function WhatsAppIntegrationPage() {
     };
 
     if (loading)
-        return <p className="text-gray-400 text-center mt-10">Loading...</p>;
+        return <p className="text-gray-600 dark:text-gray-400 text-center mt-10">Loading...</p>;
 
     return (
-        <div className="max-w-6xl mx-auto p-6 text-white">
+        <div className="max-w-6xl mx-auto p-6 text-gray-800 dark:text-gray-100">
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-600 pb-2">
+        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
             {tabs.map((tab) => (
             <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-5 py-2 rounded-t-lg font-medium transition-all duration-200 ${
                 activeTab === tab
-                    ? "bg-green-600 text-white shadow-md"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    ? "bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] shadow-md"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-[var(--brand-blue)]/10 hover:text-[var(--brand-blue)]"
                 }`}
             >
                 {tab}
@@ -94,7 +94,7 @@ export default function WhatsAppIntegrationPage() {
         </div>
 
         {/* Active Tab Content */}
-        <div className="bg-gray-700 p-6 rounded-lg shadow-inner min-h-[400px] transition-colors duration-300">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-inner min-h-[400px] transition-colors duration-300 border border-gray-200 dark:border-gray-700">
             {activeTab === "Connection" && <ConnectionTab />}
 
             {activeTab === "Ai Agent" && agent && (

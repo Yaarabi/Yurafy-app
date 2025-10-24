@@ -69,20 +69,20 @@ export default function DetectionRuleItem({
                                 value={keywordInput}
                                 onChange={e => setKeywordInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && handleAddKeyword()}
-                                className="p-1 rounded-md bg-gray-700 text-white text-sm flex-1"
+                                className="p-1 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm flex-1 border border-gray-200 dark:border-gray-600"
                                 placeholder="Add keyword"
                             />
-                            <button onClick={handleAddKeyword} className="text-sm px-2 py-1 bg-blue-600 rounded-md">Add</button>
+                            <button onClick={handleAddKeyword} className="text-sm px-2 py-1 bg-brand-blue hover:opacity-90 text-white rounded-md">Add</button>
                         </div>
                     ) : (
-                        <p className="text-white font-semibold tracking-wide">{keywords.join(', ')}</p>
+                        <p className="text-gray-800 dark:text-white font-semibold tracking-wide">{keywords.join(', ')}</p>
                     )}
                     {keywords.length > 0 && editing && (
                         <div className="flex flex-wrap gap-1 mt-1">
                             {keywords.map(kw => (
                                 <span key={kw} className="bg-gray-700 px-2 py-0.5 rounded-full text-xs flex items-center gap-1">
                                     {kw}
-                                    <button onClick={() => handleRemoveKeyword(kw)}>x</button>
+                                    <button onClick={() => handleRemoveKeyword(kw)} className="hover:text-red-500 dark:hover:text-red-400 transition-colors">×</button>
                                 </span>
                             ))}
                         </div>
@@ -93,14 +93,14 @@ export default function DetectionRuleItem({
                 <div className="flex gap-2">
                     <button
                         onClick={() => setEditing(prev => !prev)}
-                        className="p-2 rounded-lg bg-blue-500 hover:bg-blue-400 text-white shadow-sm transition"
+                        className="p-2 rounded-lg bg-brand-blue hover:opacity-90 text-white shadow-sm transition"
                         title="Edit Keywords"
                     >
                         <FaEdit size={16} />
                     </button>
                     <button
                         onClick={() => onRemove(index)}
-                        className="p-2 rounded-lg bg-red-500 hover:bg-red-400 text-white shadow-sm transition"
+                        className="p-2 rounded-lg bg-red-500 dark:bg-red-600 hover:opacity-90 text-white shadow-sm transition"
                         title="Remove Rule"
                     >
                         <FaTrash size={16} />

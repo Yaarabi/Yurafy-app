@@ -75,9 +75,9 @@ export default function OrdersTable() {
         <OrdersFilters filters={filters} setFilters={setFilters} orders={orders} />
 
         {/* Orders Table */}
-        <div className="overflow-x-auto rounded-lg border border-gray-700">
-            <table className="min-w-full bg-gray-700 text-gray-200">
-            <thead className="bg-gray-800/80">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <thead className="bg-gray-50 dark:bg-gray-800/80">
                 <tr>
                 <th className="px-4 py-2">#</th>
                 <th>Name</th>
@@ -93,13 +93,13 @@ export default function OrdersTable() {
             <tbody>
                 {loading ? (
                 <tr>
-                    <td colSpan={9} className="text-center py-4 text-gray-400">
+                    <td colSpan={9} className="text-center py-4 text-gray-500 dark:text-gray-400">
                     Loading...
                     </td>
                 </tr>
                 ) : filteredOrders.length === 0 ? (
                 <tr>
-                    <td colSpan={9} className="text-center py-4 text-gray-400">
+                    <td colSpan={9} className="text-center py-4 text-gray-500 dark:text-gray-400">
                     No orders found
                     </td>
                 </tr>
@@ -107,7 +107,7 @@ export default function OrdersTable() {
                 filteredOrders.map((order, idx) => (
                     <tr
                     key={order._id}
-                    className="border-t border-gray-600 hover:bg-gray-800/40 transition"
+                    className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
                     >
                     <td className="px-4 py-2">{idx + 1}</td>
                     <td className="px-4 py-2">{order.shippingAddress.fullName}</td>
@@ -118,7 +118,7 @@ export default function OrdersTable() {
                         {order.products.map((p, i) => (
                         <div
                             key={i}
-                            className="flex flex-wrap items-center gap-2 bg-gray-800/50 p-1 rounded-md"
+                            className="flex flex-wrap items-center gap-2 bg-gray-100 dark:bg-gray-800/50 p-1 rounded-md"
                         >
                             <span className="font-medium">{p.name}</span>
                             <span className="text-sm text-gray-400">{p.quantity}×</span>
@@ -144,7 +144,7 @@ export default function OrdersTable() {
                         {/* Edit Icon */}
                         <button
                             onClick={() => setEditingOrder(order)}
-                            className="p-2 rounded bg-yellow-600 hover:bg-yellow-500 text-white flex items-center justify-center"
+                            className="p-2 rounded bg-brand-blue hover:opacity-90 text-white flex items-center justify-center"
                             title="Edit Order"
                         >
                             <FaEdit />
@@ -161,7 +161,7 @@ export default function OrdersTable() {
                                 console.error(err);
                             }
                             }}
-                            className="p-2 rounded bg-red-600 hover:bg-red-500 text-white flex items-center justify-center"
+                            className="p-2 rounded bg-red-500 dark:bg-red-600 hover:opacity-90 text-white flex items-center justify-center"
                             title="Delete Order"
                         >
                             <FaTrash />

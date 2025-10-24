@@ -54,18 +54,18 @@ export default function ChatWindow({
     return (
         <div className="flex flex-col flex-1 h-full">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-gray-600 bg-gray-800 flex-shrink-0">
-                <button onClick={onBack} className="md:hidden text-gray-300">← Back</button>
-                <div className="font-medium text-white">{conversation.customer.name || conversation.customer.phone}</div>
+            <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 flex-shrink-0">
+                <button onClick={onBack} className="md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">← Back</button>
+                <div className="font-medium text-gray-800 dark:text-white">{conversation.customer.name || conversation.customer.phone}</div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-700">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-700">
                 {messages.map((msg: IWhatsAppMessage, idx) => {
                     const isOutgoing = msg.direction === "outgoing";
                     return (
                         <div key={msg.waMessageId || idx} className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}>
-                            <div className={`max-w-[75%] px-3 py-2 rounded-lg text-sm ${isOutgoing ? "bg-green-600 text-white" : "bg-gray-600 text-white"}`}>
+                            <div className={`max-w-[75%] px-3 py-2 rounded-lg text-sm ${isOutgoing ? "bg-brand-blue text-white" : "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"}`}>
                                 {msg.text}
                                 <div className="text-[10px] text-gray-200 mt-1 text-right">
                                     {new Date(msg.timestamp).toLocaleTimeString()}
@@ -78,16 +78,16 @@ export default function ChatWindow({
             </div>
 
             {/* Input */}
-            <div className="p-3 border-t border-gray-600 bg-gray-800 flex gap-2 flex-shrink-0">
+            <div className="p-3 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 flex gap-2 flex-shrink-0">
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Type a message"
-                    className="flex-1 bg-gray-700 text-white px-3 py-2 rounded focus:outline-none"
+                    className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-2 rounded border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-blue"
                 />
                 <button
                     onClick={sendMessage}
-                    className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-white"
+                    className="bg-brand-blue hover:opacity-90 px-4 py-2 rounded text-white"
                 >
                     Send
                 </button>

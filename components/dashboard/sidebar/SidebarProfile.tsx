@@ -30,17 +30,14 @@ export default function SidebarProfile({ user }: { user: any }) {
             />
         ) : (
             <div className="w-10 h-10 flex items-center justify-center rounded-full 
-                            bg-gray-200 text-gray-600 
-                            dark:bg-gray-700 dark:text-gray-300">
+                            bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
             <FaUser size={20} />
             </div>
         )}
 
         <div className="overflow-hidden">
             <p
-            className="font-semibold truncate 
-                        text-gray-800 dark:text-gray-100 
-                        hover:text-[var(--brand-blue)] transition-colors"
+            className="font-semibold truncate text-gray-800 dark:text-gray-100 hover:text-[var(--brand-blue)] transition-colors"
             >
             {brandName}
             </p>

@@ -6,9 +6,11 @@ import {useTranslations} from 'next-intl';
 export default function SupportPage() {
     const t = useTranslations('support');
     return (
-        <div className="grid gap-4">
-        <h2 className="text-xl font-semibold">{t('title')}</h2>
-        <SupportBot />
+        <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">{t('title')}</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+            <SupportBot />
+        </div>
         </div>
     );
 }

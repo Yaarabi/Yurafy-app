@@ -67,47 +67,47 @@ export default function ProductsTable() {
     }
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-md shadow-lg">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
             <table className="min-w-full text-sm">
-                <thead className="bg-gray-800/70">
+                <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
                         {columns.map((col) => (
-                            <th key={col.key} className="px-4 py-3 text-left font-semibold text-gray-200 uppercase tracking-wider">
+                            <th key={col.key} className="px-4 py-3 text-left font-semibold text-gray-800 dark:text-gray-200 uppercase tracking-wider">
                                 {col.label}
                             </th>
                         ))}
-                        <th className="px-4 py-3 text-gray-200 font-semibold uppercase tracking-wider">Actions</th>
+                        <th className="px-4 py-3 text-gray-800 dark:text-gray-200 font-semibold uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-400">
+                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                 Loading products...
                             </td>
                         </tr>
                     ) : products.length === 0 ? (
                         <tr>
-                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-400">
+                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                 No products found
                             </td>
                         </tr>
                     ) : (
                         products.map((row, i) => (
-                            <tr key={row._id} className={`border-t border-gray-800 transition-colors duration-150 hover:bg-gray-800/40 ${i % 2 === 0 ? "bg-gray-900/40" : ""}`}>
-                                <td className="px-4 py-3 text-gray-400">{i + 1}</td>
-                                <td className="px-4 py-3 text-gray-300 font-medium">{row.name}</td>
-                                <td className="px-4 py-3 text-gray-300">${row.price}</td>
-                                <td className="px-4 py-3 text-gray-300">{row.stock}</td>
-                                <td className="px-4 py-3 text-gray-300">{row.salesCount}</td>
+                            <tr key={row._id} className={`border-t border-gray-200 dark:border-gray-700 transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/40 ${i % 2 === 0 ? "bg-gray-50/50 dark:bg-gray-800/30" : ""}`}>
+                                <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{i + 1}</td>
+                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200 font-medium">{row.name}</td>
+                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">${row.price}</td>
+                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{row.stock}</td>
+                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{row.salesCount}</td>
                                 <td className="px-4 py-3">
                                     <div className="flex gap-3">
                                         <button onClick={() => (window.location.href = `/${locale}/dashboard/products/${row._id}`)}
-                                                className="text-indigo-400 hover:text-indigo-200 transition-transform hover:scale-110" title="Edit product">
+                                                className="text-[var(--brand-blue)] hover:text-[var(--brand-blue)]/80 transition-transform hover:scale-110" title="Edit product">
                                             <FaEdit />
                                         </button>
                                         <button onClick={() => handleDelete(row._id ?? "")}
-                                                className="text-red-400 hover:text-red-200 transition-transform hover:scale-110" title="Delete product">
+                                                className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-transform hover:scale-110" title="Delete product">
                                             <FaTrash />
                                         </button>
                                     </div>

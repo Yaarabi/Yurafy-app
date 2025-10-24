@@ -20,7 +20,7 @@ export default function MediaButton({ files, setFiles }: MediaButtonProps) {
         <div className="relative">
         {/* Icon upload button */}
         <label
-            className="flex items-center justify-center w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded cursor-pointer text-white transition"
+            className="flex items-center justify-center w-10 h-10 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 rounded cursor-pointer text-white transition"
             title="Add Media"
         >
             <FaFileUpload />
@@ -35,17 +35,17 @@ export default function MediaButton({ files, setFiles }: MediaButtonProps) {
 
         {/* Selected files dropdown */}
         {files.length > 0 && (
-            <ul className="absolute mt-2 max-h-40 w-56 overflow-auto bg-gray-700 rounded shadow-md p-2 space-y-1 z-10">
+            <ul className="absolute mt-2 max-h-40 w-56 overflow-auto bg-white dark:bg-gray-800 rounded shadow-md p-2 space-y-1 z-10 border border-gray-200 dark:border-gray-700">
             {files.map((file, i) => (
                 <li
                 key={i}
-                className="flex justify-between items-center text-white text-sm"
+                className="flex justify-between items-center text-gray-800 dark:text-gray-100 text-sm"
                 >
                 <span className="truncate">{file.name}</span>
                 <button
                     type="button"
                     onClick={() => handleRemove(i)}
-                    className="text-red-400 hover:text-red-300 ml-2 transition"
+                    className="text-red-500 hover:text-red-400 ml-2 transition"
                     title="Remove"
                 >
                     ✕

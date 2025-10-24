@@ -16,15 +16,15 @@ export default function LogoUploader({ logoUrl, onUpload }: LogoUploaderProps) {
             alt="Logo"
             width={64}
             height={64}
-            className="w-16 h-16 rounded-full object-cover border border-gray-500"
+            className="w-16 h-16 rounded-full object-cover border border-gray-200 dark:border-gray-600"
             />
         ) : (
-            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-700">
-            <FaUser size={28} className="text-gray-300" />
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+            <FaUser size={28} className="text-gray-500 dark:text-gray-300" />
             </div>
         )}
 
-        <label className="px-3 py-1 rounded-md bg-indigo-600 text-white text-sm cursor-pointer hover:bg-indigo-700 transition">
+        <label className="px-3 py-1 rounded-md bg-brand-blue text-white text-sm cursor-pointer hover:opacity-90 transition">
             Change Logo
             <input
             type="file"

@@ -9,6 +9,7 @@ import PlanSelector from '@/components/dashboard/setting/PlanSelector';
 import LogoUploader from '@/components/dashboard/setting/LogoPreview';
 import SettingsSection from '@/components/dashboard/setting/settingSection';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
+import ThemeToggle from '@/components/dashboard/Mode';
 
 export default function SettingsPage() {
     const { data: session, status } = useSession();
@@ -17,7 +18,7 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('Profile');
 
-    const tabs = ['Profile', 'Plan', 'WhatsApp', 'Language'];
+    const tabs = ['Profile', 'Plan', 'WhatsApp', 'Language', 'Mode'];
 
     // Fetch user + WhatsApp account
     useEffect(() => {
@@ -149,7 +150,8 @@ export default function SettingsPage() {
     if (!user) return <p className="text-red-500">User not found</p>;
 
     return (
-        <div className="max-w-5xl mx-auto p-6 text-gray-800 dark:text-white">
+        <div className="min-h-screen bg-white dark:bg-gray-900 p-6">
+        <div className="max-w-5xl mx-auto text-gray-800 dark:text-white">
         <ProfileHeader name={user.name} email={user.email} logo={user.logo} />
 
         {/* Tabs Navigation */}
@@ -199,6 +201,12 @@ export default function SettingsPage() {
                 <LocaleSwitcher />
             </SettingsSection>
             )}
+            {activeTab === 'Mode' && (
+            <SettingsSection title="Mode">
+                <ThemeToggle />
+            </SettingsSection>
+            )}
+        </div>
         </div>
         </div>
     );

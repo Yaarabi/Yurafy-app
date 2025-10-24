@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import ProtectedDashboardClient from "@/components/dashboard/dashboardLayout";
-
-
+import ThemeProvider from "@/components/dashboard/theme";
 
 async function getMessages(locale: string) {
     try {
@@ -27,8 +26,10 @@ export default async function DashboardLayoutServer({
     const messages = await getMessages(locale);
 
     return (
+        <ThemeProvider>
         <ProtectedDashboardClient locale={locale} messages={messages}>
-        {children}
+            {children}
         </ProtectedDashboardClient>
+        </ThemeProvider>
     );
 }

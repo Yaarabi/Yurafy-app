@@ -17,9 +17,9 @@ export default function TemplateSelector({
     }: TemplateSelectorProps) {
     return (
         <div className="space-y-1">
-        <label className="text-white block mb-1">{label}</label>
+        <label className="text-gray-800 dark:text-white block mb-1">{label}</label>
         <select
-            className="w-full p-2 rounded bg-gray-600 text-white"
+            className="w-full p-2 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-brand-blue outline-none"
             value={selected}
             onChange={(e) => onChange(e.target.value)}
         >

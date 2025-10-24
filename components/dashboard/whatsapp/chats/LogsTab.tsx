@@ -28,11 +28,11 @@ export default function LogsTab() {
     }, []);
 
     return (
-        <div className="flex h-[85vh] overflow-hidden bg-gray-700">
+        <div className="flex h-[85vh] overflow-hidden bg-white dark:bg-gray-700">
             {/* Sidebar */}
-            <div className={`w-full md:w-1/3 border-r border-gray-600 ${activeConv ? 'hidden md:block' : 'block'}`}>
+            <div className={`w-full md:w-1/3 border-r border-gray-200 dark:border-gray-600 ${activeConv ? 'hidden md:block' : 'block'}`}>
                 {loading ? (
-                    <p className="text-gray-300 text-center mt-6">Loading...</p>
+                    <p className="text-gray-500 dark:text-gray-300 text-center mt-6">Loading...</p>
                 ) : (
                     <ConversationList conversations={conversations} onSelect={setActiveConv} />
                 )}
@@ -43,7 +43,7 @@ export default function LogsTab() {
                 {activeConv ? (
                     <ChatWindow conversation={activeConv} onBack={() => setActiveConv(null)} />
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-400">
+                    <div className="flex-1 flex items-center justify-center text-gray-500 dark:text-gray-400">
                         Select a conversation
                     </div>
                 )}

@@ -25,7 +25,7 @@ export default function WorkflowCard({
     onTemplateChange,
 }: WorkflowCardProps) {
     return (
-        <div className="bg-gray-800 border border-gray-700 hover:border-gray-600 transition-all p-5 rounded-xl shadow-md space-y-4">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all p-5 rounded-xl shadow-md space-y-4">
             <WorkflowToggle
                 label={label}
                 enabled={enabled}
