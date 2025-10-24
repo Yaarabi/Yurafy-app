@@ -115,18 +115,18 @@ export default function TemplateList() {
             <ul className="space-y-2">
                 {templates.length === 0 && <li className="text-sm text-gray-400">No templates yet.</li>}
                 {templates.map((tpl) => (
-                    <li key={tpl._id} className="bg-gray-700 p-3 rounded space-y-2">
+                    <li key={tpl._id} className="bg-white dark:bg-gray-700 p-3 rounded space-y-2 border border-gray-200 dark:border-gray-600">
                         {editingId === tpl._id ? (
                             <div className="space-y-2">
                                 <input
                                     type="text"
-                                    className="w-full p-2 rounded bg-gray-600 text-white"
+                                    className="w-full p-2 rounded bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                                     value={editData.name}
                                     onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                 />
                                 {editData.type === "TEXT" && (
                                     <textarea
-                                        className="w-full p-2 rounded bg-gray-600 text-white"
+                                        className="w-full p-2 rounded bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                                         rows={3}
                                         value={editData.content}
                                         onChange={(e) => setEditData({ ...editData, content: e.target.value })}
@@ -136,7 +136,7 @@ export default function TemplateList() {
                                     <input
                                         type="text"
                                         placeholder="Media URL"
-                                        className="w-full p-2 rounded bg-gray-600 text-white"
+                                        className="w-full p-2 rounded bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                                         value={editData.mediaUrl}
                                         onChange={(e) => setEditData({ ...editData, mediaUrl: e.target.value })}
                                     />
@@ -144,7 +144,7 @@ export default function TemplateList() {
                                 <input
                                     type="text"
                                     placeholder="Caption"
-                                    className="w-full p-2 rounded bg-gray-600 text-white"
+                                    className="w-full p-2 rounded bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                                     value={editData.caption}
                                     onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
                                 />
@@ -161,7 +161,7 @@ export default function TemplateList() {
                                             setEditingId(null);
                                             setEditData({ name: "", content: "", type: "TEXT", mediaUrl: "", caption: "", variables: [] });
                                         }}
-                                        className="bg-gray-500 hover:bg-gray-400 px-3 py-1 rounded text-white"
+                                        className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 px-3 py-1 rounded text-gray-900 dark:text-white"
                                     >
                                         Cancel
                                     </button>
@@ -174,7 +174,7 @@ export default function TemplateList() {
                                         {tpl.name}
                                         {renderStatusBadge(tpl.status, tpl.rejectionReason)}
                                     </p>
-                                    <p className="text-sm text-gray-300">{tpl.content || tpl.mediaUrl}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">{tpl.content || tpl.mediaUrl}</p>
                                     {tpl.status === "REJECTED" && tpl.rejectionReason && (
                                         <p className="text-xs text-red-400 mt-1">Reason: {tpl.rejectionReason}</p>
                                     )}

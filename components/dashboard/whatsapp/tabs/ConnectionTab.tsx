@@ -65,7 +65,7 @@ export default function ConnectionTab() {
 
     return (
         <div className="space-y-4">
-        <p className="text-sm text-gray-300">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
             Manage your WhatsApp Business connection. Use the switch below to
             activate or deactivate integration.
         </p>
@@ -81,7 +81,7 @@ export default function ConnectionTab() {
             />
             <div
                 className={`w-14 h-7 rounded-full transition-colors ${
-                connected ? "bg-green-600" : "bg-gray-600"
+                connected ? "bg-green-600" : "bg-gray-200 dark:bg-gray-600"
                 }`}
             ></div>
             <div
@@ -90,7 +90,7 @@ export default function ConnectionTab() {
                 }`}
             ></div>
             </label>
-            <span className="text-sm text-gray-200">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
             {loading
                 ? "Processing..."
                 : connected

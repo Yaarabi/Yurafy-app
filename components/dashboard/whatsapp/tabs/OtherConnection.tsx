@@ -60,7 +60,7 @@ export default function ConnectionTab() {
 
     return (
         <div className="space-y-4">
-        <p className="text-sm text-gray-300">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
             Manage your WhatsApp Business numbers. Connect or disconnect accounts
             below.
         </p>
@@ -69,11 +69,11 @@ export default function ConnectionTab() {
             {accounts.map((acc) => (
             <li
                 key={acc.id}
-                className="flex items-center justify-between bg-gray-700 p-3 rounded"
+                className="flex items-center justify-between bg-white dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600"
             >
                 <div>
                 <p className="font-medium">{acc.number}</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
                     {acc.verified ? "Verified" : "Unverified"}
                 </p>
                 </div>

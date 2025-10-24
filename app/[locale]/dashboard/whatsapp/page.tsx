@@ -12,8 +12,8 @@ export default function WhatsAppSettingsPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center p-4 space-y-6">
-        <div className="w-full max-w-4xl space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+        <div className="w-full space-y-6 mt-10">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4">
                 <WhatsAppIntegrationPage />
             </div>
         </div>

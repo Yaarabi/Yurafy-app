@@ -74,13 +74,13 @@ export default function AddTemplate() {
     // };
 
     return (
-        <div className="space-y-4 bg-gray-800 p-4 rounded shadow-md">
+        <div className="space-y-4 bg-white dark:bg-gray-800 p-4 rounded shadow-md border border-gray-200 dark:border-gray-700">
             {/* Name + Type selector + Variable + Media */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                 <input
                     type="text"
                     placeholder="Template Name"
-                    className="flex-1 p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    className="flex-1 p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
                     value={template.name}
                     onChange={(e) => setTemplate({ ...template, name: e.target.value })}
                 />
@@ -96,7 +96,7 @@ export default function AddTemplate() {
                             mediaUrl: "",
                         })
                     }
-                    className="p-2 bg-gray-700 text-white rounded focus:ring-2 focus:ring-blue-500"
+                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-gray-600"
                 >
                     <option value="TEXT">Text</option>
                     <option value="IMAGE">Image</option>
@@ -123,7 +123,7 @@ export default function AddTemplate() {
             {template.type === "TEXT" ? (
                 <textarea
                     placeholder="Template Content (use variables like {{fullName}})"
-                    className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
                     rows={4}
                     value={template.content}
                     onChange={(e) => setTemplate({ ...template, content: e.target.value })}
@@ -133,14 +133,14 @@ export default function AddTemplate() {
                     <input
                         type="text"
                         placeholder="Media URL"
-                        className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                        className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
                         value={template.mediaUrl}
                         onChange={(e) => setTemplate({ ...template, mediaUrl: e.target.value })}
                     />
                     <input
                         type="text"
                         placeholder="Optional caption"
-                        className="mt-2 w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                        className="mt-2 w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
                         value={template.caption}
                         onChange={(e) => setTemplate({ ...template, caption: e.target.value })}
                     />

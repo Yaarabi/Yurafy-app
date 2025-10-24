@@ -131,8 +131,8 @@ export default function WhatsAppIntegrationPage() {
                     updateAgent({ tools: { ...agent.tools, sellerMessaging: v } })
                 }
                 />
-                <div className="mt-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
-                <p className="text-gray-400">Audio assets will appear here</p>
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">Audio assets will appear here</p>
                 </div>
             </SettingsSection>
             )}

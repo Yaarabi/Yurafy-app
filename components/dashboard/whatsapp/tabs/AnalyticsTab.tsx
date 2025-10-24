@@ -28,7 +28,7 @@ export default function AnalyticsTab() {
         fetchAnalytics();
     }, []);
 
-    if (!stats) return <p className="text-gray-400">Loading analytics...</p>;
+    if (!stats) return <p className="text-gray-600 dark:text-gray-400">Loading analytics...</p>;
 
     const deliveryRate = ((stats.delivered / stats.sent) * 100).toFixed(1);
     const readRate = ((stats.read / stats.delivered) * 100).toFixed(1);
@@ -37,22 +37,22 @@ export default function AnalyticsTab() {
     return (
         <div className="space-y-6">
         <h2 className="text-xl font-semibold">Analytics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-700 p-4 rounded">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600">
             <p className="text-lg font-bold">{stats.sent}</p>
-            <p className="text-sm text-gray-300">Sent</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Sent</p>
             </div>
-            <div className="bg-gray-700 p-4 rounded">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600">
             <p className="text-lg font-bold">{stats.delivered}</p>
-            <p className="text-sm text-gray-300">Delivered ({deliveryRate}%)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Delivered ({deliveryRate}%)</p>
             </div>
-            <div className="bg-gray-700 p-4 rounded">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600">
             <p className="text-lg font-bold">{stats.read}</p>
-            <p className="text-sm text-gray-300">Read ({readRate}%)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Read ({readRate}%)</p>
             </div>
-            <div className="bg-gray-700 p-4 rounded">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600">
             <p className="text-lg font-bold">{stats.replied}</p>
-            <p className="text-sm text-gray-300">Replied ({replyRate}%)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Replied ({replyRate}%)</p>
             </div>
         </div>
         </div>

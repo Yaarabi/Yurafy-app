@@ -95,5 +95,9 @@ export default function AutomationGrid({
         )),
     ];
 
-    return <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{combinedItems}</div>;
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+            {combinedItems}
+        </div>
+    );
 }

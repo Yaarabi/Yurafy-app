@@ -9,7 +9,7 @@ interface WorkflowToggleProps {
 function WorkflowToggle({ label, enabled, onChange, disabled }: WorkflowToggleProps) {
     return (
         <div className="flex items-center justify-between">
-        <span className="text-white font-medium">{label}</span>
+        <span className="text-gray-900 dark:text-white font-medium">{label}</span>
         <label className="relative inline-flex items-center cursor-pointer">
             <input
             type="checkbox"
@@ -20,12 +20,12 @@ function WorkflowToggle({ label, enabled, onChange, disabled }: WorkflowTogglePr
             />
             <div
             className={`w-14 h-7 rounded-full transition-colors ${
-                enabled ? "bg-green-600" : "bg-gray-600"
-            }`}
+                enabled ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
+            } ${disabled ? 'opacity-50' : ''}`}
             ></div>
             <div
-            className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                enabled ? "translate-x-7" : ""
+            className={`absolute left-1 top-1 w-5 h-5 bg-white dark:bg-gray-100 rounded-full shadow-sm transition-transform ${
+                enabled ? 'translate-x-7' : ''
             }`}
             ></div>
         </label>

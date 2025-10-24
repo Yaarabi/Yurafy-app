@@ -65,13 +65,13 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 bg-gray-800 text-white rounded-xl shadow-lg p-4 flex gap-4 items-center border border-gray-600 animate-fadeIn z-50">
-            <span className="text-sm text-gray-300">{selectedOrders.length} selected</span>
+        <div className="fixed bottom-6 right-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl shadow-lg p-4 flex gap-4 items-center border border-gray-200 dark:border-gray-700 animate-fadeIn z-50">
+            <span className="text-sm text-gray-600 dark:text-gray-300">{selectedOrders.length} selected</span>
 
             <button
                 onClick={() => sendInBatches(selectedOrders, '/api/whatsapp/send-confirmations')}
                 disabled={isSending}
-                className="bg-green-600 hover:bg-green-500 px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
+                className="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
             >
                 <FaPaperPlane /> Send Confirmation
             </button>
@@ -79,7 +79,7 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
             <button
                 onClick={() => sendInBatches(selectedOrders, '/api/whatsapp/send-ad-template')}
                 disabled={isSending}
-                className="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
             >
                 <FaBullhorn /> Send Ad Template
             </button>
@@ -87,7 +87,7 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
             {isSending && (
                 <button
                     onClick={handleCancel}
-                    className="bg-red-600 hover:bg-red-500 px-3 py-2 rounded flex items-center gap-2"
+                    className="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded flex items-center gap-2"
                     title="Cancel sending"
                 >
                     <FaStop /> Cancel
@@ -97,7 +97,7 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
             <button
                 onClick={onClear}
                 disabled={isSending}
-                className="bg-gray-600 hover:bg-gray-500 p-2 rounded disabled:opacity-50"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-2 rounded disabled:opacity-50 text-gray-700 dark:text-gray-200"
                 title="Clear selection"
             >
                 <FaTimes />

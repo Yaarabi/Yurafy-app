@@ -151,7 +151,7 @@ export default function SettingsPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 p-6">
-        <div className="max-w-5xl mx-auto text-gray-800 dark:text-white">
+        <div className="max-w-5xl mx-auto text-gray-800 dark:text-white mt-12">
         <ProfileHeader name={user.name} email={user.email} logo={user.logo} />
 
         {/* Tabs Navigation */}
@@ -160,10 +160,11 @@ export default function SettingsPage() {
             <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 w-32 rounded text-sm font-medium transition-all
-                ${activeTab === tab
-                    ? 'bg-green-600 text-white shadow-md'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-500 hover:text-white'}`}
+                className={`px-5 py-2 rounded-t-lg font-medium transition-all duration-200 ${
+                activeTab === tab
+                    ? "bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] shadow-md"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-[var(--brand-blue)]/10 hover:text-[var(--brand-blue)]"
+                }`}
             >
                 {tab}
             </button>
@@ -174,7 +175,7 @@ export default function SettingsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-all duration-300">
             {activeTab === 'Profile' && (
             <SettingsSection title="Profile">
-                <LogoUploader logoUrl={user.logo || '/default.png'} onUpload={handleLogoUpload} />
+                <LogoUploader logoUrl={user.logo || '/logo.png'} onUpload={handleLogoUpload} />
                 <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
                 <EditableField label="Brand Name" value={user.brandName || ''} onSave={(val) => updateField('brandName', val)} />
                 <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />

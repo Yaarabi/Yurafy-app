@@ -11,7 +11,7 @@ export default function ConversationList({
     onSelect: (conv: IWhatsAppConversation) => void;
 }) {
     return (
-        <div className="h-full overflow-y-auto bg-white dark:bg-gray-900">
+        <div className="h-full overflow-y-auto bg-white dark:bg-gray-700">
             {conversations.length === 0 ? (
                 <p className="text-gray-600 dark:text-gray-400 text-center mt-6">No conversations yet.</p>
             ) : (
@@ -28,7 +28,7 @@ export default function ConversationList({
                         >
                             {/* Left: Icon + Name/Last Message */}
                             <div className="flex items-center gap-3 truncate">
-                                <div className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full text-gray-800 dark:text-gray-100 flex-shrink-0">
+                                <div className="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-full text-gray-800 dark:text-gray-100 flex-shrink-0">
                                     <FaUser className="text-lg" />
                                 </div>
                                 <div className="flex flex-col truncate">

@@ -89,7 +89,7 @@ export default function AddDetectionRuleModal({ templates, autoReplyActive, onAd
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: 'spring', damping: 20 }}
-                className="bg-gray-900 text-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4 relative"
+                className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4 relative"
                 >
                 {/* Header */}
                 <div className="flex justify-between items-center mb-2">
@@ -103,45 +103,42 @@ export default function AddDetectionRuleModal({ templates, autoReplyActive, onAd
                 </div>
 
                 {/* Keyword Input */}
-                <div className="flex gap-2">
-                    <input
-                    type="text"
-                    placeholder="Add keyword"
-                    value={keywordInput}
-                    onChange={e => setKeywordInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleAddKeyword()}
-                    className="flex-1 p-2 rounded-md bg-gray-800 border border-gray-700 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                    <button
-                    onClick={handleAddKeyword}
-                    className="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-md text-sm font-medium transition-all"
-                    >
-                    <Plus size={14} />
-                    </button>
-                </div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Add keyword"
+                                        value={keywordInput}
+                                        onChange={e => setKeywordInput(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && handleAddKeyword()}
+                                        className="flex-1 p-2 rounded-md bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-emerald-500"
+                                    />
+                                    <button
+                                        onClick={handleAddKeyword}
+                                        className="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-md text-sm font-medium text-white transition-all"
+                                    >
+                                        <Plus size={14} />
+                                    </button>
+                                </div>
 
                 {/* Keyword Chips */}
-                {newRule.keywords.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-1">
-                    {newRule.keywords.map(kw => (
-                        <span
-                        key={kw}
-                        className="bg-gray-700 text-xs px-2 py-0.5 rounded-full"
-                        >
-                        {kw}
-                        </span>
-                    ))}
-                    </div>
-                )}
+                                {newRule.keywords.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5 mt-1">
+                                        {newRule.keywords.map(kw => (
+                                            <span key={kw} className="bg-gray-100 dark:bg-gray-700 text-xs px-2 py-0.5 rounded-full text-gray-800 dark:text-gray-100">
+                                                {kw}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
 
                 {/* Template Selector */}
                 <div className="pt-2">
-                    <label className="block text-sm mb-1 text-gray-300">Select Template</label>
-                    <select
-                    value={newRule.template}
-                    onChange={e => setNewRule(prev => ({ ...prev, template: e.target.value }))}
-                    className="w-full p-2 rounded-md bg-gray-800 border border-gray-700 text-sm focus:ring-2 focus:ring-emerald-500"
-                    >
+                                        <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Select Template</label>
+                                        <select
+                                            value={newRule.template}
+                                            onChange={e => setNewRule(prev => ({ ...prev, template: e.target.value }))}
+                                            className="w-full p-2 rounded-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500"
+                                        >
                     <option value="">-- Select Template --</option>
                     {templates.map(tpl => (
                         <option key={tpl._id} value={tpl.name}>
@@ -153,18 +150,14 @@ export default function AddDetectionRuleModal({ templates, autoReplyActive, onAd
 
                 {/* Footer Actions */}
                 <div className="flex justify-end gap-3 pt-3">
-                    <button
-                    onClick={() => setOpen(false)}
-                    className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm"
-                    >
-                    Cancel
-                    </button>
-                    <button
-                    onClick={handleSubmit}
-                    className="flex items-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-md text-sm font-medium transition-all"
-                    >
-                    <Save size={14} /> Save
-                    </button>
+                                <div className="flex justify-end gap-3 pt-3">
+                                    <button onClick={() => setOpen(false)} className="px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md text-sm text-gray-800 dark:text-gray-100">
+                                        Cancel
+                                    </button>
+                                    <button onClick={handleSubmit} className="flex items-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-md text-sm font-medium text-white transition-all">
+                                        <Save size={14} /> Save
+                                    </button>
+                                </div>
                 </div>
                 </motion.div>
             </motion.div>
