@@ -35,11 +35,10 @@ export default function NewProductPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
-        <div className="max-w-4xl mx-auto">
+        <div>
             <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('createTitle')}</h2>
             </div>
-
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
             <ProductForm onSubmit={create} loading={loading} />
             </div>

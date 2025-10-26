@@ -3,7 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-white" aria-labelledby="footer-heading">
+  <footer className="bg-white dark:bg-gray-900" aria-labelledby="footer-heading">
       <div>
         <h2 id="footer-heading" className="sr-only">
           Footer
@@ -17,48 +17,48 @@ const Footer = () => {
               height={100}
               className="h-auto w-auto"
             />
-            <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+                <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
-                  <h3 className="text-lg font-bold leading-6 text-[var(--secondary-color)]">
+                  <h3 className="text-lg font-bold leading-6 text-[var(--text-color)]">
                     Sale
                   </h3>
                   <ul role="list" className="mt-6 space-y-4">
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Featured Deals</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Clearance</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Bundle Offers</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Featured Deals</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Clearance</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Bundle Offers</a></li>
                   </ul>
                 </div>
                 <div className="mt-10 md:mt-0">
-                  <h3 className="text-base font-bold leading-6 text-[var(--secondary-color)]">
+                  <h3 className="text-base font-bold leading-6 text-[var(--text-color)]">
                     About Us
                   </h3>
                   <ul role="list" className="mt-6 space-y-4">
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Company Info</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Careers</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Press</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Company Info</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Careers</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Press</a></li>
                   </ul>
                 </div>
               </div>
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
-                  <h3 className="text-base font-bold leading-6 text-[var(--secondary-color)]">
+                  <h3 className="text-base font-bold leading-6 text-[var(--text-color)]">
                     Buying
                   </h3>
                   <ul role="list" className="mt-6 space-y-4">
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">How to Buy</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Payment Options</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Shipping Info</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">How to Buy</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Payment Options</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Shipping Info</a></li>
                   </ul>
                 </div>
                 <div className="mt-10 md:mt-0">
-                  <h3 className="text-base font-bold leading-6 text-[var(--secondary-color)]">
+                  <h3 className="text-base font-bold leading-6 text-[var(--text-color)]">
                     Support
                   </h3>
                   <ul role="list" className="mt-6 space-y-4">
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Help Center</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Returns</a></li>
-                    <li><a href="#" className="text-sm leading-6 text-black hover:text-gray-700">Contact Us</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Help Center</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Returns</a></li>
+                    <li><a href="#" className="text-sm leading-6 text-gray-900 dark:text-gray-200 hover:text-gray-700">Contact Us</a></li>
                   </ul>
                 </div>
               </div>

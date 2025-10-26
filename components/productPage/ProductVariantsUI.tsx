@@ -32,17 +32,16 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
             </h3>
             <div className="flex flex-wrap gap-2">
                 {sizes.map((size, idx) => (
-                <span
+                <button
                     key={idx}
-                    className="px-3 py-1 border rounded-lg text-sm transition-all"
+                    className="px-4 py-2 border rounded-lg text-sm transition-all bg-transparent hover:bg-[var(--secondary-color)]/10"
                     style={{
                     color: 'var(--text-color)',
-                    backgroundColor: 'var(--secondary-color)',
                     borderColor: 'var(--primary-color)',
                     }}
                 >
                     {size}
-                </span>
+                </button>
                 ))}
             </div>
             </div>
@@ -61,9 +60,9 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
             </h3>
             <div className="flex flex-wrap gap-2">
                 {colors.map((color, idx) => (
-                <span
+                <button
                     key={idx}
-                    className="w-6 h-6 rounded-full border shadow-sm hover:scale-105 transition-transform"
+                    className="w-8 h-8 sm:w-6 sm:h-6 rounded-full border shadow-sm hover:scale-105 transition-transform"
                     style={{
                     backgroundColor: color,
                     borderColor: 'var(--primary-color)',

@@ -6,8 +6,8 @@ import { FaRegEnvelope } from "react-icons/fa6";
 
 const HeaderTop = () => {
   return (
-    <div className="h-10 text-white bg-[var(--secondary-color)] max-lg:px-5 max-lg:h-16 max-[573px]:px-0">
-        <div className="text-sm font-semibold flex justify-center items-center max-[370px]:text-xs text-white">
+    <div className="min-h-[40px] sm:h-10 text-white bg-[var(--secondary-color)] px-3 sm:px-5">
+        <div className="text-sm sm:text-sm font-semibold flex justify-center items-center text-white py-2">
           🎉 Enjoy free shipping on orders over $50!
         </div>
     </div>

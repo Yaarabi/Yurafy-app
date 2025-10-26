@@ -5,6 +5,14 @@ import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
 import ProductVariants from './product/ProductVariant';
+import BackButton from './BackButton';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; 
+
+function isValidFileType(file: File) {
+    const allowedTypes = ['image/', 'video/', 'audio/'];
+    return allowedTypes.some((type) => file.type.startsWith(type));
+}
 
 interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
@@ -60,7 +68,6 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         }
     }, [session]);
 
-    /** Upload images to server and store URLs */
     const handleImageUpload = async (
         e: ChangeEvent<HTMLInputElement>,
         field: 'mainImage' | 'images'
@@ -71,6 +78,16 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         const uploadedUrls: string[] = [];
 
         for (const file of Array.from(files)) {
+        if (!isValidFileType(file)) {
+            alert('Unsupported file type. Only images, videos, and audio files are allowed.');
+            continue;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            alert('File too large. Maximum size is 10MB.');
+            continue;
+        }
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -127,10 +144,11 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
     return (
         <form
         onSubmit={handleSubmit}
-        className="w-full p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6 border border-gray-200 dark:border-gray-700"
+        className="w-full relative p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6 border border-gray-200 dark:border-gray-700"
         >
+            <BackButton/>
         {/* Name & Slug */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label={t('name')} name="name" value={values.name || ''} onChange={handleChange} error={errors.name} />
             <Input label={t('slug')} name="slug" value={values.slug || ''} onChange={handleChange} error={errors.slug} />
         </div>
@@ -164,14 +182,14 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             </div>
         </div>
 
-        {/* Images */}
+        {/* Media Uploads */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Main Image */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('mainImage')}</label>
             <input
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*,audio/*"
                 onChange={(e) => handleImageUpload(e, 'mainImage')}
                 className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
             />
@@ -180,20 +198,49 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             )}
             </div>
 
-            {/* Additional Images */}
+            {/* Additional Media */}
             <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('otherImages')}</label>
             <input
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*,audio/*"
                 multiple
                 onChange={(e) => handleImageUpload(e, 'images')}
                 className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
             />
             <div className="flex flex-wrap gap-3 mt-2">
-                {values.images?.map((img, idx) => (
-                <img key={idx} src={img} alt={`Preview ${idx + 1}`} className="w-28 h-28 object-cover rounded-lg border border-gray-700" />
-                ))}
+                {values.images?.map((url, idx) => {
+                const ext = url.split('.').pop()?.toLowerCase();
+                if (ext?.match(/(jpg|jpeg|png|webp|gif)/)) {
+                    return (
+                    <img
+                        key={idx}
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        className="w-28 h-28 object-cover rounded-lg border border-gray-700"
+                    />
+                    );
+                } else if (ext?.match(/(mp4|webm|ogg)/)) {
+                    return (
+                    <video
+                        key={idx}
+                        src={url}
+                        controls
+                        className="w-28 h-28 rounded-lg border border-gray-700"
+                    />
+                    );
+                } else if (ext?.match(/(mp3|wav|ogg)/)) {
+                    return (
+                    <audio
+                        key={idx}
+                        src={url}
+                        controls
+                        className="w-28 mt-2"
+                    />
+                    );
+                }
+                return null;
+                })}
             </div>
             </div>
         </div>
@@ -225,7 +272,11 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${loading ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' : 'bg-brand-blue hover:opacity-90 shadow-md'}`}
+            className={`w-full py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+            loading
+                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                : 'bg-brand-blue hover:opacity-90 shadow-md'
+            }`}
         >
             {loading
             ? initialValues
@@ -238,6 +289,8 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         </form>
     );
 }
+
+
 
 
 

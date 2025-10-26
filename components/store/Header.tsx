@@ -61,11 +61,11 @@ export default function ProductHeader({ store }: Props) {
 
         {/* Search */}
         {!isMobile || showMobileSearch ? (
-          <div className="flex-1 max-w-md mx-4 relative">
+          <div className="flex-1 max-w-md sm:max-w-md mx-4 relative w-full">
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full border border-[var(--primary-color)] bg-white rounded-full px-5 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] transition"
+              className="w-full sm:max-w-md border border-[var(--primary-color)] bg-white rounded-full px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] transition"
             />
             <FaSearch className="absolute right-4 top-3 text-gray-400" />
           </div>
@@ -90,7 +90,7 @@ export default function ProductHeader({ store }: Props) {
               if (orderForm) orderForm.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            <FaShoppingCart className="text-xl" />
+            <FaShoppingCart className="text-xl" color='black' />
             <span className="absolute -top-1 -right-1 bg-[var(--primary-color)] text-white text-[10px] px-1.5 rounded-full">
               1
             </span>

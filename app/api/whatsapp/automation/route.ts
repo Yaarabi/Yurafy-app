@@ -38,23 +38,22 @@ export async function POST(req: NextRequest) {
         }
 
         // 🧩 2️⃣ Detection Rules (optional)
-        if (account.settings.ad) {
-            console.log("AD active")
-            for (const rule of account.detectionRules) {
-                if (!rule.active || !rule.keywords?.length || !rule.template) continue;
+        if (account.detectionRules?.length) {
+        for (const rule of account.detectionRules) {
+            if (!rule.active || !rule.keywords?.length || !rule.template) continue;
 
-                const matched = rule.keywords.some((k: string) =>
-                    messageText.toLowerCase().includes(k.toLowerCase())
-                );
+            const matched = rule.keywords.some((k: string) =>
+            messageText.toLowerCase().includes(k.toLowerCase())
+            );
 
-                if (matched) {
-                    const templateContent = await getTemplate(account.owner, rule.template);
-                    if (templateContent) {
-                        await sendWhatsAppMessage(account, from, templateContent, decryptedToken);
-                        return NextResponse.json({ type: "adDetection", success: true });
-                    }
-                }
+            if (matched) {
+            const templateContent = await getTemplate(account.owner, rule.template);
+            if (templateContent) {
+                await sendWhatsAppMessage(account, from, templateContent, decryptedToken);
+                return NextResponse.json({ type: "adDetection", success: true });
             }
+            }
+        }
         }
 
         // 🧩 3️⃣ AI Agent (Customer)

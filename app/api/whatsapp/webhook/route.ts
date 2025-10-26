@@ -4,7 +4,7 @@ import WhatsAppAccount from "@/models/whatsappAccount";
 import WhatsAppConversation from "@/models/whatsappMessage";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import crypto from "crypto";
-import Template from "@/models/templates";
+import Template, { ITemplate } from "@/models/templates";
 
 
 
@@ -16,9 +16,16 @@ export async function getTemplate(ownerId: string, name: string) {
     const template = await Template.findOne({
         owner: ownerId,
         name,
-    });
+    }).lean<ITemplate>();
 
-    return template?.content || null;
+    if (!template) return null;
+
+    if (template.type === "TEXT") {
+        return template.content || ""
+    }
+
+    // For media templates
+    return `${template.link || ""}\n${template.caption || ""}`.trim()
 }
 
 

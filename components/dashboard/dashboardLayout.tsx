@@ -33,14 +33,28 @@ export default function ProtectedDashboardClient({
             <NextIntlClientProvider locale={locale} messages={messages}>
             <div
                 className="
-                flex flex-col md:grid md:grid-cols-[auto_1fr] min-h-screen
+                min-h-screen
                 bg-[var(--color-bg)] text-[var(--color-text)]
                 dark:bg-[var(--color-bg)] dark:text-[var(--color-text)]
+                flex flex-col md:flex-row
                 "
             >
+                {/* 📱 Sidebar */}
+                <div className="md:w-64 md:fixed md:inset-y-0 md:left-0 z-40">
                 <Sidebar />
-                <div className="flex flex-col flex-1">
-                <main className="p-4 flex-1">{children}</main>
+                </div>
+
+                {/* 🧭 Main content area */}
+                <div
+                className="
+                    flex-1 
+                    md:ml-64 
+                    overflow-y-auto
+                    min-h-screen
+                    p-4
+                "
+                >
+                <main className="flex-1">{children}</main>
                 </div>
             </div>
             </NextIntlClientProvider>

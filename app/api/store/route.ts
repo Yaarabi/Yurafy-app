@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Store, { IStore } from "@/models/store";
+import Store from "@/models/store";
 import { connectDB } from "@/lib/db/mongoDB";
 
 connectDB();

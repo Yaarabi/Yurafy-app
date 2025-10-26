@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { IProduct } from '@/models/products';
 import toast from 'react-hot-toast';
@@ -13,34 +14,21 @@ export default function OrderForm({ product }: { product: IProduct }) {
         size: '',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const increment = () => setForm((prev) => ({ ...prev, quantity: prev.quantity + 1 }));
-    const decrement = () =>
-        setForm((prev) => ({ ...prev, quantity: prev.quantity > 1 ? prev.quantity - 1 : 1 }));
+    const increment = () => setForm(prev => ({ ...prev, quantity: prev.quantity + 1 }));
+    const decrement = () => setForm(prev => ({ ...prev, quantity: prev.quantity > 1 ? prev.quantity - 1 : 1 }));
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const orderData = {
         owner: product.owner,
-        products: [
-            {
-            product: product._id,
-            quantity: form.quantity,
-            price: product.price,
-            color: form.color,
-            size: form.size,
-            },
-        ],
+        products: [{ product: product._id, quantity: form.quantity, price: product.price, color: form.color, size: form.size }],
         totalAmount: product.price * form.quantity,
-        shippingAddress: {
-            fullName: form.fullName,
-            phone: form.phone,
-            address: form.address,
-        },
+        shippingAddress: { fullName: form.fullName, phone: form.phone, address: form.address },
         };
 
         try {
@@ -62,120 +50,86 @@ export default function OrderForm({ product }: { product: IProduct }) {
     };
 
     return (
-        <form
-        onSubmit={handleSubmit}
-        id="order-form"
-        className="mt-12 bg-white/90 text-[var(--primary-color)] backdrop-blur-md p-8 rounded-2xl shadow-lg space-y-6 max-w-2xl mx-auto"
-        >
-        <h3 className="text-3xl font-bold text-center">
+        <div className="border border-gray-200 rounded-lg p-6 mt-8 bg-gray-50 max-w-2xl mx-auto">
+        <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--secondary-color)' }}>
             Passer votre commande
         </h3>
-
-        <input
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input
             type="text"
             name="fullName"
             placeholder="Nom complet"
             value={form.fullName}
             onChange={handleChange}
             required
-            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
-        />
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            />
 
-        <input
+            <input
             type="tel"
-            inputMode="numeric"
             name="phone"
             placeholder="Numéro de téléphone"
             value={form.phone}
             onChange={handleChange}
-            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
-        />
+            required
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            />
 
-        <input
-            type="text"
+            <textarea
             name="address"
             placeholder="Adresse"
             value={form.address}
             onChange={handleChange}
+            rows={3}
             required
-            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
-        />
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+            />
 
-        {Array.isArray(product.colors) && product.colors.length > 0 && (
-            <div>
-            <label className="block font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
-                Couleur
-            </label>
+            {product.colors && product.colors?.length > 0 && (
             <select
                 name="color"
                 value={form.color}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
                 required
+                className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
             >
                 <option value="">Sélectionner une couleur</option>
                 {product.colors.map((color, idx) => (
-                <option key={idx} value={color}>
-                    {color}
-                </option>
+                <option key={idx} value={color}>{color}</option>
                 ))}
             </select>
-            </div>
-        )}
+            )}
 
-        {Array.isArray(product.sizes) && product.sizes.length > 0 && (
-            <div>
-            <label className="block font-semibold mb-2" style={{ color: 'var(--text-color)' }}>
-                Taille
-            </label>
+            {product.sizes && product.sizes?.length > 0 && (
             <select
                 name="size"
                 value={form.size}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
                 required
+                className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
             >
                 <option value="">Sélectionner une taille</option>
                 {product.sizes.map((size, idx) => (
-                <option key={idx} value={size}>
-                    {size}
-                </option>
+                <option key={idx} value={size}>{size}</option>
                 ))}
             </select>
-            </div>
-        )}
+            )}
 
-        <div className="flex items-center gap-4 mt-4">
-            <span className="font-semibold" style={{ color: 'var(--text-color)' }}>
-            Quantité :
-            </span>
-            <button
-            type="button"
-            onClick={decrement}
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition"
-            >
-            −
-            </button>
+            <div className="flex items-center gap-4 mt-2">
+            <span className="font-semibold">Quantité :</span>
+            <button type="button" onClick={decrement} className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300">−</button>
             <span className="px-4 py-1 bg-gray-100 border rounded-md">{form.quantity}</span>
-            <button
-            type="button"
-            onClick={increment}
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition"
-            >
-            +
-            </button>
-        </div>
+            <button type="button" onClick={increment} className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300">+</button>
+            </div>
 
-        <button
+            <button
             type="submit"
-            className="w-full py-3 rounded-lg transition font-semibold text-lg"
-            style={{
-            backgroundColor: 'var(--primary-color)',
-            color: 'white',
-            }}
-        >
+            className="w-full py-3 rounded-lg font-bold text-lg transition-transform duration-300 ease-in-out transform hover:scale-105"
+            style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
+            >
             Commander maintenant
-        </button>
+            </button>
         </form>
+        </div>
     );
-}
+    }

@@ -24,29 +24,21 @@ const ProductItem = ({
               ? `${product.mainImage}`
               : "/log.jpg"
           }
-          width="0"
-          height="0"
-          sizes="100vw"
-          className="w-auto h-[250px]"
+          width={800}
+          height={800}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="w-full h-48 sm:h-64 md:h-72 object-cover rounded-lg"
           alt={product.name || "Product image"}
         />
       </Link>
       <Link
         href={`/${params.domain}/shop/${product.slug}`}
-        className={
-          color === "black"
-            ? `text-xl text-black font-normal mt-2 uppercase`
-            : `text-xl text-white font-normal mt-2 uppercase`
-        }
+        className="text-xl font-bold text-gray-900 font-normal mt-2 uppercase truncate w-full text-center sm:text-left"
       >
         {product.name}
       </Link>
       <p
-        className={
-          color === "black"
-            ? "text-lg text-black font-semibold"
-            : "text-lg text-white font-semibold"
-        }
+        className="text-lg text-gray-900 font-semibold"
       >
         ${product.price}
       </p>
@@ -54,7 +46,7 @@ const ProductItem = ({
       <ProductItemRating productRating={4.5} />
       <Link
         href={`/${params.domain}/shop/${product.slug}`}
-        className="block flex justify-center items-center w-full uppercase bg-white px-0 py-2 text-base border border-black border-gray-300 font-bold text-[var(--secondary-color)] shadow-sm hover:bg-black hover:bg-gray-100 focus:outline-none focus:ring-2"
+        className="block flex justify-center items-center w-full uppercase bg-white px-4 py-2 text-base border border-black border-gray-300 font-bold text-[var(--secondary-color)] shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2"
       >
         <p>View product</p>
       </Link>

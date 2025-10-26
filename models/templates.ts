@@ -7,7 +7,7 @@ export interface ITemplate {
     type: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
     content?: string; // for TEXT templates
     variables?: string[]; // e.g. ["customerName", "orderId"]
-    mediaUrl?: string; // for media templates
+    link?: string; // for media templates
     caption?: string; // optional caption for media
     status: "PENDING" | "APPROVED" | "REJECTED";
     rejectionReason?: string;
@@ -26,7 +26,7 @@ const TemplateSchema = new Schema(
         },
         content: { type: String }, 
         variables: [{ type: String }],
-        mediaUrl: { type: String }, 
+        link: { type: String }, 
         caption: { type: String },
         status: {
             type: String,

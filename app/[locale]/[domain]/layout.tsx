@@ -34,7 +34,6 @@ export default async function Layout({
                     <div className='min-h-screen'>
                         {children}
                     </div>
-                <Footer/>
             </NextIntlClientProvider>
     );
 }

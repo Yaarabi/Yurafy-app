@@ -126,3 +126,24 @@ export async function getProductWithStoreBySlug(slug: string): Promise<{
 
     return serializeProductWithStore(productDoc, storeDoc);
 }
+
+
+export async function getProductsByOwner(ownerId: string): Promise<IProduct[]> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products?owner=${ownerId}`, {
+            method: "GET",
+            next: { revalidate: 60 }, // ✅ optional caching
+        });
+
+        if (!res.ok) {
+            console.error("❌ Failed to fetch products:", res.statusText);
+            return [];
+        }
+
+        const data = await res.json();
+        return data.products || [];
+    } catch (error) {
+        console.error("⚠️ Error fetching products:", error);
+        return [];
+    }
+}

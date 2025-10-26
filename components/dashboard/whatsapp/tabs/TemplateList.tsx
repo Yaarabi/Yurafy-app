@@ -10,7 +10,7 @@ interface Template {
     type: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
     status: "PENDING" | "APPROVED" | "REJECTED";
     rejectionReason?: string;
-    mediaUrl?: string;
+    link?: string;
     caption?: string;
     variables?: string[];
 }
@@ -23,27 +23,29 @@ export default function TemplateList() {
         name: string;
         content: string;
         type: string;
-        mediaUrl?: string;
+        link?: string;
         caption?: string;
         variables?: string[];
+        mediaFile?: File;
     }>({
         name: "",
         content: "",
         type: "TEXT",
-        mediaUrl: "",
+        link: "",
         caption: "",
         variables: [],
+        mediaFile: undefined,
     });
 
     const fetchTemplates = async () => {
         try {
-            const res = await fetch("/api/whatsapp/templates");
-            if (!res.ok) throw new Error("Failed to fetch templates");
-            const data = await res.json();
-            setTemplates(Array.isArray(data.templates) ? data.templates : []);
+        const res = await fetch("/api/whatsapp/templates");
+        if (!res.ok) throw new Error("Failed to fetch templates");
+        const data = await res.json();
+        setTemplates(Array.isArray(data.templates) ? data.templates : []);
         } catch (err) {
-            console.error(err);
-            toast.error("Could not load templates");
+        console.error(err);
+        toast.error("Could not load templates");
         }
     };
 
@@ -53,28 +55,64 @@ export default function TemplateList() {
 
     const handleUpdate = async (id: string) => {
         if (!editData.name.trim() || (editData.type === "TEXT" && !editData.content.trim())) {
-            toast.error("Name and content required");
-            return;
+        toast.error("Name and content required");
+        return;
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/whatsapp/templates", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id, ...editData }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Failed to update template");
+        let link = editData.link;
 
-            toast.success("Template updated");
-            setEditingId(null);
-            setEditData({ name: "", content: "", type: "TEXT", mediaUrl: "", caption: "", variables: [] });
-            fetchTemplates();
+        // If user selected a new file, call /api/upload PUT
+        if (editData.type !== "TEXT" && editData.mediaFile) {
+            const formData = new FormData();
+            formData.append("file", editData.mediaFile);
+            formData.append("oldUrls", JSON.stringify([editData.link]));
+
+            const uploadRes = await fetch("/api/upload", {
+            method: "PUT",
+            body: formData,
+            });
+            const uploadData = await uploadRes.json();
+            if (!uploadRes.ok) throw new Error(uploadData.message || "Upload failed");
+
+            link = uploadData.url; // new full URL
+        }
+
+        // Update the template record
+        const res = await fetch("/api/whatsapp/templates", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+            id,
+            name: editData.name,
+            content: editData.content,
+            type: editData.type,
+            caption: editData.caption,
+            variables: editData.variables,
+            link,
+            }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to update template");
+
+        toast.success("Template updated");
+        setEditingId(null);
+        setEditData({
+            name: "",
+            content: "",
+            type: "TEXT",
+            link: "",
+            caption: "",
+            variables: [],
+            mediaFile: undefined,
+        });
+        fetchTemplates();
         } catch (err: any) {
-            console.error(err);
-            toast.error(err.message || "Update failed");
+        console.error(err);
+        toast.error(err.message || "Update failed");
         } finally {
-            setLoading(false);
+        setLoading(false);
         }
     };
 
@@ -82,17 +120,17 @@ export default function TemplateList() {
         if (!confirm("Delete this template?")) return;
         setLoading(true);
         try {
-            const res = await fetch(`/api/whatsapp/templates?id=${id}`, { method: "DELETE" });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Failed to delete template");
+        const res = await fetch(`/api/whatsapp/templates?id=${id}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to delete template");
 
-            toast.success("Template deleted");
-            fetchTemplates();
+        toast.success("Template deleted");
+        fetchTemplates();
         } catch (err: any) {
-            console.error(err);
-            toast.error(err.message || "Delete failed");
+        console.error(err);
+        toast.error(err.message || "Delete failed");
         } finally {
-            setLoading(false);
+        setLoading(false);
         }
     };
 
@@ -101,14 +139,13 @@ export default function TemplateList() {
         if (status === "APPROVED") color = "bg-green-600";
         if (status === "PENDING") color = "bg-yellow-600";
         if (status === "REJECTED") color = "bg-red-600";
-        color = "bg-blue-500"; // Updated to reflect brand blue accent
-        return ( 
-            <span className={`${color} text-white text-xs px-2 py-1 rounded ml-2`} title={reason || ""}>
-                {status}
-            </span>
+        color = "bg-blue-500"; // brand accent
+        return (
+        <span className={`${color} text-white text-xs px-2 py-1 rounded ml-2`} title={reason || ""}>
+            {status}
+        </span>
         );
     };
-
     return (
         <div>
             <h3 className="text-lg font-medium mb-2">Existing Templates</h3>
@@ -137,8 +174,8 @@ export default function TemplateList() {
                                         type="text"
                                         placeholder="Media URL"
                                         className="w-full p-2 rounded bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
-                                        value={editData.mediaUrl}
-                                        onChange={(e) => setEditData({ ...editData, mediaUrl: e.target.value })}
+                                        value={editData.link}
+                                        onChange={(e) => setEditData({ ...editData, link: e.target.value })}
                                     />
                                 )}
                                 <input
@@ -159,7 +196,7 @@ export default function TemplateList() {
                                     <button
                                         onClick={() => {
                                             setEditingId(null);
-                                            setEditData({ name: "", content: "", type: "TEXT", mediaUrl: "", caption: "", variables: [] });
+                                            setEditData({ name: "", content: "", type: "TEXT", link: "", caption: "", variables: [] });
                                         }}
                                         className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 px-3 py-1 rounded text-gray-900 dark:text-white"
                                     >
@@ -174,7 +211,7 @@ export default function TemplateList() {
                                         {tpl.name}
                                         {renderStatusBadge(tpl.status, tpl.rejectionReason)}
                                     </p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-300">{tpl.content || tpl.mediaUrl}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">{tpl.content || tpl.link}</p>
                                     {tpl.status === "REJECTED" && tpl.rejectionReason && (
                                         <p className="text-xs text-red-400 mt-1">Reason: {tpl.rejectionReason}</p>
                                     )}
@@ -187,7 +224,7 @@ export default function TemplateList() {
                                                 name: tpl.name,
                                                 content: tpl.content || "",
                                                 type: tpl.type,
-                                                mediaUrl: tpl.mediaUrl || "",
+                                                link: tpl.link || "",
                                                 caption: tpl.caption || "",
                                                 variables: tpl.variables || [],
                                             });

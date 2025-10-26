@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.4",
     "@mui/system": "^7.3.3",
     "@mui/types": "^7.4.7",
+    "@mui/x-charts": "^8.15.0",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
@@ -39,7 +40,7 @@
     "zod": "^3.25.76",
     "zustand": "^5.0.8"
   },
-    "devDependencies": {
+  "devDependencies": {
     "@types/node": "^20",
     "@types/papaparse": "^5.3.16",
     "@types/react": "^19",
@@ -48,6 +49,5 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
-}
-
+  }
 }

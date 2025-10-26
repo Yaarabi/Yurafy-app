@@ -58,12 +58,12 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const userId = await getUserId(req);
-        const { name, type, content, mediaUrl, caption, variables } = await req.json();
+        const { name, type, content, link, caption, variables } = await req.json();
 
         if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
         if (type === "TEXT" && !content?.trim())
             return NextResponse.json({ error: "Content is required for TEXT type" }, { status: 400 });
-        if (type !== "TEXT" && !mediaUrl?.trim())
+        if (type !== "TEXT" && !link?.trim())
             return NextResponse.json({ error: "Media URL is required for media templates" }, { status: 400 });
 
         const account = await WhatsAppAccount.findOne({ owner: userId });
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
             name: name.trim(),
             type,
             content: content?.trim(),
-            mediaUrl: mediaUrl?.trim(),
+            link: link?.trim(),
             caption: caption?.trim(),
             variables: variables || [],
             status: "PENDING",
@@ -84,9 +84,28 @@ export async function POST(req: NextRequest) {
 
         // Build components
         const components: any[] = [];
-        if (type === "TEXT") components.push({ type: "BODY", text: content });
-        else components.push({ type, [type.toLowerCase() + "_url"]: mediaUrl, caption });
+        if (type === "TEXT") {
+            components.push({
+            type: "BODY",
+            text: content,
+            });
+        } else {
+            // Media templates must use HEADER with format
+            components.push({
+            type: "HEADER",
+            format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
+            example: {
+                header_handle: [link], // array of example URLs
+            },
+            });
 
+            if (caption) {
+            components.push({
+                type: "BODY",
+                text: caption,
+            });
+            }
+        }
         // Send to Meta
         try {
             const res = await fetch(
@@ -126,18 +145,22 @@ export async function PUT(req: NextRequest) {
     try {
         await connectDB();
         const userId = await getUserId(req);
-        const { id, name, type, content, mediaUrl, caption, variables } = await req.json();
-        if (!id || !name?.trim())
-            return NextResponse.json({ error: "ID and name are required" }, { status: 400 });
+        const { id, name, type, content, link, caption, variables } = await req.json();
+
+        if (!id || !name?.trim()) {
+        return NextResponse.json({ error: "ID and name are required" }, { status: 400 });
+        }
 
         const template = await Template.findOne({ _id: id, owner: userId });
-        if (!template) return NextResponse.json({ error: "Template not found" }, { status: 404 });
+        if (!template) {
+        return NextResponse.json({ error: "Template not found" }, { status: 404 });
+        }
 
         // Update fields safely
         template.name = name.trim();
         template.type = type || template.type;
         template.content = content?.trim();
-        template.mediaUrl = mediaUrl?.trim();
+        template.link = link?.trim();
         template.caption = caption?.trim();
         template.variables = variables || [];
         template.status = "PENDING";
@@ -145,35 +168,64 @@ export async function PUT(req: NextRequest) {
 
         const account = await WhatsAppAccount.findOne({ owner: userId });
         if (account) {
-            const rawToken = decryptToken(account.waTokenEncrypted);
-            const components: any[] = [];
-            if (type === "TEXT") components.push({ type: "BODY", text: content });
-            else components.push({ type, [type.toLowerCase() + "_url"]: mediaUrl, caption });
+        const rawToken = decryptToken(account.waTokenEncrypted);
 
-            try {
-                const res = await fetch(
-                    `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
-                    {
-                        method: "POST",
-                        headers: { Authorization: `Bearer ${rawToken}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            name: name.trim().toLowerCase().replace(/\s+/g, "_"),
-                            category: "UTILITY",
-                            language: "en_US",
-                            components,
-                        }),
-                    }
-                );
-                const metaData = await res.json();
-                if (metaData.error) {
-                    template.status = "REJECTED";
-                    template.rejectionReason = metaData.error.message;
-                } else {
-                    template.status = metaData.status || "PENDING";
-                }
-            } catch (err) {
-                console.error("Meta update failed:", err);
+        const components: any[] = [];
+
+        if (type === "TEXT") {
+            components.push({
+            type: "BODY",
+            text: content,
+            });
+        } else {
+            // Media templates must use HEADER with format
+            components.push({
+            type: "HEADER",
+            format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
+            example: {
+                header_handle: [link], // array of example URLs
+            },
+            });
+
+            if (caption) {
+            components.push({
+                type: "BODY",
+                text: caption,
+            });
             }
+        }
+
+        try {
+            const res = await fetch(
+            `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
+            {
+                method: "POST",
+                headers: {
+                Authorization: `Bearer ${rawToken}`,
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                name: name.trim().toLowerCase().replace(/\s+/g, "_"),
+                category: "UTILITY",
+                language: "en_US",
+                components,
+                }),
+            }
+            );
+
+            const metaData = await res.json();
+            console.log("Template creation response:", metaData);
+
+            if (metaData.error) {
+            template.status = "REJECTED";
+            template.rejectionReason = metaData.error.message;
+            } else {
+            // WhatsApp returns status in "status" or "review_status"
+            template.status = metaData.status || metaData.review_status || "PENDING";
+            }
+        } catch (err) {
+            console.error("Meta template creation failed:", err);
+        }
         }
 
         await template.save();

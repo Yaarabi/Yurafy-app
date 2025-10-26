@@ -4,13 +4,18 @@ import { useEffect, useState } from "react";
 
 export default function SidebarProfile({ user }: { user: any }) {
     const [brandName, setBrandName] = useState("");
+    const [ logo, setlogo ] = useState('')
 
     useEffect(() => {
         const fetchUser = async () => {
+            console.log(user)
         try {
             const res = await fetch(`/api/users?id=${user.id}`);
             const data = await res.json();
-            if (res.ok) setBrandName(data.user.brandName);
+            if (res.ok){ 
+                setlogo(data.user.logo)
+                setBrandName(data.user.brandName)
+            };
         } catch (err) {
             console.error("Failed to fetch user:", err);
         }
@@ -20,9 +25,9 @@ export default function SidebarProfile({ user }: { user: any }) {
 
     return (
         <div className="flex items-center gap-3">
-        {user?.logo ? (
+        {logo ? (
             <Image
-            src={user.logo}
+            src={logo}
             alt="User Logo"
             width={40}
             height={40}

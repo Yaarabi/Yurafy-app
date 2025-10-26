@@ -63,7 +63,7 @@ export default function EditProductPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
-        <div className="max-w-4xl mx-auto">
+        <div>
             <div className="mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('editTitle')}</h2>
             </div>

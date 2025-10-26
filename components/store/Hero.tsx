@@ -15,13 +15,13 @@ type HeroProps = {
 const Hero = ({ hero }: HeroProps) => {
   const params = useParams();
 
-  return (
+    return (
     <section className="relative w-full bg-[var(--secondary-color)]">
-      <div className="max-w-screen-2xl mx-auto grid grid-cols-3 items-center px-10 gap-x-10 h-[500px] max-lg:grid-cols-1 max-lg:gap-y-12 max-lg:py-12 max-lg:h-auto">
+      <div className="max-w-screen-2xl mx-auto grid grid-cols-3 items-center px-6 sm:px-10 gap-x-6 sm:gap-x-10 h-auto sm:h-[500px] max-lg:grid-cols-1 max-lg:gap-y-12 max-lg:py-12">
         
         {/* Text Content */}
-        <div className="flex flex-col justify-center gap-y-6 col-span-2 text-center lg:text-left max-lg:order-last">
-          <h1 className="text-6xl font-extrabold text-white leading-tight max-xl:text-5xl max-md:text-4xl max-sm:text-3xl">
+        <div className="flex flex-col justify-center gap-y-6 col-span-2 text-center lg:text-left max-lg:order-last px-2 sm:px-0">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
             {hero?.title || "THE PRODUCT OF THE FUTURE"}
           </h1>
           <p className="text-white/90 text-lg max-sm:text-sm leading-relaxed">
@@ -30,16 +30,16 @@ const Hero = ({ hero }: HeroProps) => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex gap-4 max-lg:flex-col max-lg:items-center">
+          <div className="flex gap-4 max-lg:flex-col max-lg:items-center w-full">
             <Link
               href="#products"
-              className="bg-white text-[var(--secondary-color)] font-semibold px-10 py-3 rounded-md shadow hover:bg-gray-100 transition"
+              className="block sm:inline-block w-full sm:w-auto bg-white text-[var(--secondary-color)] font-semibold px-6 sm:px-10 py-3 rounded-md shadow hover:bg-gray-100 transition text-center"
             >
               BUY NOW
             </Link>
             <Link
               href="#about"
-              className="bg-transparent border-2 border-white text-white font-semibold px-10 py-3 rounded-md hover:bg-white hover:text-[var(--secondary-color)] transition"
+              className="block sm:inline-block w-full sm:w-auto bg-transparent border-2 border-white text-white font-semibold px-6 sm:px-10 py-3 rounded-md hover:bg-white hover:text-[var(--secondary-color)] transition text-center"
             >
               LEARN MORE
             </Link>

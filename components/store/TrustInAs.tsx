@@ -25,25 +25,25 @@ const trustItems = [
 const TrustSection = () => {
     return (
         <section className="py-20 px-6 bg-[var(--primary-color)] text-[var(--text-color)]">
-        <div className="max-w-screen-2xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-12 max-md:text-3xl max-sm:text-2xl">
+        <div className="max-w-screen-2xl mx-auto text-center px-4">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 max-md:text-3xl max-sm:text-2xl">
             TRUST IN US
             </h2>
-            <div className="grid grid-cols-3 gap-10 max-md:grid-cols-2 max-sm:grid-cols-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
             {trustItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
                 <motion.div
                     key={index}
-                    className="flex flex-col items-center text-center gap-y-4 p-6 rounded-lg bg-[var(--secondary-color)] hover:scale-105 transition-transform duration-300"
+                    className="flex flex-col items-center text-center gap-y-4 p-4 sm:p-6 rounded-lg bg-[var(--secondary-color)] hover:scale-105 transition-transform duration-300"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}
                 >
-                    <Icon className="text-5xl text-white" />
-                    <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="text-sm max-w-xs">{item.description}</p>
+                    <Icon className="text-4xl sm:text-5xl text-white" />
+                    <h3 className="text-lg sm:text-xl font-semibold mt-2">{item.title}</h3>
+                    <p className="text-sm sm:text-sm max-w-xs">{item.description}</p>
                 </motion.div>
                 );
             })}
