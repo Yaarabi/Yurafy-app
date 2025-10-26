@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
         updatedAt: new Date(),
         products: order.products?.map((p) => ({
             product: p.product,
+            name: p.name || "Unnamed product",
             quantity: Number(p.quantity),
             price: Number(p.price),
             color: p.color,
