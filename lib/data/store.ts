@@ -10,7 +10,7 @@ export interface SerializedStore {
     domain: string;
     description?: string;
     logoUrl?: string;
-    whoWeAre?: string;
+    whoWeAre?: { description?: string; imageUrl?: string };
     socialLinks?: {
         facebook?: string;
         instagram?: string;
@@ -43,7 +43,10 @@ function serializeStore(store: IStore): SerializedStore {
         domain: store.domain,
         description: store.description,
         logoUrl: store.logoUrl,
-        whoWeAre: store.whoWeAre,
+        whoWeAre: {
+                description: store.whoWeAre?.description,
+                imageUrl: store.whoWeAre?.imageUrl,
+            },
         socialLinks: { ...store.socialLinks },
         theme: {
             primaryColor: store.theme?.primaryColor,

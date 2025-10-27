@@ -30,9 +30,9 @@ export default async function Layout({
 
     return (
             <NextIntlClientProvider locale={locale} messages={messages}>
-                    <div className='min-h-screen'>
+                    <main className='min-h-screen'>
                         {children}
-                    </div>
+                    </main>
             </NextIntlClientProvider>
     );
 }

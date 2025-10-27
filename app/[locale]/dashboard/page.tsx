@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import RevenueChart from "@/components/dashboard/home/RevenueChart";
 import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
 import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
+import DashboardHeader from "@/components/dashboard/home/Header";
+import CustomersChart from "@/components/dashboard/home/customers";
+import LogoLoader from "@/components/themePreview/loadder";
 
 export default function DashboardClient() {
     const [orders, setOrders] = useState<any[]>([]);
@@ -36,20 +39,20 @@ export default function DashboardClient() {
         fetchData();
     }, []);
 
-    if (loading) return <div className="p-6">Loading dashboard...</div>;
+    if (loading) return <LogoLoader/>
 
     return (
         <div className="p-6 space-y-6 mx-6">
-        <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Dashboard
-        </h1>
+        <DashboardHeader/>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RevenueChart orders={orders} />
             <OrdersStatusChart orders={orders} />
         </div>
-
-        <TopProductsChart products={products} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TopProductsChart products={products} />
+            <CustomersChart/>
+        </div>
 
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
             <h2 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">

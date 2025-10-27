@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import Providers from "@/components/home/provider";
 import Sidebar from "./sidebar/Sidebar";
+import LogoLoader from "../themePreview/loadder";
 
 interface Props {
     children: ReactNode;
@@ -25,7 +26,7 @@ export default function ProtectedDashboardClient({
         if (status === "unauthenticated") router.push(`/${locale}/login`);
     }, [status, session, router, locale]);
 
-    if (status === "loading") return <h2>Loading...</h2>;
+    if (status === "loading") return <LogoLoader/>
 
     if (status === "authenticated") {
         return (

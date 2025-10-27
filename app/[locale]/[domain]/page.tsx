@@ -3,13 +3,14 @@ import { getStoreByDomain } from "@/lib/data/store";
 import { getProductsByOwner } from "@/lib/data/products"; 
 import ThemeInjector from "@/components/productPage/ThemeInjector";
 import StoreClientWrapper from "@/components/pages/storeWerwper";
+import NotFound from "./not-found";
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;
     return await generateStoreMetadata(domain);
 }
 
-export async function generateViewport({ params }: { params: { domain: string } }) {
+export async function generateViewport({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;
     const store = await getStoreByDomain(domain);
     return { themeColor: store?.theme };
@@ -22,7 +23,7 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     const store = await getStoreByDomain(domain);
 
     if (!store) {
-        return <div className="text-center py-20">Store not found.</div>;
+        return <> <NotFound/> </>;
     }
 
     const products = await getProductsByOwner(store.owner);

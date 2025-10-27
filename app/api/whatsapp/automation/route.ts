@@ -24,18 +24,28 @@ export async function POST(req: NextRequest) {
 
         const decryptedToken = decryptToken(account.waTokenEncrypted);
 
-        // 🧩 1️⃣ AutoReply (optional)
-        if (account.settings.autoReply && account.preferredTemplates?.greeting) {
-            console.log("Auto repla active")
-            const greetingTemplate = await getTemplate(
-                account.owner,
-                account.preferredTemplates.greeting
-            );
-            if (greetingTemplate) {
-                await sendWhatsAppMessage(account, from, greetingTemplate, decryptedToken);
-                return NextResponse.json({ type: "autoReply", success: true });
+        // 🧩 1️⃣ AI Agent (Customer)
+        if (account.settings.aiAgent) {
+            console.log("AI active")
+            console.log(from)
+            try {
+                const customerReply = await generateCustomerAIResponse(
+                    account.owner,
+                    from,
+                    messageText
+                );
+
+                if (customerReply) {
+                    await sendWhatsAppMessage(account, from, customerReply, decryptedToken, { isAIResponse: true });
+                    return NextResponse.json({ type: "aiResponse", success: true });
+                }
+            } catch (err) {
+                console.error("Customer AI agent error:", err);
+                return NextResponse.json({ error: "Failed to response" }, { status: 404 });
             }
         }
+
+
 
         // 🧩 2️⃣ Detection Rules (optional)
         if (account.detectionRules?.length) {
@@ -56,23 +66,16 @@ export async function POST(req: NextRequest) {
         }
         }
 
-        // 🧩 3️⃣ AI Agent (Customer)
-        if (account.settings.aiAgent) {
-            console.log("AI active")
-            try {
-                const customerReply = await generateCustomerAIResponse(
-                    account.owner,
-                    from,
-                    messageText
-                );
-
-                if (customerReply) {
-                    await sendWhatsAppMessage(account, from, customerReply, decryptedToken, { isAIResponse: true });
-                    return NextResponse.json({ type: "aiResponse", success: true });
-                }
-            } catch (err) {
-                console.error("Customer AI agent error:", err);
-                return NextResponse.json({ error: "Failed to response" }, { status: 404 });
+        // 🧩 3️⃣ AutoReply (optional) 
+        if (account.settings.autoReply && account.preferredTemplates?.greeting) {
+            console.log("Auto repla active")
+            const greetingTemplate = await getTemplate(
+                account.owner,
+                account.preferredTemplates.greeting
+            );
+            if (greetingTemplate) {
+                await sendWhatsAppMessage(account, from, greetingTemplate, decryptedToken);
+                return NextResponse.json({ type: "autoReply", success: true });
             }
         }
 

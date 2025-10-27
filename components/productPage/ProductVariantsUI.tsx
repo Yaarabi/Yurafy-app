@@ -17,15 +17,13 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        style={{ fontFamily: 'var(--font-family, Inter)' }}
         >
         {sizes.length > 0 && (
             <div>
             <h3
                 className="font-semibold mb-2"
                 style={{
-                color: 'var(--text-color)',
-                fontWeight: 'var(--heading-weight, 600)',
+                color: 'var(--primary-color)',
                 }}
             >
                 Tailles disponibles
@@ -34,11 +32,7 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
                 {sizes.map((size, idx) => (
                 <button
                     key={idx}
-                    className="px-4 py-2 border rounded-lg text-sm transition-all bg-transparent hover:bg-[var(--secondary-color)]/10"
-                    style={{
-                    color: 'var(--text-color)',
-                    borderColor: 'var(--primary-color)',
-                    }}
+                    className="px-4 py-2 border rounded-lg text-sm text-gray-800 transition-all"
                 >
                     {size}
                 </button>
@@ -52,8 +46,7 @@ export default function ProductVariantsUI({ sizes = [], colors = [] }: ProductVa
             <h3
                 className="font-semibold mb-2"
                 style={{
-                color: 'var(--text-color)',
-                fontWeight: 'var(--heading-weight, 600)',
+                color: 'var(--primary-color)',
                 }}
             >
                 Couleurs disponibles

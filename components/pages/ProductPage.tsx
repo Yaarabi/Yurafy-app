@@ -10,6 +10,7 @@ import OrderForm from "../productPage/orderForm";
 import ProductGallery from "../productPage/ProductGallery";
 import ProductVariantsUI from "../productPage/ProductVariantsUI";
 import ProductDetails from "../productPage/ProductDetails";
+import WhatsAppButton from "../productPage/ProductActions";
 
 interface ProductPageProps {
     product: IProduct;
@@ -45,7 +46,7 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
                         <div className="flex-1 flex flex-col justify-between">
                             <ProductDetails product={product} />
                             <ProductVariantsUI sizes={product.sizes} colors={product.colors} />
-                            <OrderForm product={product} />
+                            <OrderForm product={product} formRef={formRef} />
                         </div>
                     </div>
                 </section>
@@ -53,6 +54,7 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
 
         {/* Trust section */}
         <TrustSection />
+        <WhatsAppButton/>
 
         {/* Footer */}
         <Footer store={store} />
@@ -60,12 +62,12 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
         {/* Floating Button (Mobile Only) */}
         <button
             onClick={() => setShowOrderForm(!showOrderForm)}
-            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full font-semibold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105"
+            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 w-[70vw] py-3 rounded-full font-semibold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105"
             style={{
             backgroundColor: "var(--primary-color)",
             }}
         >
-            {showOrderForm ? "Fermer le formulaire" : "🛒 Commander maintenant"}
+            Order Now!
         </button>
         </div>
     );

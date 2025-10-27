@@ -14,6 +14,7 @@ const NAV_ITEMS = {
     dashboard: { href: "dashboard", icon: <MdDashboard size={20} />, key: "nav.dashboard" },
     orders: { href: "dashboard/orders", icon: <MdShoppingCart size={20} />, key: "nav.orders" },
     products: { href: "dashboard/products", icon: <MdInventory2 size={20} />, key: "nav.products" },
+    customers: { href: "dashboard/customers", icon: <MdSupervisorAccount size={20} />, key: "nav.customers" },
     whatsapp: { href: "dashboard/whatsapp", icon: <MdWhatsapp size={20} />, key: "nav.whatsapp" },
     agent: { href: "dashboard/agent", icon: <MdSupervisorAccount size={20} />, key: "nav.agent" },
     conversations: { href: "dashboard/conversations", icon: <MdMessage size={20} />, key: "nav.conversations" },
@@ -22,13 +23,12 @@ const NAV_ITEMS = {
 };
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
-    Starter: ["dashboard", "products", "orders", "settings", "support"],
-    "WhatsApp Automation": ["dashboard", "orders", "conversations", "whatsapp", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard", "orders", "agent", "conversations", "whatsapp", "settings", "support"],
-    Creator: ["dashboard", "products", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "products", "conversations", "whatsapp", "settings", "support"],
-    Visionary: ["dashboard", "orders", "products", "agent", "conversations", "whatsapp", "settings", "support"],
-    free: ["dashboard", "settings", "support"],
+    "Starter": ["dashboard", "products", "orders", "customers", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "whatsapp", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "whatsapp", "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
+    "free": ["dashboard", "settings", "support"],
 };
 
 export default function SidebarNav({

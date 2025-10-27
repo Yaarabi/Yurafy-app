@@ -1,19 +1,19 @@
 import { IOrder } from "@/models/orders";
 
 const VARIABLES = [
-    { label: "Name", value: "{{fullName}}" },
-    { label: "Email", value: "{{email}}" },
-    { label: "Phone", value: "{{phone}}" },
-    { label: "Address", value: "{{address}}" },
-    { label: "City", value: "{{city}}" },
-    { label: "Country", value: "{{country}}" },
-    { label: "Total Amount", value: "{{totalAmount}}" },
-    { label: "Product Name", value: "{{product.name}}" },
-    { label: "Product Quantity", value: "{{product.quantity}}" },
-    { label: "Product Price", value: "{{product.price}}" },
+    { label: "Name", value: "{{1}}" },
+    { label: "Email", value: "{{2}}" },
+    { label: "Phone", value: "{{3}}" },
+    { label: "Address", value: "{{4}}" },
+    { label: "City", value: "{{5}}" },
+    { label: "Country", value: "{{6}}" },
+    { label: "Total Amount", value: "{{7}}" },
+    { label: "Product Name", value: "{{8}}" },
+    { label: "Product Quantity", value: "{{9}}" },
+    { label: "Product Price", value: "{{10}}" },
 ];
 
-/**
+/** 
  * Replace template variables with values from the order.
  * @param templateContent - The content string from the template
  * @param order - The order object

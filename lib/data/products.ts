@@ -14,7 +14,7 @@ export interface SerializedStore {
     description?: string;
     logoUrl?: string;
     coverImageUrl?: string;
-    whoWeAre?: string;
+    whoWeAre?: { description?: string; imageUrl?: string };
     socialLinks?: {
         facebook?: string;
         instagram?: string;
@@ -76,7 +76,10 @@ function serializeProductWithStore(product: any, store?: any): {
             description: store.description,
             logoUrl: store.logoUrl,
             coverImageUrl: store.coverImageUrl,
-            whoWeAre: store.whoWeAre,
+            whoWeAre: {
+                description: store.whoWeAre?.description,
+                imageUrl: store.whoWeAre?.imageUrl,
+            },
             socialLinks: {
             facebook: store.socialLinks?.facebook,
             instagram: store.socialLinks?.instagram,

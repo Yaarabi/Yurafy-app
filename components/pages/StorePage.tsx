@@ -6,6 +6,8 @@ import TrustSection from "./components/TrustSection";
 import { IProduct } from "@/models/products";
 import { SerializedStore } from "@/lib/data/products";
 import FeaturedProducts from "./components/featuredProducts";
+import Hero from "./components/Hero";
+import WhatsAppButton from "../productPage/ProductActions";
 
 interface StorePageProps {
     store: SerializedStore;
@@ -13,36 +15,6 @@ interface StorePageProps {
     onProductSelect: (product: IProduct) => void;
 }
 
-// HERO SECTION
-const Hero = ({ store }: { store: SerializedStore }) => {
-    if (!store.hero) return null;
-    return (
-        <section
-        className="relative h-96 md:h-[500px] bg-cover bg-center text-white flex items-center justify-center"
-        style={{ backgroundImage: `url(${store.hero.imageUrl})` }}
-        >
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="relative z-10 text-center p-4">
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg">
-            {store.hero.title}
-            </h1>
-            <p className="text-lg md:text-2xl mb-8 drop-shadow-md">
-            {store.hero.subtitle}
-            </p>
-            <a
-            href="#featured-products"
-            className="px-8 py-3 rounded-full font-bold transition-transform duration-300 ease-in-out transform hover:scale-105"
-            style={{
-                backgroundColor: "var(--primary-color)",
-                color: "var(--text-color)",
-            }}
-            >
-            Shop Now
-            </a>
-        </div>
-        </section>
-    );
-};
 
 // ABOUT SECTION
 const AboutUs = ({ store }: { store: SerializedStore }) => {
@@ -61,15 +33,16 @@ const AboutUs = ({ store }: { store: SerializedStore }) => {
                 className="w-24 h-1 mb-6"
                 style={{ backgroundColor: "var(--primary-color)" }}
             ></div>
-            <p className="text-gray-600 leading-relaxed">{store.whoWeAre}</p>
+            <p className="text-gray-600 leading-relaxed">{store.whoWeAre.description}</p>
             </div>
             <div className="md:w-1/2">
-            <img
-                src="https://picsum.photos/seed/aboutus/600/400"
-                alt="About Us"
-                className="rounded-lg shadow-xl"
-            />
+                <img
+                    src={store.whoWeAre.imageUrl || "https://picsum.photos/seed/aboutus/600/400"}
+                    alt="About Us"
+                    className="rounded-lg shadow-xl"
+                />
             </div>
+
         </div>
         </section>
     );
@@ -93,6 +66,7 @@ const StoreComponent = async ({
             <AboutUs store={store} />
             <TrustSection />
         </main>
+        <WhatsAppButton/>
         <Footer store={store} />
         </div>
     );

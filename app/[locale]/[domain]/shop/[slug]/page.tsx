@@ -5,13 +5,14 @@ import { getProductWithStoreBySlug } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
 import { getStoreByDomain } from '@/lib/data/store';
+import NotFound from '../not-found';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const { product, store } = await getProductWithStoreBySlug(slug);
 
     if (!product) {
-        return <p className="text-center text-gray-400 mt-10 animate-pulse">Produit introuvable.</p>;
+        return <NotFound/>;
     }
 
     return (
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // Optional: viewport theme
-export async function generateViewport({ params }: { params: { domain: string } }) {
+export async function generateViewport({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;
     const store = await getStoreByDomain(domain);
     return { themeColor: store?.theme };

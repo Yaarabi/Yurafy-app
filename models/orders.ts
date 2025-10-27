@@ -4,8 +4,8 @@ export interface IOrder {
   _id: string;
   owner: string;
   products: {
-    product?: string; // product ID (ObjectId)
-    name: string;    // cached name
+    product?: string;
+    name: string;    
     quantity: number;
     price: number;
     color?: string;
@@ -31,7 +31,7 @@ const OrderSchema = new Schema(
     products: [
       {
         product: { type: Schema.Types.ObjectId, ref: "Product", required: false },
-        name: { type: String, required: true }, // ✅ added
+        name: { type: String, required: true }, 
         quantity: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true },
         color: { type: String },

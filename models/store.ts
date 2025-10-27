@@ -33,7 +33,7 @@ export interface IStore extends Document {
     domain: string;
     description?: string;
     logoUrl?: string;
-    whoWeAre?: string;
+    whoWeAre?: { description?: string; imageUrl?: string };
     socialLinks?: {
         facebook?: string;
         instagram?: string;
@@ -53,7 +53,10 @@ const storeSchema = new Schema(
         domain: { type: String, required: true, unique: true, trim: true },
         description: { type: String, trim: true },
         logoUrl: { type: String, trim: true },
-        whoWeAre: { type: String, trim: true },
+        whoWeAre: {
+            description: { type: String, trim: true },
+            imageUrl: { type: String, trim: true },
+        },
         socialLinks: {
             facebook: { type: String, trim: true },
             instagram: { type: String, trim: true },

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { SerializedStore } from "@/lib/data/products";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface HeaderProps {
     store: SerializedStore;
@@ -87,6 +88,8 @@ const MobileMenu: React.FC<{
     }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    const params = useParams()
+
     return (
         <>
         <header
@@ -139,19 +142,19 @@ const MobileMenu: React.FC<{
                     {/* ✅ Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
                     <Link
-                        href="#"
+                        href={`/${params.locale}/${params.domain}/`}
                         className="hover:opacity-80 transition-opacity"
                     >
                         Home
                     </Link>
                     <Link
-                        href="#"
+                        href={`/${params.locale}/${params.domain}/shop`}
                         className="hover:opacity-80 transition-opacity"
                     >
                         Products
                     </Link>
                     <Link
-                        href="#about-us"
+                        href={`/${params.locale}/${params.domain}/#about-us`}
                         className="hover:opacity-80 transition-opacity"
                     >
                         About

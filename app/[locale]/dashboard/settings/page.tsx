@@ -12,6 +12,7 @@ import LocaleSwitcher from '@/components/home/LocaleSwitcher';
 import ThemeToggle from '@/components/dashboard/Mode';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import LogoLoader from '@/components/themePreview/loadder';
 
 export default function SettingsPage() {
     const { data: session, status } = useSession();
@@ -169,7 +170,7 @@ export default function SettingsPage() {
 
     const params = useParams()
 
-    if (loading) return <p className="text-gray-400 animate-pulse">Loading settings...</p>;
+    if (loading) return <LogoLoader/>
     if (!user) return <p className="text-red-500">User not found</p>;
 
     return (

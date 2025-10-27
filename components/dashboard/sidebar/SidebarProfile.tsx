@@ -8,7 +8,6 @@ export default function SidebarProfile({ user }: { user: any }) {
 
     useEffect(() => {
         const fetchUser = async () => {
-            console.log(user)
         try {
             const res = await fetch(`/api/users?id=${user.id}`);
             const data = await res.json();

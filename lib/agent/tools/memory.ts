@@ -48,7 +48,7 @@ export const storeAgentActionTool = tool(
         description:
         "Store or update what the AI agent did or observed about a customer. If a memory exists, the new info is appended.",
         schema: z.object({
-        ownerId: z.string().describe("The ID of the business owner"),
+        ownerId: z.string().describe("The ID of the your owner"),
         customerPhone: z.string().describe("The customer's phone number"),
         customerName: z.string().optional().describe("The customer's name, if known"),
         summary: z
@@ -79,7 +79,7 @@ export const getAgentMemoryTool = tool(
         description:
         "Retrieve the stored summary of previous actions or customer situations for a specific customer.",
         schema: z.object({
-        ownerId: z.string().describe("The ID of the business owner"),
+        ownerId: z.string().describe("The ID of your owner"),
         customerPhone: z.string().describe("The customer's phone number"),
         }),
     }

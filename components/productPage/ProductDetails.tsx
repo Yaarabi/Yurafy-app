@@ -34,7 +34,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
         }}
         className="space-y-6 container mx-auto px-4 py-8"
-        style={{ fontFamily: 'var(--font-family, Inter)' }}
         >
         {/* Product Name */}
         <motion.h1
