@@ -39,25 +39,59 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const body = await req.json();
-        const { owner, account } = body;
+        const { owner, account, templates = [], file, prompt, memory } = body;
 
-        if (!owner) return NextResponse.json({ error: "Missing owner" }, { status: 400 });
-        if (!isValidObjectId(owner)) return NextResponse.json({ error: "Invalid owner ID" }, { status: 400 });
-        if (account && !isValidObjectId(account)) return NextResponse.json({ error: "Invalid account ID" }, { status: 400 });
+        // 🧩 Validate owner
+        if (!owner) {
+        return NextResponse.json({ error: "Missing owner" }, { status: 400 });
+        }
+        if (!isValidObjectId(owner)) {
+        return NextResponse.json({ error: "Invalid owner ID" }, { status: 400 });
+        }
 
+        // 🧩 Validate account (if provided)
+        if (account && !isValidObjectId(account)) {
+        return NextResponse.json({ error: "Invalid account ID" }, { status: 400 });
+        }
+
+        // 🧩 Check if agent already exists
         const existing = await AIAgent.findOne({ owner });
-        if (existing) return NextResponse.json({ agent: existing, message: "Agent already exists" });
+        if (existing) {
+        return NextResponse.json({
+            agent: existing,
+            message: "Agent already exists",
+        });
+        }
 
+        // 🧩 Validate file (string URL, optional)
+        if (file && typeof file !== "string") {
+        return NextResponse.json(
+            { error: "File must be a string URL" },
+            { status: 400 }
+        );
+        }
+
+        // 🧩 Handle memory (string summary only)
+        let memoryValue = "";
+        if (typeof memory === "string") {
+        memoryValue = memory;
+        } else if (typeof memory === "object" && memory !== null) {
+        // stringify if object was sent by mistake
+        memoryValue = JSON.stringify(memory);
+        }
+
+        // 🧩 Create the AI agent
         const agent = await AIAgent.create({
         owner,
         account: account || null,
         enabled: true,
-        prompt: "You are a helpful sales assistant.",
-        tools: { orderConfirmation: false, sellerMessaging: false, audioAssets: [] },
-        memory: { short: [], long: [] },
+        prompt: typeof prompt === "string" ? prompt : "You are a helpful sales assistant.",
+        templates: Array.isArray(templates) ? templates : [],
+        memory: memoryValue,
+        file: typeof file === "string" ? file : "",
         });
 
-        // Sync WhatsApp account if exists
+        // 🧩 Sync WhatsApp account settings if linked
         if (account) {
         const waAccount = await WhatsAppAccount.findById(account);
         if (waAccount) {
@@ -66,12 +100,17 @@ export async function POST(req: NextRequest) {
         }
         }
 
-        return NextResponse.json({ agent, message: "AI agent created successfully" });
+        return NextResponse.json({
+        agent,
+        message: "AI agent created successfully",
+        });
     } catch (err) {
         console.error("POST AI agent error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
+
+
 
 /**
  * PUT /api/ai-agent
@@ -82,7 +121,7 @@ export async function PUT(req: NextRequest) {
     try {
         await connectDB();
         const body = await req.json();
-        const { owner, prompt, enabled, tools, account } = body;
+        const { owner, prompt, enabled, file, account } = body;
 
         if (!owner) return NextResponse.json({ error: "Missing owner" }, { status: 400 });
         if (!isValidObjectId(owner)) return NextResponse.json({ error: "Invalid owner ID" }, { status: 400 });
@@ -91,7 +130,7 @@ export async function PUT(req: NextRequest) {
         const updateData: any = {};
         if (typeof prompt === "string") updateData.prompt = prompt;
         if (typeof enabled === "boolean") updateData.enabled = enabled;
-        if (tools) updateData.tools = tools;
+        if (file?.url) updateData.file = { url: file.url};
         if (account && isValidObjectId(account)) updateData.account = account;
 
         // Update or create AI Agent
@@ -116,3 +155,81 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
+
+export async function PATCH(req: NextRequest) {
+    try {
+        await connectDB();
+        const body = await req.json();
+        const { owner, account, enabled, prompt, templates, memory, file } = body;
+
+        if (!owner) {
+        return NextResponse.json({ error: "Missing owner ID" }, { status: 400 });
+        }
+        if (!isValidObjectId(owner)) {
+        return NextResponse.json({ error: "Invalid owner ID" }, { status: 400 });
+        }
+
+        const agent = await AIAgent.findOne({ owner });
+        if (!agent) {
+        return NextResponse.json({ error: "Agent not found" }, { status: 404 });
+        }
+
+        // Apply updates if provided
+        if (account && isValidObjectId(account)) agent.account = account;
+        if (typeof enabled === "boolean") agent.enabled = enabled;
+        if (typeof prompt === "string") agent.prompt = prompt;
+        if (Array.isArray(templates)) agent.templates = templates;
+        if (typeof memory === "string") agent.memory = memory;
+        if (typeof file === "string") agent.file = file;
+
+        await agent.save();
+
+        return NextResponse.json({ agent, message: "Agent updated successfully" });
+    } catch (err) {
+        console.error("PATCH AI agent error:", err);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
+}
+
+
+// Delet the Agent
+
+export async function DELETE(req: NextRequest) {
+    try {
+        await connectDB();
+        const { searchParams } = new URL(req.url);
+        const owner = searchParams.get("owner");
+
+        if (!owner) {
+        return NextResponse.json({ error: "Missing owner ID" }, { status: 400 });
+        }
+
+        if (!isValidObjectId(owner)) {
+        return NextResponse.json({ error: "Invalid owner ID" }, { status: 400 });
+        }
+
+        // Find the agent
+        const agent = await AIAgent.findOne({ owner });
+        if (!agent) {
+        return NextResponse.json({ error: "Agent not found" }, { status: 404 });
+        }
+
+        // Delete the agent
+        await AIAgent.deleteOne({ owner });
+
+        // Optionally sync WhatsApp account if linked
+        if (agent.account) {
+        const waAccount = await WhatsAppAccount.findById(agent.account);
+        if (waAccount) {
+            waAccount.settings.aiAgent = false;
+            await waAccount.save();
+        }
+        }
+
+        return NextResponse.json({ message: "AI agent deleted successfully" });
+    } catch (err) {
+        console.error("DELETE AI agent error:", err);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
+}
+

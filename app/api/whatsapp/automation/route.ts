@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
         // 🧩 1️⃣ AI Agent (Customer)
         if (account.settings.aiAgent) {
             console.log("AI active")
-            console.log(from)
             try {
                 const customerReply = await generateCustomerAIResponse(
                     account.owner,

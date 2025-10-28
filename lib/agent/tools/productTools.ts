@@ -21,7 +21,7 @@ export const searchProductTool = tool(
         ],
         })
         .limit(10)
-        .lean<IProduct[]>(); // ✅ Properly typed lean result
+        .lean<IProduct[]>(); 
 
         if (!products.length) return "No products found for that query.";
 

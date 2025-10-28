@@ -14,35 +14,6 @@ export default function ChatWindow({
     const [input, setInput] = useState("");
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-    const sendMessage = async () => {
-        if (!input.trim()) return;
-
-        const newMessage: IWhatsAppMessage = {
-            from: "me",
-            to: conversation.customer.phone,
-            type: "text",
-            text: input,
-            direction: "outgoing",
-            status: "sent",
-            timestamp: Date.now(),
-        };
-
-        const res = await fetch("/api/whatsapp/conversations", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                phone: conversation.customer.phone,
-                message: newMessage,
-            }),
-        });
-
-        if (res.ok) {
-            setMessages((prev) => [...prev, newMessage]);
-            setInput("");
-            scrollToBottom();
-        }
-    };
-
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -75,22 +46,6 @@ export default function ChatWindow({
                     );
                 })}
                 <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="p-3 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 flex gap-2 flex-shrink-0">
-                <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type a message"
-                    className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-2 rounded border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]"
-                />
-                <button
-                    onClick={sendMessage}
-                    className="bg-brand-blue hover:opacity-90 px-4 py-2 rounded text-white"
-                >
-                    Send
-                </button>
             </div>
         </div>
     );

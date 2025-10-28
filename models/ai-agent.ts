@@ -1,48 +1,36 @@
-
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IAIAgent {
+
+export interface IAIAgent extends Document {
     owner: string; // User ID
     account: string; // WhatsAppAccount ID
     enabled: boolean; // connect/disconnect
     prompt: string; // base system prompt / personality
-    tools: {
-        orderConfirmation: boolean;
-        sellerMessaging: boolean;
-        audioAssets: {
-            title: string;
-            url: string;
-            trigger: string; // e.g. "greeting", "order_shipped"
-            active: boolean;
-        }[];
-    };
+    templates: string[]; // list of template names (e.g. "order_bot", "faq_bot")
     memory?: string; // single string summary
+    file?:string;
     createdAt: Date;
     updatedAt: Date;
 }
 
+/**
+ * Mongoose schema for AIAgent
+ */
 const AIAgentSchema = new Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        account: { type: Schema.Types.ObjectId, ref: "WhatsAppAccount", default: null, required: false },
+        account: { type: Schema.Types.ObjectId, ref: "WhatsAppAccount", default: null },
         enabled: { type: Boolean, default: false },
         prompt: { type: String, default: "You are a helpful sales assistant." },
-        tools: {
-        orderConfirmation: { type: Boolean, default: false },
-        sellerMessaging: { type: Boolean, default: false },
-        audioAssets: [
-            {
-            title: String,
-            url: String,
-            trigger: String,
-            active: { type: Boolean, default: true },
-            },
-        ],
-        },
-        memory: { type: String, default: "" }, 
+        templates: [{ type: [String], default: [] }],
+        memory: { type: String, default: "" },
+        file: { type: String, default: "" },
 
     },
     { timestamps: true }
 );
 
-export default mongoose.models.AIAgent || mongoose.model("AIAgent", AIAgentSchema);
+/**
+ * Export the model
+ */
+export default mongoose.models.AIAgent || mongoose.model<IAIAgent>("AIAgent", AIAgentSchema);

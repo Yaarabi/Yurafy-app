@@ -223,6 +223,8 @@
         "orders": "Orders",
         "products": "Products",
         "settings": "Settings",
+        "agent": "Agent",
+        "customers": "Customers",
         "whatsapp": "WhatsApp",
         "conversations": "My chats", 
         "support": "Support"

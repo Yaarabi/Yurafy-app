@@ -1,4 +1,3 @@
-
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
@@ -14,7 +13,11 @@ export const storeAgentActionTool = tool(
     async ({ ownerId, customerPhone, customerName, summary }) => {
         await connectDB();
 
-        if (!summary.trim()) return "Cannot store an empty summary.";
+        const cleanSummary = summary.trim();
+        if (!cleanSummary) return "⚠️ Cannot store an empty summary.";
+
+        const timestamp = new Date().toISOString();
+        const entry = `🕒 ${timestamp}\n${cleanSummary}`;
 
         const existing = await AgentMemory.findOne({
         owner: new mongoose.Types.ObjectId(ownerId),
@@ -22,25 +25,22 @@ export const storeAgentActionTool = tool(
         });
 
         if (existing) {
-        existing.summary = `${existing.summary}\n\n🆕 ${summary}`;
-        if (customerName && !existing.customerName)
+        existing.summary = `${existing.summary}\n\n${entry}`;
+        if (customerName && !existing.customerName) {
             existing.customerName = customerName;
+        }
         await existing.save();
 
-        return `🧠 Updated memory for ${
-            existing.customerName || customerPhone
-        }. Summary updated successfully.`;
+        return `✅ Memory updated for ${existing.customerName || customerPhone}.`;
         } else {
         const memory = await AgentMemory.create({
             owner: new mongoose.Types.ObjectId(ownerId),
             customerPhone,
             customerName,
-            summary,
+            summary: entry,
         });
 
-        return `🧠 Created new memory for ${
-            customerName || customerPhone
-        }: "${summary}".`;
+        return `🧠 New memory created for ${customerName || customerPhone}.`;
         }
     },
     {
@@ -48,7 +48,7 @@ export const storeAgentActionTool = tool(
         description:
         "Store or update what the AI agent did or observed about a customer. If a memory exists, the new info is appended.",
         schema: z.object({
-        ownerId: z.string().describe("The ID of the your owner"),
+        ownerId: z.string().describe("The ID of your owner"),
         customerPhone: z.string().describe("The customer's phone number"),
         customerName: z.string().optional().describe("The customer's name, if known"),
         summary: z
@@ -65,12 +65,12 @@ export const getAgentMemoryTool = tool(
     async ({ ownerId, customerPhone }) => {
         await connectDB();
 
-        const memory: IAgentMemory | null = await AgentMemory.findOne({
+        const memory = await AgentMemory.findOne({
         owner: new mongoose.Types.ObjectId(ownerId),
         customerPhone,
-        }).lean() as IAgentMemory | null;
+        }).lean<IAgentMemory>();
 
-        if (!memory) return `No previous memory found for customer ${customerPhone}.`;
+        if (!memory) return `❌ No memory found for ${customerPhone}.`;
 
         return memory.summary;
     },
@@ -85,12 +85,4 @@ export const getAgentMemoryTool = tool(
     }
 );
 
-/**
- * Tool to store or update the agent's memory for the owner.
- * Memory is a single string, updated with new observations.
- */
-
-
-
-export const memoryTools = [storeAgentActionTool, getAgentMemoryTool]
-
+export const memoryTools = [storeAgentActionTool, getAgentMemoryTool];
