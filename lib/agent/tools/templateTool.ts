@@ -19,13 +19,17 @@ export async function getAgentTemplates(agentOwnerId: string) {
     const agent = await AIAgent.findOne({ owner: agentOwnerId }).lean<IAIAgent>();
     if (!agent) return [];
 
-    const templateNames = agent.templates || [];
+    let templateNames = agent.templates || [];
+
+    // Flatten in case it's nested
+    templateNames = templateNames.flat();
+
     if (!templateNames.length) return [];
 
     // 2️⃣ Fetch approved templates that match the agent's template names
     const templates = await Template.find({
         owner: new mongoose.Types.ObjectId(agentOwnerId),
-        status: "APPROVED",
+        // status: "APPROVED",
         name: { $in: templateNames },
         caption: { $ne: "" }, // Only templates with non-empty caption
     }).lean();
@@ -45,6 +49,8 @@ export async function getAgentTemplates(agentOwnerId: string) {
  */
 export const templateGuideTool = tool(
     async ({ agentOwnerId, query }) => {
+
+        console.log("Hayi 4i")
         const templates = await getAgentTemplates(agentOwnerId);
 
         if (!templates.length) return "No templates found for this agent.";
@@ -56,6 +62,7 @@ export const templateGuideTool = tool(
 
         if (!relevant.length) return `No relevant templates found for: "${query}"`;
 
+        console.log(relevant)
         // Format results for agent usage
         return relevant
         .map(

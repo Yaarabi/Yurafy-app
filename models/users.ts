@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 
 export interface IUser {
     _id: string;
-    name: string;
-    brandName?: string;
+    username: string;
     logo?: string;
     email: string;
     phone?: string;
@@ -16,19 +15,14 @@ export interface IUser {
         | "Visionary" 
         | "free";
     role: "user" | "tester" | "admin";
+    active: boolean;
 }
 
 const userSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true,
         trim: true
-    },
-    brandName: {
-        type: String,
-        lowercase: true,
-        trim: true,
-        default: null
     },
     logo: {
         type: String,
@@ -56,7 +50,6 @@ const userSchema = new mongoose.Schema({
             "Starter",
             "WhatsApp Automation",
             "AI WhatsApp Agent",
-            "Creator",
             "Pro Seller",
             "Visionary",
             "free"
@@ -67,9 +60,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["user", "tester", "admin"],
         default: "user"
+    },
+    active: {
+        type: Boolean,
+        default: false,
     }
 });
-
-userSchema.index({ brandName: 1 }, { unique: true, sparse: true });
 
 export default mongoose.models.User || mongoose.model("User", userSchema);

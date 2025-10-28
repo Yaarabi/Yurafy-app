@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppAccount from "@/models/whatsappAccount";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import WhatsAppConversation, { IWhatsAppMessage } from "@/models/whatsappMessage";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import crypto from "crypto";
 import Template, { ITemplate } from "@/models/templates";
@@ -93,27 +93,38 @@ export async function POST(req: NextRequest) {
         const messageText = message.text?.body || "";
 
         // Save conversation
-        await WhatsAppConversation.findOneAndUpdate(
-        { owner: account.owner, "customer.phone": from },
-        {
-            $push: {
-            messages: {
-                waMessageId: message.id,
-                from,
-                text: messageText,
-                direction: "incoming",
-                timestamp: Number(message.timestamp),
+        const conv = await WhatsAppConversation.findOneAndUpdate(
+            { owner: account.owner, "customer.phone": from },
+            {
+                $push: {
+                    messages: {
+                        waMessageId: message.id,
+                        from,
+                        text: messageText,
+                        direction: "incoming",
+                        timestamp: Number(message.timestamp),
+                    },
+                },
+                $set: {
+                    lastMessage: messageText,
+                    lastTimestamp: Number(message.timestamp),
+                    status: "open",
+                },
+                $inc: { unreadCount: 1 },
             },
-            },
-            $set: {
-            lastMessage: messageText,
-            lastTimestamp: Number(message.timestamp),
-            status: "open",
-            },
-            $inc: { unreadCount: 1 },
-        },
-        { upsert: true, new: true }
+            { upsert: true, new: true }
         );
+
+        // -------------------------------
+        // Optional: delete old messages, keep only latest 12
+        // -------------------------------
+        if (conv && conv.messages.length > 12) {
+            conv.messages = conv.messages
+                .sort((a: IWhatsAppMessage, b: IWhatsAppMessage) => b.timestamp - a.timestamp) // newest first
+                .slice(0, 12) // keep only 12 newest
+                .sort((a: IWhatsAppMessage, b: IWhatsAppMessage) => a.timestamp - b.timestamp); // restore chronological order
+            await conv.save();
+        }
 
         // 🔄 Trigger automation
         await fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/automation`, {

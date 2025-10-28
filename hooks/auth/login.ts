@@ -6,54 +6,61 @@ export function useSignIn() {
     const router = useRouter();
     const params = useParams();
 
-    async function signInUser(formData: FormData) {
+    async function signInUser(formData: FormData): Promise<string | void> {
+        const email = formData.get("email")?.toString().trim();
+        const password = formData.get("password")?.toString().trim();
+
+        if (!email || !password) return "Email and password are required.";
+
         const res = await signIn("credentials", {
-        email: formData.get("email"),
-        password: formData.get("password"),
+        email,
+        password,
         redirect: false,
         });
 
-        if (res?.error) return res.error as string; // Return error string
+        if (res?.error) return res.error;
 
         if (res?.ok) {
-        return router.push(`/${params.locale}/dashboard`);
+        router.push(`/${params.locale}/dashboard`);
         }
     }
 
     return { signInUser };
 }
 
-
 export function useSignUp() {
     const router = useRouter();
     const params = useParams();
 
-    async function signUpUser(formData: FormData) {
-        const name = (formData.get('name') as string)?.trim();
-        const email = (formData.get('email') as string)?.trim();
-        const password = (formData.get('password') as string)?.trim();
+    async function signUpUser(formData: FormData): Promise<string | true> {
+        const username = formData.get("username")?.toString().trim();
+        const email = formData.get("email")?.toString().trim().toLowerCase();
+        const password = formData.get("password")?.toString().trim();
+
+        if (!username || !email || !password) {
+        return "All fields are required.";
+        }
 
         try {
-        const res = await fetch('/api/signUp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password }),
+        const res = await fetch("/api/signUp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
         });
 
         const data = await res.json();
 
         if (!res.ok || data.error) {
-            return data.error || 'Registration failed. Try again.';
+            return data.error || "Registration failed. Try again.";
         }
 
         router.push(`/${params.locale}/login`);
         return true;
         } catch (err) {
-        console.error('Registration fetch error:', err);
-        return 'Something went wrong. Please try again.';
+        console.error("Registration fetch error:", err);
+        return "Something went wrong. Please try again.";
         }
     }
 
     return { signUpUser };
-    }
-
+}

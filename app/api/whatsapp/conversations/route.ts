@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         const conversation = await WhatsAppConversation.findOneAndUpdate(
             { owner: session.user.id, "customer.phone": phone },
             {
-                $push: { messages: { $each: [newMessage], $slice: -10 } },
+                $push: { messages: { $each: [newMessage], $slice: -12 } },
                 $set: {
                     lastMessage: message.text || "",
                     lastTimestamp: newMessage.timestamp,

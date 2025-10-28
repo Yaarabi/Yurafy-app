@@ -9,7 +9,7 @@ declare module "next-auth" {
     interface Session {
         user: {
             id?:string
-            name?: string;
+            username?: string;
             email?: string;
             role?: string;
             plan?: string;
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 await connectDB();
 
-                const user = await User.findOne({ email: credentials?.email }).select("+password +role");
+                const user = await User.findOne({ email: credentials?.email }).select("+password");
 
                 if (!user) return null;
 
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
 
                 return {
                     id: user._id.toString(),
-                    name: user.name,
+                    username: user.username,
                     email: user.email,
                     role: user.role,
                     plan: user.plan,

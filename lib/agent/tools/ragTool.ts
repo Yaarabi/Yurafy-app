@@ -27,52 +27,64 @@ async function getAgentIdByOwner(ownerId: string): Promise<string | null> {
     return agent?._id || null;
 }
 
+
 // Tool definition
 export const brandInfoRetrievalTool = tool(
     async ({ ownerId, query }) => {
+        try {
         await connectDB();
 
-        // 1. Resolve agentId
+        // 1️⃣ Resolve agent ID
         const agentId = await getAgentIdByOwner(ownerId);
-        if (!agentId) {
-        return `No AI agent found for owner ${ownerId}.`;
-        }
+        if (!agentId) return `No AI agent found for owner ${ownerId}.`;
 
-        // 2. Embed the query
+        // 2️⃣ Embed the query using Mistral
         const embeddingRes = await mistralClient.embeddings.create({
-        model: "mistral-embed",
-        inputs: [query],
+            model: "mistral-embed",
+            inputs: [query],
         });
-        const queryEmbedding = embeddingRes.data[0].embedding as number[];
 
-        // 3. Load stored chunks
+        const queryEmbedding = embeddingRes.data?.[0]?.embedding;
+        if (!queryEmbedding) return "Failed to generate embedding for query.";
+
+        // 3️⃣ Retrieve brand knowledge (agent chunks)
         const agentDoc: IAgentChunks | null = await AgentChunks.findOne({ agent: agentId });
-            if (!agentDoc) {
-            return `No brand information has been uploaded yet for this owner.`;
-        }
+        if (!agentDoc || !agentDoc.chunks?.length)
+            return "No brand information has been uploaded yet for this owner.";
 
-        // 4. Compute similarity
+        // 4️⃣ Compute similarity for all chunks
         const scored = agentDoc.chunks.map((chunk) => ({
-        content: chunk.content,
-        score: cosineSimilarity(queryEmbedding, chunk.embedding),
+            content: chunk.content,
+            score: cosineSimilarity(queryEmbedding, chunk.embedding),
         }));
 
-        // 5. Return top 3 matches
+        // 5️⃣ Sort and select top 3
         const top = scored.sort((a, b) => b.score - a.score).slice(0, 3);
+        if (!top.length) return "No relevant information found.";
 
-        return top.map((t) => ({
-        content: t.content,
-        similarity: t.score.toFixed(3),
-        }));
+
+        // 6️⃣ Format output as plain readable text (for LLM)
+        const formatted = top
+            .map(
+            (t, i) =>
+                `(${i + 1}) ${t.content.replace(/\s+/g, " ").trim()} [relevance: ${t.score.toFixed(3)}]`
+            )
+            .join("\n");
+
+        return `\n${formatted}`;
+        } catch (err: any) {
+        console.error("[brandInfoRetrievalTool] Error:", err);
+        return "An internal error occurred while retrieving brand information.";
+        }
     },
     {
         name: "brand_info_retrieval",
         description:
         "Use this tool whenever a customer asks you something about your owner's brand, products, or policies. " +
-        "You will search through the knowledge your owner uploaded (like manuals, FAQs, or brand documents) and return the most relevant passages. " +
-        "Always call this tool before answering if the question is about the owner's brand or business.",
+        "It searches through the brand's uploaded knowledge (manuals, FAQs, documents) and returns the most relevant passages. " +
+        "Always use this tool before answering if the question concerns the owner's brand or business.",
         schema: z.object({
-        ownerId: z.string().describe("The ID of your owner"),
+        ownerId: z.string().describe("The owner's ID"),
         query: z.string().describe("The customer's question about the brand"),
         }),
     }

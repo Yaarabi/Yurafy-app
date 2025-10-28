@@ -4,6 +4,7 @@ import { Mistral } from "@mistralai/mistralai";
 import AgentChunks from "@/models/agentVector"
 import { IAIAgent } from "@/models/ai-agent";
 
+//
 
 const mistralClient = new Mistral({
     apiKey: process.env.MISTRAL_API_KEY as string,

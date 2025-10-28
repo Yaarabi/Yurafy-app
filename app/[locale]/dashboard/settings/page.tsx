@@ -176,7 +176,7 @@ export default function SettingsPage() {
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 p-6">
         <div className="max-w-5xl mx-auto text-gray-800 dark:text-white mt-12">
-            <ProfileHeader name={user.name} email={user.email} logo={user.logo} />
+            <ProfileHeader name={user.username} email={user.email} logo={user.logo} />
 
             {/* Tabs Navigation */}
             <div className="flex flex-wrap gap-2 mb-6 mt-6">
@@ -200,8 +200,7 @@ export default function SettingsPage() {
             {activeTab === 'Profile' && (
                 <SettingsSection title="Profile">
                 <LogoUploader logoUrl={user.logo || '/logo.png'} onUpload={handleLogoUpload} />
-                <EditableField label="Name" value={user.name} onSave={(val) => updateField('name', val)} />
-                <EditableField label="Brand Name" value={user.brandName || ''} onSave={(val) => updateField('brandName', val)} />
+                <EditableField label="Name" value={user.username} onSave={(val) => updateField('name', val)} />
                 <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
                 </SettingsSection>
             )}

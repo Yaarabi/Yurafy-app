@@ -1,138 +1,150 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import User from "@/models/users";
+import User, { IUser } from "@/models/users";
+import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 
-// 🔹 GET: fetch all users or one user by id
+const ALLOWED_UPDATE_FIELDS = ["username", "email", "plan", "role", "active"];
+
+const isValidObjectId = (id: string) => mongoose.Types.ObjectId.isValid(id);
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+const sanitizeUser = (user: any) => ({
+    id: user._id.toString(),
+    username: user.username,
+    email: user.email,
+    plan: user.plan,
+    role: user.role,
+    active: user.active,
+});
+
 export async function GET(req: Request) {
     await connectDB();
-
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
 
         if (id) {
-        const user = await User.findById(id).select("-password");
-        if (!user) {
-            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        if (!isValidObjectId(id)) {
+            return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
         }
-        return NextResponse.json({ message: "User retrieved", user });
+
+        const user = await User.findById(id).select("-password");
+        if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        return NextResponse.json({ message: "User retrieved", user: sanitizeUser(user) }, { status: 200 });
         }
 
         const users = await User.find().select("-password");
-        if (users.length === 0) {
-        return NextResponse.json({ message: "No users found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: "All users retrieved", users });
+        return NextResponse.json({
+        message: "All users retrieved",
+        users: users.map(sanitizeUser),
+        }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Server error", error }, { status: 500 });
+        console.error("GET /api/users error:", error);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
 
-// 🔹 PUT: update user by id
-export async function PUT(req: Request) {
-    await connectDB();
-
-    try {
-        const { searchParams } = new URL(req.url);
-        const id = searchParams.get("id");
-        const body = await req.json();
-
-        if (!id) {
-        return NextResponse.json({ message: "User ID is required" }, { status: 400 });
-        }
-
-        const updatedUser = await User.findByIdAndUpdate(id, body, { new: true }).select("-password");
-        if (!updatedUser) {
-        return NextResponse.json({ message: "User not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: "User updated successfully", user: updatedUser });
-    } catch (error) {
-        return NextResponse.json({ message: "Error in PUT request", error }, { status: 500 });
-    }
-}
-
-// 🔹 DELETE: remove user by id
-export async function DELETE(req: Request) {
-    await connectDB();
-
-    try {
-        const { searchParams } = new URL(req.url);
-        const id = searchParams.get("id");
-
-        if (!id) {
-        return NextResponse.json({ message: "User ID is required" }, { status: 400 });
-        }
-
-        const result = await User.findByIdAndDelete(id).select("-password");
-        if (!result) {
-        return NextResponse.json({ message: "User not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: "User deleted", user: result }, { status: 202 });
-    } catch (error) {
-        return NextResponse.json({ message: "Error in DELETE request", error }, { status: 500 });
-    }
-}
-
-// 🔹 POST: create a new user
 export async function POST(req: Request) {
     await connectDB();
-
     try {
         const body = await req.json();
-        const { name, email, password, brandName, plan, role } = body;
+        const username = body.username?.trim();
+        const email = body.email?.trim().toLowerCase();
+        const password = body.password?.trim();
+        const plan = body.plan || "free";
+        const role = body.role || "user";
 
-        // Basic validation
-        if (!name || !email || !password) {
-            return NextResponse.json({ message: "Name, email, and password are required." }, { status: 400 });
+        if (!username || !email || !password) {
+        return NextResponse.json({ error: "Username, email, and password are required." }, { status: 400 });
         }
 
-        // Check for existing email
+        if (!isValidEmail(email)) {
+        return NextResponse.json({ error: "Invalid email format." }, { status: 400 });
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return NextResponse.json({ message: "Email already exists." }, { status: 409 });
+        return NextResponse.json({ error: "Email already exists." }, { status: 409 });
         }
 
-        // Optional: check for duplicate brandName if provided
-        if (brandName) {
-            const brandConflict = await User.findOne({ brandName });
-            if (brandConflict) {
-                return NextResponse.json({ message: "Brand name already in use." }, { status: 409 });
-            }
-        }
-
-        // Hash password
-        const bcrypt = await import("bcryptjs");
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
         const newUser = new User({
-            name,
-            email,
-            password: hashedPassword,
-            brandName: brandName || undefined,
-            plan: plan || "free",
-            role: role || "user"
+        username,
+        email,
+        password: hashedPassword,
+        plan,
+        role,
+        active: false,
         });
 
         const savedUser = await newUser.save();
 
         return NextResponse.json({
-            message: "User created successfully",
-            user: {
-                id: savedUser._id,
-                name: savedUser.name,
-                email: savedUser.email,
-                brandName: savedUser.brandName,
-                plan: savedUser.plan,
-                role: savedUser.role
-            }
+        message: "User created successfully",
+        user: sanitizeUser(savedUser),
         }, { status: 201 });
     } catch (error) {
-        console.error("POST /api/user error:", error);
-        return NextResponse.json({ message: "Server error", error }, { status: 500 });
+        console.error("POST /api/users error:", error);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
 
+export async function PUT(req: Request) {
+    await connectDB();
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id || !isValidObjectId(id)) {
+        return NextResponse.json({ error: "Valid user ID is required" }, { status: 400 });
+        }
+
+        const body = await req.json();
+        const updateData: Record<string, any> = {};
+
+        for (const field of ALLOWED_UPDATE_FIELDS) {
+        if (body[field] !== undefined) updateData[field] = body[field];
+        }
+
+        if (body.password) {
+        updateData.password = await bcrypt.hash(body.password, 10);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true }).select("-password");
+        if (!updatedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        return NextResponse.json({
+        message: "User updated successfully",
+        user: sanitizeUser(updatedUser),
+        }, { status: 200 });
+    } catch (error) {
+        console.error("PUT /api/users error:", error);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: Request) {
+    await connectDB();
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id || !isValidObjectId(id)) {
+        return NextResponse.json({ error: "Valid user ID is required" }, { status: 400 });
+        }
+
+        const deletedUser = await User.findByIdAndDelete(id).select("-password");
+        if (!deletedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        return NextResponse.json({
+        message: "User deleted successfully",
+        user: sanitizeUser(deletedUser),
+        }, { status: 200 });
+    } catch (error) {
+        console.error("DELETE /api/users error:", error);
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
+}

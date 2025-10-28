@@ -14,20 +14,19 @@ export default function SignupForm() {
     const { signUpUser } = useSignUp();
 
     const [form, setForm] = useState({
-        name: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
     });
 
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
-    // 🧠 Validate inputs before submission
     const validate = () => {
-        const newErrors: { [key: string]: string } = {};
+        const newErrors: Record<string, string> = {};
 
-        if (!form.name) newErrors.name = t('errorRequired');
+        if (!form.username) newErrors.username = t('errorRequired');
         if (!form.email) newErrors.email = t('errorRequired');
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
         newErrors.email = t('errorInvalidEmail');
@@ -40,7 +39,7 @@ export default function SignupForm() {
         setErrors(newErrors);
 
         if (Object.values(newErrors).length > 0) {
-        toast.error(Object.values(newErrors)[0]); // show first error
+        toast.error(Object.values(newErrors)[0]);
         }
 
         return Object.keys(newErrors).length === 0;
@@ -56,14 +55,13 @@ export default function SignupForm() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         if (!validate()) return;
 
         setLoading(true);
         const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) =>
-        formData.append(key, value)
-        );
+        formData.append('username', form.username.trim());
+        formData.append('email', form.email.trim().toLowerCase());
+        formData.append('password', form.password.trim());
 
         try {
         const result = await signUpUser(formData);
@@ -90,15 +88,14 @@ export default function SignupForm() {
             {t('signupTitle')}
         </h2>
 
-        {/* 🟢 Inputs */}
         <InputField
             label={t('NameLabel')}
             placeholder={t('NamePlaceholder')}
             type="text"
-            name="name"
-            value={form.name}
+            name="username"
+            value={form.username}
             onChange={handleChange}
-            error={errors.name}
+            error={errors.username}
             required
         />
         <InputField
