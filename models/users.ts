@@ -9,8 +9,7 @@ export interface IUser {
     plan: 
         | "Starter" 
         | "WhatsApp Automation" 
-        | "AI WhatsApp Agent" 
-        | "Creator" 
+        | "AI WhatsApp Agent"
         | "Pro Seller" 
         | "Visionary" 
         | "free";
@@ -54,7 +53,7 @@ const userSchema = new mongoose.Schema({
             "Visionary",
             "free"
         ],
-        default: "free"
+        default: null
     },
     role: {
         type: String,

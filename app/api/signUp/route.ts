@@ -39,7 +39,7 @@ export async function POST(req: Request) {
             email,
             password: hashedPassword,
             role: "user",  // default role
-            plan: "free",  // default plan
+            plan: null,  // default plan
             active: false, // default active state
         });
 

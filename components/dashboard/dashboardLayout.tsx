@@ -24,11 +24,14 @@ export default function ProtectedDashboardClient({
 
     useEffect(() => {
         if (status === "unauthenticated") router.push(`/${locale}/login`);
+        if (status === "authenticated" && session?.user?.plan === null) {
+            router.push(`/${locale}/onboarding/plan`);
+        };
     }, [status, session, router, locale]);
 
     if (status === "loading") return <LogoLoader/>
 
-    if (status === "authenticated") {
+    if (status === "authenticated" && session?.user?.plan !== null) {
         return (
         <Providers session={session}>
             <NextIntlClientProvider locale={locale} messages={messages}>
