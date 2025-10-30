@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
@@ -16,11 +15,34 @@ export default function Sidebar() {
     const params = useParams();
     const router = useRouter();
     const [open, setOpen] = useState(false);
+    const [userDetails, setUserDetails] = useState<any>(null);
 
-    const { data: session } = useSession();
-    const user = session?.user;
+    const { data: session, status } = useSession();
+    const userId = session?.user?.id;
 
-    if (!user) return null;
+    useEffect(() => {
+        if (status === "authenticated" && userId) {
+        fetch("/api/auth/refresh", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: userId }),
+        })
+            .then(async (res) => {
+            if (!res.ok) throw new Error("Failed to fetch user details");
+            const data = await res.json();
+            setUserDetails(data);
+            })
+            .catch(() => {
+            signOut({ redirect: false }).then(() => {
+                router.push(`/${params.locale}/login`);
+            });
+            });
+        }
+    }, [status, userId, router, params.locale]);
+
+    if (!userDetails) return null;
 
     const handleSignOut = () => {
         signOut({ redirect: false }).then(() => {
@@ -44,8 +66,8 @@ export default function Sidebar() {
             transition-transform duration-300 transform 
             ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:shadow-none`}
         >
-            <SidebarProfile user={user} />
-            <SidebarNav userPlan={user.plan || "free"} pathname={pathname} t={t} />
+            <SidebarProfile user={userDetails} />
+            <SidebarNav userPlan={userDetails.plan || "free"} pathname={pathname} t={t} />
             <SidebarLogout handleSignOut={handleSignOut} t={t} />
         </aside>
 

@@ -21,22 +21,33 @@ export default function ProtectedDashboardClient({
     }: Props) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [overridePlan, setOverridePlan] = useState<string | null>(null);
+    const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
     useEffect(() => {
         if (status === "unauthenticated") {
         router.push(`/${locale}/login`);
+        return;
         }
 
-        if (status === "authenticated" && session?.user?.plan === null) {
-        fetch("/api/auth/refresh")
-            .then((res) => res.json())
-            .then((data) => {
-            if (data.plan) {
-                setOverridePlan(data.plan);
-            } else {
+        if (status === "authenticated" && session?.user?.id) {
+        fetch("/api/auth/refresh", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: session.user.id }),
+        })
+            .then(async (res) => {
+            if (!res.ok) throw new Error("Unauthorized");
+            const data = await res.json();
+            const completed = data.onboardingCompleted ?? false;
+
+            if (!completed) {
                 router.push(`/${locale}/onboarding/plan`);
+                return;
             }
+
+            setOnboardingCompleted(completed);
             })
             .catch(() => {
             router.push(`/${locale}/onboarding/plan`);
@@ -44,11 +55,9 @@ export default function ProtectedDashboardClient({
         }
     }, [status, session, router, locale]);
 
-    if (status === "loading") return <LogoLoader />;
+    if (status === "loading" || onboardingCompleted === null) return <LogoLoader />;
 
-    const effectivePlan = session?.user?.plan || overridePlan;
-
-    if (status === "authenticated" && effectivePlan !== null) {
+    if (status === "authenticated" && onboardingCompleted === true) {
         return (
         <Providers session={session}>
             <NextIntlClientProvider locale={locale} messages={messages}>

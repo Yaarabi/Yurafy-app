@@ -6,66 +6,59 @@ export interface IUser {
     logo?: string;
     email: string;
     phone?: string;
-    plan: 
-        | "Starter" 
-        | "WhatsApp Automation" 
-        | "AI WhatsApp Agent"
-        | "Pro Seller" 
-        | "Visionary" 
-        | "free";
     role: "user" | "tester" | "admin";
     active: boolean;
+    currentPlanId?: string;
+    onboardingCompleted?: boolean;
 }
 
-const userSchema = new mongoose.Schema({
-    username: {
+const userSchema = new mongoose.Schema(
+    {
+        username: {
         type: String,
         required: true,
-        trim: true
-    },
-    logo: {
+        trim: true,
+        },
+        logo: {
         type: String,
         required: false,
-    },
-    email: {
+        },
+        email: {
         type: String,
         required: true,
         unique: true,
         lowercase: true,
-        trim: true
-    },
-    password: {
+        trim: true,
+        },
+        password: {
         type: String,
-        required: true
-    },
-    phone: {
+        required: true,
+        },
+        phone: {
         type: String,
         required: false,
-        trim: true
-    },
-    plan: {
-        type: String,
-        enum: [
-            "Starter",
-            "WhatsApp Automation",
-            "AI WhatsApp Agent",
-            "Pro Seller",
-            "Visionary",
-            "free"
-        ],
-        default: null
-    },
-    role: {
+        trim: true,
+        },
+        role: {
         type: String,
         enum: ["user", "tester", "admin"],
-        default: "user"
-    },
-    active: {
+        default: "user",
+        },
+        active: {
         type: Boolean,
         default: false,
-    }
-},
-{ timestamps: true }
+        },
+        currentPlanId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Plan",
+        default: null,
+        },
+        onboardingCompleted: {
+        type: Boolean,
+        default: false,
+        },
+    },
+    { timestamps: true }
 );
 
 export default mongoose.models.User || mongoose.model("User", userSchema);

@@ -1,21 +1,22 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import User, { IUser } from "@/models/users";
+import User from "@/models/users";
+import Plan from "@/models/plan";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
-const ALLOWED_UPDATE_FIELDS = ["username", "email", "plan", "role", "active"];
+const ALLOWED_UPDATE_FIELDS = ["username", "email", "role", "active"]; // removed "plan"
 
 const isValidObjectId = (id: string) => mongoose.Types.ObjectId.isValid(id);
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const sanitizeUser = (user: any) => ({
+const sanitizeUser = (user: any, planKey: string = "free") => ({
     id: user._id.toString(),
     username: user.username,
     email: user.email,
-    plan: user.plan,
     role: user.role,
     active: user.active,
+    plan: planKey,
 });
 
 export async function GET(req: Request) {
@@ -32,14 +33,32 @@ export async function GET(req: Request) {
         const user = await User.findById(id).select("-password");
         if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-        return NextResponse.json({ message: "User retrieved", user: sanitizeUser(user) }, { status: 200 });
+        let planKey = "free";
+        if (user.currentPlanId) {
+            const plan = await Plan.findById(user.currentPlanId);
+            if (plan && plan.status === "active") {
+            planKey = plan.planKey;
+            }
+        }
+
+        return NextResponse.json({ message: "User retrieved", user: sanitizeUser(user, planKey) }, { status: 200 });
         }
 
         const users = await User.find().select("-password");
-        return NextResponse.json({
-        message: "All users retrieved",
-        users: users.map(sanitizeUser),
-        }, { status: 200 });
+        const enrichedUsers = await Promise.all(
+        users.map(async (user) => {
+            let planKey = "free";
+            if (user.currentPlanId) {
+            const plan = await Plan.findById(user.currentPlanId);
+            if (plan && plan.status === "active") {
+                planKey = plan.planKey;
+            }
+            }
+            return sanitizeUser(user, planKey);
+        })
+        );
+
+        return NextResponse.json({ message: "All users retrieved", users: enrichedUsers }, { status: 200 });
     } catch (error) {
         console.error("GET /api/users error:", error);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
@@ -53,7 +72,7 @@ export async function POST(req: Request) {
         const username = body.username?.trim();
         const email = body.email?.trim().toLowerCase();
         const password = body.password?.trim();
-        const plan = body.plan || "free";
+        const planKey = body.plan || "free";
         const role = body.role || "user";
 
         if (!username || !email || !password) {
@@ -75,16 +94,34 @@ export async function POST(req: Request) {
         username,
         email,
         password: hashedPassword,
-        plan,
         role,
         active: false,
         });
 
         const savedUser = await newUser.save();
 
+        // Create and link plan
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + 30); // default to 30 days
+
+        const newPlan = new Plan({
+        userId: savedUser._id,
+        planKey,
+        price: 0,
+        durationDays: 30,
+        startDate,
+        endDate,
+        status: "active",
+        });
+
+        const savedPlan = await newPlan.save();
+        savedUser.currentPlanId = savedPlan._id;
+        await savedUser.save();
+
         return NextResponse.json({
         message: "User created successfully",
-        user: sanitizeUser(savedUser),
+        user: sanitizeUser(savedUser, planKey),
         }, { status: 201 });
     } catch (error) {
         console.error("POST /api/users error:", error);
@@ -116,9 +153,17 @@ export async function PUT(req: Request) {
         const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true }).select("-password");
         if (!updatedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+        let planKey = "free";
+        if (updatedUser.currentPlanId) {
+        const plan = await Plan.findById(updatedUser.currentPlanId);
+        if (plan && plan.status === "active") {
+            planKey = plan.planKey;
+        }
+        }
+
         return NextResponse.json({
         message: "User updated successfully",
-        user: sanitizeUser(updatedUser),
+        user: sanitizeUser(updatedUser, planKey),
         }, { status: 200 });
     } catch (error) {
         console.error("PUT /api/users error:", error);
@@ -138,6 +183,8 @@ export async function DELETE(req: Request) {
 
         const deletedUser = await User.findByIdAndDelete(id).select("-password");
         if (!deletedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        await Plan.deleteMany({ userId: deletedUser._id }); // clean up plans
 
         return NextResponse.json({
         message: "User deleted successfully",
