@@ -1,42 +1,127 @@
-"use client"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useState } from "react"
-import { AiOutlineShoppingCart, AiOutlineWechat } from "react-icons/ai"
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"
+"use client";
 
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useMemo } from "react";
+import { AiOutlineShoppingCart, AiOutlineWechat } from "react-icons/ai";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+
+/* ------------------- Reusable Input Components ------------------- */
+const InputField = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    type = "text",
+    required = false,
+    }: {
+    label?: string;
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    type?: string;
+    required?: boolean;
+    }) => (
+    <div>
+        {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+        <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+        />
+    </div>
+    );
+
+    const TextAreaField = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    }: {
+    label?: string;
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    }) => (
+    <div>
+        {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+        <textarea
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+        />
+    </div>
+    );
+
+    /* ------------------- Collapsible Section ------------------- */
+    const CollapsibleSection = ({
+    title,
+    color,
+    Icon,
+    open,
+    setOpen,
+    children,
+    }: {
+    title: string;
+    color: string;
+    Icon: React.ComponentType<{ size?: number }>;
+    open: boolean;
+    setOpen: (val: boolean) => void;
+    children: React.ReactNode;
+    }) => (
+    <div className="bg-white shadow-md rounded-xl p-6">
+        <button
+        onClick={() => setOpen(!open)}
+        className={`flex justify-between items-center w-full text-left ${color} font-semibold text-lg`}
+        >
+        <div className="flex items-center gap-2">
+            <Icon size={24} />
+            {title}
+        </div>
+        {open ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {open && <div className="mt-4 space-y-3">{children}</div>}
+    </div>
+);
+
+/* ------------------- Main Page Component ------------------- */
 export default function InfoPage() {
-    const plan = useSearchParams().get("plan")
-    const locale = useSearchParams().get("locale") ?? "en"
-    const router = useRouter()
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
-    // Store fields
-    const [brandName, setBrandName] = useState("")
-    const [domain, setDomain] = useState("")
-    const [description, setDescription] = useState("")
-    const [logoUrl, setLogoUrl] = useState("")
-    const [whoWeAreDesc, setWhoWeAreDesc] = useState("")
-    const [whoWeAreImage, setWhoWeAreImage] = useState("")
-    const [facebook, setFacebook] = useState("")
-    const [instagram, setInstagram] = useState("")
-    const [twitter, setTwitter] = useState("")
-    const [linkedin, setLinkedin] = useState("")
-    const [heroTitle, setHeroTitle] = useState("")
-    const [heroSubtitle, setHeroSubtitle] = useState("")
-    const [heroImage, setHeroImage] = useState("")
+    // 🧠 Fix the focus bug (memoize search params)
+    const plan = useMemo(() => searchParams.get("plan"), [searchParams]);
+    const locale = useMemo(() => searchParams.get("locale") ?? "en", [searchParams]);
 
-    // WhatsApp fields
-    const [waBusinessId, setWaBusinessId] = useState("")
-    const [waNumberId, setWaNumberId] = useState("")
-    const [waNumber, setWaNumber] = useState("")
-    const [waToken, setWaToken] = useState("")
-    const [aiPersonality, setAiPersonality] = useState("friendly assistant")
+    /* ------------------- Store Fields ------------------- */
+    const [brandName, setBrandName] = useState("");
+    const [domain, setDomain] = useState("");
+    const [description, setDescription] = useState("");
+    const [logoUrl, setLogoUrl] = useState("");
+    const [whoWeAreDesc, setWhoWeAreDesc] = useState("");
+    const [whoWeAreImage, setWhoWeAreImage] = useState("");
+    const [facebook, setFacebook] = useState("");
+    const [instagram, setInstagram] = useState("");
+    const [twitter, setTwitter] = useState("");
+    const [linkedin, setLinkedin] = useState("");
+    const [heroTitle, setHeroTitle] = useState("");
+    const [heroSubtitle, setHeroSubtitle] = useState("");
+    const [heroImage, setHeroImage] = useState("");
 
-    const [storeOpen, setStoreOpen] = useState(true)
-    const [waOpen, setWaOpen] = useState(true)
+    /* ------------------- WhatsApp Fields ------------------- */
+    const [waBusinessId, setWaBusinessId] = useState("");
+    const [waNumberId, setWaNumberId] = useState("");
+    const [waNumber, setWaNumber] = useState("");
+    const [waToken, setWaToken] = useState("");
+    const [aiPersonality, setAiPersonality] = useState("friendly assistant");
 
-    const inputClasses =
-        "w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+    const [storeOpen, setStoreOpen] = useState(true);
+    const [waOpen, setWaOpen] = useState(true);
 
+    /* ------------------- Handle Submit ------------------- */
     const handleSubmit = async () => {
         await fetch("/api/onboarding/save-info", {
         method: "POST",
@@ -60,39 +145,9 @@ export default function InfoPage() {
             aiConfig: { personality: aiPersonality },
             },
         }),
-        })
-        router.push(`/${locale}/onboarding/checkout?plan=${plan}`)
-    }
-
-    const CollapsibleSection = ({
-        title,
-        color,
-        Icon,
-        open,
-        setOpen,
-        children,
-    }: {
-        title: string
-        color: string
-        Icon: React.ComponentType<{ size?: number }>
-        open: boolean
-        setOpen: (val: boolean) => void
-        children: React.ReactNode
-    }) => (
-        <div className="bg-white shadow-md rounded-xl p-6">
-        <button
-            onClick={() => setOpen(!open)}
-            className={`flex justify-between items-center w-full text-left ${color} font-semibold text-lg`}
-        >
-            <div className="flex items-center gap-2">
-            <Icon size={24} />
-            {title}
-            </div>
-            {open ? <FaChevronUp /> : <FaChevronDown />}
-        </button>
-        {open && <div className="mt-4 space-y-3">{children}</div>}
-        </div>
-    )
+        });
+        router.push(`/${locale}/onboarding/checkout?plan=${plan}`);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 p-6 flex justify-center">
@@ -101,7 +156,7 @@ export default function InfoPage() {
             Setup Info for <span className="capitalize">{plan}</span>
             </h1>
 
-            {/* Store Section */}
+            {/* 🛍️ Store Section */}
             {(plan === "starter" || plan === "proSeller" || plan === "visionary") && (
             <CollapsibleSection
                 title="Store Details"
@@ -110,96 +165,29 @@ export default function InfoPage() {
                 open={storeOpen}
                 setOpen={setStoreOpen}
             >
-                <input
-                placeholder="Brand Name *"
-                className={inputClasses}
-                value={brandName}
-                onChange={e => setBrandName(e.target.value)}
-                required
-                />
-                <input
-                placeholder="Domain *"
-                className={inputClasses}
-                value={domain}
-                onChange={e => setDomain(e.target.value)}
-                required
-                />
-                <textarea
-                placeholder="Description"
-                className={inputClasses}
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                />
-                <input
-                placeholder="Logo URL"
-                className={inputClasses}
-                value={logoUrl}
-                onChange={e => setLogoUrl(e.target.value)}
-                />
+                <InputField placeholder="Brand Name *" value={brandName} onChange={(e) => setBrandName(e.target.value)} required />
+                <InputField placeholder="Domain *" value={domain} onChange={(e) => setDomain(e.target.value)} required />
+                <TextAreaField placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                <InputField placeholder="Logo URL" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
 
                 <h3 className="font-medium">Who We Are</h3>
-                <textarea
-                placeholder="Description"
-                className={inputClasses}
-                value={whoWeAreDesc}
-                onChange={e => setWhoWeAreDesc(e.target.value)}
-                />
-                <input
-                placeholder="Image URL"
-                className={inputClasses}
-                value={whoWeAreImage}
-                onChange={e => setWhoWeAreImage(e.target.value)}
-                />
+                <TextAreaField placeholder="Description" value={whoWeAreDesc} onChange={(e) => setWhoWeAreDesc(e.target.value)} />
+                <InputField placeholder="Image URL" value={whoWeAreImage} onChange={(e) => setWhoWeAreImage(e.target.value)} />
 
                 <h3 className="font-medium">Social Links</h3>
-                <input
-                placeholder="Facebook"
-                className={inputClasses}
-                value={facebook}
-                onChange={e => setFacebook(e.target.value)}
-                />
-                <input
-                placeholder="Instagram"
-                className={inputClasses}
-                value={instagram}
-                onChange={e => setInstagram(e.target.value)}
-                />
-                <input
-                placeholder="Twitter"
-                className={inputClasses}
-                value={twitter}
-                onChange={e => setTwitter(e.target.value)}
-                />
-                <input
-                placeholder="LinkedIn"
-                className={inputClasses}
-                value={linkedin}
-                onChange={e => setLinkedin(e.target.value)}
-                />
+                <InputField placeholder="Facebook" value={facebook} onChange={(e) => setFacebook(e.target.value)} />
+                <InputField placeholder="Instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} />
+                <InputField placeholder="Twitter" value={twitter} onChange={(e) => setTwitter(e.target.value)} />
+                <InputField placeholder="LinkedIn" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
 
                 <h3 className="font-medium">Hero Section</h3>
-                <input
-                placeholder="Hero Title"
-                className={inputClasses}
-                value={heroTitle}
-                onChange={e => setHeroTitle(e.target.value)}
-                />
-                <input
-                placeholder="Hero Subtitle"
-                className={inputClasses}
-                value={heroSubtitle}
-                onChange={e => setHeroSubtitle(e.target.value)}
-                />
-                <input
-                placeholder="Hero Image URL"
-                className={inputClasses}
-                value={heroImage}
-                onChange={e => setHeroImage(e.target.value)}
-                />
+                <InputField placeholder="Hero Title" value={heroTitle} onChange={(e) => setHeroTitle(e.target.value)} />
+                <InputField placeholder="Hero Subtitle" value={heroSubtitle} onChange={(e) => setHeroSubtitle(e.target.value)} />
+                <InputField placeholder="Hero Image URL" value={heroImage} onChange={(e) => setHeroImage(e.target.value)} />
             </CollapsibleSection>
             )}
 
-            {/* WhatsApp Section */}
+            {/* 💬 WhatsApp Section */}
             {(plan === "whatsapp" || plan === "aiAgent" || plan === "proSeller" || plan === "visionary") && (
             <CollapsibleSection
                 title="WhatsApp Account"
@@ -208,43 +196,19 @@ export default function InfoPage() {
                 open={waOpen}
                 setOpen={setWaOpen}
             >
-                <input
-                placeholder="Business ID *"
-                className={inputClasses}
-                value={waBusinessId}
-                onChange={e => setWaBusinessId(e.target.value)}
-                required
-                />
-                <input
-                placeholder="Number ID *"
-                className={inputClasses}
-                value={waNumberId}
-                onChange={e => setWaNumberId(e.target.value)}
-                required
-                />
-                <input
-                placeholder="WhatsApp Number *"
-                className={inputClasses}
-                value={waNumber}
-                onChange={e => setWaNumber(e.target.value)}
-                required
-                />
-                <input
+                <InputField placeholder="Business ID *" value={waBusinessId} onChange={(e) => setWaBusinessId(e.target.value)} required />
+                <InputField placeholder="Number ID *" value={waNumberId} onChange={(e) => setWaNumberId(e.target.value)} required />
+                <InputField placeholder="WhatsApp Number *" value={waNumber} onChange={(e) => setWaNumber(e.target.value)} required />
+                <InputField
                 placeholder="Access Token (Encrypted) *"
                 type="password"
-                className={inputClasses}
                 value={waToken}
-                onChange={e => setWaToken(e.target.value)}
+                onChange={(e) => setWaToken(e.target.value)}
                 required
                 />
 
                 <h3 className="font-medium">AI Agent Config</h3>
-                <input
-                placeholder="Personality"
-                className={inputClasses}
-                value={aiPersonality}
-                onChange={e => setAiPersonality(e.target.value)}
-                />
+                <InputField placeholder="Personality" value={aiPersonality} onChange={(e) => setAiPersonality(e.target.value)} />
             </CollapsibleSection>
             )}
 
@@ -256,5 +220,5 @@ export default function InfoPage() {
             </button>
         </div>
         </div>
-    )
+    );
 }

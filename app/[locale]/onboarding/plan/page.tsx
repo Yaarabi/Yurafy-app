@@ -1,7 +1,7 @@
 "use client"
 import { useParams, useRouter } from "next/navigation"
 
-    const PLANS = {
+export const PLANS = {
     free: { 
         name: "Free", 
         price: 0, 
