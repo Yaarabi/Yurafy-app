@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import RevenueChart from "@/components/dashboard/home/RevenueChart";
 import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
 import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
@@ -9,6 +10,7 @@ import CustomersChart from "@/components/dashboard/home/customers";
 import LogoLoader from "@/components/themePreview/loadder";
 
 export default function DashboardClient() {
+    const { data: session } = useSession();
     const [orders, setOrders] = useState<any[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [templates, setTemplates] = useState<any[]>([]);
@@ -43,6 +45,14 @@ export default function DashboardClient() {
 
     return (
         <div className="p-6 space-y-6 mx-6">
+        {session?.user?.name || session?.user?.username ? (
+            <div className="mb-4">
+                <h1 className="text-2xl font-bold text-gray-900">
+                    Welcome, {session.user.name || session.user.username}!
+                </h1>
+                <p className="text-gray-600">Here's your dashboard overview.</p>
+            </div>
+        ) : null}
         <DashboardHeader/>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

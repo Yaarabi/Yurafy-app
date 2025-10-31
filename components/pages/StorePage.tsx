@@ -8,6 +8,7 @@ import { SerializedStore } from "@/lib/data/products";
 import FeaturedProducts from "./components/featuredProducts";
 import Hero from "./components/Hero";
 import WhatsAppButton from "../productPage/ProductActions";
+import { motion } from "framer-motion";
 
 interface StorePageProps {
     store: SerializedStore;
@@ -58,13 +59,21 @@ const StoreComponent = async ({
         <div>
         <Header store={store} page="store" />
         <main>
-            <Hero store={store} />
-            <FeaturedProducts
-            products={products}
-            onProductSelect={onProductSelect} // ✅ OK because FeaturedProducts is client
-            />
-            <AboutUs store={store} />
-            <TrustSection />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <Hero store={store} />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
+                <FeaturedProducts
+                products={products}
+                onProductSelect={onProductSelect}
+                />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}>
+                <AboutUs store={store} />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
+                <TrustSection />
+            </motion.div>
         </main>
         <WhatsAppButton/>
         <Footer store={store} />

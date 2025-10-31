@@ -10,7 +10,7 @@ export default function Button({ text, disabled }: ButtonProps) {
         <button
         disabled={disabled}
         type="submit"
-        className="w-full py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded transition duration-200"
+        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
         {text}
         </button>

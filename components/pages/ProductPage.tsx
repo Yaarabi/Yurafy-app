@@ -11,6 +11,7 @@ import ProductGallery from "../productPage/ProductGallery";
 import ProductVariantsUI from "../productPage/ProductVariantsUI";
 import ProductDetails from "../productPage/ProductDetails";
 import WhatsAppButton from "../productPage/ProductActions";
+import { motion } from "framer-motion";
 
 interface ProductPageProps {
     product: IProduct;
@@ -35,7 +36,7 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
 
         {/* Main Content */}
             <main className="relative min-h-screen px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-                <section className="max-w-6xl mx-auto flex flex-col gap-10 p-6 md:p-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm">
+                <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-6xl mx-auto flex flex-col gap-10 p-6 md:p-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm">
                     <div className="flex flex-col md:flex-row gap-10">
                         <ProductGallery
                             mainImage={product.mainImage}
@@ -43,13 +44,13 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
                             alt={product.name}
                         />
 
-                        <div className="flex-1 flex flex-col justify-between">
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45 }} className="flex-1 flex flex-col justify-between">
                             <ProductDetails product={product} />
                             <ProductVariantsUI sizes={product.sizes} colors={product.colors} />
                             <OrderForm product={product} formRef={formRef} />
-                        </div>
+                        </motion.div>
                     </div>
-                </section>
+                </motion.section>
             </main>
 
         {/* Trust section */}

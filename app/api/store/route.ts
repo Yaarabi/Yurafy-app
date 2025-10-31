@@ -40,11 +40,18 @@ export async function POST(req: NextRequest) {
         domain,
         description,
         logoUrl,
+        faviconUrl,
         coverImageUrl,
         whoWeAre,
         socialLinks,
         theme,
         hero,
+        customization,
+        seo,
+        businessInfo,
+        paymentMethods,
+        codEnabled,
+        shippingInfo,
         } = body;
 
         if (!owner || !brandName || !domain) {
@@ -59,14 +66,20 @@ export async function POST(req: NextRequest) {
         const store = await Store.create({
         owner,
         brandName,
-        domain,
+        domain: domain.toLowerCase().trim(),
         description,
         logoUrl,
-        coverImageUrl,
+        faviconUrl,
         whoWeAre,
         socialLinks,
         theme,
         hero,
+        customization,
+        seo,
+        businessInfo,
+        paymentMethods,
+        codEnabled,
+        shippingInfo,
         });
 
         return NextResponse.json(store, { status: 201 });

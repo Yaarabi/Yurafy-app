@@ -6,40 +6,8 @@ import { IProduct } from '@/models/products';
 // ----------------------
 // Serialized Store Interface
 // ----------------------
-export interface SerializedStore {
-    _id: string;
-    owner?: string;
-    brandName: string;
-    domain: string;
-    description?: string;
-    logoUrl?: string;
-    coverImageUrl?: string;
-    whoWeAre?: { description?: string; imageUrl?: string };
-    socialLinks?: {
-        facebook?: string;
-        instagram?: string;
-        twitter?: string;
-        linkedin?: string;
-    };
-    theme?: {
-        primaryColor?: string;
-        secondaryColor?: string;
-        backgroundColor?: string;
-        textColor?: string;
-        gradient?: {
-        from?: string;
-        via?: string;
-        to?: string;
-        };
-    };
-    hero?: {
-        title?: string;
-        subtitle?: string;
-        imageUrl?: string;
-    };
-    createdAt?: string;
-    updatedAt?: string;
-    }
+// Use SerializedStore from store.ts to maintain consistency
+export type { SerializedStore } from './store';
 
 // ----------------------
 // Helper: Serialize ID

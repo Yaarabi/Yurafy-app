@@ -11,6 +11,7 @@ import SettingsSection from '@/components/dashboard/setting/settingSection';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
 import ThemeToggle from '@/components/dashboard/Mode';
 import Link from 'next/link';
+import StoreSettings from '@/components/dashboard/setting/StoreSettings';
 import { useParams } from 'next/navigation';
 import LogoLoader from '@/components/themePreview/loadder';
 
@@ -142,13 +143,13 @@ export default function SettingsPage() {
     // --- Logo Upload ---
     const MAX_LOGO_SIZE = 2 * 1024 * 1024; // 2MB
 
-    const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
         const files = e.target.files;
         if (!files?.length) return;
         const file = files[0];
 
-        if (!file.type.startsWith('image/')) return toast.error('Invalid logo type.');
-        if (file.size > MAX_LOGO_SIZE) return toast.error('Logo too large (max 2MB).');
+        if (!file.type.startsWith('image/')) { toast.error('Invalid logo type.'); return; }
+        if (file.size > MAX_LOGO_SIZE) { toast.error('Logo too large (max 2MB).'); return; }
 
         try {
         const formData = new FormData();
@@ -212,29 +213,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === 'Store' && store && (
-                <SettingsSection title="Store Settings">
-                <LogoUploader logoUrl={'/logo.png'} onUpload={handleLogoUpload} />
-                <EditableField label="Brand Name" value={store.brandName || ''} onSave={(val) => updateStoreField('brandName', val)} />
-                <EditableField label="Domain" value={store.domain || ''} onSave={(val) => updateStoreField('domain', val)} />
-                <EditableField label="Description" value={store.description || ''} onSave={(val) => updateStoreField('description', val)} />
-                <EditableField label="Who We Are" value={store.whoWeAre || ''} onSave={(val) => updateStoreField('whoWeAre', val)} />
-
-                <SettingsSection title="Social Links">
-                    <EditableField label="Facebook" value={store.socialLinks?.facebook || ''} onSave={(val) => updateStoreField('socialLinks', { ...store.socialLinks, facebook: val })} />
-                    <EditableField label="Instagram" value={store.socialLinks?.instagram || ''} onSave={(val) => updateStoreField('socialLinks', { ...store.socialLinks, instagram: val })} />
-                    <EditableField label="Twitter" value={store.socialLinks?.twitter || ''} onSave={(val) => updateStoreField('socialLinks', { ...store.socialLinks, twitter: val })} />
-                    <EditableField label="LinkedIn" value={store.socialLinks?.linkedin || ''} onSave={(val) => updateStoreField('socialLinks', { ...store.socialLinks, linkedin: val })} />
-                </SettingsSection>
-
-                <div className="mt-6 flex justify-end">
-                    <Link
-                    href={`/${params.locale}/dashboard/settings/theme`}
-                    className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue-dark)] transition-all"
-                    >
-                    Edit Theme
-                    </Link>
-                </div>
-                </SettingsSection>
+                <StoreSettings store={store} onUpdate={updateStoreField} onUploadLogo={handleLogoUpload} locale={params.locale} />
             )}
 
             {activeTab === 'WhatsApp' && whatsapp && (

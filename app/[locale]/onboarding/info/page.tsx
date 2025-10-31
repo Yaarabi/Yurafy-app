@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 import StoreSection from "@/components/onboarding/info/storeInfo";
 import WhatsAppSection from "@/components/onboarding/info/waAccountInfo";
+import AIStoreSetup from "@/components/onboarding/ai/AIStoreSetup";
 
 export default function InfoPage() {
     const searchParams = useSearchParams();
@@ -14,6 +15,7 @@ export default function InfoPage() {
 
     const [storeOpen, setStoreOpen] = useState(true);
     const [waOpen, setWaOpen] = useState(true);
+    const [useAI, setUseAI] = useState(true);
 
     const [storeData, setStoreData] = useState({
         brandName: "",
@@ -80,7 +82,46 @@ export default function InfoPage() {
             </h1>
 
             {(plan === "starter" || plan === "proSeller" || plan === "visionary") && (
-            <StoreSection storeData={storeData} setStoreData={setStoreData} open={storeOpen} setOpen={setStoreOpen} />
+                <>
+                    <div className="flex gap-4 mb-4">
+                        <button
+                            onClick={() => setUseAI(true)}
+                            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                                useAI
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            🤖 AI Assistant Setup
+                        </button>
+                        <button
+                            onClick={() => setUseAI(false)}
+                            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                                !useAI
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            ✏️ Manual Setup
+                        </button>
+                    </div>
+                    {useAI ? (
+                        <AIStoreSetup
+                            plan={plan || "Starter"}
+                            onComplete={(suggestions) => {
+                                setStoreData({
+                                    ...storeData,
+                                    brandName: suggestions.brandName || storeData.brandName,
+                                    domain: suggestions.domain || storeData.domain,
+                                    description: suggestions.description || storeData.description,
+                                });
+                                setUseAI(false);
+                            }}
+                        />
+                    ) : (
+                        <StoreSection storeData={storeData} setStoreData={setStoreData} open={storeOpen} setOpen={setStoreOpen} />
+                    )}
+                </>
             )}
 
             {(plan === "whatsapp" || plan === "aiAgent" || plan === "proSeller" || plan === "visionary") && (

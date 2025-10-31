@@ -1,6 +1,7 @@
 "use client";
 import CollectionPage from "@/components/pages/CollectionPage";
 import ThemeInjector from "@/components/productPage/ThemeInjector";
+import CustomCSSJSInjector from "@/components/store/CustomCSSJSInjector";
 import { SerializedStore } from "@/lib/data/store";
 import { IProduct } from "@/models/products";
 import { useParams } from "next/navigation";
@@ -52,8 +53,11 @@ function WraapShopPage() {
     return (
         <>
             <ThemeInjector theme={store.theme} />
+            <CustomCSSJSInjector 
+                customCSS={store.customization?.customCSS} 
+                customJS={store.customization?.customJS} 
+            />
             <CollectionPage store={store} products={products} onProductSelect={onProductSelect} />
-
         </>
     );
 }

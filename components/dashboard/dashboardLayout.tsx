@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import Providers from "@/components/home/provider";
+import Providers from "@/components/login/Providers";
 import Sidebar from "./sidebar/Sidebar";
 import LogoLoader from "../themePreview/loadder";
 

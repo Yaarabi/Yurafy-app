@@ -10,13 +10,15 @@ export interface SerializedStore {
     domain: string;
     description?: string;
     logoUrl?: string;
+    faviconUrl?: string;
     whoWeAre?: { description?: string; imageUrl?: string };
     socialLinks?: {
         facebook?: string;
         instagram?: string;
         twitter?: string;
         linkedin?: string;
-        email?: string;
+        youtube?: string;
+        tiktok?: string;
         whatsapp?: string;
     };
     theme?: {
@@ -29,6 +31,46 @@ export interface SerializedStore {
         title?: string;
         subtitle?: string;
         imageUrl?: string;
+        ctaText?: string;
+        ctaLink?: string;
+    };
+    customization?: {
+        layout?: 'grid' | 'list' | 'masonry';
+        showCategories?: boolean;
+        showFilters?: boolean;
+        productsPerPage?: number;
+        enableSearch?: boolean;
+        enableReviews?: boolean;
+        enableWishlist?: boolean;
+        enableCompare?: boolean;
+        footerText?: string;
+        customCSS?: string;
+        customJS?: string;
+    };
+    seo?: {
+        metaTitle?: string;
+        metaDescription?: string;
+        keywords?: string[];
+        ogImage?: string;
+    };
+    businessInfo?: {
+        address?: string;
+        city?: string;
+        country?: string;
+        phone?: string;
+        email?: string;
+        workingHours?: string;
+        taxId?: string;
+    };
+    paymentMethods?: string[];
+    codEnabled?: boolean;
+    shippingInfo?: {
+        freeShippingThreshold?: number;
+        shippingZones?: Array<{
+            name: string;
+            countries: string[];
+            price: number;
+        }>;
     };
     createdAt: string;
     updatedAt: string;
@@ -43,10 +85,11 @@ function serializeStore(store: IStore): SerializedStore {
         domain: store.domain,
         description: store.description,
         logoUrl: store.logoUrl,
+        faviconUrl: store.faviconUrl,
         whoWeAre: {
-                description: store.whoWeAre?.description,
-                imageUrl: store.whoWeAre?.imageUrl,
-            },
+            description: store.whoWeAre?.description,
+            imageUrl: store.whoWeAre?.imageUrl,
+        },
         socialLinks: { ...store.socialLinks },
         theme: {
             primaryColor: store.theme?.primaryColor,
@@ -55,6 +98,12 @@ function serializeStore(store: IStore): SerializedStore {
             gradient: { ...store.theme?.gradient },
         },
         hero: { ...store.hero },
+        customization: { ...store.customization },
+        seo: { ...store.seo },
+        businessInfo: { ...store.businessInfo },
+        paymentMethods: store.paymentMethods ? [...store.paymentMethods] : undefined,
+        codEnabled: (store as any).codEnabled,
+        shippingInfo: { ...store.shippingInfo },
         createdAt: store.createdAt?.toISOString(),
         updatedAt: store.updatedAt?.toISOString(),
     };

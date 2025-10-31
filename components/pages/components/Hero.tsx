@@ -26,14 +26,14 @@ const Hero = ({ store }: { store: SerializedStore }) => {
             {store.hero.subtitle}
             </p>
             <Link
-                href={`/${params.locale}/${params.domain}/shop`}
+                href={store.hero.ctaLink || `/${params.locale}/${params.domain}/shop`}
                 className="px-8 py-3 rounded-full font-bold transition-transform duration-300 ease-in-out transform hover:scale-105"
                 style={{
                     backgroundColor: "var(--primary-color)",
                     color: "var(--text-color)",
                 }}
             >
-            Shop Now
+            {store.hero.ctaText || "Shop Now"}
             </Link>
         </div>
         </section>

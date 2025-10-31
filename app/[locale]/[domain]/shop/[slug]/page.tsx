@@ -4,6 +4,7 @@ import ProductPageClientWrapper from '@/components/pages/productWraper';
 import { getProductWithStoreBySlug } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
+import CustomCSSJSInjector from '@/components/store/CustomCSSJSInjector';
 import { getStoreByDomain } from '@/lib/data/store';
 import NotFound from '../not-found';
 
@@ -18,6 +19,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     return (
         <>
             <ThemeInjector theme={store?.theme || {}} />
+            <CustomCSSJSInjector 
+                customCSS={store?.customization?.customCSS} 
+                customJS={store?.customization?.customJS} 
+            />
             <ProductPageClientWrapper product={product} store={store} />
         </>
     );
