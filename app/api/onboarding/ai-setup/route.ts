@@ -3,7 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
+import Store from "@/models/store";
 import { generateStoreSetupResponse, getThreadId } from "@/lib/agent/storeAgent/storeAgent";
+import { serializeStore } from "@/lib/data/store";
 
 /**
  * AI-powered store setup assistant
@@ -90,8 +92,21 @@ export async function POST(request: NextRequest) {
         const response = result.message || '';
         const uiAction = result.uiAction || null;
         const storeCreated = response.includes('✅ Store') && response.includes('has been created successfully');
-        const storeData = result.storeData || null;
+        let storeData = result.storeData || null;
         const showPreviewEdit = result.showPreviewEdit || false;
+
+        // If store was created, fetch the saved store from database to get complete data
+        if (storeCreated) {
+            try {
+                const savedStore = await Store.findOne({ owner: session.user.id }).lean();
+                if (savedStore) {
+                    storeData = serializeStore(savedStore);
+                }
+            } catch (error) {
+                console.error("Error fetching saved store:", error);
+                // Continue with storeData from result if fetch fails
+            }
+        }
 
         return NextResponse.json({
             success: true,

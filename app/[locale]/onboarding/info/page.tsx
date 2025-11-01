@@ -3,10 +3,11 @@
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import AIStoreSetup from "@/components/onboarding/ai/AIStoreSetup";
 import ThemeSelector from "@/components/onboarding/ThemeSelector";
 import StoreThemeStructureSelector from "@/components/onboarding/StoreThemeStructureSelector";
 import ProductPageStructureSelector from "@/components/onboarding/ProductPageStructureSelector";
+import StoreBasicInfoForm from "@/components/onboarding/StoreBasicInfoForm";
+import StoreGenerator from "@/components/onboarding/StoreGenerator";
 
 export default function InfoPage() {
     const searchParams = useSearchParams();
@@ -38,7 +39,13 @@ export default function InfoPage() {
     } | null>(null);
     const [showThemeStructure, setShowThemeStructure] = useState(false);
     const [showProductPageStructure, setShowProductPageStructure] = useState(false);
-    const [showAgent, setShowAgent] = useState(false);
+    const [showBasicInfoForm, setShowBasicInfoForm] = useState(false);
+    const [basicInfo, setBasicInfo] = useState<{
+        brandName: string;
+        domain: string;
+        description: string;
+    } | null>(null);
+    const [showGenerator, setShowGenerator] = useState(false);
     const [checking, setChecking] = useState(true);
 
     // Check if store exists and user onboarding status
@@ -122,8 +129,27 @@ export default function InfoPage() {
         setSelectedProductPageStructure(productPageStructure);
         // Small delay for smooth transition
         setTimeout(() => {
-            setShowAgent(true);
+            setShowBasicInfoForm(true);
         }, 300);
+    };
+
+    const handleBasicInfoSubmit = (info: { brandName: string; domain: string; description: string }) => {
+        setBasicInfo(info);
+        // Small delay for smooth transition
+        setTimeout(() => {
+            setShowGenerator(true);
+        }, 300);
+    };
+
+    const handleBackFromGenerator = () => {
+        setShowGenerator(false);
+        setBasicInfo(null);
+        setShowBasicInfoForm(true);
+    };
+
+    const handleBackFromBasicInfo = () => {
+        setShowBasicInfoForm(false);
+        setSelectedProductPageStructure(null);
     };
 
     // Show loading state while checking
@@ -154,7 +180,7 @@ export default function InfoPage() {
     }
 
     // Show product page structure selector after store structure is selected
-    if (!showAgent || !selectedProductPageStructure) {
+    if (!showBasicInfoForm || !selectedProductPageStructure) {
         return (
             <ProductPageStructureSelector
                 onSelect={handleProductPageStructureSelect}
@@ -163,20 +189,26 @@ export default function InfoPage() {
         );
     }
 
+    // Show basic info form after product page structure is selected
+    if (!showGenerator || !basicInfo) {
+        return (
+            <StoreBasicInfoForm
+                selectedTheme={selectedTheme}
+                onSubmit={handleBasicInfoSubmit}
+                onBack={handleBackFromBasicInfo}
+            />
+        );
+    }
+
+    // Show generator with preview after basic info is submitted
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 flex justify-center items-start">
-            <div className="w-full max-w-6xl">
-                <AIStoreSetup
-                    plan={plan || "Starter"}
-                    selectedTheme={selectedTheme}
-                    selectedThemeStructure={selectedThemeStructure}
-                    selectedProductPageStructure={selectedProductPageStructure}
-                    onComplete={(data) => {
-                        // Store creation and redirect handled inside AIStoreSetup component
-                        console.log("Store setup completed:", data);
-                    }}
-                />
-            </div>
-        </div>
+        <StoreGenerator
+            selectedTheme={selectedTheme}
+            selectedThemeStructure={selectedThemeStructure}
+            selectedProductPageStructure={selectedProductPageStructure}
+            basicInfo={basicInfo}
+            plan={plan || "Starter"}
+            onBack={handleBackFromGenerator}
+        />
     );
 }

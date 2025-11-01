@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Store, Palette, Globe, FileText, Image as ImageIcon, Info, 
-    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield 
+    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield, ExternalLink
 } from 'lucide-react';
 
 interface StorePreviewData {
@@ -59,8 +60,13 @@ export default function StorePreviewWithEdit({
     onEdit,
     loading = false 
 }: StorePreviewWithEditProps) {
+    const params = useParams();
+    const locale = (params?.locale as string) || 'en';
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState<any>('');
+    
+    // Generate store URL
+    const storeUrl = data?.domain ? `/${locale}/${data.domain}` : null;
 
     if (!visible || !data) return null;
 
@@ -352,6 +358,26 @@ export default function StorePreviewWithEdit({
                         </div>
                     )}
 
+                    {/* View Store Link */}
+                    {storeUrl && data?.domain && (
+                        <div className="pt-4 border-t border-gray-200 mb-4">
+                            <motion.a
+                                href={storeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-indigo-600 text-indigo-600 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:bg-indigo-50"
+                            >
+                                <ExternalLink className="w-5 h-5" />
+                                <span>View Your Store</span>
+                            </motion.a>
+                            <p className="text-xs text-gray-500 text-center mt-2">
+                                Preview your store at: <span className="font-mono break-all">{typeof window !== 'undefined' ? window.location.origin : ''}{storeUrl}</span>
+                            </p>
+                        </div>
+                    )}
+
                     {/* Submit Button */}
                     <div className="pt-6 border-t border-gray-200">
                         <motion.button
@@ -369,7 +395,7 @@ export default function StorePreviewWithEdit({
                             ) : (
                                 <>
                                     <Save className="w-5 h-5" />
-                                    <span>Save Store & Continue to Checkout</span>
+                                    <span>Continue to Checkout</span>
                                 </>
                             )}
                         </motion.button>
