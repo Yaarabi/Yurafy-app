@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import Store from "@/models/store";
+import { getStoreByDomain, getAllStores } from "@/lib/data/store";
 import { connectDB } from "@/lib/db/mongoDB";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth";
+import Store from "@/models/store";
 
 connectDB();
 
@@ -14,13 +17,13 @@ export async function GET(req: NextRequest) {
         const slug = url.searchParams.get("slug");
 
         if (slug) {
-        const store = await Store.findOne({ domain: slug });
-        if (!store) return NextResponse.json({ error: "Store not found" }, { status: 404 });
-        return NextResponse.json(store);
+            const store = await getStoreByDomain(slug);
+            if (!store) return NextResponse.json({ error: "Store not found" }, { status: 404 });
+            return NextResponse.json({ store });
         }
 
-        const stores = await Store.find();
-        return NextResponse.json(stores);
+        const stores = await getAllStores();
+        return NextResponse.json({ stores });
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to fetch stores" }, { status: 500 });
@@ -33,56 +36,64 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
     try {
+        const session = await getServerSession(authOptions);
         const body = await req.json();
         const {
-        owner,
-        brandName,
-        domain,
-        description,
-        logoUrl,
-        faviconUrl,
-        coverImageUrl,
-        whoWeAre,
-        socialLinks,
-        theme,
-        hero,
-        customization,
-        seo,
-        businessInfo,
-        paymentMethods,
-        codEnabled,
-        shippingInfo,
+            brandName,
+            domain,
+            description,
+            logoUrl,
+            faviconUrl,
+            coverImageUrl,
+            whoWeAre,
+            socialLinks,
+            theme,
+            hero,
+            customization,
+            seo,
+            businessInfo,
+            paymentMethods,
+            codEnabled,
+            shippingInfo,
         } = body;
 
-        if (!owner || !brandName || !domain) {
-        return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        // Prefer authenticated owner when available
+        const ownerId = session?.user?.id || body.owner;
+
+        if (!ownerId || !brandName || !domain) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        const existing = await Store.findOne({ domain });
+        // Normalize domain (lowercase, remove special chars, hyphenate)
+        const normalizedDomain = domain.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+        const existing = await Store.findOne({ domain: normalizedDomain });
         if (existing) {
-        return NextResponse.json({ error: "Domain already exists" }, { status: 400 });
+            return NextResponse.json({ error: "Domain already exists" }, { status: 400 });
         }
 
         const store = await Store.create({
-        owner,
-        brandName,
-        domain: domain.toLowerCase().trim(),
-        description,
-        logoUrl,
-        faviconUrl,
-        whoWeAre,
-        socialLinks,
-        theme,
-        hero,
-        customization,
-        seo,
-        businessInfo,
-        paymentMethods,
-        codEnabled,
-        shippingInfo,
+            owner: ownerId,
+            brandName,
+            domain: normalizedDomain,
+            description,
+            logoUrl,
+            faviconUrl,
+            whoWeAre,
+            socialLinks,
+            theme,
+            hero,
+            customization,
+            seo,
+            businessInfo,
+            paymentMethods,
+            codEnabled,
+            shippingInfo,
         });
 
-        return NextResponse.json(store, { status: 201 });
+        // Return serialized store via getStoreByDomain for consistency
+        const serialized = await getStoreByDomain(store.domain);
+        return NextResponse.json({ store: serialized }, { status: 201 });
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to create store" }, { status: 500 });
@@ -95,17 +106,28 @@ export async function POST(req: NextRequest) {
  */
 export async function PATCH(req: NextRequest) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
         const body = await req.json();
         const { storeId, updates } = body;
 
         if (!storeId || !updates) {
-        return NextResponse.json({ error: "Missing storeId or updates" }, { status: 400 });
+            return NextResponse.json({ error: "Missing storeId or updates" }, { status: 400 });
         }
 
-        const store = await Store.findByIdAndUpdate(storeId, updates, { new: true });
-        if (!store) return NextResponse.json({ error: "Store not found" }, { status: 404 });
+        // Ensure the authenticated user owns the store
+        const storeDoc = await Store.findById(storeId);
+        if (!storeDoc) return NextResponse.json({ error: "Store not found" }, { status: 404 });
+        if (storeDoc.owner?.toString() !== session.user.id) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
 
-        return NextResponse.json(store);
+        Object.assign(storeDoc, updates);
+        await storeDoc.save();
+
+        const serialized = await getStoreByDomain(storeDoc.domain);
+        return NextResponse.json({ store: serialized });
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to update store" }, { status: 500 });
@@ -118,13 +140,21 @@ export async function PATCH(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
         const url = new URL(req.url);
         const storeId = url.searchParams.get("storeId");
 
         if (!storeId) return NextResponse.json({ error: "Missing storeId" }, { status: 400 });
 
-        const store = await Store.findByIdAndDelete(storeId);
-        if (!store) return NextResponse.json({ error: "Store not found" }, { status: 404 });
+        const storeDoc = await Store.findById(storeId);
+        if (!storeDoc) return NextResponse.json({ error: "Store not found" }, { status: 404 });
+        if (storeDoc.owner?.toString() !== session.user.id) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+
+        await Store.findByIdAndDelete(storeId);
 
         return NextResponse.json({ success: true });
     } catch (err) {

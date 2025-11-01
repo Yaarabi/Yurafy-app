@@ -30,6 +30,7 @@ function serializeStoreDoc(store: any) {
         paymentMethods: store.paymentMethods ? [...store.paymentMethods] : undefined,
         codEnabled: store.codEnabled,
         shippingInfo: store.shippingInfo ? { ...store.shippingInfo } : undefined,
+        headerLinks: store.headerLinks ? [...store.headerLinks] : [],
         createdAt: store.createdAt?.toISOString(),
         updatedAt: store.updatedAt?.toISOString(),
     };
@@ -81,9 +82,19 @@ export async function PATCH(req: NextRequest) {
             return NextResponse.json({ error: "Missing updates" }, { status: 400 });
         }
 
-        // Normalize domain if provided
+        // Normalize domain if provided (lowercase, remove special chars, hyphenate)
         if (updates.domain && typeof updates.domain === 'string') {
-            updates.domain = updates.domain.toLowerCase().trim();
+            updates.domain = updates.domain.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            
+            // Check if domain is already taken by another store
+            const existingStore = await Store.findOne({ 
+                domain: updates.domain,
+                owner: { $ne: session.user.id } // Exclude current user's store
+            });
+            
+            if (existingStore) {
+                return NextResponse.json({ error: "Domain is already taken" }, { status: 400 });
+            }
         }
 
         const store = await Store.findOneAndUpdate(

@@ -7,6 +7,7 @@ import { connectDB } from "../../db/mongoDB";
 /**
  * Save store information tool
  * Allows the AI agent to save/store the store configuration directly to the database
+ * Matches the exact Store schema structure from models/store.ts
  */
 export const saveStoreTool = tool(
     async ({
@@ -14,94 +15,72 @@ export const saveStoreTool = tool(
         brandName,
         domain,
         description,
-        logoUrl,
-        faviconUrl,
-        whoWeAre,
-        socialLinks,
+        themeId,
         theme,
+        themeStructure,
         hero,
-        customization,
-        seo,
-        businessInfo,
-        paymentMethods,
-        codEnabled,
-        shippingInfo,
+        about,
+        footer,
+        socialLinks,
+        headerLinks,
     }: {
         ownerId: string;
         brandName: string;
-        domain: string;
-        description?: string;
-        logoUrl?: string;
-        faviconUrl?: string;
-        whoWeAre?: { description?: string; imageUrl?: string };
+        domain?: string;
+        description: string;
+        themeId: number;
+        theme: {
+            primaryColor: string;
+            secondaryColor?: string;
+            textColor?: string;
+        };
+        themeStructure?: {
+            header?: boolean;
+            hero?: boolean;
+            about?: boolean;
+            trust?: boolean;
+            productGrid?: boolean;
+            footer?: boolean;
+        };
+        hero: {
+            title: string;
+            subtitle: string;
+            imageUrl: string;
+        };
+        about: {
+            title: string;
+            description: string;
+        };
+        footer: {
+            text: string;
+        };
         socialLinks?: {
             facebook?: string;
             instagram?: string;
             twitter?: string;
-            linkedin?: string;
-            youtube?: string;
-            tiktok?: string;
-            whatsapp?: string;
         };
-        theme?: {
-            primaryColor?: string;
-            secondaryColor?: string;
-            textColor?: string;
-            gradient?: { from?: string; via?: string; to?: string };
-        };
-        hero?: {
-            title?: string;
-            subtitle?: string;
-            imageUrl?: string;
-            ctaText?: string;
-            ctaLink?: string;
-        };
-        customization?: {
-            layout?: 'grid' | 'list' | 'masonry';
-            showCategories?: boolean;
-            showFilters?: boolean;
-            productsPerPage?: number;
-            enableSearch?: boolean;
-            enableReviews?: boolean;
-            enableWishlist?: boolean;
-            enableCompare?: boolean;
-            footerText?: string;
-            customCSS?: string;
-            customJS?: string;
-        };
-        seo?: {
-            metaTitle?: string;
-            metaDescription?: string;
-            keywords?: string[];
-            ogImage?: string;
-        };
-        businessInfo?: {
-            address?: string;
-            city?: string;
-            country?: string;
-            phone?: string;
-            email?: string;
-            workingHours?: string;
-            taxId?: string;
-        };
-        paymentMethods?: string[];
-        codEnabled?: boolean;
-        shippingInfo?: {
-            freeShippingThreshold?: number;
-            shippingZones?: Array<{
-                name: string;
-                countries: string[];
-                price: number;
-            }>;
-        };
+        headerLinks?: Array<{
+            label: string;
+            href: string;
+        }>;
     }) => {
         try {
             await connectDB();
 
-            // Normalize domain
-            const normalizedDomain = domain.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            // Generate domain from brand name if not provided, otherwise normalize
+            let finalDomain = domain;
+            if (!finalDomain || finalDomain.trim() === '') {
+                finalDomain = brandName
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
+            const normalizedDomain = finalDomain.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
-            // Check if store already exists
+            // Check if store already exists for this owner or domain
             const existingStore = await Store.findOne({
                 $or: [
                     { owner: new mongoose.Types.ObjectId(ownerId) },
@@ -110,119 +89,123 @@ export const saveStoreTool = tool(
             });
 
             if (existingStore) {
-                return `❌ Store already exists. A store with domain "${normalizedDomain}" or for this owner already exists. Please use a different domain.`;
+                if (existingStore.owner.toString() === ownerId) {
+                    return `❌ Store already exists for this owner. Please update the existing store instead of creating a new one.`;
+                } else {
+                    return `❌ Domain "${normalizedDomain}" is already taken. Please choose a different domain.`;
+                }
             }
 
-            // Create new store
+            // Validate required fields (domain will be auto-generated if not provided)
+            if (!brandName || !description || !themeId || !theme?.primaryColor || 
+                !hero?.title || !hero?.subtitle || !hero?.imageUrl ||
+                !about?.title || !about?.description || !footer?.text) {
+                return `❌ Missing required fields. Please provide: brandName, description, themeId, theme.primaryColor, hero (title, subtitle, imageUrl), about (title, description), and footer.text. Domain will be auto-generated from brandName if not provided.`;
+            }
+
+            // Create new store matching the exact schema
             const newStore = await Store.create({
                 owner: new mongoose.Types.ObjectId(ownerId),
                 brandName,
                 domain: normalizedDomain,
                 description,
-                logoUrl,
-                faviconUrl,
-                whoWeAre,
-                socialLinks,
-                theme,
-                hero,
-                customization,
-                seo,
-                businessInfo,
-                paymentMethods,
-                codEnabled,
-                shippingInfo,
+                themeId,
+                theme: {
+                    primaryColor: theme.primaryColor,
+                    secondaryColor: theme.secondaryColor,
+                    textColor: theme.textColor,
+                },
+                themeStructure: {
+                    header: themeStructure?.header ?? true,
+                    hero: themeStructure?.hero ?? true,
+                    about: themeStructure?.about ?? true,
+                    trust: themeStructure?.trust ?? true,
+                    productGrid: themeStructure?.productGrid ?? true,
+                    footer: themeStructure?.footer ?? true,
+                },
+                hero: {
+                    title: hero.title,
+                    subtitle: hero.subtitle,
+                    imageUrl: hero.imageUrl,
+                },
+                about: {
+                    title: about.title,
+                    description: about.description,
+                },
+                footer: {
+                    text: footer.text,
+                },
+                socialLinks: socialLinks ? {
+                    facebook: socialLinks.facebook,
+                    instagram: socialLinks.instagram,
+                    twitter: socialLinks.twitter,
+                } : undefined,
+                headerLinks: headerLinks || [],
             });
 
             return `✅ Store "${brandName}" has been created successfully! Domain: ${newStore.domain}. Store ID: ${newStore._id}. The store is now ready to use!`;
         } catch (error) {
             console.error('Save store tool error:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            return `❌ Error saving store: ${errorMessage}. Please check that all required fields are provided and the domain is unique.`;
+            return `❌ Error saving store: ${errorMessage}. Please check that all required fields are provided correctly.`;
         }
     },
     {
         name: "save_store",
-        description: `Save the store configuration to the database. Use this tool ONLY when:
-1. You have collected sufficient information (at minimum: brandName and domain)
+        description: `Save the store configuration to the database using the exact Store schema structure. Use this tool ONLY when:
+1. You have collected ALL required information:
+   - brandName (required)
+   - domain (recommended but optional - unique URL-friendly slug like "my-awesome-store" - if not provided, will be auto-generated from brandName by converting to lowercase and replacing spaces with hyphens)
+   - description (required)
+   - themeId (required, number 1-11 for theme selection)
+   - theme with primaryColor (required), secondaryColor, textColor
+   - hero with title, subtitle, imageUrl (all required)
+   - about with title, description (both required)
+   - footer with text (required)
 2. The user explicitly confirms they want to create the store (e.g., "yes", "create it", "let's do it", "save it")
 3. You have asked "Would you like me to create your store with these details?" and they confirmed
 
-This will create the store in the database using the store model. Make sure the domain is unique and SEO-friendly (lowercase, hyphenated).`,
+IMPORTANT: Always present the domain to the user in the confirmation summary, whether you collected it from them or auto-generated it from the brand name. The domain will be used in the store URL (e.g., yoursite.com/[domain]). The domain will be automatically normalized (lowercase, hyphenated, no special chars) when saved.`,
         schema: z.object({
             ownerId: z.string().describe("The ID of the store owner"),
-            brandName: z.string().describe("The brand/store name"),
-            domain: z.string().describe("The unique domain/slug for the store (will be normalized to lowercase, hyphenated, no special chars)"),
-            description: z.string().optional().describe("Store description"),
-            logoUrl: z.string().optional().describe("Logo image URL"),
-            faviconUrl: z.string().optional().describe("Favicon image URL"),
-            whoWeAre: z.object({
-                description: z.string().optional(),
-                imageUrl: z.string().optional(),
-            }).optional().describe("About us information"),
-            socialLinks: z.object({
-                facebook: z.string().optional(),
-                instagram: z.string().optional(),
-                twitter: z.string().optional(),
-                linkedin: z.string().optional(),
-                youtube: z.string().optional(),
-                tiktok: z.string().optional(),
-                whatsapp: z.string().optional(),
-            }).optional().describe("Social media links"),
+            brandName: z.string().describe("The brand/store name (required)"),
+            domain: z.string().optional().describe("The unique domain/slug for the store that will be used in the store URL (e.g., 'my-awesome-store' for 'mysite.com/my-awesome-store'). Will be normalized to lowercase, hyphenated, no special chars. If not provided, will be auto-generated from brandName by converting spaces to hyphens and lowercasing. RECOMMENDED: Ask the user for their preferred domain or suggest one based on their brand name."),
+            description: z.string().describe("Store description (required)"),
+            themeId: z.number().describe("Theme ID number (1-11, required)"),
             theme: z.object({
-                primaryColor: z.string().optional(),
-                secondaryColor: z.string().optional(),
-                textColor: z.string().optional(),
-                gradient: z.object({
-                    from: z.string().optional(),
-                    via: z.string().optional(),
-                    to: z.string().optional(),
-                }).optional(),
-            }).optional().describe("Store theme colors"),
+                primaryColor: z.string().describe("Primary theme color in hex format (e.g., #3B82F6, required)"),
+                secondaryColor: z.string().optional().describe("Secondary theme color in hex format"),
+                textColor: z.string().optional().describe("Text color in hex format"),
+            }).describe("Store theme colors"),
+            themeStructure: z.object({
+                header: z.boolean().optional().describe("Show header section (default: true)"),
+                hero: z.boolean().optional().describe("Show hero section (default: true)"),
+                about: z.boolean().optional().describe("Show about section (default: true)"),
+                trust: z.boolean().optional().describe("Show trust section (default: true)"),
+                productGrid: z.boolean().optional().describe("Show product grid (default: true)"),
+                footer: z.boolean().optional().describe("Show footer section (default: true)"),
+            }).optional().describe("Theme structure visibility settings"),
             hero: z.object({
-                title: z.string().optional(),
-                subtitle: z.string().optional(),
-                imageUrl: z.string().optional(),
-                ctaText: z.string().optional(),
-                ctaLink: z.string().optional(),
-            }).optional().describe("Hero section content"),
-            customization: z.object({
-                layout: z.enum(['grid', 'list', 'masonry']).optional(),
-                showCategories: z.boolean().optional(),
-                showFilters: z.boolean().optional(),
-                productsPerPage: z.number().optional(),
-                enableSearch: z.boolean().optional(),
-                enableReviews: z.boolean().optional(),
-                enableWishlist: z.boolean().optional(),
-                enableCompare: z.boolean().optional(),
-                footerText: z.string().optional(),
-                customCSS: z.string().optional(),
-                customJS: z.string().optional(),
-            }).optional().describe("Store customization options"),
-            seo: z.object({
-                metaTitle: z.string().optional(),
-                metaDescription: z.string().optional(),
-                keywords: z.array(z.string()).optional(),
-                ogImage: z.string().optional(),
-            }).optional().describe("SEO settings"),
-            businessInfo: z.object({
-                address: z.string().optional(),
-                city: z.string().optional(),
-                country: z.string().optional(),
-                phone: z.string().optional(),
-                email: z.string().optional(),
-                workingHours: z.string().optional(),
-                taxId: z.string().optional(),
-            }).optional().describe("Business information"),
-            paymentMethods: z.array(z.string()).optional().describe("Accepted payment methods"),
-            codEnabled: z.boolean().optional().describe("Enable Cash on Delivery option"),
-            shippingInfo: z.object({
-                freeShippingThreshold: z.number().optional(),
-                shippingZones: z.array(z.object({
-                    name: z.string(),
-                    countries: z.array(z.string()),
-                    price: z.number(),
-                })).optional(),
-            }).optional().describe("Shipping information"),
+                title: z.string().describe("Hero section main title (required)"),
+                subtitle: z.string().describe("Hero section subtitle (required)"),
+                imageUrl: z.string().describe("Hero section image URL (required)"),
+            }).describe("Hero section content"),
+            about: z.object({
+                title: z.string().describe("About section title (required)"),
+                description: z.string().describe("About section description (required)"),
+            }).describe("About section content"),
+            footer: z.object({
+                text: z.string().describe("Footer text content (required)"),
+            }).describe("Footer content"),
+            socialLinks: z.object({
+                facebook: z.string().optional().describe("Facebook page URL"),
+                instagram: z.string().optional().describe("Instagram profile URL"),
+                twitter: z.string().optional().describe("Twitter profile URL"),
+            }).optional().describe("Social media links"),
+            headerLinks: z.array(z.object({
+                label: z.string().describe("Link label/text"),
+                href: z.string().describe("Link URL/path"),
+            })).optional().describe("Header navigation links array"),
         }),
     }
 );

@@ -2,8 +2,7 @@ import { generateStoreMetadata } from "@/lib/metadata/storeMetadata";
 import { getStoreByDomain } from "@/lib/data/store";
 import { getProductsByOwner } from "@/lib/data/products"; 
 import ThemeInjector from "@/components/productPage/ThemeInjector";
-import CustomCSSJSInjector from "@/components/store/CustomCSSJSInjector";
-import StoreClientWrapper from "@/components/pages/storeWerwper";
+import StoreClientWrapper from "@/components/pages/storeWrapper";
 import NotFound from "./not-found";
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }) {
@@ -23,19 +22,18 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     const { domain } = await params;
     const store = await getStoreByDomain(domain);
 
-    if (!store) {
+    if (!store || !store.owner) {
+        // console.log(store);
         return <> <NotFound/> </>;
     }
 
-    const products = await getProductsByOwner(store.owner);
+    // Ensure owner is a valid string
+    const ownerId = typeof store.owner === 'string' ? store.owner : store.owner;
+    const products = await getProductsByOwner(ownerId);
 
     return (
         <>
             <ThemeInjector theme={store.theme} />
-            <CustomCSSJSInjector 
-                customCSS={store.customization?.customCSS} 
-                customJS={store.customization?.customJS} 
-            />
             <StoreClientWrapper store={store} products={products} />
         </>
     );

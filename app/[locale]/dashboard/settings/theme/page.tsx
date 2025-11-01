@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { storeThemes } from '@/public/themes';
+import { THEMES } from '@/lib/store/themes';
 import type { Theme } from '@/models/store';
 
 // ----------------------
@@ -19,22 +19,29 @@ const dummyStore = {
 
 export default function ThemePreviewPage() {
   const [theme, setTheme] = useState<Theme>(dummyStore.theme);
-  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   // -------------------
   // Handle Theme Select
   // -------------------
-  const handleSelectTheme = (themeName: string, newTheme: Theme) => {
-    setTheme(newTheme);
-    setSelectedTheme(themeName);
+  const handleSelectTheme = (themeId: string) => {
+    const def = THEMES.find(t => t.id === themeId);
+    if (!def) return;
+    setTheme({
+      primaryColor: def.colorTokens.primaryColor,
+      secondaryColor: def.colorTokens.secondaryColor,
+      textColor: def.colorTokens.textColor,
+      gradient: def.colorTokens.gradient,
+    });
+    setSelectedThemeId(themeId);
   };
 
   // -------------------
   // Handle Save (calls PATCH API)
   // -------------------
   const handleSave = async () => {
-    if (!selectedTheme) {
+    if (!selectedThemeId) {
       toast.error('Please select a theme first.');
       return;
     }
@@ -45,7 +52,7 @@ export default function ThemePreviewPage() {
       const res = await fetch('/api/store/theme', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ theme }),
+        body: JSON.stringify({ themeId: selectedThemeId }),
       });
 
       const data = await res.json();
@@ -78,14 +85,15 @@ export default function ThemePreviewPage() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {storeThemes.map(({ name, theme: t }) => {
-            const isSelected = selectedTheme === name;
+      {THEMES.map((def) => {
+            const t = def.colorTokens;
+            const isSelected = selectedThemeId === def.id;
             const borderColor = t.primaryColor || t.secondaryColor || '#4f46e5';
 
             return (
               <button
-                key={name}
-                onClick={() => handleSelectTheme(name, t)}
+                key={def.id}
+                onClick={() => handleSelectTheme(def.id)}
                 className={`relative flex flex-col rounded-xl border p-4 transition-all duration-200 ${
                   isSelected
                     ? 'scale-[1.03] shadow-lg'
@@ -111,7 +119,7 @@ export default function ThemePreviewPage() {
                 />
 
                 {/* Theme Name */}
-                <span className="font-medium text-gray-800">{name}</span>
+                <span className="font-medium text-gray-800">{def.name}</span>
 
                 {/* Color Swatches */}
                 <div className="flex gap-1 mt-2">

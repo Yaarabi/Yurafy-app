@@ -2,6 +2,7 @@ import { connectDB } from '../db/mongoDB';
 import Product from '@/models/products';
 import Store, { IStore } from '@/models/store';
 import { IProduct } from '@/models/products';
+import { serializeStore, SerializedStore } from './store';
 
 // ----------------------
 // Serialized Store Interface
@@ -35,45 +36,7 @@ function serializeProductWithStore(product: any, store?: any): {
         colors: product.colors || [],
     };
 
-    const serializedStore: SerializedStore | null = store
-        ? {
-            _id: serializeId(store._id),
-            owner: store.owner ? serializeId(store.owner) : undefined,
-            brandName: store.brandName,
-            domain: store.domain,
-            description: store.description,
-            logoUrl: store.logoUrl,
-            coverImageUrl: store.coverImageUrl,
-            whoWeAre: {
-                description: store.whoWeAre?.description,
-                imageUrl: store.whoWeAre?.imageUrl,
-            },
-            socialLinks: {
-            facebook: store.socialLinks?.facebook,
-            instagram: store.socialLinks?.instagram,
-            twitter: store.socialLinks?.twitter,
-            linkedin: store.socialLinks?.linkedin,
-            },
-            theme: {
-            primaryColor: store.theme?.primaryColor,
-            secondaryColor: store.theme?.secondaryColor,
-            backgroundColor: store.theme?.backgroundColor,
-            textColor: store.theme?.textColor,
-            gradient: {
-                from: store.theme?.gradient?.from,
-                via: store.theme?.gradient?.via,
-                to: store.theme?.gradient?.to,
-            },
-            },
-            hero: {
-            title: store.hero?.title,
-            subtitle: store.hero?.subtitle,
-            imageUrl: store.hero?.imageUrl,
-            },
-            createdAt: store.createdAt?.toISOString(),
-            updatedAt: store.updatedAt?.toISOString(),
-        }
-        : null;
+    const serializedStore: SerializedStore | null = store ? serializeStore(store) : null;
 
     return { product: serializedProduct, store: serializedStore };
 }
@@ -100,10 +63,16 @@ export async function getProductWithStoreBySlug(slug: string): Promise<{
 
 
 export async function getProductsByOwner(ownerId: string): Promise<IProduct[]> {
+    if (!ownerId || ownerId === 'undefined') {
+        console.warn("⚠️ getProductsByOwner called with invalid ownerId:", ownerId);
+        return [];
+    }
+
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products?owner=${ownerId}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/products?owner=${ownerId}`, {
             method: "GET",
-            next: { revalidate: 60 }, // ✅ optional caching
+            cache: 'no-store', // Don't cache in server components to avoid stale data
         });
 
         if (!res.ok) {

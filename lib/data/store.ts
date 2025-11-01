@@ -27,12 +27,28 @@ export interface SerializedStore {
         textColor?: string;
         gradient?: { from?: string; via?: string; to?: string };
     };
+    themeId?: string;
     hero?: {
         title?: string;
         subtitle?: string;
         imageUrl?: string;
         ctaText?: string;
         ctaLink?: string;
+    };
+    about?: {
+        title?: string;
+        description?: string;
+    };
+    footer?: {
+        text?: string;
+    };
+    themeStructure?: {
+        header?: boolean;
+        hero?: boolean;
+        about?: boolean;
+        trust?: boolean;
+        productGrid?: boolean;
+        footer?: boolean;
     };
     customization?: {
         layout?: 'grid' | 'list' | 'masonry';
@@ -72,40 +88,61 @@ export interface SerializedStore {
             price: number;
         }>;
     };
+    headerLinks?: Array<{
+        label: string;
+        href: string;
+    }>;
     createdAt: string;
     updatedAt: string;
 }
 
 
-function serializeStore(store: IStore): SerializedStore {
+export function serializeStore(store: any): SerializedStore {
     return {
         _id: store._id?.toString(),
-        owner: store.owner?.toString(),
-        brandName: store.brandName,
-        domain: store.domain,
-        description: store.description,
+        owner: store.owner?.toString() || '',
+        brandName: store.brandName || '',
+        domain: store.domain || '',
+        description: store.description || '',
         logoUrl: store.logoUrl,
         faviconUrl: store.faviconUrl,
-        whoWeAre: {
+        whoWeAre: store.whoWeAre ? {
             description: store.whoWeAre?.description,
             imageUrl: store.whoWeAre?.imageUrl,
-        },
-        socialLinks: { ...store.socialLinks },
-        theme: {
+        } : undefined,
+        socialLinks: store.socialLinks ? { ...store.socialLinks } : undefined,
+        theme: store.theme ? {
             primaryColor: store.theme?.primaryColor,
             secondaryColor: store.theme?.secondaryColor,
             textColor: store.theme?.textColor,
             gradient: { ...store.theme?.gradient },
-        },
-        hero: { ...store.hero },
-        customization: { ...store.customization },
-        seo: { ...store.seo },
-        businessInfo: { ...store.businessInfo },
+        } : undefined,
+        themeId: (store as any).themeId?.toString() || '1',
+        hero: store.hero ? { ...store.hero } : undefined,
+        about: store.about ? {
+            title: store.about.title,
+            description: store.about.description,
+        } : undefined,
+        footer: store.footer ? {
+            text: store.footer.text,
+        } : undefined,
+        themeStructure: store.themeStructure ? {
+            header: store.themeStructure.header ?? true,
+            hero: store.themeStructure.hero ?? true,
+            about: store.themeStructure.about ?? true,
+            trust: store.themeStructure.trust ?? true,
+            productGrid: store.themeStructure.productGrid ?? true,
+            footer: store.themeStructure.footer ?? true,
+        } : undefined,
+        customization: store.customization ? { ...store.customization } : undefined,
+        seo: store.seo ? { ...store.seo } : undefined,
+        businessInfo: store.businessInfo ? { ...store.businessInfo } : undefined,
         paymentMethods: store.paymentMethods ? [...store.paymentMethods] : undefined,
         codEnabled: (store as any).codEnabled,
-        shippingInfo: { ...store.shippingInfo },
-        createdAt: store.createdAt?.toISOString(),
-        updatedAt: store.updatedAt?.toISOString(),
+        shippingInfo: store.shippingInfo ? { ...store.shippingInfo } : undefined,
+        headerLinks: store.headerLinks ? [...store.headerLinks] : [],
+        createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
+        updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };
 }
 
@@ -114,4 +151,10 @@ export async function getStoreByDomain(domain: string): Promise<SerializedStore 
     const storeDoc = await Store.findOne({ domain }).lean<IStore>();
     if (!storeDoc) return null;
     return serializeStore(storeDoc);
+}
+
+export async function getAllStores(): Promise<SerializedStore[]> {
+    await connectDB();
+    const docs = await Store.find().lean();
+    return docs.map((d: any) => serializeStore(d));
 }

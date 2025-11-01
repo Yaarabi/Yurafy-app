@@ -40,10 +40,14 @@ export async function POST(request: NextRequest) {
             conversationThreadId
         );
 
+        // Check if store was created (agent used save_store tool successfully)
+        const storeCreated = response.includes('✅ Store') && response.includes('has been created successfully');
+
         return NextResponse.json({
             success: true,
             message: response,
             threadId: conversationThreadId,
+            storeCreated,
         });
 
     } catch (error) {

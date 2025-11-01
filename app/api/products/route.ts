@@ -23,21 +23,15 @@ export async function GET(req: Request) {
         // Build dynamic query
         const query: Record<string, string> = {};
         if (category) query.category = category;
-        if (owner) query.owner = owner;
+        if (owner && owner !== 'undefined') query.owner = owner;
 
         // Fetch products based on query
         const products = await Product.find(query);
 
-        if (products.length === 0) {
-        return NextResponse.json(
-            { message: owner ? "No products found" : category ? "No products found in this category" : "No products found" },
-            { status: 404 }
-        );
-        }
-
+        // Return empty array instead of 404 for no products found
         return NextResponse.json({
-        message: owner ? "Owner's products retrieved" : category ? "Category products retrieved" : "All products retrieved",
-        products,
+            message: owner ? "Owner's products retrieved" : category ? "Category products retrieved" : "All products retrieved",
+            products: products || [],
         });
     } catch (error) {
         return NextResponse.json({ message: "Server error", error }, { status: 500 });
