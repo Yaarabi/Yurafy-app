@@ -58,7 +58,7 @@ export default function LoginForm() {
                     : res
             );
         } else {
-            toast.success(tAuth('loginSuccess'));
+            toast.success(tAuth('successLogin'));
         }
 
         setLoading(false);

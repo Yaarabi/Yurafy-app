@@ -1,5 +1,5 @@
 'use client';
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 
 export function useSignIn() {
@@ -21,7 +21,24 @@ export function useSignIn() {
         if (res?.error) return res.error;
 
         if (res?.ok) {
-        router.push(`/${params.locale}/dashboard`);
+            // Wait a moment for session to update, then fetch it
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            try {
+                const session = await getSession();
+                
+                // Redirect admin users to admin dashboard
+                if (session?.user?.role === "admin") {
+                    router.push(`/${params.locale}/admin`);
+                    return;
+                }
+            } catch (error) {
+                console.error("Error getting session:", error);
+                // Continue with default redirect if session fetch fails
+            }
+
+            // Default redirect for non-admin users
+            router.push(`/${params.locale}/dashboard`);
         }
     }
 

@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
 import Plan from "@/models/plan";
@@ -19,9 +21,15 @@ const sanitizeUser = (user: any, planKey: string = "free") => ({
     plan: planKey,
 });
 
-export async function GET(req: Request) {
-    await connectDB();
+export async function GET(req: NextRequest) {
     try {
+        // Check admin authentication
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id || session.user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 });
+        }
+
+        await connectDB();
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
 
@@ -44,7 +52,8 @@ export async function GET(req: Request) {
         return NextResponse.json({ message: "User retrieved", user: sanitizeUser(user, planKey) }, { status: 200 });
         }
 
-        const users = await User.find().select("-password");
+        // Only fetch users with role "user" (exclude admin users)
+        const users = await User.find({ role: "user" }).select("-password");
         const enrichedUsers = await Promise.all(
         users.map(async (user) => {
             let planKey = "free";
@@ -65,9 +74,15 @@ export async function GET(req: Request) {
     }
 }
 
-export async function POST(req: Request) {
-    await connectDB();
+export async function POST(req: NextRequest) {
     try {
+        // Check admin authentication
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id || session.user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 });
+        }
+
+        await connectDB();
         const body = await req.json();
         const username = body.username?.trim();
         const email = body.email?.trim().toLowerCase();
@@ -129,9 +144,15 @@ export async function POST(req: Request) {
     }
 }
 
-export async function PUT(req: Request) {
-    await connectDB();
+export async function PUT(req: NextRequest) {
     try {
+        // Check admin authentication
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id || session.user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 });
+        }
+
+        await connectDB();
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
 
@@ -171,9 +192,15 @@ export async function PUT(req: Request) {
     }
 }
 
-export async function DELETE(req: Request) {
-    await connectDB();
+export async function DELETE(req: NextRequest) {
     try {
+        // Check admin authentication
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id || session.user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 });
+        }
+
+        await connectDB();
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
 

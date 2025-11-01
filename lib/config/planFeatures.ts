@@ -86,10 +86,10 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             exportData: false,
         },
         support: {
-            enabled: false,
+            enabled: true,
             priority: false,
             email: false,
-            chat: false,
+            chat: true,
         },
     },
     Starter: {

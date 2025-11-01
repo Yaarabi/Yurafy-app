@@ -3,6 +3,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
+import PlanProtection from '@/components/dashboard/PlanProtection';
 
 async function getMessages(locale: string) {
     try {
@@ -31,7 +32,9 @@ export default async function Layout({
     return (
             <NextIntlClientProvider locale={locale} messages={messages}>
                     <main className='min-h-screen'>
-                        {children}
+                        <PlanProtection requiredFeature="whatsapp.enabled" planName="WhatsApp Plans">
+                            {children}
+                        </PlanProtection>
                     </main>
             </NextIntlClientProvider>
     );

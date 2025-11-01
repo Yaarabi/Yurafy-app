@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
+import OnboardingGuard from "@/components/onboarding/OnboardingGuard";
 
 async function getMessages(locale: string) {
   try {
@@ -55,15 +56,16 @@ export default async function Layout({
     redirect(`/${locale}/login`);
   }
 
-  if (data.onboardingCompleted === true) {
-    redirect(`/${locale}/dashboard`);
-  }
-
   const messages = await getMessages(locale);
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <main className="min-h-screen">{children}</main>
+      <OnboardingGuard 
+        locale={locale} 
+        onboardingCompleted={data.onboardingCompleted === true}
+      >
+        <main className="min-h-screen">{children}</main>
+      </OnboardingGuard>
     </NextIntlClientProvider>
   );
 }

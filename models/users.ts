@@ -6,7 +6,7 @@ export interface IUser {
     logo?: string;
     email: string;
     phone?: string;
-    role: "user" | "tester" | "admin";
+    role: "user" | "admin";
     active: boolean;
     currentPlanId?: string;
     onboardingCompleted?: boolean;
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
         },
         role: {
         type: String,
-        enum: ["user", "tester", "admin"],
+        enum: ["user", "admin"],
         default: "user",
         },
         active: {

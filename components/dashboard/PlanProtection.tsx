@@ -2,6 +2,7 @@
 
 import { useEffect, useState, ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Lock, Upgrade, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -18,6 +19,8 @@ export default function PlanProtection({
     planName 
 }: PlanProtectionProps) {
     const { data: session } = useSession();
+    const params = useParams();
+    const locale = (params?.locale as string) || 'en';
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [daysRemaining, setDaysRemaining] = useState<number | null>(null);
@@ -86,7 +89,7 @@ export default function PlanProtection({
 
                     <div className="flex gap-4 justify-center">
                         <Link
-                            href="/dashboard/settings?tab=plan"
+                            href={`/${locale}/dashboard/settings?tab=plan`}
                             className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
                         >
                             <Upgrade className="w-5 h-5 inline-block mr-2" />
@@ -106,7 +109,7 @@ export default function PlanProtection({
                         <AlertCircle className="w-5 h-5 text-yellow-600" />
                         <p className="text-sm text-yellow-800">
                             Your plan expires in {daysRemaining} day(s). 
-                            <Link href="/dashboard/settings?tab=plan" className="underline ml-1">Renew now</Link>
+                            <Link href={`/${locale}/dashboard/settings?tab=plan`} className="underline ml-1">Renew now</Link>
                         </p>
                     </div>
                 </div>

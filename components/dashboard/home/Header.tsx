@@ -2,11 +2,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Bell, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
+import NotificationBell from '../NotificationBell';
 
 export default function DashboardHeader() {
     const [darkMode, setDarkMode] = useState(false);
-    const [notifications, setNotifications] = useState(3);
 
     useEffect(() => {
         const storedTheme = localStorage.getItem('theme');
@@ -37,15 +37,8 @@ export default function DashboardHeader() {
 
             {/* Right Section: Notifications + Toggle */}
             <div className="flex items-center gap-4 sm:gap-6">
-            {/* Notification */}
-            <div className="relative cursor-pointer">
-                <Bell className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-                {notifications > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-4 h-4 flex items-center justify-center">
-                    {notifications}
-                </span>
-                )}
-            </div>
+            {/* Notification Bell */}
+            <NotificationBell />
 
             {/* Dark/Light Toggle */}
             <label className="flex items-center cursor-pointer">
