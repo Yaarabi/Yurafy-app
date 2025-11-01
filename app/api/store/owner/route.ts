@@ -10,29 +10,51 @@ import {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 } from "@/lib/data/store";
 
-// Local serializer to avoid circular import in edge runtimes
+// Local serializer aligned with Store schema
 function serializeStoreDoc(store: any) {
     return {
         _id: store._id?.toString(),
         owner: store.owner?.toString(),
-        brandName: store.brandName,
-        domain: store.domain,
-        description: store.description,
-        logoUrl: store.logoUrl,
-        faviconUrl: store.faviconUrl,
-        whoWeAre: store.whoWeAre ? { ...store.whoWeAre } : undefined,
+        brandName: store.brandName || '',
+        domain: store.domain || '',
+        description: store.description || '',
+        themeId: store.themeId || 1,
+        theme: store.theme ? {
+            primaryColor: store.theme.primaryColor,
+            secondaryColor: store.theme.secondaryColor,
+            textColor: store.theme.textColor,
+        } : undefined,
+        themeStructure: store.themeStructure ? {
+            header: store.themeStructure.header ?? true,
+            hero: store.themeStructure.hero ?? true,
+            about: store.themeStructure.about ?? true,
+            trust: store.themeStructure.trust ?? true,
+            productGrid: store.themeStructure.productGrid ?? true,
+            footer: store.themeStructure.footer ?? true,
+        } : {
+            header: true,
+            hero: true,
+            about: true,
+            trust: true,
+            productGrid: true,
+            footer: true,
+        },
+        hero: store.hero ? {
+            title: store.hero.title,
+            subtitle: store.hero.subtitle,
+            imageUrl: store.hero.imageUrl,
+        } : undefined,
+        about: store.about ? {
+            title: store.about.title,
+            description: store.about.description,
+        } : undefined,
+        footer: store.footer ? {
+            text: store.footer.text,
+        } : undefined,
         socialLinks: store.socialLinks ? { ...store.socialLinks } : undefined,
-        theme: store.theme ? { ...store.theme } : undefined,
-        hero: store.hero ? { ...store.hero } : undefined,
-        customization: store.customization ? { ...store.customization } : undefined,
-        seo: store.seo ? { ...store.seo } : undefined,
-        businessInfo: store.businessInfo ? { ...store.businessInfo } : undefined,
-        paymentMethods: store.paymentMethods ? [...store.paymentMethods] : undefined,
-        codEnabled: store.codEnabled,
-        shippingInfo: store.shippingInfo ? { ...store.shippingInfo } : undefined,
         headerLinks: store.headerLinks ? [...store.headerLinks] : [],
-        createdAt: store.createdAt?.toISOString(),
-        updatedAt: store.updatedAt?.toISOString(),
+        createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
+        updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };
 }
 

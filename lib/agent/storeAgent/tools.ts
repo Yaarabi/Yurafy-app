@@ -80,10 +80,23 @@ export const saveStoreTool = tool(
             }
             const normalizedDomain = finalDomain.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
+            // Validate ownerId is a valid MongoDB ObjectId format
+            if (!ownerId || typeof ownerId !== 'string' || ownerId.trim() === '') {
+                console.error('Save store tool: ownerId is missing or empty');
+                return `❌ Error: Owner ID is missing. Please contact support.`;
+            }
+
+            if (!mongoose.Types.ObjectId.isValid(ownerId)) {
+                console.error('Save store tool: Invalid ownerId format:', ownerId, 'Type:', typeof ownerId);
+                return `❌ Error: Invalid owner ID format (${ownerId}). Please contact support.`;
+            }
+
+            const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
+
             // Check if store already exists for this owner or domain
             const existingStore = await Store.findOne({
                 $or: [
-                    { owner: new mongoose.Types.ObjectId(ownerId) },
+                    { owner: ownerObjectId },
                     { domain: normalizedDomain }
                 ]
             });
@@ -105,7 +118,7 @@ export const saveStoreTool = tool(
 
             // Create new store matching the exact schema
             const newStore = await Store.create({
-                owner: new mongoose.Types.ObjectId(ownerId),
+                owner: ownerObjectId,
                 brandName,
                 domain: normalizedDomain,
                 description,
@@ -146,7 +159,24 @@ export const saveStoreTool = tool(
             return `✅ Store "${brandName}" has been created successfully! Domain: ${newStore.domain}. Store ID: ${newStore._id}. The store is now ready to use!`;
         } catch (error) {
             console.error('Save store tool error:', error);
+            console.error('Error details:', {
+                ownerId,
+                ownerIdType: typeof ownerId,
+                brandName,
+                domain,
+                error: error instanceof Error ? {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                } : error
+            });
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            
+            // Provide more helpful error messages
+            if (errorMessage.includes('ObjectId') || errorMessage.includes('BSON')) {
+                return `❌ Error: Invalid owner ID format. Please contact support with this information: Owner ID type: ${typeof ownerId}, Value: ${ownerId?.substring(0, 10)}...`;
+            }
+            
             return `❌ Error saving store: ${errorMessage}. Please check that all required fields are provided correctly.`;
         }
     },
@@ -165,9 +195,11 @@ export const saveStoreTool = tool(
 2. The user explicitly confirms they want to create the store (e.g., "yes", "create it", "let's do it", "save it")
 3. You have asked "Would you like me to create your store with these details?" and they confirmed
 
-IMPORTANT: Always present the domain to the user in the confirmation summary, whether you collected it from them or auto-generated it from the brand name. The domain will be used in the store URL (e.g., yoursite.com/[domain]). The domain will be automatically normalized (lowercase, hyphenated, no special chars) when saved.`,
+IMPORTANT: 
+- Always present the domain to the user in the confirmation summary, whether you collected it from them or auto-generated it from the brand name. The domain will be used in the store URL (e.g., yoursite.com/[domain]). The domain will be automatically normalized (lowercase, hyphenated, no special chars) when saved.
+- For ownerId: Use the User ID from the User Information section above. This is the ID of the authenticated user creating the store.`,
         schema: z.object({
-            ownerId: z.string().describe("The ID of the store owner"),
+            ownerId: z.string().describe("The ID of the store owner (use the User ID from User Information - this is provided in the context above)"),
             brandName: z.string().describe("The brand/store name (required)"),
             domain: z.string().optional().describe("The unique domain/slug for the store that will be used in the store URL (e.g., 'my-awesome-store' for 'mysite.com/my-awesome-store'). Will be normalized to lowercase, hyphenated, no special chars. If not provided, will be auto-generated from brandName by converting spaces to hyphens and lowercasing. RECOMMENDED: Ask the user for their preferred domain or suggest one based on their brand name."),
             description: z.string().describe("Store description (required)"),

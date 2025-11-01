@@ -42,26 +42,26 @@ export async function POST(req: NextRequest) {
             brandName,
             domain,
             description,
-            logoUrl,
-            faviconUrl,
-            coverImageUrl,
-            whoWeAre,
-            socialLinks,
+            themeId,
             theme,
+            themeStructure,
             hero,
-            customization,
-            seo,
-            businessInfo,
-            paymentMethods,
-            codEnabled,
-            shippingInfo,
+            about,
+            footer,
+            socialLinks,
+            headerLinks,
         } = body;
 
         // Prefer authenticated owner when available
         const ownerId = session?.user?.id || body.owner;
 
-        if (!ownerId || !brandName || !domain) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        // Validate required fields according to Store schema
+        if (!ownerId || !brandName || !domain || !description || !themeId || !theme?.primaryColor ||
+            !hero?.title || !hero?.subtitle || !hero?.imageUrl ||
+            !about?.title || !about?.description || !footer?.text) {
+            return NextResponse.json({ 
+                error: "Missing required fields. Required: brandName, domain, description, themeId, theme.primaryColor, hero (title, subtitle, imageUrl), about (title, description), footer.text" 
+            }, { status: 400 });
         }
 
         // Normalize domain (lowercase, remove special chars, hyphenate)
@@ -77,18 +77,34 @@ export async function POST(req: NextRequest) {
             brandName,
             domain: normalizedDomain,
             description,
-            logoUrl,
-            faviconUrl,
-            whoWeAre,
-            socialLinks,
-            theme,
-            hero,
-            customization,
-            seo,
-            businessInfo,
-            paymentMethods,
-            codEnabled,
-            shippingInfo,
+            themeId: typeof themeId === 'number' ? themeId : parseInt(themeId || '1', 10),
+            theme: {
+                primaryColor: theme.primaryColor,
+                secondaryColor: theme.secondaryColor,
+                textColor: theme.textColor,
+            },
+            themeStructure: themeStructure || {
+                header: true,
+                hero: true,
+                about: true,
+                trust: true,
+                productGrid: true,
+                footer: true,
+            },
+            hero: {
+                title: hero.title,
+                subtitle: hero.subtitle,
+                imageUrl: hero.imageUrl,
+            },
+            about: {
+                title: about.title,
+                description: about.description,
+            },
+            footer: {
+                text: footer.text,
+            },
+            socialLinks: socialLinks || {},
+            headerLinks: headerLinks || [],
         });
 
         // Return serialized store via getStoreByDomain for consistency

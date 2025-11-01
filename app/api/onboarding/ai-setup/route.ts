@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { message, plan, threadId } = await request.json();
+        const { message, plan, threadId, selectedTheme, selectedThemeStructure, selectedProductPageStructure, finalStoreData } = await request.json();
 
         if (!message || typeof message !== 'string') {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -32,22 +32,75 @@ export async function POST(request: NextRequest) {
         // Use provided thread ID or generate one for conversation continuity
         const conversationThreadId = threadId || getThreadId(session.user.id);
 
-        // Generate AI response using the store agent
-        const response = await generateStoreSetupResponse(
+        // If finalStoreData is provided, save the store directly
+        if (finalStoreData && message === "Save store with these details") {
+            // Import the save store function from tools
+            const { saveStoreTool } = await import("@/lib/agent/storeAgent/tools");
+            
+            try {
+                // Prepare store data with owner ID
+                const storeDataToSave = {
+                    ownerId: session.user.id,
+                    brandName: finalStoreData.brandName,
+                    domain: finalStoreData.domain,
+                    description: finalStoreData.description,
+                    themeId: selectedTheme?.themeId || finalStoreData.themeId,
+                    theme: selectedTheme?.theme || finalStoreData.theme,
+                    themeStructure: selectedThemeStructure || finalStoreData.themeStructure,
+                    hero: finalStoreData.hero,
+                    about: finalStoreData.about,
+                    footer: finalStoreData.footer,
+                    socialLinks: finalStoreData.socialLinks,
+                    headerLinks: finalStoreData.headerLinks || [],
+                };
+
+                // Call the save store tool
+                const result = await saveStoreTool.invoke(storeDataToSave);
+                
+                // Check if store was created successfully
+                const storeCreated = result.includes('✅ Store') && result.includes('has been created successfully');
+
+                return NextResponse.json({
+                    success: true,
+                    message: result,
+                    threadId: conversationThreadId,
+                    storeCreated,
+                    storeData: finalStoreData,
+                });
+            } catch (error) {
+                console.error("Error saving store:", error);
+                return NextResponse.json({
+                    error: error instanceof Error ? error.message : "Failed to save store"
+                }, { status: 500 });
+            }
+        }
+
+        // Generate AI response using the store agent (pass selectedTheme, selectedThemeStructure, and selectedProductPageStructure if provided)
+        const result = await generateStoreSetupResponse(
             session.user.id,
             message,
             plan,
-            conversationThreadId
+            conversationThreadId,
+            selectedTheme,
+            selectedThemeStructure,
+            selectedProductPageStructure
         );
 
-        // Check if store was created (agent used save_store tool successfully)
+        // Extract response and tool actions
+        const response = result.message || '';
+        const uiAction = result.uiAction || null;
         const storeCreated = response.includes('✅ Store') && response.includes('has been created successfully');
+        const storeData = result.storeData || null;
+        const showPreviewEdit = result.showPreviewEdit || false;
 
         return NextResponse.json({
             success: true,
             message: response,
             threadId: conversationThreadId,
             storeCreated,
+            uiAction,
+            storeData,
+            showPreviewEdit,
         });
 
     } catch (error) {
