@@ -4,7 +4,7 @@ import { useEffect, useState, ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, Upgrade, AlertCircle } from 'lucide-react';
+import { Lock, ArrowUpCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface PlanProtectionProps {
@@ -92,7 +92,7 @@ export default function PlanProtection({
                             href={`/${locale}/dashboard/settings?tab=plan`}
                             className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
                         >
-                            <Upgrade className="w-5 h-5 inline-block mr-2" />
+                            <ArrowUpCircle className="w-5 h-5 inline-block mr-2" />
                             Upgrade Plan
                         </Link>
                     </div>

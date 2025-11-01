@@ -28,8 +28,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
         id: user._id.toString(),
+        username: user.username,
+        email: user.email,
+        phone: user.phone || '',
+        logo: user.logo || '',
         role: user.role,
         plan: activePlan,
         onboardingCompleted: user.onboardingCompleted || false,
+        active: user.active || false,
     });
 }

@@ -74,32 +74,52 @@ export async function POST(req: Request) {
             );
         }
 
-        // Find user's current plan
-        const existingPlan = await Plan.findById(user.currentPlanId);
-        if (!existingPlan) {
-            return NextResponse.json(
-                { verified: false, error: "No existing plan found for user" },
-                { status: 404 }
-            );
-        }
-
-        // Update the existing plan details
+        // Find or create user's plan
+        let userPlan: any;
         const durationDays = 30;
         const startDate = new Date();
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + durationDays);
+        const price = parseFloat(orderData.purchase_units?.[0]?.amount?.value || "0");
 
-        existingPlan.planKey = plan;
-        existingPlan.price = orderData.purchase_units?.[0]?.amount?.value || 0;
-        existingPlan.durationDays = durationDays;
-        existingPlan.startDate = startDate;
-        existingPlan.endDate = endDate;
-        existingPlan.status = "active";
-        await existingPlan.save();
+        if (user.currentPlanId) {
+            // Update existing plan (for upgrades)
+            userPlan = await Plan.findById(user.currentPlanId);
+            if (userPlan) {
+                userPlan.planKey = plan;
+                userPlan.price = price;
+                userPlan.durationDays = durationDays;
+                userPlan.startDate = startDate;
+                userPlan.endDate = endDate;
+                userPlan.status = "active";
+                await userPlan.save();
+            }
+        }
+
+        // If no existing plan or plan not found, create a new one
+        if (!userPlan || !user.currentPlanId) {
+            userPlan = new Plan({
+                userId: user._id,
+                planKey: plan,
+                price: price,
+                durationDays: durationDays,
+                startDate: startDate,
+                endDate: endDate,
+                status: "active",
+            });
+            await userPlan.save();
+            
+            // Update user's current plan reference
+            user.currentPlanId = userPlan._id;
+        }
 
         // Update user flags
         user.active = true;
-        user.onboardingCompleted = true;
+        // Only set onboardingCompleted to true if it was false (for first-time onboarding)
+        // Don't override it if user is upgrading
+        if (!user.onboardingCompleted) {
+            user.onboardingCompleted = true;
+        }
         await user.save();
 
         return NextResponse.json({ verified: true });

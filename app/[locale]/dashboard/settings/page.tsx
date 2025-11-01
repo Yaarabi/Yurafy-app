@@ -39,7 +39,11 @@ export default function SettingsPage() {
         if (status === 'authenticated' && session?.user?.id) {
             try {
             const [userRes, waRes, storeRes] = await Promise.all([
-                fetch(`/api/users?id=${session.user.id}`),
+                fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: session.user.id }),
+                }),
                 fetch(`/api/whatsapp/account`),
                 fetch(`/api/store/owner`),
             ]);
@@ -50,7 +54,7 @@ export default function SettingsPage() {
 
             console.log(storeData)
 
-            if (userRes.ok) setUser(userData.user);
+            if (userRes.ok && userData) setUser(userData);
             if (waRes.ok && waData.account) setWhatsApp(waData.account);
             if (storeRes.ok && storeData) setStore(storeData);
             } catch (err) {
@@ -72,14 +76,20 @@ export default function SettingsPage() {
         setUser(updated);
 
         try {
-        const res = await fetch(`/api/users?id=${session.user.id}`, {
+        const res = await fetch('/api/user/me', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ [field]: value }),
         });
 
-        if (res.ok) toast.success(`${field} updated successfully!`);
-        else toast.error(`Failed to update ${field}.`);
+        if (res.ok) {
+            const updatedData = await res.json();
+            setUser(updatedData);
+            toast.success(`${field} updated successfully!`);
+        } else {
+            const errorData = await res.json();
+            toast.error(errorData.error || `Failed to update ${field}.`);
+        }
         } catch (err) {
         console.error('Error updating user:', err);
         toast.error(`Error updating ${field}.`);

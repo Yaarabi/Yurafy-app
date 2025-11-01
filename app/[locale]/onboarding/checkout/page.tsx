@@ -1,15 +1,18 @@
 "use client";
 
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { PLANS } from "../plan/page";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const params = useParams();
     const planKey = searchParams.get("plan");
-    const locale = searchParams.get("locale") || "en";
+    // Get locale from URL params
+    const locale = (params?.locale as string) || searchParams.get("locale") || "en";
     const plan = PLANS[planKey as keyof typeof PLANS];
 
     const [loading, setLoading] = useState(false);
@@ -22,7 +25,6 @@ export default function CheckoutPage() {
         "enable-funding": "card",
     };
 
-    const router = useRouter();
 
     if (!plan) {
         return (
@@ -98,15 +100,30 @@ export default function CheckoutPage() {
                         }),
                         });
 
+                        // Check response status before parsing JSON
+                        if (!res.ok) {
+                            const errorText = await res.text();
+                            let errorMessage = "⚠️ Payment could not be verified. Please contact support.";
+                            try {
+                                const errorData = JSON.parse(errorText);
+                                errorMessage = errorData.error || errorMessage;
+                            } catch {
+                                // If not JSON, use default message
+                            }
+                            toast.error(errorMessage);
+                            console.error("Payment verification failed:", res.status, errorText);
+                            return;
+                        }
+
                         const result = await res.json();
 
                         if (result.verified) {
-                        toast.success(`Payment verified! Welcome, ${buyerName}.`);
-                        router.push(`/${locale}/dashboard`);
+                            toast.success(`Payment verified! Welcome, ${buyerName}.`);
+                            router.push(`/${locale}/dashboard`);
                         } else {
-                        toast.error(
-                            "⚠️ Payment could not be verified. Please contact support."
-                        );
+                            toast.error(
+                                result.error || "⚠️ Payment could not be verified. Please contact support."
+                            );
                         }
                     })
                     .catch((err) => {

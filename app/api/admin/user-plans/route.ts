@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
 
         await connectDB();
 
-        // Get all users with their plans
-        const users = await User.find().select('-password').lean();
+        // Get all users with their plans, excluding admin users
+        const users = await User.find({ role: { $ne: 'admin' } }).select('-password').lean();
         
         const usersWithPlans = await Promise.all(
             users.map(async (user: any) => {

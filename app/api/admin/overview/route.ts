@@ -17,15 +17,16 @@ export async function GET(req: NextRequest) {
 
         await connectDB();
 
+        // Exclude admin users from counts and lists
         const [usersCount, storesCount, ordersCount, waAccountsCount, supportCount] = await Promise.all([
-            User.countDocuments({}),
+            User.countDocuments({ role: { $ne: 'admin' } }),
             Store.countDocuments({}),
             Order.countDocuments({}),
             WhatsAppAccount.countDocuments({}),
             SupportMessage.countDocuments({}),
         ]);
 
-        const recentUsers = await User.find({}).sort({ createdAt: -1 }).limit(5).select('username email createdAt');
+        const recentUsers = await User.find({ role: { $ne: 'admin' } }).sort({ createdAt: -1 }).limit(5).select('username email createdAt');
         const recentOrders = await Order.find({}).sort({ createdAt: -1 }).limit(5).select('customerName total status createdAt');
 
         return NextResponse.json({

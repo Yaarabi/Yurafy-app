@@ -21,24 +21,69 @@ export function useSignIn() {
         if (res?.error) return res.error;
 
         if (res?.ok) {
-            // Wait a moment for session to update, then fetch it
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Fetch user role directly from API to bypass NextAuth session cache timing issues
+            let redirectPath = `/${params.locale}/dashboard`; // Default redirect
             
             try {
-                const session = await getSession();
+                // Retry getting session until we have user ID (max 5 attempts)
+                let session = null;
+                let attempts = 0;
+                const maxAttempts = 5;
                 
-                // Redirect admin users to admin dashboard
-                if (session?.user?.role === "admin") {
-                    router.push(`/${params.locale}/admin`);
-                    return;
+                while (attempts < maxAttempts && !session?.user?.id) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    session = await getSession();
+                    if (session?.user?.id) break;
+                    attempts++;
+                }
+                
+                if (session?.user?.id) {
+                    // Fetch fresh user data including role from database via API
+                    const userResponse = await fetch('/api/auth/refresh', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: session.user.id }),
+                    });
+                    
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        console.log('User role from API:', userData.role); // Debug log
+                        
+                        // Check role from API response
+                        if (userData.role === "admin") {
+                            redirectPath = `/${params.locale}/admin`;
+                        }
+                    } else {
+                        console.warn('API refresh failed, trying session fallback');
+                        // If API fails, try session fallback
+                        if (session?.user?.role === "admin") {
+                            redirectPath = `/${params.locale}/admin`;
+                        }
+                    }
+                } else {
+                    // If no session ID after retries, try session role directly
+                    console.warn('No session ID after retries, checking session role');
+                    const finalSession = await getSession();
+                    if (finalSession?.user?.role === "admin") {
+                        redirectPath = `/${params.locale}/admin`;
+                    }
                 }
             } catch (error) {
-                console.error("Error getting session:", error);
-                // Continue with default redirect if session fetch fails
+                console.error("Error checking user role:", error);
+                // On error, try session one more time
+                try {
+                    const errorSession = await getSession();
+                    if (errorSession?.user?.role === "admin") {
+                        redirectPath = `/${params.locale}/admin`;
+                    }
+                } catch (e) {
+                    console.error("Error in fallback session check:", e);
+                }
             }
-
-            // Default redirect for non-admin users
-            router.push(`/${params.locale}/dashboard`);
+            
+            console.log('Redirecting to:', redirectPath); // Debug log
+            // Perform redirect using window.location for hard redirect
+            window.location.href = redirectPath;
         }
     }
 
