@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
                 <p className="text-center text-sm text-white/70 mt-8">
-                    Powered by Modular Storefront
+                    Powered by Yurafy
                 </p>
             </div>
         </footer>

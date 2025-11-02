@@ -3,10 +3,11 @@
 import React from "react";
 import { useStore } from "../../../hooks/useStore";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
+import SearchBar from "@/components/store/components/SearchBar";
 import { motion } from "framer-motion";
 
 const Header: React.FC = () => {
-    const { selectedStore } = useStore();
+    const { selectedStore, selectProduct } = useStore();
     if (!selectedStore) return null;
 
     const headerLinks = [
@@ -25,60 +26,75 @@ const Header: React.FC = () => {
             style={{ borderColor: primaryColor }}
         >
             <div className="container mx-auto px-4 sm:px-6">
-                <div className="flex justify-between items-center py-5">
-                    <a href="/" className="flex items-center space-x-3">
-                        {selectedStore.logoUrl ? (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${selectedStore.brandName} logo`}
-                                className="h-14 w-auto object-contain"
-                            />
-                        ) : (
-                            <h1 
-                                className="text-3xl sm:text-4xl font-black uppercase tracking-tight"
-                                style={{ color: primaryColor }}
-                            >
-                                {selectedStore.brandName}
-                            </h1>
-                        )}
-                    </a>
+                <div className="flex flex-col space-y-4 py-5">
+                    {/* Top row: Logo and Cart */}
+                    <div className="flex justify-between items-center">
+                        <a href="/" className="flex items-center space-x-3">
+                            {selectedStore.logoUrl ? (
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${selectedStore.brandName} logo`}
+                                    className="h-14 w-auto object-contain"
+                                />
+                            ) : (
+                                <h1 
+                                    className="text-3xl sm:text-4xl font-black uppercase tracking-tight"
+                                    style={{ color: primaryColor }}
+                                >
+                                    {selectedStore.brandName}
+                                </h1>
+                            )}
+                        </a>
 
-                    <nav className="hidden md:flex items-center space-x-10">
-                        {headerLinks.map((link) => (
-                            <a
-                                key={link.label}
-                                href={link.href}
-                                className="text-base font-black text-gray-800 hover:transition-colors duration-200 uppercase tracking-wider relative"
-                                style={{ 
-                                    color: link.href === '#about' ? primaryColor : undefined 
-                                }}
+                        <div className="flex items-center space-x-4">
+                            <button
+                                className="relative p-3 rounded-none hover:bg-gray-100 transition-colors duration-200 border-2"
+                                style={{ borderColor: primaryColor }}
+                                aria-label="View cart"
                             >
-                                {link.label}
+                                <ShoppingCartIcon 
+                                    className="h-7 w-7"
+                                    style={{ color: primaryColor }}
+                                />
                                 <span 
-                                    className="absolute -bottom-2 left-0 w-full h-1 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                                    className="absolute -top-2 -right-2 text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white"
                                     style={{ backgroundColor: primaryColor }}
-                                ></span>
-                            </a>
-                        ))}
-                    </nav>
+                                >
+                                    2
+                                </span>
+                            </button>
+                        </div>
+                    </div>
 
-                    <div className="flex items-center space-x-4">
-                        <button
-                            className="relative p-3 rounded-none hover:bg-gray-100 transition-colors duration-200 border-2"
-                            style={{ borderColor: primaryColor }}
-                            aria-label="View cart"
-                        >
-                            <ShoppingCartIcon 
-                                className="h-7 w-7"
-                                style={{ color: primaryColor }}
+                    {/* Bottom row: Search and Navigation */}
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-6">
+                        {/* Search Bar */}
+                        <div className="flex-1 max-w-md">
+                            <SearchBar 
+                                primaryColor={primaryColor} 
+                                onProductSelect={selectProduct}
                             />
-                            <span 
-                                className="absolute -top-2 -right-2 text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white"
-                                style={{ backgroundColor: primaryColor }}
-                            >
-                                2
-                            </span>
-                        </button>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <nav className="flex flex-wrap items-center gap-4 md:gap-10">
+                            {headerLinks.map((link) => (
+                                <a
+                                    key={link.label}
+                                    href={link.href}
+                                    className="text-base font-black text-gray-800 hover:transition-colors duration-200 uppercase tracking-wider relative"
+                                    style={{ 
+                                        color: link.href === '#about' ? primaryColor : undefined 
+                                    }}
+                                >
+                                    {link.label}
+                                    <span 
+                                        className="absolute -bottom-2 left-0 w-full h-1 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                                        style={{ backgroundColor: primaryColor }}
+                                    ></span>
+                                </a>
+                            ))}
+                        </nav>
                     </div>
                 </div>
             </div>

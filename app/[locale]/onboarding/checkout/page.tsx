@@ -97,6 +97,7 @@ export default function CheckoutPage() {
                         body: JSON.stringify({
                             orderId,
                             plan: plan.name,
+                            planKey: planKey, // Pass the plan key to identify plan type
                         }),
                         });
 

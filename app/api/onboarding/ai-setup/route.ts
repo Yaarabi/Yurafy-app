@@ -60,7 +60,44 @@ export async function POST(request: NextRequest) {
                 const result = await saveStoreTool.invoke(storeDataToSave);
                 
                 // Check if store was created successfully
+                // The tool returns: "✅ Store "{brandName}" has been created successfully! Domain: ..."
                 const storeCreated = result.includes('✅ Store') && result.includes('has been created successfully');
+                
+                // Check if store already exists (user is saving again, which means they've completed onboarding)
+                const storeExists = result.includes('already exists');
+
+                // If plan is free, set onboardingCompleted to true and active to true
+                // This applies whether the store was just created OR already exists (user is completing onboarding)
+                if (plan && plan.toLowerCase() === 'free' && user) {
+                    // Check if store exists in database even if tool returned an error
+                    let shouldCompleteOnboarding = storeCreated || storeExists;
+                    
+                    // If store creation failed but store might already exist, check database
+                    if (!shouldCompleteOnboarding) {
+                        try {
+                            const existingStore = await Store.findOne({ owner: session.user.id });
+                            if (existingStore) {
+                                shouldCompleteOnboarding = true;
+                            }
+                        } catch (storeCheckError) {
+                            console.error('Error checking store existence:', storeCheckError);
+                        }
+                    }
+                    
+                    if (shouldCompleteOnboarding) {
+                        try {
+                            // Check current status to avoid unnecessary updates
+                            if (!user.onboardingCompleted || !user.active) {
+                                user.onboardingCompleted = true;
+                                user.active = true;
+                                await user.save();
+                            }
+                        } catch (updateError) {
+                            console.error('Error updating user onboarding status:', updateError);
+                            // Still return success for store creation, but log the error
+                        }
+                    }
+                }
 
                 return NextResponse.json({
                     success: true,

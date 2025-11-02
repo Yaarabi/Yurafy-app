@@ -29,50 +29,27 @@ interface UserPlan {
 interface PlanAwareDashboardProps {
     orders: any[];
     products: any[];
-    templates: any[];
+    templatesCount?: number;
+    featuresData?: any; // UserFeaturesData from hook
 }
 
-export default function PlanAwareDashboard({ orders, products, templates }: PlanAwareDashboardProps) {
-    const { data: session } = useSession();
-    const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
-    const [loading, setLoading] = useState(true);
+export default function PlanAwareDashboard({ orders, products, templatesCount = 0, featuresData }: PlanAwareDashboardProps) {
+    // Use featuresData if provided, otherwise fall back to plan API (for backward compatibility)
+    const planKey = featuresData?.plan?.planKey || "free";
+    const userPlan = featuresData?.plan;
+    const planFeatures = featuresData?.planFeatures;
+    const statistics = featuresData?.statistics;
 
-    useEffect(() => {
-        fetchUserPlan();
-    }, [session]);
-
-    const fetchUserPlan = async () => {
-        if (!session?.user?.id) {
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const response = await fetch("/api/user/plan");
-            if (response.ok) {
-                const data = await response.json();
-                setUserPlan(data);
-            }
-        } catch (error) {
-            console.error("Error fetching user plan:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center p-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            </div>
-        );
-    }
-
-    const planKey = userPlan?.planKey || "free";
     const isFreePlan = planKey === "free";
-    const isStorePlan = planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
-    const isWhatsAppPlan = planKey === "WhatsApp Automation" || planKey === "AI WhatsApp Agent" || planKey === "Pro Seller" || planKey === "Visionary";
-    const hasOrders = planKey !== "free";
+    const isStorePlan = planFeatures?.isStorePlan || planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
+    const isWhatsAppPlan = planFeatures?.isWhatsAppPlan || planKey === "WhatsApp Automation" || planKey === "AI WhatsApp Agent" || planKey === "Pro Seller" || planKey === "Visionary";
+    const hasOrders = planFeatures?.hasOrders !== false;
+    
+    // Calculate days remaining if plan exists
+    const daysRemaining = userPlan?.currentPlan?.endDate 
+        ? Math.ceil((new Date(userPlan.currentPlan.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+        : 0;
+    const isExpired = daysRemaining < 0;
 
     return (
         <div className="space-y-6">
@@ -82,19 +59,19 @@ export default function PlanAwareDashboard({ orders, products, templates }: Plan
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`p-4 rounded-lg border ${
-                        userPlan.isExpired
-                            ? "bg-red-50 border-red-200 text-red-800"
-                            : userPlan.daysRemaining <= 7
-                            ? "bg-yellow-50 border-yellow-200 text-yellow-800"
-                            : "bg-blue-50 border-blue-200 text-blue-800"
+                        isExpired
+                            ? "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200"
+                            : daysRemaining <= 7
+                            ? "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200"
+                            : "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200"
                     }`}
                 >
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="font-semibold">
-                                {userPlan.isExpired
+                                {isExpired
                                     ? "Your plan has expired"
-                                    : `Plan: ${planKey} (${userPlan.daysRemaining} days remaining)`}
+                                    : `Plan: ${planKey} (${daysRemaining} days remaining)`}
                             </p>
                             {userPlan.limits && (
                                 <div className="mt-2 flex flex-wrap gap-4 text-sm">
@@ -120,10 +97,87 @@ export default function PlanAwareDashboard({ orders, products, templates }: Plan
                             href="/dashboard/settings?tab=plan"
                             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
-                            {userPlan.isExpired ? "Renew Plan" : "Upgrade Plan"}
+                            {isExpired ? "Renew Plan" : "Upgrade Plan"}
                         </Link>
                     </div>
                 </motion.div>
+            )}
+
+            {/* Statistics Overview Cards */}
+            {statistics && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {hasOrders && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        ${statistics.totalRevenue.toLocaleString()}
+                                    </p>
+                                </div>
+                                <TrendingUp className="w-8 h-8 text-green-500" />
+                            </div>
+                        </motion.div>
+                    )}
+                    
+                    {isStorePlan && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Products</p>
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {statistics.productsCount}
+                                    </p>
+                                </div>
+                                <Package className="w-8 h-8 text-blue-500" />
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {hasOrders && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {statistics.ordersCount}
+                                    </p>
+                                </div>
+                                <ShoppingCart className="w-8 h-8 text-purple-500" />
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {isWhatsAppPlan && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Templates</p>
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {templatesCount}
+                                    </p>
+                                </div>
+                                <BarChart3 className="w-8 h-8 text-indigo-500" />
+                            </div>
+                        </motion.div>
+                    )}
+                </div>
             )}
 
             {/* Charts Section */}
@@ -176,35 +230,17 @@ export default function PlanAwareDashboard({ orders, products, templates }: Plan
             </div>
 
             {/* WhatsApp Templates - Only for WhatsApp plans */}
-            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-                {isWhatsAppPlan ? (
-                    <>
-                        <h2 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <BarChart3 className="w-5 h-5" />
-                            WhatsApp Templates
-                        </h2>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Total templates: {templates.length}
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Approved: {templates.filter((t) => t.status === "APPROVED").length}
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Pending: {templates.filter((t) => t.status === "PENDING").length}
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Rejected: {templates.filter((t) => t.status === "REJECTED").length}
-                        </p>
-                    </>
-                ) : (
-                    <PlanLockedCard
-                        title="WhatsApp Templates"
-                        description="Upgrade to a WhatsApp plan to manage templates"
-                        feature="whatsapp"
-                        compact
-                    />
-                )}
-            </div>
+            {isWhatsAppPlan && (
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow border border-gray-200 dark:border-gray-700">
+                    <h2 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <BarChart3 className="w-5 h-5" />
+                        WhatsApp Templates
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        Total templates: {templatesCount}
+                    </p>
+                </div>
+            )}
 
             {/* Free Plan CTA */}
             {isFreePlan && (

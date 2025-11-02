@@ -154,6 +154,7 @@ export const saveStoreTool = tool(
                     twitter: socialLinks.twitter,
                 } : undefined,
                 headerLinks: headerLinks || [],
+                active: true, // Set active when store is created
             });
 
             return `✅ Store "${brandName}" has been created successfully! Domain: ${newStore.domain}. Store ID: ${newStore._id}. The store is now ready to use!`;

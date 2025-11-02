@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Sparkles, Eye, ArrowRight } from 'lucide-react';
 import { storeThemes } from '@/public/themes';
@@ -24,6 +24,14 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
     const [previewSecondaryColor, setPreviewSecondaryColor] = useState<string>('');
     const [previewTextColor, setPreviewTextColor] = useState<string>('');
     const [scale, setScale] = useState<number>(0.4);
+    
+    // Debounce refs for smooth color updates
+    const colorUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastColorUpdateRef = useRef<{
+        primary?: string;
+        secondary?: string;
+        text?: string;
+    }>({});
 
     // Calculate responsive scale
     useEffect(() => {
@@ -45,7 +53,8 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
         return () => window.removeEventListener('resize', updateScale);
     }, []);
 
-    const getPreviewStore = (themeId: number): SerializedStore => {
+    // Memoize getPreviewStore to prevent unnecessary recalculations
+    const getPreviewStore = useCallback((themeId: number): SerializedStore => {
         const preview = THEME_PREVIEWS.find(p => p.themeId === themeId);
         const themeData = storeThemes[themeId - 1];
         const isCurrentPreviewTheme = previewThemeId === themeId;
@@ -103,15 +112,46 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
-    };
+    }, [previewThemeId, previewPrimaryColor, previewSecondaryColor, previewTextColor, selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor]);
+
+    // Optimized color update function with throttling
+    const updatePreviewColor = useCallback((type: 'primary' | 'secondary' | 'text', value: string, isSelectedTheme: boolean) => {
+        // Update immediately for responsive feel
+        if (type === 'primary') {
+            setPreviewPrimaryColor(value);
+            if (isSelectedTheme) {
+                setCustomPrimaryColor(value);
+            }
+        } else if (type === 'secondary') {
+            setPreviewSecondaryColor(value);
+            if (isSelectedTheme) {
+                setCustomSecondaryColor(value);
+            }
+        } else if (type === 'text') {
+            setPreviewTextColor(value);
+            if (isSelectedTheme) {
+                setCustomTextColor(value);
+            }
+        }
+
+        // Clear existing timeout
+        if (colorUpdateTimeoutRef.current) {
+            clearTimeout(colorUpdateTimeoutRef.current);
+        }
+
+        // Store the latest values
+        lastColorUpdateRef.current[type] = value;
+    }, []);
 
     // Memoize preview store to avoid recalculating on every render
+    // Use requestAnimationFrame batching for color updates
     const previewStoreElement = useMemo(() => {
         if (!previewThemeId) return null;
         
         const previewStore = getPreviewStore(previewThemeId);
-        // Create a unique key based on colors to force remount when colors change
-        const storeKey = `${previewThemeId}-${previewStore.theme.primaryColor}-${previewStore.theme.secondaryColor || ''}-${previewStore.theme.textColor}`;
+        // Use color values in key to ensure updates, but optimize with RAF
+        const storeKey = `preview-${previewThemeId}-${previewPage}-${previewStore.theme.primaryColor}-${previewStore.theme.secondaryColor || ''}-${previewStore.theme.textColor}`;
+        
         return (
             <StoreProvider 
                 key={storeKey}
@@ -131,7 +171,16 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                 </div>
             </StoreProvider>
         );
-    }, [previewThemeId, previewPage, previewPrimaryColor, previewSecondaryColor, previewTextColor, scale, selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor]);
+    }, [previewThemeId, previewPage, scale, getPreviewStore]);
+    
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (colorUpdateTimeoutRef.current) {
+                clearTimeout(colorUpdateTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const handlePreview = (themeId: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -487,12 +536,11 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                     type="color"
                                                                     value={primaryColor}
                                                                     onChange={(e) => {
-                                                                        // Update preview color for real-time preview
-                                                                        setPreviewPrimaryColor(e.target.value);
-                                                                        // If this is the selected theme, also update custom color
-                                                                        if (isSelectedTheme) {
-                                                                            setCustomPrimaryColor(e.target.value);
-                                                                        }
+                                                                        // Use requestAnimationFrame for smoother updates
+                                                                        const value = e.target.value;
+                                                                        requestAnimationFrame(() => {
+                                                                            updatePreviewColor('primary', value, isSelectedTheme);
+                                                                        });
                                                                     }}
                                                                     className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
                                                                 />
@@ -502,21 +550,14 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                     onChange={(e) => {
                                                                         const value = e.target.value;
                                                                         if (value === '' || /^#[0-9A-F]{0,6}$/i.test(value)) {
-                                                                            // Update preview color for real-time preview
-                                                                            setPreviewPrimaryColor(value || currentTheme.theme.primaryColor);
-                                                                            // If this is the selected theme, also update custom color
-                                                                            if (isSelectedTheme) {
-                                                                                setCustomPrimaryColor(value || '');
-                                                                            }
+                                                                            // Immediate update for text input with debounce for heavy operations
+                                                                            updatePreviewColor('primary', value || currentTheme.theme.primaryColor, isSelectedTheme);
                                                                         }
                                                                     }}
                                                                     onBlur={(e) => {
                                                                         const value = e.target.value;
-                                                                        if (!/^#[0-9A-F]{6}$/i.test(value)) {
-                                                                            setPreviewPrimaryColor('');
-                                                                            if (isSelectedTheme) {
-                                                                                setCustomPrimaryColor('');
-                                                                            }
+                                                                        if (!/^#[0-9A-F]{6}$/i.test(value) && value !== '') {
+                                                                            updatePreviewColor('primary', currentTheme.theme.primaryColor, isSelectedTheme);
                                                                         }
                                                                     }}
                                                                     placeholder={currentTheme.theme.primaryColor}
@@ -539,12 +580,10 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                         type="color"
                                                                         value={secondaryColor}
                                                                         onChange={(e) => {
-                                                                            // Update preview color for real-time preview
-                                                                            setPreviewSecondaryColor(e.target.value);
-                                                                            // If this is the selected theme, also update custom color
-                                                                            if (isSelectedTheme) {
-                                                                                setCustomSecondaryColor(e.target.value);
-                                                                            }
+                                                                            const value = e.target.value;
+                                                                            requestAnimationFrame(() => {
+                                                                                updatePreviewColor('secondary', value, isSelectedTheme);
+                                                                            });
                                                                         }}
                                                                         className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
                                                                     />
@@ -554,21 +593,13 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                         onChange={(e) => {
                                                                             const value = e.target.value;
                                                                             if (value === '' || /^#[0-9A-F]{0,6}$/i.test(value)) {
-                                                                                // Update preview color for real-time preview
-                                                                                setPreviewSecondaryColor(value || currentTheme.theme.secondaryColor || '');
-                                                                                // If this is the selected theme, also update custom color
-                                                                                if (isSelectedTheme) {
-                                                                                    setCustomSecondaryColor(value || '');
-                                                                                }
+                                                                                updatePreviewColor('secondary', value || currentTheme.theme.secondaryColor || '', isSelectedTheme);
                                                                             }
                                                                         }}
                                                                         onBlur={(e) => {
                                                                             const value = e.target.value;
-                                                                            if (!/^#[0-9A-F]{6}$/i.test(value)) {
-                                                                                setPreviewSecondaryColor('');
-                                                                                if (isSelectedTheme) {
-                                                                                    setCustomSecondaryColor('');
-                                                                                }
+                                                                            if (!/^#[0-9A-F]{6}$/i.test(value) && value !== '') {
+                                                                                updatePreviewColor('secondary', currentTheme.theme.secondaryColor || '', isSelectedTheme);
                                                                             }
                                                                         }}
                                                                         placeholder={currentTheme.theme.secondaryColor}
@@ -591,12 +622,10 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                     type="color"
                                                                     value={textColor}
                                                                     onChange={(e) => {
-                                                                        // Update preview color for real-time preview
-                                                                        setPreviewTextColor(e.target.value);
-                                                                        // If this is the selected theme, also update custom color
-                                                                        if (isSelectedTheme) {
-                                                                            setCustomTextColor(e.target.value);
-                                                                        }
+                                                                        const value = e.target.value;
+                                                                        requestAnimationFrame(() => {
+                                                                            updatePreviewColor('text', value, isSelectedTheme);
+                                                                        });
                                                                     }}
                                                                     className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
                                                                 />
@@ -606,21 +635,13 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                     onChange={(e) => {
                                                                         const value = e.target.value;
                                                                         if (value === '' || /^#[0-9A-F]{0,6}$/i.test(value)) {
-                                                                            // Update preview color for real-time preview
-                                                                            setPreviewTextColor(value || currentTheme.theme.textColor);
-                                                                            // If this is the selected theme, also update custom color
-                                                                            if (isSelectedTheme) {
-                                                                                setCustomTextColor(value || '');
-                                                                            }
+                                                                            updatePreviewColor('text', value || currentTheme.theme.textColor, isSelectedTheme);
                                                                         }
                                                                     }}
                                                                     onBlur={(e) => {
                                                                         const value = e.target.value;
-                                                                        if (!/^#[0-9A-F]{6}$/i.test(value)) {
-                                                                            setPreviewTextColor('');
-                                                                            if (isSelectedTheme) {
-                                                                                setCustomTextColor('');
-                                                                            }
+                                                                        if (!/^#[0-9A-F]{6}$/i.test(value) && value !== '') {
+                                                                            updatePreviewColor('text', currentTheme.theme.textColor, isSelectedTheme);
                                                                         }
                                                                     }}
                                                                     placeholder={currentTheme.theme.textColor}

@@ -2,7 +2,8 @@
 import { useParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Check, Sparkles, Store, MessageCircle, Bot, Crown, Zap } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import toast from "react-hot-toast"
 
 export const PLANS = {
@@ -58,60 +59,96 @@ export const PLANS = {
 
 const planTypes = {
     FREE: ['free'],
-    WHATSAPP: ['whatsapp', 'aiAgent'],
-    STORE: ['starter', 'proSeller', 'visionary']
+    WHATSAPP_ONLY: ['whatsapp', 'aiAgent'],
+    STORE_ONLY: ['starter'],
+    MIXED: ['proSeller', 'visionary'] // Store + WhatsApp
 }
 
 export default function PlanPage() {
     const router = useRouter()
     const params = useParams()
+    const { data: session, status } = useSession()
     const [loading, setLoading] = useState<string | null>(null)
+    const [isUpgrade, setIsUpgrade] = useState(false)
+
+    // Check if user has completed onboarding (upgrade scenario)
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user?.id) {
+            fetch('/api/auth/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: session.user.id }),
+            })
+                .then(async (res) => {
+                    if (res.ok) {
+                        const data = await res.json();
+                        setIsUpgrade(data.onboardingCompleted === true);
+                    }
+                })
+                .catch(() => {
+                    setIsUpgrade(false);
+                });
+        }
+    }, [status, session]);
 
     const handlePlanSelect = async (planKey: string) => {
         setLoading(planKey)
 
         try {
-            // Free plan → redirect to dashboard
+            // Free plan → redirect to info page to create store
             if (planTypes.FREE.includes(planKey)) {
-                router.push(`/${params.locale}/dashboard`)
+                router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
                 return
             }
 
-            // WhatsApp plans → create WhatsApp account then checkout
-            if (planTypes.WHATSAPP.includes(planKey)) {
-                try {
-                    const response = await fetch('/api/whatsapp/account', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            waBusinessId: 'temp-' + Date.now(),
-                            waNumberId: 'temp-' + Date.now(),
-                            waNumber: '+1234567890',
-                            waToken: 'temp-token-' + Date.now(),
-                            settings: {
-                                autoReply: planKey === 'aiAgent',
-                                aiAgent: planKey === 'aiAgent',
-                            },
-                        }),
-                    })
+            // If this is an upgrade (user has completed onboarding), use upgrade API
+            if (isUpgrade) {
+                const response = await fetch('/api/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ planKey }),
+                });
 
-                    if (!response.ok) {
-                        const data = await response.json()
-                        throw new Error(data.error || 'Failed to create WhatsApp account')
-                    }
-
-                    toast.success('WhatsApp account created!')
-                    router.push(`/${params.locale}/onboarding/checkout?plan=${planKey}`)
-                } catch (error: any) {
-                    console.error('Error creating WhatsApp account:', error)
-                    toast.error(error.message || 'Failed to create WhatsApp account')
-                    setLoading(null)
+                if (!response.ok) {
+                    const error = await response.json();
+                    toast.error(error.error || 'Failed to process upgrade');
+                    setLoading(null);
+                    return;
                 }
+
+                const result = await response.json();
+                
+                if (result.created && result.created.length > 0) {
+                    toast.success(
+                        `Created: ${result.created.join(', ')}. Redirecting...`,
+                        { duration: 2000 }
+                    );
+                }
+
+                // Wait a bit for toast to show
+                setTimeout(() => {
+                    router.push(`/${params.locale}${result.redirectTo}`);
+                }, 500);
+                return;
+            }
+
+            // First-time onboarding flow (existing logic)
+            // WhatsApp-only plans → redirect directly to checkout
+            // WhatsApp account will be created after successful payment
+            if (planTypes.WHATSAPP_ONLY.includes(planKey)) {
+                router.push(`/${params.locale}/onboarding/checkout?plan=${planKey}`)
                 return
             }
 
-            // Store plans → redirect to onboarding/info
-            if (planTypes.STORE.includes(planKey)) {
+            // Store-only plans → redirect to onboarding/info to create store first
+            if (planTypes.STORE_ONLY.includes(planKey)) {
+                router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
+                return
+            }
+
+            // Mixed plans (Store + WhatsApp) → redirect to info page to create store first
+            // WhatsApp account will be created after successful payment
+            if (planTypes.MIXED.includes(planKey)) {
                 router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
                 return
             }
@@ -140,11 +177,24 @@ export default function PlanPage() {
                         <Sparkles className="w-12 h-12 text-indigo-600 mx-auto" />
                     </motion.div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-4">
-                        Choose Your Plan
+                        {isUpgrade ? 'Upgrade Your Plan' : 'Choose Your Plan'}
                     </h1>
                     <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-                        Select the perfect plan for your business needs
+                        {isUpgrade 
+                            ? 'Select a plan to upgrade. Missing features will be created automatically.' 
+                            : 'Select the perfect plan for your business needs'
+                        }
                     </p>
+                    {isUpgrade && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium"
+                        >
+                            <Crown className="w-4 h-4" />
+                            <span>Upgrade Mode: Features will be set up automatically</span>
+                        </motion.div>
+                    )}
                 </div>
 
                 {/* Plans Grid */}
@@ -224,7 +274,9 @@ export default function PlanPage() {
                                             </>
                                         ) : (
                                             <>
-                                                <span>Select {plan.name}</span>
+                                                <span>
+                                                    {isUpgrade ? 'Upgrade to' : 'Select'} {plan.name}
+                                                </span>
                                                 {isPopular && <Crown className="w-5 h-5" />}
                                             </>
                                         )}

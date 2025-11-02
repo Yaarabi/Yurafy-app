@@ -66,9 +66,23 @@ export default function InfoPage() {
                     const storeData = await storeResponse.json();
                     const userData = await userResponse.json();
 
-                    // If store exists and onboarding is not completed, redirect to checkout
+                    // If store exists and onboarding is not completed (first-time flow)
                     if (storeResponse.ok && storeData._id && userData.onboardingCompleted === false) {
+                        // If free plan, redirect to dashboard (onboarding should be completed)
+                        if (plan === 'free') {
+                            router.push(`/${params.locale}/dashboard`);
+                            return;
+                        }
+                        // For paid plans, redirect to checkout
                         router.push(`/${params.locale}/onboarding/checkout?plan=${plan || 'starter'}`);
+                        return;
+                    }
+                    
+                    // If store exists and onboarding IS completed, this is an upgrade
+                    // Allow user to continue with info page flow for upgrade
+                    if (storeResponse.ok && storeData._id && userData.onboardingCompleted === true) {
+                        // User is upgrading/changing plan, allow them to continue
+                        setChecking(false);
                         return;
                     }
                 } catch (error) {

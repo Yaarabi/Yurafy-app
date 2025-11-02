@@ -41,15 +41,37 @@ export interface IStore extends Document {
         label: string;
         href: string;
     }>;
+    active?: boolean;
 }
 
 const storeSchema = new Schema<IStore>(
     {
-        owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-        brandName: { type: String, required: true, trim: true },
-        domain: { type: String, required: true, trim: true, unique: true, lowercase: true },
+        owner: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "User", 
+            required: true,
+            index: true, // Index for owner lookups
+        },
+        brandName: { 
+            type: String, 
+            required: true, 
+            trim: true,
+            index: true, // Index for search
+        },
+        domain: { 
+            type: String, 
+            required: true, 
+            trim: true, 
+            unique: true, 
+            lowercase: true,
+            index: true, // Unique index already exists
+        },
         description: { type: String, required: true, trim: true },
-        themeId: { type: Number, required: true },
+        themeId: { 
+            type: Number, 
+            required: true,
+            index: true, // Index for theme filtering
+        },
 
         theme: {
         primaryColor: { type: String, required: true, trim: true },
@@ -58,12 +80,12 @@ const storeSchema = new Schema<IStore>(
         },
 
         themeStructure: {
-        header: { type: Boolean, default: true },
-        hero: { type: Boolean, default: true },
-        about: { type: Boolean, default: true },
-        trust: { type: Boolean, default: true },
-        productGrid: { type: Boolean, default: true },
-        footer: { type: Boolean, default: true },
+            header: { type: Boolean, default: true },
+            hero: { type: Boolean, default: true },
+            about: { type: Boolean, default: true },
+            trust: { type: Boolean, default: true },
+            productGrid: { type: Boolean, default: true },
+            footer: { type: Boolean, default: true },
         },
 
         hero: {
@@ -93,8 +115,16 @@ const storeSchema = new Schema<IStore>(
             href: { type: String, required: true, trim: true },
         },
         ],
+        active: { 
+            type: Boolean, 
+            default: false,
+            index: true, // Index for filtering active stores
+        },
     },
     { timestamps: true }
 );
+
+// Compound indexes for common queries
+storeSchema.index({ owner: 1, domain: 1 });
 
 export default mongoose.models.Store || mongoose.model<IStore>("Store", storeSchema);

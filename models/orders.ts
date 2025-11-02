@@ -27,7 +27,12 @@ export interface IOrder {
 
 const OrderSchema = new Schema(
   {
-    owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    owner: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true,
+      index: true, // Index for owner queries
+    },
     products: [
       {
         product: { type: Schema.Types.ObjectId, ref: "Product", required: false },
@@ -38,11 +43,16 @@ const OrderSchema = new Schema(
         size: { type: String },
       },
     ],
-    totalAmount: { type: Number, required: true },
+    totalAmount: { 
+      type: Number, 
+      required: true,
+      index: true, // Index for financial queries
+    },
     status: {
       type: String,
       enum: ["new", "confirmed", "shipped", "delivered", "cancelled"],
       default: "new",
+      index: true, // Index for status filtering
     },
     shippingAddress: {
       fullName: { type: String, required: true },
@@ -55,5 +65,10 @@ const OrderSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Compound indexes for common queries
+OrderSchema.index({ owner: 1, status: 1 });
+OrderSchema.index({ owner: 1, createdAt: -1 });
+OrderSchema.index({ status: 1, createdAt: -1 });
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);

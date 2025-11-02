@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
         templates: Array.isArray(templates) ? templates : [],
         memory: memoryValue,
         file: typeof file === "string" ? file : "",
+        active: true, // Set active when AI agent is created
         });
 
         // 🧩 Sync WhatsApp account settings if linked

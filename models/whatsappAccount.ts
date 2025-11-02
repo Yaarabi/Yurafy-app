@@ -31,6 +31,7 @@ export interface IWhatsAppAccount{
         personality: string;
         knowledgeBaseId?: string;
     };
+    active?: boolean;
     createdAt: Date;
     updatedAt: Date;
     }
@@ -69,6 +70,11 @@ const WhatsAppAccountSchema = new Schema(
         aiConfig: {
         personality: { type: String, default: "friendly assistant" },
         knowledgeBaseId: { type: String },
+        },
+        active: { 
+            type: Boolean, 
+            default: false,
+            index: true, // Index for filtering active accounts
         },
     },
     { timestamps: true }

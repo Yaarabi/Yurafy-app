@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
                 ...account.preferredTemplates,
                 ...defaultTemplates,
             };
+            account.active = true; // Ensure active is true when updated
             await account.save();
         } else {
             // Create new account
@@ -108,6 +109,7 @@ export async function POST(req: NextRequest) {
                 settings: defaultSettings,
                 aiConfig: aiConfig || { personality: "friendly assistant" },
                 preferredTemplates: defaultTemplates,
+                active: true, // Set active when WhatsApp account is created
             });
         }
 

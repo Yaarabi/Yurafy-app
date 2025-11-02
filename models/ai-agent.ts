@@ -9,6 +9,7 @@ export interface IAIAgent extends Document {
     templates: string[]; // list of template names (e.g. "order_bot", "faq_bot")
     memory?: string; // single string summary
     file?:string;
+    active?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,7 +26,11 @@ const AIAgentSchema = new Schema(
         templates: [{ type: [String], default: [] }],
         memory: { type: String, default: "" },
         file: { type: String, default: "" },
-
+        active: { 
+            type: Boolean, 
+            default: false,
+            index: true, // Index for filtering active agents
+        },
     },
     { timestamps: true }
 );

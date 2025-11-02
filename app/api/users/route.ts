@@ -174,6 +174,20 @@ export async function PUT(req: NextRequest) {
         const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true }).select("-password");
         if (!updatedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+        // If active status was updated, sync with related records
+        if (updateData.active !== undefined) {
+            const Store = (await import('@/models/store')).default;
+            const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
+            const AIAgent = (await import('@/models/ai-agent')).default;
+            
+            // Update related records to match user's active status
+            await Promise.all([
+                Store.updateMany({ owner: id }, { active: updateData.active }),
+                WhatsAppAccount.updateMany({ owner: id }, { active: updateData.active }),
+                AIAgent.updateMany({ owner: id }, { active: updateData.active }),
+            ]);
+        }
+
         let planKey = "free";
         if (updatedUser.currentPlanId) {
         const plan = await Plan.findById(updatedUser.currentPlanId);
@@ -211,7 +225,34 @@ export async function DELETE(req: NextRequest) {
         const deletedUser = await User.findByIdAndDelete(id).select("-password");
         if (!deletedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-        await Plan.deleteMany({ userId: deletedUser._id }); // clean up plans
+        // Import all models that reference the user
+        const Store = (await import('@/models/store')).default;
+        const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
+        const AIAgent = (await import('@/models/ai-agent')).default;
+        const Product = (await import('@/models/products')).default;
+        const Order = (await import('@/models/orders')).default;
+        const Notification = (await import('@/models/notification')).default;
+        const Support = (await import('@/models/support')).default;
+        const Template = (await import('@/models/templates')).default;
+        const AgentMemory = (await import('@/models/agentMemory')).default;
+        const AgentVector = (await import('@/models/agentVector')).default;
+        const WhatsAppMessage = (await import('@/models/whatsappMessage')).default;
+
+        // Delete all related records
+        await Promise.all([
+            Plan.deleteMany({ userId: deletedUser._id }),
+            Store.deleteMany({ owner: deletedUser._id }),
+            WhatsAppAccount.deleteMany({ owner: deletedUser._id }),
+            AIAgent.deleteMany({ owner: deletedUser._id }),
+            Product.deleteMany({ owner: deletedUser._id }),
+            Order.deleteMany({ owner: deletedUser._id }),
+            Notification.deleteMany({ owner: deletedUser._id }),
+            Support.deleteMany({ owner: deletedUser._id }),
+            Template.deleteMany({ owner: deletedUser._id }),
+            AgentMemory.deleteMany({ owner: deletedUser._id }),
+            AgentVector.deleteMany({ owner: deletedUser._id }),
+            WhatsAppMessage.deleteMany({ owner: deletedUser._id }),
+        ]);
 
         return NextResponse.json({
         message: "User deleted successfully",

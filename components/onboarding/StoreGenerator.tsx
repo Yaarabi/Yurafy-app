@@ -229,8 +229,10 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
             // Check if data has been modified - compare with original storeData
             const hasChanges = data && JSON.stringify(data) !== JSON.stringify(storeData);
             
-            if (hasChanges) {
-                // Update the store with any edits made in the preview
+            // For free plan, always call API to ensure onboardingCompleted is set
+            // For paid plans, only call if there are changes
+            if (hasChanges || plan === 'free') {
+                // Update the store with any edits made in the preview (or confirm completion for free plan)
                 const response = await fetch('/api/onboarding/ai-setup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -246,19 +248,41 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
 
                 const responseData = await response.json();
 
-                if (responseData.success && responseData.storeCreated) {
-                    toast.success('Store updated successfully!');
+                // For free plan, even if store already exists, we still need to complete onboarding
+                if (responseData.success && (responseData.storeCreated || plan === 'free')) {
+                    if (plan === 'free') {
+                        toast.success('Store created successfully!');
+                    } else {
+                        toast.success('Store updated successfully!');
+                    }
+                } else if (responseData.success) {
+                    // Store already exists, but that's okay for free plan
+                    if (plan === 'free') {
+                        toast.success('Store saved successfully!');
+                    } else {
+                        toast.error(responseData.error || 'Failed to update store');
+                        return;
+                    }
                 } else {
-                    toast.error(responseData.error || 'Failed to update store');
-                    return;
+                    toast.error(responseData.error || 'Failed to save store');
+                    if (plan !== 'free') {
+                        return;
+                    }
                 }
             }
             
-            // Redirect to checkout
-            toast.success('Redirecting to checkout...');
-            setTimeout(() => {
-                router.push(`/${locale}/onboarding/checkout?plan=${plan || 'Starter'}`);
-            }, 500);
+            // Check if plan is free - redirect to dashboard (onboardingCompleted is set in API)
+            if (plan === 'free') {
+                setTimeout(() => {
+                    router.push(`/${locale}/dashboard`);
+                }, 500);
+            } else {
+                // Redirect to checkout for paid plans
+                toast.success('Redirecting to checkout...');
+                setTimeout(() => {
+                    router.push(`/${locale}/onboarding/checkout?plan=${plan || 'Starter'}`);
+                }, 500);
+            }
         } catch (error) {
             console.error('Error saving store:', error);
             toast.error('Something went wrong while saving. Please try again.');

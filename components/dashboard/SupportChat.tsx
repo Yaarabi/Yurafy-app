@@ -73,22 +73,8 @@ export default function SupportChat() {
 
             if (!response.ok) throw new Error("Failed to send message");
 
-            // Create a notification for admin
-            try {
-                await fetch("/api/notifications/create", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        ownerId: session?.user?.id,
-                        type: "support_reply",
-                        title: "New Support Message",
-                        message: userMessage.text.substring(0, 100),
-                        link: `/admin/support?userId=${session?.user?.id}`,
-                    }),
-                });
-            } catch (notifError) {
-                console.error("Error creating notification:", notifError);
-            }
+            // Notification for admin is now handled server-side in /api/support
+            // Users should NOT receive notifications for their own messages
 
             toast.success("Message sent! Our support team will respond soon.");
         } catch (error) {

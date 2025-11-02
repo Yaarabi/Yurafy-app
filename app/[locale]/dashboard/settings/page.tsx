@@ -1,27 +1,47 @@
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProfileHeader from '@/components/dashboard/setting/profileHeader';
 import EditableField from '@/components/dashboard/setting/SettingsField';
-import PlanSelector from '@/components/dashboard/setting/PlanSelector';
 import LogoUploader from '@/components/dashboard/setting/LogoPreview';
 import SettingsSection from '@/components/dashboard/setting/settingSection';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
 import ThemeToggle from '@/components/dashboard/Mode';
 import Link from 'next/link';
 import StoreSettings from '@/components/dashboard/setting/StoreSettings';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import LogoLoader from '@/components/themePreview/loadder';
+import { ArrowRight, Crown, Zap, User, Package, MessageCircle, Globe, Palette, ChevronRight } from 'lucide-react';
+import { useUserFeatures } from '@/hooks/useUserFeatures';
 
 export default function SettingsPage() {
-    const { data: session, status } = useSession();
+    const { data: featuresData, loading, error } = useUserFeatures();
+    const searchParams = useSearchParams();
+    const [activeTab, setActiveTab] = useState('Profile');
     const [user, setUser] = useState<any>(null);
     const [whatsapp, setWhatsApp] = useState<any>(null);
     const [store, setStore] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('Profile');
+
+    // Update local state when features data is loaded
+    useEffect(() => {
+        if (featuresData) {
+            setUser(featuresData.user);
+            setWhatsApp(featuresData.features.whatsapp);
+            setStore(featuresData.features.store);
+        }
+    }, [featuresData]);
+
+    // Tab icons mapping
+    const tabIcons: Record<string, any> = {
+        Profile: User,
+        Plan: Crown,
+        Store: Package,
+        WhatsApp: MessageCircle,
+        Language: Globe,
+        Mode: Palette,
+    };
 
     // 👇 Tabs are built dynamically (no WhatsApp/Store unless they exist)
     const tabs = [
@@ -33,72 +53,79 @@ export default function SettingsPage() {
         'Mode',
     ];
 
-    // 👇 Fetch all user-related data once session is ready
+    // Set active tab from URL query parameter
     useEffect(() => {
-        const fetchData = async () => {
-        if (status === 'authenticated' && session?.user?.id) {
-            try {
-            const [userRes, waRes, storeRes] = await Promise.all([
-                fetch('/api/auth/refresh', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: session.user.id }),
-                }),
-                fetch(`/api/whatsapp/account`),
-                fetch(`/api/store/owner`),
-            ]);
-
-            const userData = await userRes.json();
-            const waData = await waRes.json();
-            const storeData = await storeRes.json();
-
-            console.log(storeData)
-
-            if (userRes.ok && userData) setUser(userData);
-            if (waRes.ok && waData.account) setWhatsApp(waData.account);
-            if (storeRes.ok && storeData) setStore(storeData);
-            } catch (err) {
-            console.error('Error fetching settings:', err);
-            toast.error('Failed to fetch settings.');
-            } finally {
-            setLoading(false);
+        const tabParam = searchParams.get('tab');
+        if (tabParam) {
+            // Capitalize first letter to match tab names (e.g., 'plan' -> 'Plan')
+            const normalizedTab = tabParam.charAt(0).toUpperCase() + tabParam.slice(1).toLowerCase();
+            
+            // Recalculate tabs here to ensure they're up to date
+            const availableTabs = [
+                'Profile',
+                'Plan',
+                ...(store ? ['Store'] : []),
+                ...(whatsapp ? ['WhatsApp'] : []),
+                'Language',
+                'Mode',
+            ];
+            
+            // Validate that the tab exists in the available tabs
+            if (availableTabs.includes(normalizedTab)) {
+                setActiveTab(normalizedTab);
             }
         }
-        };
-
-        fetchData();
-    }, [status, session]);
+    }, [searchParams, store, whatsapp]);
 
     // --- Update User Field ---
     const updateField = async (field: string, value: string) => {
-        if (!session?.user?.id) return;
-        const updated = { ...user, [field]: value };
+        if (!user) return;
+        
+        // Optimistically update UI
+        const fieldToUpdate = field === 'name' ? 'username' : field;
+        const updated = { ...user, [fieldToUpdate]: value };
         setUser(updated);
 
         try {
-        const res = await fetch('/api/user/me', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [field]: value }),
-        });
+            const res = await fetch('/api/user/me', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: value }),
+            });
 
-        if (res.ok) {
-            const updatedData = await res.json();
-            setUser(updatedData);
-            toast.success(`${field} updated successfully!`);
-        } else {
-            const errorData = await res.json();
-            toast.error(errorData.error || `Failed to update ${field}.`);
-        }
+            if (res.ok) {
+                const updatedData = await res.json();
+                // Update user state with the response data, preserving the structure
+                setUser({
+                    ...user,
+                    id: updatedData.id || user.id,
+                    username: updatedData.username || user.username,
+                    email: updatedData.email || user.email,
+                    phone: updatedData.phone || user.phone,
+                    logo: updatedData.logo || user.logo,
+                    role: updatedData.role || user.role,
+                    plan: updatedData.plan || user.plan,
+                    active: updatedData.active !== undefined ? updatedData.active : user.active,
+                    onboardingCompleted: updatedData.onboardingCompleted !== undefined ? updatedData.onboardingCompleted : user.onboardingCompleted,
+                });
+                toast.success(`${field === 'name' ? 'Name' : field} updated successfully!`);
+            } else {
+                // Revert optimistic update on error
+                setUser(user);
+                const errorData = await res.json();
+                toast.error(errorData.error || `Failed to update ${field === 'name' ? 'name' : field}.`);
+            }
         } catch (err) {
-        console.error('Error updating user:', err);
-        toast.error(`Error updating ${field}.`);
+            // Revert optimistic update on error
+            setUser(user);
+            console.error('Error updating user:', err);
+            toast.error(`Error updating ${field === 'name' ? 'name' : field}.`);
         }
     };
 
     // --- Update WhatsApp Field ---
     const updateWhatsAppField = async (field: string, value: any) => {
-        if (!session?.user?.id || !whatsapp) return;
+        if (!whatsapp) return;
 
         const updated = { ...whatsapp, [field]: value };
         setWhatsApp(updated);
@@ -179,77 +206,199 @@ export default function SettingsPage() {
         }
     };
 
-    const params = useParams()
+    const params = useParams();
 
-    if (loading) return <LogoLoader/>
+    if (loading) return <LogoLoader/>;
+    if (error) return <p className="text-red-500">Error: {error}</p>;
     if (!user) return <p className="text-red-500">User not found</p>;
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 p-6">
-        <div className="max-w-5xl mx-auto text-gray-800 dark:text-white mt-12">
-            <ProfileHeader name={user.username} email={user.email} logo={user.logo} />
-
-            {/* Tabs Navigation */}
-            <div className="flex flex-wrap gap-2 mb-6 mt-6">
-            {tabs.map((tab) => (
-                <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2 rounded-t-lg font-medium transition-all duration-200 ${
-                    activeTab === tab
-                    ? 'bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] shadow-md'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-[var(--brand-blue)]/10 hover:text-[var(--brand-blue)]'
-                }`}
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                {/* Profile Header - Mobile Optimized */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 sm:mb-8"
                 >
-                {tab}
-                </button>
-            ))}
+                    <ProfileHeader name={user.username} email={user.email} logo={user.logo} />
+                </motion.div>
+
+                {/* Tabs Navigation - Mobile Scrollable with Smart UX */}
+                <div className="mb-6 sm:mb-8 relative">
+                    {/* Scrollable Tabs Container */}
+                    <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0 scroll-smooth">
+                        <div className="flex gap-2 sm:gap-3 min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center">
+                            {tabs.map((tab, index) => {
+                                const Icon = tabIcons[tab];
+                                const isActive = activeTab === tab;
+                                return (
+                                    <motion.button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className={`
+                                            flex items-center gap-2 px-4 py-3 sm:px-5 sm:py-2.5 
+                                            rounded-xl sm:rounded-lg font-medium 
+                                            transition-all duration-200 whitespace-nowrap
+                                            text-sm sm:text-base
+                                            relative
+                                            ${
+                                                isActive
+                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-300 dark:ring-indigo-700'
+                                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600'
+                                            }
+                                        `}
+                                    >
+                                        {Icon && <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
+                                        <span className="font-medium">{tab}</span>
+                                        {isActive && (
+                                            <motion.div
+                                                layoutId="activeTabIndicator"
+                                                className="absolute bottom-0 left-0 right-0 h-1 bg-white/50 rounded-full hidden sm:block"
+                                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                            />
+                                        )}
+                                    </motion.button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    
+                    {/* Mobile Scroll Indicator */}
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none">
+                        <div className="flex gap-1 opacity-50">
+                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse"></div>
+                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Tab Content - Animated */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+                    >
+                        {activeTab === 'Profile' && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <SettingsSection title="Profile">
+                                    <div className="space-y-6">
+                                        <LogoUploader logoUrl={user.logo || '/logo.png'} onUpload={handleLogoUpload} />
+                                        <div className="space-y-4">
+                                            <EditableField label="Name" value={user.username} onSave={(val) => updateField('name', val)} />
+                                            <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
+                                        </div>
+                                    </div>
+                                </SettingsSection>
+                            </div>
+                        )}
+
+                        {activeTab === 'Plan' && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <SettingsSection title="Plan">
+                                    <div className="space-y-6">
+                                        {/* Current Plan Display - Mobile Optimized */}
+                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 sm:p-6 border border-indigo-200 dark:border-indigo-800">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                                <div className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg flex-shrink-0">
+                                                    {(featuresData?.plan?.planKey || user.plan || 'free').toLowerCase() === 'free' ? (
+                                                        <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                                                    ) : (
+                                                        <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                                                        Current Plan: {featuresData?.plan?.planKey || user.plan || 'Free'}
+                                                    </h3>
+                                                    {featuresData?.plan?.currentPlan && (
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                            {featuresData.plan.currentPlan.endDate 
+                                                                ? `Expires: ${new Date(featuresData.plan.currentPlan.endDate).toLocaleDateString()}`
+                                                                : ''
+                                                            }
+                                                        </p>
+                                                    )}
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
+                                                        {(featuresData?.plan?.planKey || user.plan || 'free').toLowerCase() === 'free'
+                                                            ? 'You are on the free plan. Upgrade to unlock more features!'
+                                                            : 'Manage your subscription and explore upgrade options.'
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Upgrade Button - Mobile Optimized */}
+                                        <div className="flex justify-center">
+                                            <Link
+                                                href={`/${params.locale}/onboarding/plan`}
+                                                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
+                                            >
+                                                <Crown className="w-5 h-5" />
+                                                <span className="text-sm sm:text-base">Upgrade Plan</span>
+                                                <ArrowRight className="w-5 h-5" />
+                                            </Link>
+                                        </div>
+
+                                        {/* Plan Features Info */}
+                                        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center">
+                                                Click "Upgrade Plan" to view all available plans and choose the one that best fits your needs.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </SettingsSection>
+                            </div>
+                        )}
+
+                        {activeTab === 'Store' && store && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <StoreSettings store={store} onUpdate={updateStoreField} onUploadLogo={handleLogoUpload} locale={params.locale} />
+                            </div>
+                        )}
+
+                        {activeTab === 'WhatsApp' && whatsapp && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <SettingsSection title="WhatsApp Account">
+                                    <div className="space-y-4">
+                                        <EditableField label="Business ID" value={whatsapp.waBusinessId || ''} onSave={(val) => updateWhatsAppField('waBusinessId', val)} />
+                                        <EditableField label="Phone Number ID" value={whatsapp.waNumberId || ''} onSave={(val) => updateWhatsAppField('waNumberId', val)} />
+                                        <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => updateWhatsAppField('waNumber', val)} />
+                                        <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => updateWhatsAppField('waToken', val)} />
+                                    </div>
+                                </SettingsSection>
+                            </div>
+                        )}
+
+                        {activeTab === 'Language' && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <SettingsSection title="Language">
+                                    <LocaleSwitcher />
+                                </SettingsSection>
+                            </div>
+                        )}
+
+                        {activeTab === 'Mode' && (
+                            <div className="p-4 sm:p-6 lg:p-8">
+                                <SettingsSection title="Mode">
+                                    <ThemeToggle />
+                                </SettingsSection>
+                            </div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
             </div>
-
-            {/* Tab Content */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-all duration-300">
-            {activeTab === 'Profile' && (
-                <SettingsSection title="Profile">
-                <LogoUploader logoUrl={user.logo || '/logo.png'} onUpload={handleLogoUpload} />
-                <EditableField label="Name" value={user.username} onSave={(val) => updateField('name', val)} />
-                <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />
-                </SettingsSection>
-            )}
-
-            {activeTab === 'Plan' && (
-                <SettingsSection title="Plan">
-                <PlanSelector value={user.plan} onChange={(val) => updateField('plan', val)} />
-                </SettingsSection>
-            )}
-
-            {activeTab === 'Store' && store && (
-                <StoreSettings store={store} onUpdate={updateStoreField} onUploadLogo={handleLogoUpload} locale={params.locale} />
-            )}
-
-            {activeTab === 'WhatsApp' && whatsapp && (
-                <SettingsSection title="WhatsApp Account">
-                <EditableField label="Business ID" value={whatsapp.waBusinessId || ''} onSave={(val) => updateWhatsAppField('waBusinessId', val)} />
-                <EditableField label="Phone Number ID" value={whatsapp.waNumberId || ''} onSave={(val) => updateWhatsAppField('waNumberId', val)} />
-                <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => updateWhatsAppField('waNumber', val)} />
-                <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => updateWhatsAppField('waToken', val)} />
-                </SettingsSection>
-            )}
-
-            {activeTab === 'Language' && (
-                <SettingsSection title="Language">
-                <LocaleSwitcher />
-                </SettingsSection>
-            )}
-
-            {activeTab === 'Mode' && (
-                <SettingsSection title="Mode">
-                <ThemeToggle />
-                </SettingsSection>
-            )}
-
-
-            </div>
-        </div>
         </div>
     );
 }
