@@ -3,6 +3,7 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { SerializedStore } from '@/lib/data/products';
 import { IProduct } from '@/models/products';
+import { CartProvider } from './CartContext';
 
 export type StoreContextValue = {
     stores: SerializedStore[];
@@ -67,7 +68,9 @@ export const StoreProvider: React.FC<{
 
     return (
         <StoreContext.Provider value={value}>
-            {children}
+            <CartProvider>
+                {children}
+            </CartProvider>
         </StoreContext.Provider>
     );
 };

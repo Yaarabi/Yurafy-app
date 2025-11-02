@@ -47,9 +47,9 @@ const Hero: React.FC = () => {
                         href="#products" 
                         className="inline-block bg-white text-[var(--color-primary)] font-bold py-5 px-12 rounded-full text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110 border-4 border-white/50"
                         style={{ color: primaryColor }}
-                    >
-                        Explore Products
-                    </a>
+                        >
+                            Shop Now
+                        </a>
                 </motion.div>
             </div>
         </div>

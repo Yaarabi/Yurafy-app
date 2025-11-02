@@ -40,20 +40,49 @@ export async function POST(request: NextRequest) {
             const { saveStoreTool } = await import("@/lib/agent/storeAgent/tools");
             
             try {
+                // Get user's logo to include in store
+                let logoUrl = finalStoreData.logoUrl;
+                if (!logoUrl && user) {
+                    logoUrl = user.logo || undefined;
+                }
+
                 // Prepare store data with owner ID
+                // CRITICAL: Priority must be agent-generated data from finalStoreData (what user reviewed and confirmed)
+                // Only use selectedTheme/selectedThemeStructure as fallback if agent didn't generate those fields
                 const storeDataToSave = {
                     ownerId: session.user.id,
                     brandName: finalStoreData.brandName,
                     domain: finalStoreData.domain,
                     description: finalStoreData.description,
-                    themeId: selectedTheme?.themeId || finalStoreData.themeId,
-                    theme: selectedTheme?.theme || finalStoreData.theme,
-                    themeStructure: selectedThemeStructure || finalStoreData.themeStructure,
-                    hero: finalStoreData.hero,
-                    about: finalStoreData.about,
-                    footer: finalStoreData.footer,
-                    socialLinks: finalStoreData.socialLinks,
+                    // Use agent-generated themeId first, fallback to selectedTheme
+                    themeId: finalStoreData.themeId || selectedTheme?.themeId || 1,
+                    // Use agent-generated theme first (may include agent-generated colors), fallback to selectedTheme
+                    theme: finalStoreData.theme || selectedTheme?.theme || { primaryColor: '#3B82F6' },
+                    // Use agent-generated themeStructure first, fallback to selectedThemeStructure
+                    themeStructure: finalStoreData.themeStructure || selectedThemeStructure || {
+                        header: true,
+                        hero: true,
+                        about: true,
+                        trust: true,
+                        productGrid: true,
+                        footer: true,
+                    },
+                    // All agent-generated content sections (these should come from agent, not fallbacks)
+                    hero: finalStoreData.hero || {
+                        title: '',
+                        subtitle: '',
+                        imageUrl: '',
+                    },
+                    about: finalStoreData.about || {
+                        title: '',
+                        description: '',
+                    },
+                    footer: finalStoreData.footer || {
+                        text: '',
+                    },
+                    socialLinks: finalStoreData.socialLinks || {},
                     headerLinks: finalStoreData.headerLinks || [],
+                    logoUrl: logoUrl, // Include logoUrl
                 };
 
                 // Call the save store tool
@@ -125,11 +154,38 @@ export async function POST(request: NextRequest) {
             selectedProductPageStructure
         );
 
-        // Extract response and tool actions
+        // Extract response - agent should return JSON directly
         const response = result.message || '';
+        let storeData = result.storeData || null;
+        
+        // Try to parse JSON from the agent's response message if storeData is not already available
+        if (!storeData && response) {
+            try {
+                // Remove markdown code blocks if present
+                let jsonString = response.trim();
+                if (response.includes('```json')) {
+                    jsonString = response.split('```json')[1].split('```')[0].trim();
+                } else if (response.includes('```')) {
+                    jsonString = response.split('```')[1].split('```')[0].trim();
+                } else {
+                    // Try to find JSON object boundaries
+                    const jsonMatch = response.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        jsonString = jsonMatch[0];
+                    }
+                }
+                
+                const parsed = JSON.parse(jsonString);
+                if (parsed && (parsed.brandName || parsed.hero || parsed.about)) {
+                    storeData = parsed;
+                }
+            } catch (e) {
+                // Silent failure - will try other methods to get data
+            }
+        }
+        
         const uiAction = result.uiAction || null;
         const storeCreated = response.includes('✅ Store') && response.includes('has been created successfully');
-        let storeData = result.storeData || null;
         const showPreviewEdit = result.showPreviewEdit || false;
 
         // If store was created, fetch the saved store from database to get complete data

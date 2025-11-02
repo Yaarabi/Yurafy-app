@@ -5,6 +5,7 @@ import { SerializedStore } from "@/lib/data/products";
 import WhatsAppButton from "../productPage/ProductActions";
 import ThemeRenderer from "../store/themes/ThemeRenderer";
 import { StoreProvider } from "@/components/store/context/StoreContext";
+import Cart from "@/components/store/components/Cart";
 
 interface StorePageProps {
     store: SerializedStore;
@@ -27,6 +28,7 @@ const StoreComponent = ({
         <div>
             <StoreProvider stores={[store]} initialStore={store}>
                 <ThemeRenderer themeId={themeId} currentPage="STORE_PAGE" />
+                <Cart />
             </StoreProvider>
             <WhatsAppButton ownerPhone={store.businessInfo?.phone} />
         </div>

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
+import { Upload, X, Loader2 } from 'lucide-react';
 
 interface StoreBasicInfoFormProps {
     selectedTheme: {
         themeId: number;
         theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
     };
-    onSubmit: (data: { brandName: string; domain: string; description: string }) => void;
+    onSubmit: (data: { brandName: string; domain: string; description: string; logo?: string }) => void;
     onBack?: () => void;
 }
 
@@ -20,6 +21,11 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
     const [domainError, setDomainError] = useState<string | null>(null);
     const [isValidDomain, setIsValidDomain] = useState(false);
     const domainValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [logo, setLogo] = useState<string>('');
+    const [logoPreview, setLogoPreview] = useState<string>('');
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const [logoError, setLogoError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const normalizeDomain = (value: string): string => {
         return value
@@ -114,6 +120,68 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
         }
     };
 
+    const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            setLogoError('Please upload a valid image file (JPEG, PNG, WebP, or GIF)');
+            return;
+        }
+
+        // Validate file size (max 5MB for logo)
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.size > MAX_SIZE) {
+            setLogoError('File size must be less than 5MB');
+            return;
+        }
+
+        setUploadingLogo(true);
+        setLogoError(null);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.url) {
+                throw new Error(data.error || 'Failed to upload logo');
+            }
+
+            setLogo(data.url);
+            setLogoPreview(data.url);
+            setLogoError(null);
+        } catch (error: any) {
+            console.error('Error uploading logo:', error);
+            setLogoError(error.message || 'Failed to upload logo. Please try again.');
+            setLogo('');
+            setLogoPreview('');
+        } finally {
+            setUploadingLogo(false);
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    const handleRemoveLogo = () => {
+        setLogo('');
+        setLogoPreview('');
+        setLogoError(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -134,6 +202,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
             brandName: brandName.trim(),
             domain: normalizeDomain(domain.trim()),
             description: description.trim(),
+            logo: logo || undefined,
         });
     };
 
@@ -261,6 +330,69 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             <p className="mt-1 text-xs text-gray-500">
                                 {description.length}/20 minimum characters
                             </p>
+                        </div>
+
+                        {/* Logo Upload */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Store Logo <span className="text-gray-400 text-xs">(Optional)</span>
+                            </label>
+                            <div className="space-y-3">
+                                {logoPreview ? (
+                                    <div className="relative inline-block">
+                                        <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+                                            <img
+                                                src={logoPreview}
+                                                alt="Logo preview"
+                                                className="w-full h-full object-contain"
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleRemoveLogo}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                            title="Remove logo"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gray-400 transition-colors bg-gray-50"
+                                    >
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                                            onChange={handleLogoUpload}
+                                            className="hidden"
+                                            disabled={uploadingLogo}
+                                        />
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            {uploadingLogo ? (
+                                                <>
+                                                    <Loader2 className="w-8 h-8 text-gray-400 animate-spin mb-2" />
+                                                    <p className="text-sm text-gray-600">Uploading...</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                                                    <p className="text-sm font-medium text-gray-700 mb-1">
+                                                        Click to upload logo
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        JPEG, PNG, WebP, or GIF (max 5MB)
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                                {logoError && (
+                                    <p className="text-sm text-red-600">{logoError}</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Actions */}

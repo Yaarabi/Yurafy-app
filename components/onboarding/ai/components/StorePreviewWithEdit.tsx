@@ -5,8 +5,51 @@ import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Store, Palette, Globe, FileText, Image as ImageIcon, Info, 
-    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield, ExternalLink
+    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield, Eye
 } from 'lucide-react';
+import StoreThemePreview from './StoreThemePreview';
+import { SerializedStore } from '@/lib/data/store';
+
+// Normalize preview data to match SerializedStore interface
+function normalizeStoreDataForPreview(data: StorePreviewData | null): SerializedStore | null {
+    if (!data) return null;
+    
+    // Ensure all required fields from SerializedStore are present
+    return {
+        _id: data._id || 'preview',
+        owner: data.owner || 'preview',
+        brandName: data.brandName || '',
+        domain: data.domain || '',
+        description: data.description || '',
+        themeId: typeof data.themeId === 'number' ? data.themeId : parseInt(String(data.themeId || '1'), 10),
+        theme: data.theme || { primaryColor: '#3B82F6' },
+        themeStructure: data.themeStructure || {
+            header: true,
+            hero: true,
+            about: true,
+            trust: true,
+            productGrid: true,
+            footer: true,
+        },
+        hero: data.hero || {
+            title: '',
+            subtitle: '',
+            imageUrl: '',
+        },
+        about: data.about || {
+            title: '',
+            description: '',
+        },
+        footer: data.footer || {
+            text: '',
+        },
+        socialLinks: data.socialLinks,
+        headerLinks: data.headerLinks || [],
+        logoUrl: data.logoUrl,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    };
+}
 
 interface StorePreviewData {
     brandName?: string;
@@ -43,6 +86,13 @@ interface StorePreviewData {
         instagram?: string;
         twitter?: string;
     };
+    headerLinks?: Array<{
+        label: string;
+        href: string;
+    }>;
+    logoUrl?: string;
+    _id?: string;
+    owner?: string;
 }
 
 interface StorePreviewWithEditProps {
@@ -64,9 +114,7 @@ export default function StorePreviewWithEdit({
     const locale = (params?.locale as string) || 'en';
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState<any>('');
-    
-    // Generate store URL
-    const storeUrl = data?.domain ? `/${locale}/${data.domain}` : null;
+    const [showThemePreview, setShowThemePreview] = useState(false);
 
     if (!visible || !data) return null;
 
@@ -211,25 +259,6 @@ export default function StorePreviewWithEdit({
                         />
                     </div>
 
-                    {/* Theme Information */}
-                    <div className="space-y-4 mb-6">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Theme & Colors</h4>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Palette className="w-5 h-5 text-indigo-600" />
-                                <span className="font-semibold text-gray-900">Theme #{data.themeId || 'N/A'}</span>
-                            </div>
-                            {data.theme?.primaryColor && (
-                                <div className="flex items-center gap-2">
-                                    <div
-                                        className="w-8 h-8 rounded border-2 border-gray-300"
-                                        style={{ backgroundColor: data.theme.primaryColor }}
-                                    />
-                                    <span className="text-sm text-gray-700">{data.theme.primaryColor}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
 
                     {/* Store Structure */}
                     {data.themeStructure && (
@@ -358,25 +387,28 @@ export default function StorePreviewWithEdit({
                         </div>
                     )}
 
-                    {/* View Store Link */}
-                    {storeUrl && data?.domain && (
-                        <div className="pt-4 border-t border-gray-200 mb-4">
-                            <motion.a
-                                href={storeUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-indigo-600 text-indigo-600 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:bg-indigo-50"
-                            >
-                                <ExternalLink className="w-5 h-5" />
-                                <span>View Your Store</span>
-                            </motion.a>
-                            <p className="text-xs text-gray-500 text-center mt-2">
-                                Preview your store at: <span className="font-mono break-all">{typeof window !== 'undefined' ? window.location.origin : ''}{storeUrl}</span>
-                            </p>
-                        </div>
-                    )}
+                    {/* Theme Preview Button */}
+                    <div className="pt-4 border-t border-gray-200 mb-4">
+                        <motion.button
+                            onClick={() => setShowThemePreview(true)}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+                        >
+                            <Eye className="w-5 h-5" />
+                            <span>Preview Your Store Theme</span>
+                        </motion.button>
+                        <p className="text-xs text-gray-500 text-center mt-2">
+                            See how your store will look with the generated content
+                        </p>
+                    </div>
+                    
+                    {/* Theme Preview Modal */}
+                    <StoreThemePreview
+                        storeData={normalizeStoreDataForPreview(data)}
+                        visible={showThemePreview}
+                        onClose={() => setShowThemePreview(false)}
+                    />
 
                     {/* Submit Button */}
                     <div className="pt-6 border-t border-gray-200">

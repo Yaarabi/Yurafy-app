@@ -19,11 +19,24 @@ export async function GET(request: NextRequest) {
 
         const result = await requireFeature(session.user.id, feature);
 
+        // Get plan end date if plan exists
+        let endDate = null;
+        if (result.planStatus?.endDate) {
+            endDate = new Date(result.planStatus.endDate).toISOString();
+        } else if (result.planStatus && result.planStatus.daysRemaining !== undefined) {
+            // Fallback: Calculate end date from days remaining if endDate not available
+            const now = new Date();
+            const endDateObj = new Date(now);
+            endDateObj.setDate(now.getDate() + result.planStatus.daysRemaining);
+            endDate = endDateObj.toISOString();
+        }
+
         return NextResponse.json({
             hasAccess: result.allowed,
             error: result.error,
             daysRemaining: result.planStatus?.daysRemaining || null,
             planKey: result.planStatus?.planKey || null,
+            endDate: endDate,
         });
 
     } catch (error) {

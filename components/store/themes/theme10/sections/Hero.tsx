@@ -38,9 +38,6 @@ const Hero: React.FC = () => {
                         transition={{ duration: 0.8 }}
                         className="lg:max-w-lg"
                     >
-                        <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6 text-sm font-bold uppercase tracking-wider">
-                            Featured
-                        </div>
                         <motion.h2 
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}

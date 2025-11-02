@@ -36,14 +36,6 @@ const Hero: React.FC = () => {
                     transition={{ duration: 0.8 }}
                     className="max-w-2xl"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="inline-block px-4 py-2 mb-6 bg-white/20 backdrop-blur-sm rounded-full text-sm font-black uppercase tracking-widest"
-                    >
-                        ✨ Retro Vibes
-                    </motion.div>
                     <motion.h2 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -70,7 +62,7 @@ const Hero: React.FC = () => {
                             className="inline-block px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest text-white border-4 border-white shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110"
                             style={{ backgroundColor: primaryColor }}
                         >
-                            Explore Products
+                            Shop Now
                         </a>
                     </motion.div>
                 </motion.div>

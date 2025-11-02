@@ -13,6 +13,7 @@ export interface PlanStatus {
     planKey: PlanKey;
     isExpired: boolean;
     daysRemaining: number;
+    endDate?: Date;
     features: any;
 }
 
@@ -29,6 +30,7 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
             planKey: "free",
             isExpired: true,
             daysRemaining: 0,
+            endDate: undefined,
             features: {},
         };
     }
@@ -40,6 +42,7 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
             planKey: "free",
             isExpired: true,
             daysRemaining: 0,
+            endDate: undefined,
             features: {},
         };
     }
@@ -61,6 +64,7 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
         planKey: plan.planKey as PlanKey,
         isExpired,
         daysRemaining,
+        endDate: plan.endDate,
         features: {},
     };
 }

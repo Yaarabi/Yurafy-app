@@ -1,6 +1,7 @@
 
 import { connectDB } from "@/lib/db/mongoDB";
 import Store, { IStore } from "@/models/store";
+import User from "@/models/users";
 
 
 export interface SerializedStore {
@@ -102,6 +103,16 @@ export function serializeStore(store: any): SerializedStore {
             label: link.label,
             href: link.href,
         })) : [],
+        // Include logoUrl if it exists in the store, or keep it undefined
+        logoUrl: store.logoUrl || undefined,
+        faviconUrl: store.faviconUrl || undefined,
+        whoWeAre: store.whoWeAre || undefined,
+        customization: store.customization || undefined,
+        seo: store.seo || undefined,
+        businessInfo: store.businessInfo || undefined,
+        paymentMethods: store.paymentMethods || undefined,
+        codEnabled: store.codEnabled || undefined,
+        shippingInfo: store.shippingInfo || undefined,
         createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
         updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };
@@ -111,7 +122,23 @@ export async function getStoreByDomain(domain: string): Promise<SerializedStore 
     await connectDB();
     const storeDoc = await Store.findOne({ domain }).lean<IStore>();
     if (!storeDoc) return null;
-    return serializeStore(storeDoc);
+    
+    const serialized = serializeStore(storeDoc);
+    
+    // If store doesn't have a logoUrl, fetch the user's logo as fallback
+    if (!serialized.logoUrl && storeDoc.owner) {
+        try {
+            const user = await User.findById(storeDoc.owner).select('logo').lean();
+            if (user?.logo) {
+                serialized.logoUrl = user.logo;
+            }
+        } catch (error) {
+            // Silently fail if user lookup fails
+            console.error('Error fetching user logo:', error);
+        }
+    }
+    
+    return serialized;
 }
 
 export async function getAllStores(): Promise<SerializedStore[]> {

@@ -24,6 +24,7 @@ export default function PlanProtection({
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [daysRemaining, setDaysRemaining] = useState<number | null>(null);
+    const [endDate, setEndDate] = useState<string | null>(null);
 
     useEffect(() => {
         async function checkAccess() {
@@ -41,6 +42,9 @@ export default function PlanProtection({
                     setHasAccess(true);
                     if (data.daysRemaining !== undefined) {
                         setDaysRemaining(data.daysRemaining);
+                    }
+                    if (data.endDate) {
+                        setEndDate(data.endDate);
                     }
                 } else {
                     setHasAccess(false);
@@ -78,11 +82,17 @@ export default function PlanProtection({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Feature Not Available</h2>
                     <p className="text-gray-600 mb-6">{error}</p>
                     
-                    {daysRemaining !== null && daysRemaining <= 7 && daysRemaining > 0 && (
+                    {daysRemaining !== null && daysRemaining <= 3 && daysRemaining > 0 && endDate && (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                             <div className="flex items-center gap-2 text-yellow-800">
                                 <AlertCircle className="w-5 h-5" />
-                                <span className="font-medium">Your plan expires in {daysRemaining} day(s)</span>
+                                <span className="font-medium">
+                                    Your plan expires on {new Date(endDate).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}
+                                </span>
                             </div>
                         </div>
                     )}
@@ -103,12 +113,16 @@ export default function PlanProtection({
 
     return (
         <>
-            {daysRemaining !== null && daysRemaining <= 30 && (
+            {daysRemaining !== null && daysRemaining <= 3 && daysRemaining > 0 && endDate && (
                 <div className="mb-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
                     <div className="flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-yellow-600" />
                         <p className="text-sm text-yellow-800">
-                            Your plan expires in {daysRemaining} day(s). 
+                            Your plan expires on {new Date(endDate).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}. 
                             <Link href={`/${locale}/dashboard/settings?tab=plan`} className="underline ml-1">Renew now</Link>
                         </p>
                     </div>

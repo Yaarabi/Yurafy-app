@@ -61,7 +61,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                     className={`p-4 rounded-lg border ${
                         isExpired
                             ? "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200"
-                            : daysRemaining <= 7
+                            : daysRemaining <= 3
                             ? "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200"
                             : "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200"
                     }`}
@@ -71,8 +71,17 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             <p className="font-semibold">
                                 {isExpired
                                     ? "Your plan has expired"
-                                    : `Plan: ${planKey} (${daysRemaining} days remaining)`}
+                                    : `Plan: ${planKey}`}
                             </p>
+                            {userPlan.currentPlan?.endDate && !isExpired && (
+                                <p className="text-sm mt-1 opacity-90">
+                                    Expires: {new Date(userPlan.currentPlan.endDate).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}
+                                </p>
+                            )}
                             {userPlan.limits && (
                                 <div className="mt-2 flex flex-wrap gap-4 text-sm">
                                     {userPlan.limits.maxProducts !== undefined && (

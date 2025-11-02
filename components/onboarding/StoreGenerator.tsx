@@ -6,6 +6,41 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import StorePreviewWithEdit from './ai/components/StorePreviewWithEdit';
 
+// Normalize store data to ensure all required fields are present
+function normalizeStoreData(data: any, selectedTheme?: any, selectedThemeStructure?: any): any {
+    return {
+        ...data,
+        brandName: data.brandName || '',
+        domain: data.domain || '',
+        description: data.description || '',
+        themeId: typeof data.themeId === 'number' ? data.themeId : (selectedTheme?.themeId || parseInt(String(data.themeId || '1'), 10)),
+        theme: data.theme || selectedTheme?.theme || { primaryColor: '#3B82F6' },
+        themeStructure: data.themeStructure || selectedThemeStructure || {
+            header: true,
+            hero: true,
+            about: true,
+            trust: true,
+            productGrid: true,
+            footer: true,
+        },
+        hero: data.hero || {
+            title: '',
+            subtitle: '',
+            imageUrl: '',
+        },
+        about: data.about || {
+            title: '',
+            description: '',
+        },
+        footer: data.footer || {
+            text: '',
+        },
+        socialLinks: data.socialLinks || {},
+        headerLinks: data.headerLinks || [],
+        logoUrl: data.logoUrl || undefined,
+    };
+}
+
 interface StoreGeneratorProps {
     selectedTheme: {
         themeId: number;
@@ -33,6 +68,7 @@ interface StoreGeneratorProps {
         brandName: string;
         domain: string;
         description: string;
+        logo?: string;
     };
     plan?: string;
     onBack?: () => void;
@@ -66,8 +102,8 @@ export default function StoreGenerator({
         setError(null);
 
         try {
-            // Create prompt for agent to generate and save store
-            const generationPrompt = `Generate a complete store setup and save it immediately.
+            // Create prompt for agent to generate store content (DO NOT save yet)
+            const generationPrompt = `Generate complete store content and show it in a preview. DO NOT save the store yet - just generate the content.
 
 Given Information:
 - Brand Name: ${basicInfo.brandName}
@@ -99,20 +135,49 @@ REQUIRED: Generate all of the following NOW and IMPROVE them based on the descri
    - IMPORTANT: Generate actual working URLs based on the brand name "${basicInfo.brandName}". Format the brand name for URLs (lowercase, replace spaces with hyphens, remove special characters)
    - Generate at least 1-2 social links
 
-CRITICAL: After generating all the content, IMMEDIATELY use the save_store tool to save the store with ALL the generated data:
-- brandName: "${basicInfo.brandName}"
-- domain: "${basicInfo.domain}"
-- description: "${basicInfo.description}"
-- themeId: ${selectedTheme?.themeId || 1}
-- theme: ${JSON.stringify(selectedTheme?.theme || { primaryColor: '#3B82F6' })}
-- themeStructure: ${JSON.stringify(selectedThemeStructure || { header: true, hero: true, about: true, trust: true, productGrid: true, footer: true })}
-- hero: {title (IMPROVED), subtitle (IMPROVED), imageUrl}
-- about: {title, description (IMPROVED and EXPANDED - 80-150 words)}
-- footer: {text}
-- headerLinks: array of {label, href} (3-5 links)
-- socialLinks: {facebook, instagram, twitter} (GENERATE ACTUAL URLs)
+CRITICAL: After generating all the content, you MUST respond with ONLY a valid JSON object containing all the store data. Do NOT use any tools. Do NOT write explanatory text. Respond ONLY with the JSON object.
 
-Do NOT ask questions. Just generate, improve descriptions, and save the store NOW.`;
+MANDATORY RESPONSE FORMAT: Your entire response must be a valid JSON object in this exact format:
+
+{
+  "brandName": "${basicInfo.brandName}",
+  "domain": "${basicInfo.domain}",
+  "description": "IMPROVED description based on user's input (80-150 words, engaging and professional)",
+  "themeId": ${selectedTheme?.themeId || 1},
+  "theme": ${JSON.stringify(selectedTheme?.theme || { primaryColor: '#3B82F6' })},
+  "themeStructure": ${JSON.stringify(selectedThemeStructure || { header: true, hero: true, about: true, trust: true, productGrid: true, footer: true })},
+  "hero": {
+    "title": "IMPROVED compelling headline (5-10 words)",
+    "subtitle": "IMPROVED catchy tagline (10-20 words)",
+    "imageUrl": "high-quality Unsplash URL based on business type"
+  },
+  "about": {
+    "title": "About ${basicInfo.brandName}",
+    "description": "IMPROVED and EXPANDED description (80-150 words, engaging, professional, compelling)"
+  },
+  "footer": {
+    "text": "Copyright notice or brand message"
+  },
+  "headerLinks": [
+    {"label": "About", "href": "#about"},
+    {"label": "Products", "href": "#products"},
+    {"label": "Contact", "href": "#contact"}
+  ],
+  "socialLinks": {
+    "facebook": "https://www.facebook.com/[brand-name-formatted]",
+    "instagram": "https://www.instagram.com/[brand-name-formatted]",
+    "twitter": "https://twitter.com/[brand-name-formatted]"
+  }
+}
+
+IMPORTANT: 
+- Replace [IMPROVED] and [brand-name-formatted] with actual generated content
+- Format brand name for URLs: lowercase, replace spaces with hyphens, remove special characters
+- Generate actual Unsplash image URLs based on business type
+- Generate at least 1-2 social media links
+- Respond with ONLY the JSON object, no other text
+
+Do NOT ask questions. Do NOT use tools. Just respond with the JSON object.`;
 
             const response = await fetch('/api/onboarding/ai-setup', {
                 method: 'POST',
@@ -127,14 +192,6 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
             });
 
             const data = await response.json();
-            
-            // Debug logging
-            console.log('API Response:', {
-                success: data.success,
-                storeCreated: data.storeCreated,
-                hasStoreData: !!data.storeData,
-                message: data.message?.substring(0, 100),
-            });
 
             if (!data.success) {
                 setError(data.error || 'Failed to generate store');
@@ -142,59 +199,109 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
                 return;
             }
 
-            // Check if store was created or if we have store data
-            const isStoreCreated = data.storeCreated || data.message?.includes('✅ Store') || data.message?.includes('has been created successfully');
+            // Extract store data from agent response
+            let storeDataFromResponse = null;
             
-            // If we have store data, use it directly
-            if (data.storeData && data.storeData._id) {
-                setStoreData(data.storeData);
-                toast.success('Store generated and saved successfully!');
-                return;
+            // Priority 1: Direct storeData from API response
+            if (data.storeData) {
+                storeDataFromResponse = data.storeData;
             }
-            
-            // If store was created but no storeData, or if we're not sure, try fetching from database
-            if (isStoreCreated || data.success) {
-                // Fetch the saved store from API as fallback
+            // Priority 2: Try to parse JSON from agent's message response
+            else if (data.success && data.message) {
                 try {
-                    const storeResponse = await fetch('/api/store/owner', {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
-                    });
+                    // Try to find JSON object in the message
+                    const message = data.message.trim();
                     
-                    if (storeResponse.ok) {
-                        const storeResponseData = await storeResponse.json();
-                        if (storeResponseData && storeResponseData._id) {
-                            setStoreData(storeResponseData);
-                            toast.success('Store generated and saved successfully!');
-                            return;
+                    // Look for JSON object (could be wrapped in markdown code blocks or plain JSON)
+                    let jsonString = message;
+                    
+                    // Remove markdown code blocks if present
+                    if (message.includes('```json')) {
+                        jsonString = message.split('```json')[1].split('```')[0].trim();
+                    } else if (message.includes('```')) {
+                        jsonString = message.split('```')[1].split('```')[0].trim();
+                    } else {
+                        // Try to find JSON object boundaries
+                        const jsonMatch = message.match(/\{[\s\S]*\}/);
+                        if (jsonMatch) {
+                            jsonString = jsonMatch[0];
                         }
                     }
                     
-                    // If fetch failed but we think store was created, show error
-                    if (isStoreCreated) {
-                        setError('Store was created but could not be retrieved. Please try again.');
-                        toast.error('Store was created but could not be retrieved.');
-                    } else {
-                        setError(data.error || 'Failed to generate or save store');
-                        toast.error(data.error || 'Failed to generate or save store');
+                    // Parse the JSON
+                    const parsed = JSON.parse(jsonString);
+                    if (parsed && (parsed.brandName || parsed.hero || parsed.about)) {
+                        storeDataFromResponse = parsed;
                     }
-                } catch (fetchError) {
-                    console.error('Error fetching store:', fetchError);
-                    if (isStoreCreated) {
-                        setError('Store was created but could not be retrieved. Please try again.');
-                        toast.error('Store was created but could not be retrieved.');
-                    } else {
-                        setError(data.error || 'Failed to generate or save store');
-                        toast.error(data.error || 'Failed to generate or save store');
-                    }
+                } catch (e) {
+                    // Silent failure - will use fallback
                 }
-            } else {
-                // Agent responded but didn't save the store yet
-                setError(data.error || 'Failed to generate or save store');
-                toast.error(data.error || 'Failed to generate or save store');
+            }
+            
+            // Fallback: If no data found, construct minimal data from basicInfo
+            if (!storeDataFromResponse && data.success) {
+                storeDataFromResponse = {
+                    brandName: basicInfo.brandName,
+                    domain: basicInfo.domain,
+                    description: basicInfo.description,
+                    themeId: selectedTheme?.themeId || 1,
+                    theme: selectedTheme?.theme || { primaryColor: '#3B82F6' },
+                    themeStructure: selectedThemeStructure || {
+                        header: true,
+                        hero: true,
+                        about: true,
+                        trust: true,
+                        productGrid: true,
+                        footer: true,
+                    },
+                    hero: {
+                        title: `Welcome to ${basicInfo.brandName}`,
+                        subtitle: basicInfo.description.substring(0, 100) || 'Discover our amazing products',
+                        imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80',
+                    },
+                    about: {
+                        title: `About ${basicInfo.brandName}`,
+                        description: basicInfo.description || '',
+                    },
+                    footer: {
+                        text: `© ${new Date().getFullYear()} ${basicInfo.brandName}. All rights reserved.`,
+                    },
+                    socialLinks: {},
+                    headerLinks: [],
+                    logoUrl: basicInfo.logo || undefined,
+                };
+            }
+            
+            // Normalize storeData to ensure all required fields are present
+            if (storeDataFromResponse) {
+                storeDataFromResponse = normalizeStoreData(storeDataFromResponse, selectedTheme, selectedThemeStructure);
+            }
+            
+            if (storeDataFromResponse) {
+                setStoreData(storeDataFromResponse);
+                setGenerating(false); // Ensure generating is false so preview shows
+                toast.success('Store content generated successfully!');
+                return;
+            }
+            
+            // If API response was successful but no data found even after fallback, show error
+            if (data.success && !storeDataFromResponse) {
+                setError('Store content was generated but data format is unexpected. Please try again.');
+                toast.error('Generation incomplete. Please try again.');
+                setGenerating(false);
+                return;
+            }
+            
+            // Only set error if API call actually failed
+            if (!data.success) {
+                setError(data.error || 'Failed to generate store content');
+                toast.error(data.error || 'Failed to generate store content');
+            } else if (!basicInfo) {
+                // This shouldn't happen, but if basicInfo is missing, show error
+                setError('Missing store information. Please go back and fill in all required fields.');
+                toast.error('Missing store information.');
             }
         } catch (error) {
-            console.error('Error generating store:', error);
             setError('Something went wrong. Please try again.');
             toast.error('Something went wrong. Please try again.');
         } finally {
@@ -226,48 +333,48 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
     const handleSaveAndRedirect = async (data: any) => {
         setSaving(true);
         try {
-            // Check if data has been modified - compare with original storeData
-            const hasChanges = data && JSON.stringify(data) !== JSON.stringify(storeData);
+            // Always use the current storeData state (which includes any user edits)
+            // The data parameter might be stale if user made edits
+            const currentData = storeData || data;
             
-            // For free plan, always call API to ensure onboardingCompleted is set
-            // For paid plans, only call if there are changes
-            if (hasChanges || plan === 'free') {
-                // Update the store with any edits made in the preview (or confirm completion for free plan)
-                const response = await fetch('/api/onboarding/ai-setup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: "Save store with these details",
-                        plan: plan || 'Starter',
-                        selectedTheme,
-                        selectedThemeStructure,
-                        selectedProductPageStructure,
-                        finalStoreData: data || storeData,
-                    }),
-                });
+            // Ensure we pass the normalized store data (with all agent-generated content)
+            const dataToSave = normalizeStoreData(currentData, selectedTheme, selectedThemeStructure);
+            
+            // Always save when user clicks submit (they've reviewed and confirmed)
+            const response = await fetch('/api/onboarding/ai-setup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: "Save store with these details",
+                    plan: plan || 'Starter',
+                    selectedTheme,
+                    selectedThemeStructure,
+                    selectedProductPageStructure,
+                    finalStoreData: dataToSave, // Use normalized data with all agent-generated content
+                }),
+            });
 
-                const responseData = await response.json();
+            const responseData = await response.json();
 
-                // For free plan, even if store already exists, we still need to complete onboarding
-                if (responseData.success && (responseData.storeCreated || plan === 'free')) {
-                    if (plan === 'free') {
-                        toast.success('Store created successfully!');
-                    } else {
-                        toast.success('Store updated successfully!');
-                    }
-                } else if (responseData.success) {
-                    // Store already exists, but that's okay for free plan
-                    if (plan === 'free') {
-                        toast.success('Store saved successfully!');
-                    } else {
-                        toast.error(responseData.error || 'Failed to update store');
-                        return;
-                    }
+            // For free plan, even if store already exists, we still need to complete onboarding
+            if (responseData.success && (responseData.storeCreated || plan === 'free')) {
+                if (plan === 'free') {
+                    toast.success('Store created successfully!');
                 } else {
-                    toast.error(responseData.error || 'Failed to save store');
-                    if (plan !== 'free') {
-                        return;
-                    }
+                    toast.success('Store updated successfully!');
+                }
+            } else if (responseData.success) {
+                // Store already exists, but that's okay for free plan
+                if (plan === 'free') {
+                    toast.success('Store saved successfully!');
+                } else {
+                    toast.error(responseData.error || 'Failed to update store');
+                    return;
+                }
+            } else {
+                toast.error(responseData.error || 'Failed to save store');
+                if (plan !== 'free') {
+                    return;
                 }
             }
             
@@ -284,7 +391,6 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
                 }, 500);
             }
         } catch (error) {
-            console.error('Error saving store:', error);
             toast.error('Something went wrong while saving. Please try again.');
         } finally {
             setSaving(false);
@@ -292,7 +398,7 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
     };
 
     // Show loading state while generating
-    if (generating) {
+    if (generating && !storeData) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 flex items-center justify-center">
                 <motion.div
@@ -311,7 +417,7 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
         );
     }
 
-    // Show error state
+    // Show error state only if there's an error and no storeData
     if (error && !storeData) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 flex items-center justify-center">
@@ -349,17 +455,33 @@ Do NOT ask questions. Just generate, improve descriptions, and save the store NO
         );
     }
 
-    // Show preview with edit
+    // Show preview - if storeData exists, show it; otherwise show waiting message
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
             <div className="max-w-6xl mx-auto">
-                <StorePreviewWithEdit
-                    data={storeData}
-                    visible={!!storeData}
-                    onSave={handleSaveAndRedirect}
-                    onEdit={handleEditField}
-                    loading={saving}
-                />
+                {storeData ? (
+                    <StorePreviewWithEdit
+                        data={storeData}
+                        visible={true}
+                        onSave={handleSaveAndRedirect}
+                        onEdit={handleEditField}
+                        loading={saving}
+                    />
+                ) : (
+                    <div className="bg-white rounded-xl shadow-xl p-8 text-center">
+                        <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">Preparing Preview</h2>
+                        <p className="text-gray-600">Please wait while we prepare your store preview...</p>
+                        {onBack && (
+                            <button
+                                onClick={onBack}
+                                className="mt-4 px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                Go Back
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -21,6 +21,8 @@ export interface IOrder {
     city?: string;
     country?: string;
   };
+  deliveryInstructions?: string;
+  preferredTime?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -62,6 +64,8 @@ const OrderSchema = new Schema(
       city: { type: String },
       country: { type: String },
     },
+    deliveryInstructions: { type: String },
+    preferredTime: { type: String },
   },
   { timestamps: true }
 );

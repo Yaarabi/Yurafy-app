@@ -6,6 +6,7 @@ export async function generateStoreMetadata(domain: string) {
 
     const store = await getStoreByDomain(domain);
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://yurait.vercel.app";
+    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || "yurait.vercel.app";
 
     if (!store) {
         return {
@@ -23,6 +24,10 @@ export async function generateStoreMetadata(domain: string) {
         ? store.logoUrl
         : `${baseUrl}${store.logoUrl || "/og-default.jpg"}`;
 
+    // Use subdomain URL format: https://[domain].[main-domain] instead of path-based
+    // Example: https://my-store.yurait.vercel.app instead of https://yurait.vercel.app/my-store
+    const storeUrl = `https://${store.domain}.${domainPart}`;
+
     // const themeColor = store.theme?.primaryColor || "#22c55e";
 
     return {
@@ -31,7 +36,7 @@ export async function generateStoreMetadata(domain: string) {
         openGraph: {
             title,
             description,
-            url: `${baseUrl}/${store.domain}`,
+            url: storeUrl,
             images: [logo],
         },
         twitter: {

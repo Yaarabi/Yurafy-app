@@ -6,6 +6,7 @@ import User from "@/models/users";
 import Plan from "@/models/plan";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import AIAgent from "@/models/ai-agent";
+import Store from "@/models/store";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
@@ -142,6 +143,27 @@ export async function POST(req: Request) {
             user.onboardingCompleted = true;
         }
         await user.save();
+
+        // Update store active status based on plan features
+        const planFeatures = await import("@/lib/config/planFeatures").then(m => m.planFeatures);
+        const currentPlanFeatures = planFeatures[normalizedPlanKey as keyof typeof planFeatures] || planFeatures.free;
+        const hasStoreFeature = currentPlanFeatures.store?.enabled === true;
+
+        if (hasStoreFeature) {
+            // Activate all user's stores if plan has store feature
+            const userStores = await Store.find({ owner: user._id });
+            for (const store of userStores) {
+                store.active = true;
+                await store.save();
+            }
+        } else {
+            // Deactivate all user's stores if plan doesn't have store feature
+            const userStores = await Store.find({ owner: user._id });
+            for (const store of userStores) {
+                store.active = false;
+                await store.save();
+            }
+        }
 
         // Check if plan includes WhatsApp functionality
         const plansWithWhatsApp = ['whatsapp', 'aiAgent', 'proSeller', 'visionary'];

@@ -34,6 +34,7 @@ export default function InfoPage() {
         brandName: string;
         domain: string;
         description: string;
+        logo?: string;
     } | null>(null);
     const [showGenerator, setShowGenerator] = useState(false);
     const [checking, setChecking] = useState(true);
@@ -122,7 +123,51 @@ export default function InfoPage() {
         }, 300);
     };
 
-    const handleBasicInfoSubmit = (info: { brandName: string; domain: string; description: string }) => {
+    const handleBasicInfoSubmit = async (info: { brandName: string; domain: string; description: string; logo?: string }) => {
+        // Save logo to both user and store if provided
+        if (info.logo && session?.user?.id) {
+            try {
+                // Save to user model
+                const userResponse = await fetch('/api/user/me', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ logo: info.logo }),
+                });
+                if (!userResponse.ok) {
+                    console.error('Failed to save logo to user info');
+                }
+
+                // Save to store model if store exists
+                try {
+                    const storeResponse = await fetch('/api/store/owner', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                    
+                    if (storeResponse.ok) {
+                        const storeData = await storeResponse.json();
+                        if (storeData._id) {
+                            // Store exists, update it with logoUrl
+                            const updateResponse = await fetch('/api/store/owner', {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ updates: { logoUrl: info.logo } }),
+                            });
+                            if (!updateResponse.ok) {
+                                console.error('Failed to save logo to store');
+                            }
+                        }
+                    }
+                } catch (storeError) {
+                    // Store might not exist yet (will be created during store generation)
+                    // This is okay, logo will be saved when store is created
+                    console.log('Store does not exist yet, will be saved during store creation');
+                }
+            } catch (error) {
+                console.error('Error saving logo:', error);
+            }
+        }
+        
         setBasicInfo(info);
         // Small delay for smooth transition
         setTimeout(() => {

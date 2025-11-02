@@ -2,6 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
 import Store from "@/models/store";
+import User from "@/models/users";
 import { connectDB } from "../../db/mongoDB";
 
 /**
@@ -23,6 +24,7 @@ export const saveStoreTool = tool(
         footer,
         socialLinks,
         headerLinks,
+        logoUrl,
     }: {
         ownerId: string;
         brandName: string;
@@ -63,6 +65,7 @@ export const saveStoreTool = tool(
             label: string;
             href: string;
         }>;
+        logoUrl?: string;
     }) => {
         try {
             await connectDB();
@@ -92,6 +95,19 @@ export const saveStoreTool = tool(
             }
 
             const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
+
+            // Get user's logo if logoUrl is not provided
+            let finalLogoUrl = logoUrl;
+            if (!finalLogoUrl) {
+                try {
+                    const user = await User.findById(ownerObjectId).select('logo').lean();
+                    if (user?.logo) {
+                        finalLogoUrl = user.logo;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user logo:', error);
+                }
+            }
 
             // Check if store already exists for this owner or domain
             const existingStore = await Store.findOne({
@@ -154,6 +170,7 @@ export const saveStoreTool = tool(
                     twitter: socialLinks.twitter,
                 } : undefined,
                 headerLinks: headerLinks || [],
+                logoUrl: finalLogoUrl, // Include logoUrl if available
                 active: true, // Set active when store is created
             });
 
@@ -239,6 +256,7 @@ IMPORTANT:
                 label: z.string().describe("Link label/text"),
                 href: z.string().describe("Link URL/path"),
             })).optional().describe("Header navigation links array"),
+            logoUrl: z.string().optional().describe("Store logo URL (optional, will use user's logo if not provided)"),
         }),
     }
 );

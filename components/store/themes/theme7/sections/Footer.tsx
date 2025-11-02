@@ -33,9 +33,21 @@ const Footer: React.FC = () => {
     if (!selectedStore) return null;
 
     const brandName = selectedStore.brandName || 'My Store';
-    const footerText = selectedStore.footer?.text || 'All rights reserved.';
+    // Clean footer text - remove duplicate copyright/year if present
+    let footerText = selectedStore.footer?.text || 'All rights reserved.';
+    const copyrightPattern = /^©\s*\d{4}[\s\S]*?[.,]\s*/i;
+    footerText = footerText.replace(copyrightPattern, '').trim();
+    if (!footerText) footerText = 'All rights reserved.';
+
     const socialLinks = selectedStore.socialLinks || {};
     const primaryColor = selectedStore.theme?.primaryColor || '#8B5CF6';
+    
+    // Header links (same as in Header component)
+    const headerLinks = [
+        { label: "About", href: "#about" },
+        { label: "Products", href: "#products" },
+        { label: "Contact", href: "#contact" },
+    ];
 
     return (
         <footer 
@@ -43,10 +55,35 @@ const Footer: React.FC = () => {
             style={{ background: `linear-gradient(180deg, ${primaryColor}, ${selectedStore.theme?.secondaryColor || primaryColor})` }}
         >
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-8 mb-8">
-                    <p className="text-center sm:text-left text-xl font-bold text-white">
-                        &copy; {new Date().getFullYear()} {brandName}. {footerText}
-                    </p>
+                {/* Logo and Links Section */}
+                <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
+                    {/* Logo */}
+                    <div className="flex flex-col items-center md:items-start">
+                        {selectedStore.logoUrl ? (
+                            <img
+                                src={selectedStore.logoUrl}
+                                alt={`${brandName} logo`}
+                                className="h-12 w-auto object-contain mb-4"
+                            />
+                        ) : (
+                            <h3 className="text-2xl font-bold text-white mb-4">{brandName}</h3>
+                        )}
+                    </div>
+
+                    {/* Navigation Links */}
+                    <nav className="flex flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-6">
+                        {headerLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-bold"
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </nav>
+
+                    {/* Social Links */}
                     <div className="flex space-x-4">
                         {socialLinks.facebook && (
                             <SocialIcon platform="facebook" href={socialLinks.facebook} color={primaryColor} />
@@ -59,9 +96,16 @@ const Footer: React.FC = () => {
                         )}
                     </div>
                 </div>
-                <p className="text-center text-sm text-white/80 mt-8">
-                    Powered by Yurafy
-                </p>
+
+                {/* Copyright */}
+                <div className="border-t border-white/20 pt-6 mt-6">
+                    <p className="text-center text-sm text-white/90">
+                        &copy; {new Date().getFullYear()} {brandName}. {footerText}
+                    </p>
+                    <p className="text-center text-xs text-white/70 mt-2">
+                        Powered by Yurafy
+                    </p>
+                </div>
             </div>
         </footer>
     );

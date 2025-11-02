@@ -26,14 +26,6 @@ const Hero: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.9 }}
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-6 py-3 mb-8 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm"
-                    >
-                        <span className="text-sm font-semibold uppercase tracking-wider">🌱 Eco-Friendly</span>
-                    </motion.div>
                     <motion.h2 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -60,7 +52,7 @@ const Hero: React.FC = () => {
                             className="inline-block px-10 py-4 rounded-full text-lg font-bold text-white border-2 border-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
                             style={{ backgroundColor: primaryColor }}
                         >
-                            Shop Sustainably
+                            Shop Now
                         </a>
                     </motion.div>
                 </motion.div>

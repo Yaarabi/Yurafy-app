@@ -6,11 +6,15 @@ import { motion } from "framer-motion";
 import { 
     Users, Store, ShoppingCart, MessageSquare, TrendingUp, 
     Shield, UserCheck, XCircle, Clock, CheckCircle,
-    AlertTriangle, Activity, BarChart3, Settings
+    AlertTriangle, Activity, BarChart3, Settings, Bot,
+    Building2
 } from "lucide-react";
 import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminPlanMonitoring from "@/components/admin/AdminPlanMonitoring";
 import AdminSupportChat from "@/components/admin/AdminSupportChat";
+import AdminStoresManagement from "@/components/admin/AdminStoresManagement";
+import AdminAccountsManagement from "@/components/admin/AdminAccountsManagement";
+import AdminAgentsManagement from "@/components/admin/AdminAgentsManagement";
 
 interface OverviewData {
     counts: {
@@ -30,7 +34,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'support'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'stores' | 'accounts' | 'agents' | 'support'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -157,6 +161,39 @@ export default function AdminPage() {
                             Plans & Limits
                         </button>
                         <button
+                            onClick={() => setActiveTab('stores')}
+                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'stores'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Store className="w-4 h-4 inline mr-2" />
+                            Stores
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('accounts')}
+                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'accounts'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Building2 className="w-4 h-4 inline mr-2" />
+                            Accounts
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('agents')}
+                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'agents'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Bot className="w-4 h-4 inline mr-2" />
+                            Agents
+                        </button>
+                        <button
                             onClick={() => setActiveTab('support')}
                             className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'support'
@@ -273,6 +310,33 @@ export default function AdminPage() {
                         animate={{ opacity: 1 }}
                     >
                         <AdminPlanMonitoring />
+                    </motion.div>
+                )}
+
+                {activeTab === 'stores' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminStoresManagement />
+                    </motion.div>
+                )}
+
+                {activeTab === 'accounts' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminAccountsManagement />
+                    </motion.div>
+                )}
+
+                {activeTab === 'agents' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminAgentsManagement />
                     </motion.div>
                 )}
 

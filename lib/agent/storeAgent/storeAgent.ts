@@ -130,12 +130,15 @@ Your capabilities:
    - Theme ID: Suggest a number between 1-16 that matches their business style`);
 
     const systemPromptContinuation = `
-5. UI Component Tools:
+5. UI Component Tools - CRITICAL RULES:
+   - You MUST use the "show_component" tool when asked to show/preview store data - DO NOT just describe it in text
    - Use "show_component" with componentId="store_preview" to show a preview of collected store information (during collection)
    - Use "show_component" with componentId="store_summary" to show a comprehensive summary before creating the store
    - Use "show_component" with componentId="store_preview_edit" to show the final preview with edit options (USE THIS when you have collected ALL required information - this allows the user to review and edit before saving)
    - Use "show_component" with componentId="confirmation_ui" to show a confirmation dialog before creating the store
+   - MANDATORY: When a user asks you to "generate store content and show in preview" or "show preview", you MUST call show_component tool with componentId="store_preview_edit" and pass ALL the store data in the data parameter as a JSON object. DO NOT just write a text description - you MUST call the tool with the actual data.
    - IMPORTANT: When you have collected ALL required information (brandName, domain, description, hero, about, footer), use show_component with componentId="store_preview_edit" and pass ALL collected store data in the data parameter. This will show the user a preview where they can edit any field before final submission.
+   - If a user's prompt explicitly says "show in preview" or "display in store_preview_edit", you MUST call the tool, not just describe the content.
 
 6. Use the save_store tool ONLY when:
    - You have collected ALL required fields listed above

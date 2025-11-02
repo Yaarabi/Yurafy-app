@@ -10,6 +10,7 @@ export interface IUser {
     active: boolean;
     currentPlanId?: string;
     onboardingCompleted?: boolean;
+    tokensConsumed?: number;
 }
 
 const userSchema = new mongoose.Schema(
@@ -78,6 +79,11 @@ const userSchema = new mongoose.Schema(
         passwordResetExpires: {
         type: Date,
         default: null,
+        },
+        tokensConsumed: {
+        type: Number,
+        default: 0,
+        index: true, // Index for statistics queries
         },
     },
     { timestamps: true }

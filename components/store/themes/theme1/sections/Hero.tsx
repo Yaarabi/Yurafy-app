@@ -25,20 +25,6 @@ const Hero: React.FC = () => {
                     transition={{ duration: 0.8 }}
                     className="max-w-4xl mx-auto"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="inline-block px-6 py-2 mb-8 rounded-full border-2"
-                        style={{ 
-                            borderColor: primaryColor,
-                            backgroundColor: `${primaryColor}20`
-                        }}
-                    >
-                        <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            Innovation Awaits
-                        </span>
-                    </motion.div>
                     <motion.h2 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -68,7 +54,7 @@ const Hero: React.FC = () => {
                                 borderColor: primaryColor,
                             }}
                         >
-                            Explore Products
+                            Shop Now
                         </a>
                     </motion.div>
                 </motion.div>

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
     Users, Search, Edit2, Trash2, Shield, UserCheck, XCircle, 
-    CheckCircle, Mail, Calendar, Package, AlertCircle, Loader2
+    CheckCircle, Mail, Calendar, Package, AlertCircle, Loader2,
+    MessageSquare, UserCircle, Hash, Zap
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -19,13 +20,22 @@ interface User {
     onboardingCompleted?: boolean;
 }
 
+interface UserStats {
+    whatsappAccounts: number;
+    contacts: number;
+    messages: number;
+    tokensConsumed: number;
+}
+
 interface AdminUserManagementProps {
     onRefresh?: () => void;
 }
 
 export default function AdminUserManagement({ onRefresh }: AdminUserManagementProps) {
     const [users, setUsers] = useState<User[]>([]);
+    const [userStats, setUserStats] = useState<Record<string, UserStats>>({});
     const [loading, setLoading] = useState(true);
+    const [statsLoading, setStatsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     // No role filter needed since we only show users with role "user"
     const [filterPlan, setFilterPlan] = useState<string>("all");
@@ -35,6 +45,7 @@ export default function AdminUserManagement({ onRefresh }: AdminUserManagementPr
 
     useEffect(() => {
         fetchUsers();
+        fetchUserStats();
     }, []);
 
     const fetchUsers = async () => {
@@ -49,6 +60,34 @@ export default function AdminUserManagement({ onRefresh }: AdminUserManagementPr
             toast.error('Failed to load users');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchUserStats = async () => {
+        try {
+            setStatsLoading(true);
+            const response = await fetch('/api/admin/users/stats');
+            if (!response.ok) throw new Error('Failed to fetch user statistics');
+            const data = await response.json();
+            
+            // Convert stats array to object keyed by userId
+            const statsMap: Record<string, UserStats> = {};
+            if (data.stats && Array.isArray(data.stats)) {
+                data.stats.forEach((stat: { userId: string } & UserStats) => {
+                    statsMap[stat.userId] = {
+                        whatsappAccounts: stat.whatsappAccounts || 0,
+                        contacts: stat.contacts || 0,
+                        messages: stat.messages || 0,
+                        tokensConsumed: stat.tokensConsumed || 0,
+                    };
+                });
+            }
+            setUserStats(statsMap);
+        } catch (error) {
+            console.error('Error fetching user statistics:', error);
+            // Don't show error toast, just log it
+        } finally {
+            setStatsLoading(false);
         }
     };
 
@@ -73,6 +112,7 @@ export default function AdminUserManagement({ onRefresh }: AdminUserManagementPr
             setShowEditModal(false);
             setEditingUser(null);
             fetchUsers();
+            fetchUserStats();
             onRefresh?.();
         } catch (error) {
             console.error('Error updating user:', error);
@@ -95,6 +135,7 @@ export default function AdminUserManagement({ onRefresh }: AdminUserManagementPr
             
             toast.success('User deleted successfully');
             fetchUsers();
+            fetchUserStats();
             onRefresh?.();
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -176,74 +217,146 @@ export default function AdminUserManagement({ onRefresh }: AdminUserManagementPr
                                 <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">User</th>
                                 <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Plan</th>
                                 <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    <div className="flex items-center gap-1">
+                                        <MessageSquare className="w-4 h-4" />
+                                        WhatsApp Accounts
+                                    </div>
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    <div className="flex items-center gap-1">
+                                        <UserCircle className="w-4 h-4" />
+                                        Contacts
+                                    </div>
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    <div className="flex items-center gap-1">
+                                        <Hash className="w-4 h-4" />
+                                        Messages
+                                    </div>
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    <div className="flex items-center gap-1">
+                                        <Zap className="w-4 h-4" />
+                                        Tokens Consumed
+                                    </div>
+                                </th>
                                 <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                         No users found
                                     </td>
                                 </tr>
                             ) : (
-                                filteredUsers.map((user) => (
-                                    <motion.tr
-                                        key={user.id}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                                    >
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                            <div>
-                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{user.username}</div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
-                                                    <Mail className="w-3 h-3" />
-                                                    {user.email}
+                                filteredUsers.map((user) => {
+                                    const stats = userStats[user.id] || {
+                                        whatsappAccounts: 0,
+                                        contacts: 0,
+                                        messages: 0,
+                                        tokensConsumed: 0,
+                                    };
+                                    return (
+                                        <motion.tr
+                                            key={user.id}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                        >
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                <div>
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">{user.username}</div>
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
+                                                        <Mail className="w-3 h-3" />
+                                                        {user.email}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                            <span className="text-sm text-gray-900 dark:text-white">{user.plan}</span>
-                                        </td>
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                            {user.active ? (
-                                                <span className="flex items-center gap-1 text-green-600">
-                                                    <CheckCircle className="w-4 h-4" />
-                                                    <span className="text-sm">Active</span>
-                                                </span>
-                                            ) : (
-                                                <span className="flex items-center gap-1 text-red-600">
-                                                    <XCircle className="w-4 h-4" />
-                                                    <span className="text-sm">Inactive</span>
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => handleEditUser(user)}
-                                                    className="text-indigo-600 hover:text-indigo-900 p-1 hover:bg-indigo-50 rounded transition-colors"
-                                                    title="Edit user"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteUser(user.id)}
-                                                    disabled={deletingUserId === user.id}
-                                                    className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
-                                                    title="Delete user"
-                                                >
-                                                    {deletingUserId === user.id ? (
-                                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                                    ) : (
-                                                        <Trash2 className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </motion.tr>
-                                ))
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm text-gray-900 dark:text-white">{user.plan}</span>
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                {user.active ? (
+                                                    <span className="flex items-center gap-1 text-green-600">
+                                                        <CheckCircle className="w-4 h-4" />
+                                                        <span className="text-sm">Active</span>
+                                                    </span>
+                                                ) : (
+                                                    <span className="flex items-center gap-1 text-red-600">
+                                                        <XCircle className="w-4 h-4" />
+                                                        <span className="text-sm">Inactive</span>
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                {statsLoading ? (
+                                                    <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                                                ) : (
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                                                        <MessageSquare className="w-4 h-4 text-purple-600" />
+                                                        {stats.whatsappAccounts}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                {statsLoading ? (
+                                                    <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                                                ) : (
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                                                        <UserCircle className="w-4 h-4 text-blue-600" />
+                                                        {stats.contacts}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                {statsLoading ? (
+                                                    <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                                                ) : (
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                                                        <Hash className="w-4 h-4 text-green-600" />
+                                                        {stats.messages.toLocaleString()}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                {statsLoading ? (
+                                                    <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                                                ) : (
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                                                        <Zap className="w-4 h-4 text-yellow-600" />
+                                                        {stats.tokensConsumed.toLocaleString()}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleEditUser(user)}
+                                                        className="text-indigo-600 hover:text-indigo-900 p-1 hover:bg-indigo-50 rounded transition-colors"
+                                                        title="Edit user"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteUser(user.id)}
+                                                        disabled={deletingUserId === user.id}
+                                                        className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                                                        title="Delete user"
+                                                    >
+                                                        {deletingUserId === user.id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>

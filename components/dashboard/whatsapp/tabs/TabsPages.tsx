@@ -10,8 +10,12 @@ import {
     Settings, 
     FileText, 
     TestTube,
-    MessageCircle 
+    MessageCircle,
+    Lock,
+    ArrowUpCircle,
+    Sparkles
 } from "lucide-react";
+import Link from "next/link";
 
 import ConnectionTab from "@/components/dashboard/whatsapp/tabs/ConnectionTab";
 import AutomationTab from "../automation/AutomationTab";
@@ -30,6 +34,7 @@ export default function WhatsAppIntegrationPage() {
     const [agent, setAgent] = useState<IAIAgent | undefined>(undefined);
     const [loading, setLoading] = useState(false);
     const [availableTemplates, setAvailableTemplates] = useState<ITemplate[]>([]);
+    const [userPlan, setUserPlan] = useState<string>("free");
 
     // Tab icons mapping
     const tabIcons: Record<string, any> = {
@@ -41,6 +46,7 @@ export default function WhatsAppIntegrationPage() {
         "Test Panel": TestTube,
     };
 
+    // All available tabs - show all tabs for everyone
     const tabs = [
         "Connection",
         "Ai Agent",
@@ -50,7 +56,22 @@ export default function WhatsAppIntegrationPage() {
         "Test Panel",
     ];
 
+    // Check if user has AI Agent access
+    const hasAIAgentAccess = userPlan === "AI WhatsApp Agent" || userPlan === "Pro Seller" || userPlan === "Visionary";
+
     useEffect(() => {
+        const fetchUserPlan = async () => {
+            try {
+                const res = await fetch("/api/user/plan");
+                if (res.ok) {
+                    const data = await res.json();
+                    setUserPlan(data.planKey || "free");
+                }
+            } catch (err) {
+                console.error("Failed to fetch user plan", err);
+            }
+        };
+
         const fetchAgent = async () => {
         setLoading(true);
         try {
@@ -84,9 +105,11 @@ export default function WhatsAppIntegrationPage() {
         }
         };
 
+        fetchUserPlan();
         fetchAgent();
         fetchTemplates();
     }, []);
+
 
     const updateAgent = async (payload: any) => {
         if (!agent) return;
@@ -177,9 +200,49 @@ export default function WhatsAppIntegrationPage() {
                         transition={{ duration: 0.3 }}
                         className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden min-h-[400px]"
                     >
+                        <div className="p-4 sm:p-6 lg:p-8">
                             {activeTab === "Connection" && <ConnectionTab />}
 
-                            {activeTab === "Ai Agent" && agent && (
+                            {/* AI Agent Tab - Show upgrade message if no access */}
+                            {activeTab === "Ai Agent" && !hasAIAgentAccess && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="max-w-2xl mx-auto text-center py-12"
+                                >
+                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                        <Sparkles className="w-10 h-10 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                                        Upgrade to Use AI Agent
+                                    </h2>
+                                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                                        The AI Agent feature is available in:
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">AI WhatsApp Agent</div>
+                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Dedicated AI plan</div>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">Visionary</div>
+                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Premium plan</div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                                        Enable intelligent conversations, automated responses, and AI-powered customer support.
+                                    </p>
+                                    <Link
+                                        href="/onboarding/plan"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+                                    >
+                                        <ArrowUpCircle className="w-5 h-5" />
+                                        Upgrade Now
+                                    </Link>
+                                </motion.div>
+                            )}
+
+                            {activeTab === "Ai Agent" && hasAIAgentAccess && agent && (
                                 <SettingsSection title="AI Agent Connection">
                                     <WorkflowToggle
                                         label="Enable AI Agent"
@@ -197,7 +260,46 @@ export default function WhatsAppIntegrationPage() {
                                 </SettingsSection>
                             )}
 
-                            {activeTab === "Tools" && agent && (
+                            {/* Tools Tab - Show upgrade message if no access */}
+                            {activeTab === "Tools" && !hasAIAgentAccess && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="max-w-2xl mx-auto text-center py-12"
+                                >
+                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                        <Wrench className="w-10 h-10 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                                        Upgrade to Access AI Tools
+                                    </h2>
+                                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                                        AI Tools are available in:
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">AI WhatsApp Agent</div>
+                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Dedicated AI plan</div>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">Visionary</div>
+                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Premium plan</div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                                        Access advanced AI tools for enhanced automation, intelligent responses, and smart integrations.
+                                    </p>
+                                    <Link
+                                        href="/onboarding/plan"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+                                    >
+                                        <ArrowUpCircle className="w-5 h-5" />
+                                        Upgrade Now
+                                    </Link>
+                                </motion.div>
+                            )}
+
+                            {activeTab === "Tools" && hasAIAgentAccess && agent && (
                                 <ToolsTab
                                     agent={agent}
                                     availableTemplates={availableTemplates}

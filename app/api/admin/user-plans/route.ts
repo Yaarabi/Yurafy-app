@@ -128,6 +128,15 @@ export async function PUT(req: NextRequest) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
+        // Get old plan to check if it had store features
+        let oldPlanKey: string | null = null;
+        if (user.currentPlanId) {
+            const oldPlan = await Plan.findById(user.currentPlanId);
+            if (oldPlan) {
+                oldPlanKey = oldPlan.planKey as string;
+            }
+        }
+
         // Update or create plan
         if (user.currentPlanId) {
             const plan = await Plan.findById(user.currentPlanId);
@@ -162,6 +171,24 @@ export async function PUT(req: NextRequest) {
             const savedPlan = await newPlan.save();
             user.currentPlanId = savedPlan._id;
             await user.save();
+        }
+
+        // Update store active status based on plan features
+        if (planKey && oldPlanKey !== planKey) {
+            const newPlanFeatures = planFeatures[planKey as keyof typeof planFeatures] || planFeatures.free;
+            const oldPlanFeatures = oldPlanKey ? (planFeatures[oldPlanKey as keyof typeof planFeatures] || planFeatures.free) : planFeatures.free;
+
+            const hasStoreFeature = newPlanFeatures.store?.enabled === true;
+            const hadStoreFeature = oldPlanFeatures.store?.enabled === true;
+
+            // If store feature status changed, update all user's stores
+            if (hasStoreFeature !== hadStoreFeature) {
+                const userStores = await Store.find({ owner: user._id });
+                for (const store of userStores) {
+                    store.active = hasStoreFeature;
+                    await store.save();
+                }
+            }
         }
 
         return NextResponse.json({ message: 'Plan updated successfully' });

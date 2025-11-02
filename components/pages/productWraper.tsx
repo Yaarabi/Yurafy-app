@@ -5,6 +5,8 @@ import React from "react";
 import ProductCompo from "@/components/pages/ProductPage";
 import { IProduct } from "@/models/products";
 import { SerializedStore } from "@/lib/data/products";
+import { StoreProvider } from "@/components/store/context/StoreContext";
+import Cart from "@/components/store/components/Cart";
 
 interface ProductPageClientWrapperProps {
     product: IProduct;
@@ -14,7 +16,12 @@ interface ProductPageClientWrapperProps {
 const ProductPageClientWrapper: React.FC<ProductPageClientWrapperProps> = ({ product, store }) => {
 
     if(!store) return <h2>Not Found</h2>
-    return <ProductCompo product={product} store={store} />;
+    return (
+        <StoreProvider stores={[store]} initialStore={store}>
+            <ProductCompo product={product} store={store} />
+            <Cart />
+        </StoreProvider>
+    );
 };
 
 export default ProductPageClientWrapper;

@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../hooks/useStore';
+import { useCart } from '../context/CartContext';
 
 const ProductDetails: React.FC = () => {
-    const { selectedProduct, productOptions, setProductOptions } = useStore();
+    const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
+    const { addToCart, openCart } = useCart();
     const [mainImage, setMainImage] = useState(selectedProduct?.mainImage || '');
 
     useEffect(() => {
@@ -14,9 +16,30 @@ const ProductDetails: React.FC = () => {
 
     if (!selectedProduct) return null;
 
+    const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
+
     const handleQuantityChange = (delta: number) => {
         const newQuantity = Math.max(1, productOptions.quantity + delta);
         setProductOptions({ quantity: newQuantity });
+    };
+
+    const handleAddToCart = () => {
+        const success = addToCart(
+            selectedProduct,
+            productOptions.quantity || 1,
+            {
+                color: productOptions.color,
+                size: productOptions.size,
+                metadata: {
+                    merchantId: selectedStore?.owner,
+                },
+            }
+        );
+        
+        if (success) {
+            // Optionally open cart after adding
+            setTimeout(() => openCart(), 500);
+        }
     };
 
     return (
@@ -94,9 +117,23 @@ const ProductDetails: React.FC = () => {
                         <h3 className="text-sm font-medium text-gray-900">Quantity</h3>
                         <div className="flex items-center mt-2">
                             <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 border rounded-l-md hover:bg-gray-100">-</button>
-                            <span className="px-4 py-1 border-t border-b">{productOptions.quantity}</span>
+                            <span className="px-4 py-1 border-t border-b">{productOptions.quantity || 1}</span>
                             <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 border rounded-r-md hover:bg-gray-100">+</button>
                         </div>
+                    </div>
+
+                    {/* Add to Cart Button */}
+                    <div className="mt-6">
+                        <button
+                            onClick={handleAddToCart}
+                            disabled={selectedProduct.stock <= 0}
+                            className="w-full py-3 px-4 rounded-md font-semibold text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            style={{ 
+                                backgroundColor: selectedProduct.stock > 0 ? primaryColor : '#9CA3AF'
+                            }}
+                        >
+                            {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
                     </div>
                 </div>
 
