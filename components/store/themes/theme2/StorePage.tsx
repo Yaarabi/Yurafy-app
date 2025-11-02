@@ -1,10 +1,10 @@
 import React from 'react';
-import Header from '../../sections/Header';
-import Hero from '../../sections/Hero';
-import ProductGrid from '../../sections/ProductGrid';
-import About from '../../sections/About';
-import Footer from '../../sections/Footer';
-import Trust from '../../sections/Trust';
+import Header from './sections/Header';
+import Hero from './sections/Hero';
+import ProductGrid from './sections/ProductGrid';
+import About from './sections/About';
+import Footer from './sections/Footer';
+import Trust from './sections/Trust';
 import { useStore } from '../../hooks/useStore';
 
 const StorePage: React.FC = () => {

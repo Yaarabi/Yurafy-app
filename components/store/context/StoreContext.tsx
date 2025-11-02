@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { SerializedStore } from '@/lib/data/products';
 import { IProduct } from '@/models/products';
 
@@ -27,6 +27,13 @@ export const StoreProvider: React.FC<{
     const [selectedStore, setSelectedStore] = useState<SerializedStore | null>(initialStore || (stores[0] ?? null));
     const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
     const [productOptions, setProductOptions] = useState<Record<string, any>>({});
+
+    // Update selectedStore when initialStore changes (for real-time preview updates)
+    useEffect(() => {
+        if (initialStore) {
+            setSelectedStore(initialStore);
+        }
+    }, [initialStore]);
 
     const selectStore = useCallback((id: string) => {
         const s = allStores.find((st) => st._id === id) ?? null;

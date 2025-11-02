@@ -1,10 +1,10 @@
 import React from 'react';
-import Header from '../../sections/Header';
-import Hero from '../../sections/Hero';
-import ProductGrid from '../../sections/ProductGrid';
-import Trust from '../../sections/Trust';
-import Footer from '../../sections/Footer';
-import About from '../../sections/About';
+import Header from './sections/Header';
+import Hero from './sections/Hero';
+import ProductGrid from './sections/ProductGrid';
+import Trust from './sections/Trust';
+import Footer from './sections/Footer';
+import About from './sections/About';
 import { useStore } from '../../hooks/useStore';
 
 

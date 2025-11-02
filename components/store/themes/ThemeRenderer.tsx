@@ -26,6 +26,26 @@ const themeComponents: Record<number, Record<string, React.LazyExoticComponent<R
     5: {
         StorePage: lazy(() => import('./theme5/StorePage')),
         ProductPage: lazy(() => import('./theme5/ProductPage')),
+    },
+    6: {
+        StorePage: lazy(() => import('./theme6/StorePage')),
+        ProductPage: lazy(() => import('./theme6/ProductPage')),
+    },
+    7: {
+        StorePage: lazy(() => import('./theme7/StorePage')),
+        ProductPage: lazy(() => import('./theme7/ProductPage')),
+    },
+    8: {
+        StorePage: lazy(() => import('./theme8/StorePage')),
+        ProductPage: lazy(() => import('./theme8/ProductPage')),
+    },
+    9: {
+        StorePage: lazy(() => import('./theme9/StorePage')),
+        ProductPage: lazy(() => import('./theme9/ProductPage')),
+    },
+    10: {
+        StorePage: lazy(() => import('./theme10/StorePage')),
+        ProductPage: lazy(() => import('./theme10/ProductPage')),
     }
 };
 

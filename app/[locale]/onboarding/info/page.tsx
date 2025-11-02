@@ -4,7 +4,6 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import ThemeSelector from "@/components/onboarding/ThemeSelector";
-import StoreThemeStructureSelector from "@/components/onboarding/StoreThemeStructureSelector";
 import ProductPageStructureSelector from "@/components/onboarding/ProductPageStructureSelector";
 import StoreBasicInfoForm from "@/components/onboarding/StoreBasicInfoForm";
 import StoreGenerator from "@/components/onboarding/StoreGenerator";
@@ -19,14 +18,6 @@ export default function InfoPage() {
         themeId: number;
         theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
     } | null>(null);
-    const [selectedThemeStructure, setSelectedThemeStructure] = useState<{
-        header: boolean;
-        hero: boolean;
-        about: boolean;
-        trust: boolean;
-        productGrid: boolean;
-        footer: boolean;
-    } | null>(null);
     const [selectedProductPageStructure, setSelectedProductPageStructure] = useState<{
         productDetails: boolean;
         productImages: boolean;
@@ -37,7 +28,6 @@ export default function InfoPage() {
         relatedProducts: boolean;
         reviews: boolean;
     } | null>(null);
-    const [showThemeStructure, setShowThemeStructure] = useState(false);
     const [showProductPageStructure, setShowProductPageStructure] = useState(false);
     const [showBasicInfoForm, setShowBasicInfoForm] = useState(false);
     const [basicInfo, setBasicInfo] = useState<{
@@ -95,22 +85,7 @@ export default function InfoPage() {
 
     const handleThemeSelect = (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string }) => {
         setSelectedTheme({ themeId, theme });
-        // Small delay for smooth transition
-        setTimeout(() => {
-            setShowThemeStructure(true);
-        }, 300);
-    };
-
-    const handleThemeStructureSelect = (themeStructure: {
-        header: boolean;
-        hero: boolean;
-        about: boolean;
-        trust: boolean;
-        productGrid: boolean;
-        footer: boolean;
-    }) => {
-        setSelectedThemeStructure(themeStructure);
-        // Small delay for smooth transition
+        // Small delay for smooth transition, then go directly to product page structure
         setTimeout(() => {
             setShowProductPageStructure(true);
         }, 300);
@@ -165,21 +140,11 @@ export default function InfoPage() {
     }
 
     // Show theme selector first
-    if (!selectedTheme || !showThemeStructure) {
+    if (!selectedTheme || !showProductPageStructure) {
         return <ThemeSelector onThemeSelect={handleThemeSelect} />;
     }
 
-    // Show store theme structure selector after theme is selected
-    if (!showProductPageStructure || !selectedThemeStructure) {
-        return (
-            <StoreThemeStructureSelector
-                onSelect={handleThemeStructureSelect}
-                selectedTheme={selectedTheme}
-            />
-        );
-    }
-
-    // Show product page structure selector after store structure is selected
+    // Show product page structure selector after theme is selected
     if (!showBasicInfoForm || !selectedProductPageStructure) {
         return (
             <ProductPageStructureSelector
@@ -201,10 +166,20 @@ export default function InfoPage() {
     }
 
     // Show generator with preview after basic info is submitted
+    // Default themeStructure with all sections enabled
+    const defaultThemeStructure = {
+        header: true,
+        hero: true,
+        about: true,
+        trust: true,
+        productGrid: true,
+        footer: true,
+    };
+
     return (
         <StoreGenerator
             selectedTheme={selectedTheme}
-            selectedThemeStructure={selectedThemeStructure}
+            selectedThemeStructure={defaultThemeStructure}
             selectedProductPageStructure={selectedProductPageStructure}
             basicInfo={basicInfo}
             plan={plan || "Starter"}

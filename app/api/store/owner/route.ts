@@ -52,7 +52,10 @@ function serializeStoreDoc(store: any) {
             text: store.footer.text,
         } : undefined,
         socialLinks: store.socialLinks ? { ...store.socialLinks } : undefined,
-        headerLinks: store.headerLinks ? [...store.headerLinks] : [],
+        headerLinks: store.headerLinks ? store.headerLinks.map((link: any) => ({
+            label: link.label,
+            href: link.href,
+        })) : [],
         createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
         updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };

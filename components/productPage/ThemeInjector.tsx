@@ -22,15 +22,24 @@ export default function ThemeInjector({ theme }: ThemeInjectorProps) {
 
         const root = document.documentElement;
 
-        root.style.setProperty('--primary-color', theme.primaryColor || '#22c55e');
-        root.style.setProperty('--secondary-color', theme.secondaryColor || '#16a34a');
-        root.style.setProperty('--text-color', theme.textColor || 'white');
+        // Set CSS variables for theme colors
+        root.style.setProperty('--color-primary', theme.primaryColor || '#3B82F6');
+        root.style.setProperty('--color-secondary', theme.secondaryColor || theme.primaryColor || '#3B82F6');
+        root.style.setProperty('--color-text', theme.textColor || '#ffffff');
+        root.style.setProperty('--primary-color', theme.primaryColor || '#3B82F6');
+        root.style.setProperty('--secondary-color', theme.secondaryColor || theme.primaryColor || '#3B82F6');
+        root.style.setProperty('--text-color', theme.textColor || '#ffffff');
+
+        // Calculate light and dark variants for better UI/UX
+        const primaryColor = theme.primaryColor || '#3B82F6';
+        root.style.setProperty('--color-primary-light', primaryColor + '20');
+        root.style.setProperty('--color-primary-dark', primaryColor);
 
         if (theme.gradient) {
-        root.style.setProperty(
-            '--gradient',
-            `linear-gradient(to right, ${theme.gradient.from}, ${theme.gradient.via || theme.gradient.from}, ${theme.gradient.to})`
-        );
+            root.style.setProperty(
+                '--gradient',
+                `linear-gradient(to right, ${theme.gradient.from}, ${theme.gradient.via || theme.gradient.from}, ${theme.gradient.to})`
+            );
         }
     }, [theme]);
 
