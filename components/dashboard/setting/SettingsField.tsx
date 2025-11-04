@@ -14,9 +14,12 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
     const [saving, setSaving] = useState(false);
 
     // Sync input with value prop when value changes externally
+    // Only sync when not editing to avoid resetting user input
     useEffect(() => {
-        setInput(value);
-    }, [value]);
+        if (!editing && value !== undefined && value !== null) {
+            setInput(value);
+        }
+    }, [value, editing]);
 
     const handleSave = async () => {
         if (input === value) {
@@ -57,7 +60,7 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
                     />
                     <div className="flex gap-2">
                         <button
-                            className="px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 rounded-md bg-[var(--brand-blue)] text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={handleSave}
                             disabled={saving || input === value}
                         >

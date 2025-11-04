@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import CustomerFilters from "@/components/dashboard/customers/CustomerFilters";
 import CustomerTable from "@/components/dashboard/customers/CustomerTable";
 import BulkActionsMenu from "@/components/dashboard/order/BulkActionsMenu";
+import { useUserFeatures } from "@/hooks/useUserFeatures";
 
 export type Address = {
     address?: string | null;
@@ -26,9 +27,12 @@ export type CustomerStat = {
     };
 
     export default function MyCustomersList() {
+    const { data: featuresData } = useUserFeatures();
+    const hasWhatsApp = featuresData?.planFeatures?.hasWhatsApp ?? false;
     const [data, setData] = useState<CustomerStat[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [selected, setSelected] = useState<string[]>([]);
     const [filters, setFilters] = useState({ status: "All", address: "" });
     const limit = 20;
@@ -44,9 +48,12 @@ export type CustomerStat = {
         const res = await fetch(`/api/customers?${query.toString()}`);
         const json = await res.json();
         setData(json.data ?? []);
+        // Update totalPages from API meta
+        setTotalPages(json.meta?.totalPages ?? 1);
         } catch (e) {
         console.error(e);
         setData([]);
+        setTotalPages(1);
         } finally {
         setLoading(false);
         }
@@ -74,14 +81,16 @@ export type CustomerStat = {
     });
 
 
-    // Selection logic
+    // Selection logic - Only allow selection if WhatsApp is enabled
     const handleSelect = (id: string, checked: boolean) => {
+        if (!hasWhatsApp) return;
         setSelected((prev) =>
         checked ? [...prev, id] : prev.filter((x) => x !== id)
         );
     };
 
     const handleSelectAll = (checked: boolean) => {
+        if (!hasWhatsApp) return;
         if (checked) {
         setSelected(filteredData.map((c) => c.customerId));
         } else {
@@ -106,36 +115,40 @@ export type CustomerStat = {
             selected={selected}
             onSelect={handleSelect}
             onSelectAll={handleSelectAll}
+            hasWhatsApp={hasWhatsApp}
             />
         </div>
 
-        {/* Bulk Actions */}
-        {selected.length > 0 && (
+        {/* Bulk Actions - Only show if WhatsApp is enabled */}
+        {selected.length > 0 && hasWhatsApp && (
             <BulkActionsMenu
             selectedOrders={selected}
             onClear={() => setSelected([])}
             />
         )}
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between mt-3">
-            <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50"
-            >
-            Prev
-            </button>
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-            Page {page}
+        {/* Pagination - Only show when there's more than 1 page */}
+        {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-3">
+                <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Prev
+                </button>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                    Page {page} of {totalPages}
+                </div>
+                <button
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={page >= totalPages}
+                    className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Next
+                </button>
             </div>
-            <button
-            onClick={() => setPage((p) => p + 1)}
-            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm"
-            >
-            Next
-            </button>
-        </div>
+        )}
         </div>
     );
 }

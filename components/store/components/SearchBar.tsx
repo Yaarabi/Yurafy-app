@@ -124,7 +124,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProdu
                         }
                     }}
                     onKeyDown={handleKeyDown}
-                    className="w-full px-4 py-2 pl-10 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
+                    className="w-full px-4 py-2 pl-10 pr-10 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
                     style={{
                         borderColor: searchQuery ? primaryColor : undefined,
                         focusRingColor: primaryColor,

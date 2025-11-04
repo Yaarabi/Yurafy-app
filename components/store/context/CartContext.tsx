@@ -1,8 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { IProduct } from '@/models/products';
 import toast from 'react-hot-toast';
+
+const CART_STORAGE_KEY = 'cart_items';
 
 export interface CartItem {
     productId: string;
@@ -39,6 +41,39 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [items, setItems] = useState<CartItem[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
+    // Load cart from localStorage on mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                const stored = localStorage.getItem(CART_STORAGE_KEY);
+                if (stored) {
+                    const parsedItems = JSON.parse(stored);
+                    if (Array.isArray(parsedItems)) {
+                        setItems(parsedItems);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading cart from localStorage:', error);
+                localStorage.removeItem(CART_STORAGE_KEY);
+            }
+        }
+    }, []);
+
+    // Save cart to localStorage whenever items change
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                if (items.length > 0) {
+                    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+                } else {
+                    localStorage.removeItem(CART_STORAGE_KEY);
+                }
+            } catch (error) {
+                console.error('Error saving cart to localStorage:', error);
+            }
+        }
+    }, [items]);
+
     // Generate unique key for cart item (productId + color + size)
     const getItemKey = (productId: string, color?: string, size?: string): string => {
         return `${productId}-${color || 'no-color'}-${size || 'no-size'}`;
@@ -48,17 +83,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Validate product availability
         if (product.stock <= 0) {
             toast.error('Product is out of stock');
-            return false;
-        }
-
-        // Validate variant selection if required
-        if (product.colors && product.colors.length > 0 && !options?.color) {
-            toast.error('Please select a color');
-            return false;
-        }
-
-        if (product.sizes && product.sizes.length > 0 && !options?.size) {
-            toast.error('Please select a size');
             return false;
         }
 
@@ -143,6 +167,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const clearCart = useCallback(() => {
         setItems([]);
         setIsOpen(false);
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        }
     }, []);
 
     const getTotalItems = useCallback(() => {

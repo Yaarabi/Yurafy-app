@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheckIcon, TruckIcon, CheckCircleIcon } from '@/components/store/components/icons';
+import { CashIcon, TruckIcon, QualityIcon } from '@/components/store/components/icons';
 import { useStore } from '../../../hooks/useStore';
 import { motion, Variants } from 'framer-motion';
 
@@ -17,9 +17,9 @@ const Trust: React.FC = () => {
 
     const features = [
         {
-            Icon: ShieldCheckIcon,
-            title: 'Secure Payments',
-            description: 'Your transactions are safe with our encrypted checkout process.',
+            Icon: CashIcon,
+            title: 'Pay on Delivery',
+            description: 'Pay when you receive your order. No upfront payment required.',
         },
         {
             Icon: TruckIcon,
@@ -27,7 +27,7 @@ const Trust: React.FC = () => {
             description: 'We ensure your order gets to you as quickly as possible.',
         },
         {
-            Icon: CheckCircleIcon,
+            Icon: QualityIcon,
             title: 'Quality Guaranteed',
             description: 'We stand behind the quality of our products, 100% satisfaction.',
         },

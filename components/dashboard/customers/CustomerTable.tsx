@@ -8,9 +8,10 @@ interface Props {
     selected: string[];
     onSelect: (id: string, checked: boolean) => void;
     onSelectAll: (checked: boolean) => void;
+    hasWhatsApp?: boolean;
 }
 
-export default function CustomerTable({ data, loading, selected, onSelect, onSelectAll }: Props) {
+export default function CustomerTable({ data, loading, selected, onSelect, onSelectAll, hasWhatsApp = false }: Props) {
     const allSelected = data.length > 0 && selected.length === data.length;
 
     const getStatusStyle = (status?: string) => {
@@ -34,7 +35,13 @@ export default function CustomerTable({ data, loading, selected, onSelect, onSel
             <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-10">
             <tr className="text-xs uppercase text-gray-600 dark:text-gray-300 tracking-wide">
                 <th className="px-4 py-3">
-                <input type="checkbox" checked={allSelected} onChange={(e) => onSelectAll(e.target.checked)} />
+                <input 
+                    type="checkbox" 
+                    checked={allSelected} 
+                    onChange={(e) => onSelectAll(e.target.checked)} 
+                    disabled={!hasWhatsApp}
+                    title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
+                />
                 </th>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
@@ -74,6 +81,8 @@ export default function CustomerTable({ data, loading, selected, onSelect, onSel
                         type="checkbox"
                         checked={selected.includes(c.customerId)}
                         onChange={(e) => onSelect(c.customerId, e.target.checked)}
+                        disabled={!hasWhatsApp}
+                        title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
                     />
                     </td>
                     <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{c.name ?? "Guest"}</td>

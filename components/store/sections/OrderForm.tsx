@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { useStore } from '../hooks/useStore';
-import type { IOrder } from '../types';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 const OrderForm: React.FC = () => {
-    const { selectedProduct, productOptions } = useStore();
+    const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
     const [formData, setFormData] = useState({
         fullName: '',
         phone: '',
@@ -12,8 +12,21 @@ const OrderForm: React.FC = () => {
     });
     const [submissionState, setSubmissionState] = useState<{ status: 'idle' | 'submitting' | 'success' | 'error', message: string }>({ status: 'idle', message: '' });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const target = e.target;
+        if (target.name === 'color' || target.name === 'size') {
+            setProductOptions({ ...productOptions, [target.name]: target.value });
+        } else {
+            setFormData({ ...formData, [target.name]: target.value });
+        }
+    };
+
+    const handleQuantityChange = (delta: number) => {
+        const currentQuantity = productOptions.quantity || 1;
+        const newQuantity = Math.max(1, Math.min(currentQuantity + delta, selectedProduct?.stock || 999));
+        setProductOptions({ ...productOptions, quantity: newQuantity });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -37,13 +50,13 @@ const OrderForm: React.FC = () => {
                 {
                     product: selectedProduct._id,
                     name: selectedProduct.name,
-                    quantity: productOptions.quantity,
+                    quantity: productOptions.quantity || 1,
                     price: selectedProduct.price,
                     color: productOptions.color,
                     size: productOptions.size,
                 },
             ],
-            totalAmount: selectedProduct.price * productOptions.quantity,
+            totalAmount: selectedProduct.price * (productOptions.quantity || 1),
             shippingAddress: {
                 fullName: formData.fullName,
                 phone: formData.phone,
@@ -90,54 +103,177 @@ const OrderForm: React.FC = () => {
         );
     }
 
+    if (!selectedProduct) {
+        return (
+            <div className="bg-white p-6 rounded-lg shadow-lg text-center text-gray-500">
+                <p>No product selected</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="bg-white p-8 rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">Cash on Delivery Order</h3>
+        <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg" id="order-form">
+            <div className="mb-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Order Details</h3>
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+                    <div className="flex-1">
+                        <p className="text-sm text-gray-600">Product</p>
+                        <p className="text-base font-semibold text-gray-900 line-clamp-2">{selectedProduct.name}</p>
+                    </div>
+                    <div className="ml-4 text-right">
+                        <p className="text-sm text-gray-600">Price</p>
+                        <p className="text-lg font-bold" style={{ color: primaryColor }}>
+                            ${((productOptions.quantity || 1) * selectedProduct.price).toFixed(2)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Color Selection */}
+                {selectedProduct.colors && selectedProduct.colors.length > 0 && (
+                    <div>
+                        <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
+                            Color {productOptions.color ? `(${productOptions.color})` : '*'}
+                        </label>
+                        <select
+                            name="color"
+                            id="color"
+                            value={productOptions.color || ''}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        >
+                            <option value="">Select a color</option>
+                            {selectedProduct.colors.map(color => (
+                                <option key={color} value={color}>{color}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+                {/* Size Selection */}
+                {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
+                    <div>
+                        <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
+                            Size {productOptions.size ? `(${productOptions.size})` : '*'}
+                        </label>
+                        <select
+                            name="size"
+                            id="size"
+                            value={productOptions.size || ''}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        >
+                            <option value="">Select a size</option>
+                            {selectedProduct.sizes.map(size => (
+                                <option key={size} value={size}>{size}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+                {/* Quantity - Improved Style */}
                 <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
+                        <button
+                            type="button"
+                            onClick={() => handleQuantityChange(-1)}
+                            disabled={(productOptions.quantity || 1) <= 1}
+                            className="px-4 py-2.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-gray-700"
+                            style={{
+                                backgroundColor: (productOptions.quantity || 1) > 1 ? 'white' : '#f3f4f6'
+                            }}
+                        >
+                            −
+                        </button>
+                        <input
+                            type="number"
+                            min="1"
+                            max={selectedProduct.stock}
+                            value={productOptions.quantity || 1}
+                            onChange={(e) => {
+                                const value = Math.max(1, Math.min(parseInt(e.target.value) || 1, selectedProduct.stock || 999));
+                                setProductOptions({ ...productOptions, quantity: value });
+                            }}
+                            className="w-full text-center px-4 py-2.5 bg-white text-gray-900 border-0 focus:outline-none focus:ring-0 sm:text-sm font-medium"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleQuantityChange(1)}
+                            disabled={(productOptions.quantity || 1) >= (selectedProduct.stock || 999)}
+                            className="px-4 py-2.5 border-l border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-gray-700"
+                            style={{
+                                backgroundColor: (productOptions.quantity || 1) < (selectedProduct.stock || 999) ? 'white' : '#f3f4f6'
+                            }}
+                        >
+                            +
+                        </button>
+                    </div>
+                    {selectedProduct.stock > 0 && (
+                        <p className="mt-1 text-xs text-green-600 font-medium">In Stock</p>
+                    )}
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Shipping Information</h4>
+                </div>
+
+                <div>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Name *
+                    </label>
                     <input
                         type="text"
                         name="fullName"
                         id="fullName"
                         value={formData.fullName}
                         onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
-                        placeholder="John Doe"
+                        required
+                        className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        placeholder="Full name"
                     />
                 </div>
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        id="phone"
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number *
+                    </label>
+                    <PhoneInput
+                        defaultCountry="ma"
                         value={formData.phone}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
-                        placeholder="555-123-4567"
+                        onChange={(phone) => setFormData({ ...formData, phone })}
+                        className="mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none"
+                        style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
                     />
                 </div>
                 <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700">Full Address</label>
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Address *
+                    </label>
                     <textarea
                         name="address"
                         id="address"
                         rows={3}
                         value={formData.address}
                         onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
-                        placeholder="123 Main St, Anytown, USA 12345"
+                        required
+                        className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        placeholder="Rue Hassan II, Quartier Agdal, Rabat"
                     />
                 </div>
-                {submissionState.status === 'error' && <p className="text-sm text-red-600">{submissionState.message}</p>}
+                {submissionState.status === 'error' && (
+                    <p className="text-sm text-red-600">{submissionState.message}</p>
+                )}
                 <div>
                     <button
                         type="submit"
-                        disabled={submissionState.status === 'submitting'}
-                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={submissionState.status === 'submitting' || selectedProduct.stock <= 0}
+                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                        style={{ backgroundColor: primaryColor }}
                     >
-                        {submissionState.status === 'submitting' ? 'Placing Order...' : 'Place Order'}
+                        {submissionState.status === 'submitting' ? 'Placing Order...' : selectedProduct.stock <= 0 ? 'Out of Stock' : 'Place Order (COD)'}
                     </button>
                 </div>
             </form>

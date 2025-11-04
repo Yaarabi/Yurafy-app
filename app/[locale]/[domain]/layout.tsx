@@ -17,7 +17,7 @@ export default async function Layout({
     params
     }: {
     children: ReactNode;
-    params: Promise<{ locale: string }>;
+    params: Promise<{ locale: string; domain: string }>;
     }) {
     const { locale } = await params;
     const supportedLocales = ['en', 'fr', 'ar'];

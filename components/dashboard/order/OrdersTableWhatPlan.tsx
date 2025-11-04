@@ -18,7 +18,11 @@ type OrdersFiltersType = {
     date: string;
 };
 
-export default function OrdersTableWhatPlan() {
+interface OrdersTableWhatPlanProps {
+    hasWhatsApp?: boolean;
+}
+
+export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTableWhatPlanProps) {
     const t = useTranslations('orders');
     const { data: session } = useSession();
 
@@ -69,13 +73,15 @@ export default function OrdersTableWhatPlan() {
         return productMatch && addressMatch && statusMatch && dateMatch;
     });
 
-    // Selection logic
+    // Selection logic - Only allow selection if WhatsApp is enabled
     const toggleSelectAll = () => {
+        if (!hasWhatsApp) return;
         if (selectedOrders.length === filteredOrders.length) setSelectedOrders([]);
         else setSelectedOrders(filteredOrders.map((o) => o._id));
     };
 
     const toggleSelect = (id: string) => {
+        if (!hasWhatsApp) return;
         setSelectedOrders((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
     };
 
@@ -122,10 +128,12 @@ export default function OrdersTableWhatPlan() {
                                 <label className="inline-flex items-center">
                                     <input
                                         type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue dark:bg-gray-700 dark:border-gray-600"
+                                        className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                         checked={selectedOrders.length === filteredOrders.length && filteredOrders.length > 0}
                                         onChange={toggleSelectAll}
+                                        disabled={!hasWhatsApp}
                                         aria-label="select all orders"
+                                        title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
                                     />
                                 </label>
                             </th>
@@ -165,10 +173,12 @@ export default function OrdersTableWhatPlan() {
                                     <td className="px-4 py-4 whitespace-nowrap">
                                         <input
                                             type="checkbox"
-                                            className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue"
+                                            className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue disabled:opacity-50 disabled:cursor-not-allowed"
                                             checked={selectedOrders.includes(order._id)}
                                             onChange={() => toggleSelect(order._id)}
+                                            disabled={!hasWhatsApp}
                                             aria-label={`select order ${idx + 1}`}
+                                            title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
                                         />
                                     </td>
                                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{idx + 1}</td>
@@ -217,8 +227,8 @@ export default function OrdersTableWhatPlan() {
                 </table>
             </div>
 
-            {/* Bulk Actions Menu */}
-            {selectedOrders.length > 0 && <BulkActionsMenu selectedOrders={selectedOrders} onClear={() => setSelectedOrders([])} />}
+            {/* Bulk Actions Menu - Only show if WhatsApp is enabled */}
+            {selectedOrders.length > 0 && hasWhatsApp && <BulkActionsMenu selectedOrders={selectedOrders} onClear={() => setSelectedOrders([])} />}
 
             {/* Add / Update Modals */}
             {showAddModal && (

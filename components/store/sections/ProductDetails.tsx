@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../hooks/useStore';
 import { useCart } from '../context/CartContext';
+import ProductVariantsUI from './ProductVariantsUI';
+import toast from 'react-hot-toast';
 
 const ProductDetails: React.FC = () => {
     const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
@@ -18,10 +20,6 @@ const ProductDetails: React.FC = () => {
 
     const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
 
-    const handleQuantityChange = (delta: number) => {
-        const newQuantity = Math.max(1, productOptions.quantity + delta);
-        setProductOptions({ quantity: newQuantity });
-    };
 
     const handleAddToCart = () => {
         const success = addToCart(
@@ -72,69 +70,30 @@ const ProductDetails: React.FC = () => {
                     <p className="text-base text-gray-700">{selectedProduct.description}</p>
                 </div>
 
-                {/* Options */}
-                <div className="mt-8 space-y-6">
-                    {/* Colors */}
-                    {selectedProduct.colors && selectedProduct.colors.length > 0 && (
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-900">Color</h3>
-                            <div className="flex items-center space-x-3 mt-2">
-                                {selectedProduct.colors.map(color => (
-                                    <button
-                                        key={color}
-                                        type="button"
-                                        onClick={() => setProductOptions({ color })}
-                                        className={`relative h-8 w-8 rounded-full border border-gray-300 transition-transform transform hover:scale-110 ${productOptions.color === color ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : ''}`}
-                                        style={{ backgroundColor: color }}
-                                    >
-                                      <span className="sr-only">{color}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {/* Sizes */}
-                     {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-900">Size</h3>
-                            <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4 mt-2">
-                                {selectedProduct.sizes.map(size => (
-                                     <button
-                                        key={size}
-                                        type="button"
-                                        onClick={() => setProductOptions({ size })}
-                                        className={`group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 ${productOptions.size === size ? 'bg-[var(--color-primary)] text-white shadow-sm' : 'bg-white text-gray-900'}`}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                {/* Product Variants UI */}
+                <ProductVariantsUI
+                    sizes={selectedProduct.sizes}
+                    colors={selectedProduct.colors}
+                    selectedSize={productOptions.size}
+                    selectedColor={productOptions.color}
+                    onSizeSelect={(size) => setProductOptions({ ...productOptions, size })}
+                    onColorSelect={(color) => setProductOptions({ ...productOptions, color })}
+                    primaryColor={primaryColor}
+                    stock={selectedProduct.stock}
+                />
 
-                     {/* Quantity */}
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-900">Quantity</h3>
-                        <div className="flex items-center mt-2">
-                            <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 border rounded-l-md hover:bg-gray-100">-</button>
-                            <span className="px-4 py-1 border-t border-b">{productOptions.quantity || 1}</span>
-                            <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 border rounded-r-md hover:bg-gray-100">+</button>
-                        </div>
-                    </div>
-
-                    {/* Add to Cart Button */}
-                    <div className="mt-6">
-                        <button
-                            onClick={handleAddToCart}
-                            disabled={selectedProduct.stock <= 0}
-                            className="w-full py-3 px-4 rounded-md font-semibold text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                            style={{ 
-                                backgroundColor: selectedProduct.stock > 0 ? primaryColor : '#9CA3AF'
-                            }}
-                        >
-                            {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                        </button>
-                    </div>
+                {/* Add to Cart Button */}
+                <div className="mt-8">
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={selectedProduct.stock <= 0}
+                        className="w-full py-3 px-4 rounded-md font-semibold text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        style={{ 
+                            backgroundColor: selectedProduct.stock > 0 ? primaryColor : '#9CA3AF'
+                        }}
+                    >
+                        {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    </button>
                 </div>
 
                 <div className="mt-8">
@@ -142,7 +101,7 @@ const ProductDetails: React.FC = () => {
                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 text-sm text-gray-600">
                         {selectedProduct.category && <div><span className="font-semibold text-gray-800">Category:</span> {selectedProduct.category}</div>}
                         {selectedProduct.brand && <div><span className="font-semibold text-gray-800">Brand:</span> {selectedProduct.brand}</div>}
-                        {selectedProduct.stock > 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-green-600">In Stock ({selectedProduct.stock} left)</span></div>}
+                        {selectedProduct.stock > 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-green-600">In Stock</span></div>}
                         {selectedProduct.stock === 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-red-600">Out of Stock</span></div>}
                     </div>
                 </div>

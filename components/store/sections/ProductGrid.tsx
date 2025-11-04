@@ -21,12 +21,10 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, selectProduct } = useStore();
+    const { selectedStore, selectProduct, products } = useStore();
 
-    // ✅ If no store is selected at all, don’t render anything
+    // ✅ If no store is selected at all, don't render anything
     if (!selectedStore) return null;
-
-    const products = (selectedStore as any).products as IProduct[] || [];
 
 
     return (

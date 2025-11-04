@@ -26,7 +26,7 @@ const StoreComponent = ({
 
     return (
         <div>
-            <StoreProvider stores={[store]} initialStore={store}>
+            <StoreProvider stores={[store]} initialStore={store} products={products}>
                 <ThemeRenderer themeId={themeId} currentPage="STORE_PAGE" />
                 <Cart />
             </StoreProvider>

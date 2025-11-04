@@ -1,17 +1,45 @@
 import React from 'react';
 import { useStore } from '../../hooks/useStore';
+import { useRouter, useParams } from 'next/navigation';
 import Header from './sections/Header';
 import Footer from './sections/Footer';
 import ProductDetails from '../../sections/ProductDetails';
 import OrderForm from '../../sections/OrderForm';
+import Trust from './sections/Trust';
 import { ArrowLeftIcon } from '../../components/icons';
 import { motion } from 'framer-motion';
 
 const ProductPage: React.FC = () => {
-    const { goHome, selectedStore } = useStore();
+    const { selectedStore } = useStore();
+    const router = useRouter();
+    const params = useParams();
 
     const primaryColor = selectedStore?.theme?.primaryColor || '#ca8a04';
     const secondaryColor = selectedStore?.theme?.secondaryColor || primaryColor;
+
+    const handleGoBack = () => {
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+        const parts = hostname ? hostname.split('.') : [];
+        
+        // Check if we're using subdomain (e.g., coutanova.localhost or store.yura-saas.com)
+        const isLocalhostSubdomain = hostname.includes('localhost') && parts.length > 1 && parts[0] !== 'localhost';
+        const isProductionSubdomain = parts.length >= 3 && !hostname.includes('localhost') && !hostname.startsWith('127.0.0.1');
+        const isSubdomain = isLocalhostSubdomain || isProductionSubdomain;
+        
+        let href: string;
+        if (isSubdomain) {
+            // With subdomain: navigate to root (middleware will rewrite to /en/subdomain)
+            // Use window.location for full page reload to ensure URL updates
+            window.location.href = '/';
+            return;
+        } else {
+            // Without subdomain: navigate to /locale/domain
+            const locale = (params as any)?.locale || "en";
+            const domain = (params as any)?.domain || selectedStore?.domain || '';
+            href = `/${locale}/${domain}`;
+            router.push(href);
+        }
+    };
 
     return (
         <>
@@ -26,28 +54,28 @@ const ProductPage: React.FC = () => {
                     '--color-secondary': secondaryColor,
                 } as React.CSSProperties}
             >
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
                     <button
-                        onClick={goHome}
-                        className="inline-flex items-center gap-2 text-sm font-semibold italic text-gray-700 hover:text-[var(--color-primary)] mb-8 transition-colors duration-200"
+                        onClick={handleGoBack}
+                        className="inline-flex items-center gap-2 text-sm font-semibold italic text-gray-700 hover:text-[var(--color-primary)] mb-4 sm:mb-8 transition-colors duration-200"
                     >
                         <ArrowLeftIcon className="w-4 h-4" />
-                        <span className="hidden sm:inline">Back to Products</span>
+                        <span className="hidden sm:inline">Back to Store</span>
                         <span className="sm:hidden">Back</span>
                     </button>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                        <div className="lg:col-span-2">
-                            <div className="bg-white rounded-2xl shadow-xl p-8 border-4" style={{ borderColor: primaryColor }}>
-                                <ProductDetails />
-                            </div>
+                    <div className="space-y-6 sm:space-y-8">
+                        {/* Product Details */}
+                        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border-4" style={{ borderColor: primaryColor }}>
+                            <ProductDetails />
                         </div>
-                        <div className="lg:col-span-1">
-                            <div className="sticky top-24">
-                                <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-amber-200">
-                                    <OrderForm />
-                                </div>
-                            </div>
+                        {/* Order Form - Below Product Details */}
+                        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border-2 border-amber-200">
+                            <OrderForm />
                         </div>
+                    </div>
+                    {/* Trust Section */}
+                    <div className="mt-8 sm:mt-12 lg:mt-16">
+                        <Trust />
                     </div>
                 </div>
             </motion.div>

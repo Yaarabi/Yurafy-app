@@ -5,7 +5,7 @@ import { generateProductMetadata } from '@/lib/metadata/productMetadata';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
 
 import { getStoreByDomain } from '@/lib/data/store';
-import NotFound from '../not-found';
+import NotFound from '@/app/[locale]/[domain]/not-found';
 import { headers } from "next/headers";
 
 // Extract subdomain from hostname header
@@ -34,23 +34,19 @@ async function getSubdomainFromHeaders(): Promise<string | null> {
     return null;
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string; domain?: string; locale?: string }> }) {
-    const { slug, domain } = await params;
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     
-    // Extract actual store domain - prioritize subdomain from headers if available
-    let storeDomain = domain;
+    // Get subdomain from headers
     const subdomain = await getSubdomainFromHeaders();
     
-    // If we have a subdomain from headers, use it (subdomain takes precedence)
-    // Otherwise, use the domain from params (path-based routing)
-    if (subdomain) {
-        storeDomain = subdomain;
+    if (!subdomain) {
+        // If no subdomain, redirect to locale/domain route
+        return <NotFound/>;
     }
     
-    // Normalize domain (lowercase, trim) if we have it
-    if (storeDomain) {
-        storeDomain = storeDomain.toLowerCase().trim();
-    }
+    // Normalize domain (lowercase, trim)
+    const storeDomain = subdomain.toLowerCase().trim();
     
     const { product, store } = await getProductWithStoreBySlug(slug);
 
@@ -58,8 +54,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         return <NotFound/>;
     }
     
-    // If we have a store domain and it doesn't match the product's store, return not found
-    if (storeDomain && store && store.domain !== storeDomain) {
+    // Verify the product belongs to the store with this subdomain
+    if (store && store.domain !== storeDomain) {
         return <NotFound/>;
     }
 
@@ -80,17 +76,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // Optional: viewport theme
-export async function generateViewport({ params }: { params: Promise<{ domain?: string }> }) {
-    const { domain } = await params;
-    
-    // Extract actual store domain (handle subdomain case)
-    let storeDomain = domain;
+export async function generateViewport({ params }: { params: Promise<{ slug: string }> }) {
     const subdomain = await getSubdomainFromHeaders();
-    if (subdomain) {
-        storeDomain = subdomain;
-    }
     
-    if (storeDomain) {
+    if (subdomain) {
+        const storeDomain = subdomain.toLowerCase().trim();
         const store = await getStoreByDomain(storeDomain);
         return { themeColor: store?.theme };
     }
@@ -99,3 +89,4 @@ export async function generateViewport({ params }: { params: Promise<{ domain?: 
 }
 
 export const revalidate = 60;
+

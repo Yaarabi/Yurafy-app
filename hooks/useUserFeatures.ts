@@ -67,43 +67,42 @@ export function useUserFeatures() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+    const fetchFeatures = async () => {
         if (status === 'loading') return;
-
         if (status === 'unauthenticated' || !session?.user?.id) {
             setLoading(false);
             return;
         }
 
-        const fetchFeatures = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+        try {
+            setLoading(true);
+            setError(null);
 
-                const response = await fetch('/api/user/features');
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user features');
-                }
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    setData(result);
-                } else {
-                    throw new Error(result.error || 'Failed to fetch user features');
-                }
-            } catch (err) {
-                console.error('Error fetching user features:', err);
-                setError(err instanceof Error ? err.message : 'Failed to fetch user features');
-            } finally {
-                setLoading(false);
+            const response = await fetch('/api/user/features');
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch user features');
             }
-        };
 
+            const result = await response.json();
+            
+            if (result.success) {
+                setData(result);
+            } else {
+                throw new Error(result.error || 'Failed to fetch user features');
+            }
+        } catch (err) {
+            console.error('Error fetching user features:', err);
+            setError(err instanceof Error ? err.message : 'Failed to fetch user features');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchFeatures();
     }, [status, session]);
 
-    return { data, loading, error };
+    return { data, loading, error, refetch: fetchFeatures };
 }
 

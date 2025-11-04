@@ -2,6 +2,8 @@
 
 import React from "react";
 import { useStore } from "../../../hooks/useStore";
+import { useCart } from "../../../context/CartContext";
+import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
 
@@ -11,11 +13,29 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, selectProduct } = useStore();
+    const { selectedStore, products } = useStore();
+    const { addToCart, openCart } = useCart();
+    const router = useRouter();
+    const params = useParams();
+    
     if (!selectedStore) return null;
 
-    const products = (selectedStore as any).products as IProduct[] || [];
     const primaryColor = selectedStore.theme?.primaryColor || '#4b5563';
+
+    const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
+        e.stopPropagation();
+        const locale = (params as any)?.locale || "en";
+        const href = `/${locale}/shop/${product.slug}`;
+        router.push(href);
+    };
+
+    const handleAddToCart = (e: React.MouseEvent, product: IProduct) => {
+        e.stopPropagation();
+        const success = addToCart(product, 1);
+        if (success) {
+            openCart();
+        }
+    };
 
     return (
         <div id="products" className="py-24 bg-white">
@@ -51,8 +71,7 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                onClick={() => selectProduct(product)}
-                                className="group cursor-pointer bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
+                                className="group bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
                             >
                                 <div className="relative overflow-hidden h-80">
                                     <motion.img
@@ -72,22 +91,37 @@ const ProductGrid: React.FC = () => {
                                             {product.description}
                                         </p>
                                     </div>
-                                    <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                                    <div className="pt-6 border-t border-gray-200">
                                         <p 
-                                            className="text-3xl font-light tracking-tight"
+                                            className="text-3xl font-light tracking-tight mb-3"
                                             style={{ color: primaryColor }}
                                         >
                                             ${product.price?.toFixed(2) ?? "0.00"}
                                         </p>
-                                        <span 
-                                            className="px-6 py-2 border text-sm font-light tracking-wide transition-all duration-300 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)]"
-                                            style={{ 
-                                                borderColor: primaryColor,
-                                                color: primaryColor 
-                                            }}
-                                        >
-                                            View
-                                        </span>
+                                        <div className="flex gap-2">
+                                            <button 
+                                                onClick={(e) => handleViewProduct(e, product)}
+                                                className="flex-1 px-4 py-2 border text-sm font-light tracking-wide transition-all duration-300 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)]"
+                                                style={{ 
+                                                    borderColor: primaryColor,
+                                                    color: primaryColor,
+                                                    backgroundColor: 'transparent'
+                                                }}
+                                            >
+                                                View
+                                            </button>
+                                            <button 
+                                                onClick={(e) => handleAddToCart(e, product)}
+                                                className="flex-1 px-4 py-2 border text-sm font-light tracking-wide transition-all duration-300 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)]"
+                                                style={{ 
+                                                    borderColor: primaryColor,
+                                                    color: primaryColor,
+                                                    backgroundColor: 'transparent'
+                                                }}
+                                            >
+                                                Add to Cart
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>

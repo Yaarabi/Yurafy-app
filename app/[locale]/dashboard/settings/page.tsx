@@ -23,15 +23,20 @@ export default function SettingsPage() {
     const [user, setUser] = useState<any>(null);
     const [whatsapp, setWhatsApp] = useState<any>(null);
     const [store, setStore] = useState<any>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // Update local state when features data is loaded
+    // Update local state when features data is loaded (ONLY on initial load)
     useEffect(() => {
-        if (featuresData) {
+        if (featuresData && !isInitialized) {
             setUser(featuresData.user);
             setWhatsApp(featuresData.features.whatsapp);
             setStore(featuresData.features.store);
+            setIsInitialized(true);
         }
-    }, [featuresData]);
+    }, [featuresData, isInitialized]);
+    
+    // NOTE: We intentionally do NOT update state from featuresData after initialization
+    // to prevent overwriting user edits. State is only updated from API responses.
 
     // Tab icons mapping
     const tabIcons: Record<string, any> = {
@@ -95,19 +100,23 @@ export default function SettingsPage() {
 
             if (res.ok) {
                 const updatedData = await res.json();
-                // Update user state with the response data, preserving the structure
-                setUser({
+                // Update user state with the response data, preserving all fields
+                // Use nullish coalescing to preserve empty strings but use fallback for undefined/null
+                const updatedUser = {
                     ...user,
-                    id: updatedData.id || user.id,
-                    username: updatedData.username || user.username,
-                    email: updatedData.email || user.email,
-                    phone: updatedData.phone || user.phone,
-                    logo: updatedData.logo || user.logo,
-                    role: updatedData.role || user.role,
-                    plan: updatedData.plan || user.plan,
-                    active: updatedData.active !== undefined ? updatedData.active : user.active,
-                    onboardingCompleted: updatedData.onboardingCompleted !== undefined ? updatedData.onboardingCompleted : user.onboardingCompleted,
-                });
+                    ...updatedData,
+                    // Ensure all fields are preserved
+                    id: updatedData.id ?? user.id,
+                    username: updatedData.username ?? user.username,
+                    email: updatedData.email ?? user.email,
+                    phone: updatedData.phone ?? user.phone ?? '',
+                    logo: updatedData.logo ?? user.logo ?? '',
+                    role: updatedData.role ?? user.role,
+                    plan: updatedData.plan ?? user.plan,
+                    active: updatedData.active ?? user.active,
+                    onboardingCompleted: updatedData.onboardingCompleted ?? user.onboardingCompleted,
+                };
+                setUser(updatedUser);
                 toast.success(`${field === 'name' ? 'Name' : field} updated successfully!`);
             } else {
                 // Revert optimistic update on error
@@ -143,8 +152,12 @@ export default function SettingsPage() {
 
         if (res.ok) {
             const data = await res.json();
-            if (data?.account) setWhatsApp(data.account);
-            toast.success(`${field} updated successfully!`);
+            if (data?.account) {
+                setWhatsApp(data.account);
+                toast.success(`${field} updated successfully!`);
+            } else {
+                toast.success(`${field} updated successfully!`);
+            }
         } else toast.error(`Failed to update ${field}.`);
         } catch (err) {
         console.error('Error updating WhatsApp account:', err);
@@ -156,6 +169,7 @@ export default function SettingsPage() {
     const updateStoreField = async (field: string, value: any) => {
         if (!store?._id) return;
 
+        // Optimistically update UI
         const updated = { ...store, [field]: value };
         setStore(updated);
 
@@ -168,10 +182,31 @@ export default function SettingsPage() {
 
         if (res.ok) {
             const data = await res.json();
-            setStore(data);
+            // API returns { store: serialized }, so extract the store object
+            const updatedStore = data.store || data;
+            // Merge with existing store to preserve all fields
+            // Deep merge nested objects to preserve all fields
+            const mergedStore = {
+                ...store,
+                ...updatedStore,
+                // Deep merge nested objects to preserve all existing fields
+                hero: updatedStore.hero ? { ...store.hero, ...updatedStore.hero } : (store.hero || {}),
+                about: updatedStore.about ? { ...store.about, ...updatedStore.about } : (store.about || {}),
+                footer: updatedStore.footer ? { ...store.footer, ...updatedStore.footer } : (store.footer || {}),
+                socialLinks: updatedStore.socialLinks ? { ...store.socialLinks, ...updatedStore.socialLinks } : (store.socialLinks || {}),
+                theme: updatedStore.theme ? { ...store.theme, ...updatedStore.theme } : (store.theme || {}),
+            };
+            setStore(mergedStore);
             toast.success(`${field} updated successfully!`);
-        } else toast.error(`Failed to update ${field}.`);
+        } else {
+            // Revert optimistic update on error
+            setStore(store);
+            const errorData = await res.json();
+            toast.error(errorData.error || `Failed to update ${field}.`);
+        }
         } catch (err) {
+        // Revert optimistic update on error
+        setStore(store);
         console.error('Error updating store:', err);
         toast.error(`Error updating ${field}.`);
         }
@@ -249,8 +284,8 @@ export default function SettingsPage() {
                                             relative
                                             ${
                                                 isActive
-                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-300 dark:ring-indigo-700'
-                                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600'
+                                                    ? 'bg-[var(--brand-blue)] text-white shadow-lg shadow-[var(--brand-blue)]/50 ring-2 ring-[var(--brand-blue)]/30 dark:ring-[var(--brand-blue)]/50'
+                                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-[var(--brand-blue)]/10 dark:hover:bg-[var(--brand-blue)]/20 hover:text-[var(--brand-blue)] dark:hover:text-[var(--brand-blue)] border border-gray-200 dark:border-gray-700 hover:border-[var(--brand-blue)]/30 dark:hover:border-[var(--brand-blue)]/50'
                                             }
                                         `}
                                     >

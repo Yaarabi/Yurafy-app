@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useStore } from '../hooks/useStore';
@@ -30,11 +30,20 @@ const Cart: React.FC = () => {
         phone: '',
         address: '',
         city: '',
-        deliveryInstructions: '',
-        preferredTime: '',
     });
+    const [itemVariants, setItemVariants] = useState<Record<string, { color?: string; size?: string }>>({});
 
     const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
+
+    // Initialize itemVariants when items change
+    useEffect(() => {
+        const variants: Record<string, { color?: string; size?: string }> = {};
+        items.forEach(item => {
+            const itemKey = `${item.productId}-${item.color || 'no-color'}-${item.size || 'no-size'}`;
+            variants[itemKey] = { color: item.color, size: item.size };
+        });
+        setItemVariants(variants);
+    }, [items]);
 
     const handleQuantityChange = (productId: string, delta: number, color?: string, size?: string) => {
         const item = items.find(
@@ -68,14 +77,18 @@ const Cart: React.FC = () => {
         try {
             const orderData = {
                 owner: selectedStore.owner,
-                products: items.map(item => ({
-                    product: item.productId,
-                    name: item.product.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                    color: item.color || undefined,
-                    size: item.size || undefined,
-                })),
+                products: items.map(item => {
+                    const itemKey = `${item.productId}-${item.color || 'no-color'}-${item.size || 'no-size'}`;
+                    const variant = itemVariants[itemKey] || {};
+                    return {
+                        product: item.productId,
+                        name: item.product.name,
+                        quantity: item.quantity,
+                        price: item.price,
+                        color: variant.color || item.color || undefined,
+                        size: variant.size || item.size || undefined,
+                    };
+                }),
                 totalAmount: getTotal(),
                 shippingAddress: {
                     fullName: checkoutForm.fullName,
@@ -83,8 +96,6 @@ const Cart: React.FC = () => {
                     address: checkoutForm.address,
                     city: checkoutForm.city || undefined,
                 },
-                deliveryInstructions: checkoutForm.deliveryInstructions || undefined,
-                preferredTime: checkoutForm.preferredTime || undefined,
             };
 
             const response = await fetch('/api/orders/guest', {
@@ -104,9 +115,8 @@ const Cart: React.FC = () => {
                     phone: '',
                     address: '',
                     city: '',
-                    deliveryInstructions: '',
-                    preferredTime: '',
                 });
+                setItemVariants({});
             } else {
                 toast.error(data.error || 'Failed to place order');
             }
@@ -181,12 +191,12 @@ const Cart: React.FC = () => {
                                                     className="w-20 h-20 object-cover rounded"
                                                 />
                                                 <div className="flex-1">
-                                                    <h3 className="font-semibold text-sm">{item.product.name}</h3>
+                                                    <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">{item.product.name}</h3>
                                                     {item.color && (
-                                                        <p className="text-xs text-gray-600">Color: {item.color}</p>
+                                                        <p className="text-xs text-gray-700 dark:text-gray-300">Color: {item.color}</p>
                                                     )}
                                                     {item.size && (
-                                                        <p className="text-xs text-gray-600">Size: {item.size}</p>
+                                                        <p className="text-xs text-gray-700 dark:text-gray-300">Size: {item.size}</p>
                                                     )}
                                                     <p className="text-sm font-bold mt-1" style={{ color: primaryColor }}>
                                                         ${item.price.toFixed(2)}
@@ -196,15 +206,15 @@ const Cart: React.FC = () => {
                                                     <div className="flex items-center gap-2 mt-2">
                                                         <button
                                                             onClick={() => handleQuantityChange(item.productId, -1, item.color, item.size)}
-                                                            className="w-7 h-7 flex items-center justify-center border rounded hover:bg-gray-100"
+                                                            className="w-7 h-7 flex items-center justify-center border rounded hover:bg-gray-100 text-gray-900 dark:text-gray-100"
                                                             style={{ borderColor: primaryColor }}
                                                         >
                                                             −
                                                         </button>
-                                                        <span className="w-8 text-center font-medium">{item.quantity}</span>
+                                                        <span className="w-8 text-center font-medium text-gray-900 dark:text-gray-100">{item.quantity}</span>
                                                         <button
                                                             onClick={() => handleQuantityChange(item.productId, 1, item.color, item.size)}
-                                                            className="w-7 h-7 flex items-center justify-center border rounded hover:bg-gray-100"
+                                                            className="w-7 h-7 flex items-center justify-center border rounded hover:bg-gray-100 text-gray-900 dark:text-gray-100"
                                                             style={{ borderColor: primaryColor }}
                                                         >
                                                             +
@@ -292,7 +302,7 @@ const Cart: React.FC = () => {
                                         required
                                         value={checkoutForm.fullName}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, fullName: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:outline-none"
+                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
                                         style={{ focusRingColor: primaryColor }}
                                         placeholder="Enter your full name"
                                     />
@@ -306,7 +316,8 @@ const Cart: React.FC = () => {
                                         defaultCountry="ma"
                                         value={checkoutForm.phone}
                                         onChange={(phone) => setCheckoutForm({ ...checkoutForm, phone })}
-                                        className="w-full border rounded-md"
+                                        className="w-full border rounded-md focus:ring-2 focus:outline-none"
+                                        style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
                                     />
                                 </div>
 
@@ -319,7 +330,7 @@ const Cart: React.FC = () => {
                                         rows={3}
                                         value={checkoutForm.address}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:outline-none"
+                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
                                         style={{ focusRingColor: primaryColor }}
                                         placeholder="Enter your delivery address"
                                     />
@@ -333,39 +344,76 @@ const Cart: React.FC = () => {
                                         type="text"
                                         value={checkoutForm.city}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, city: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:outline-none"
+                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
                                         style={{ focusRingColor: primaryColor }}
                                         placeholder="Enter your city (optional)"
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Delivery Instructions
-                                    </label>
-                                    <textarea
-                                        rows={2}
-                                        value={checkoutForm.deliveryInstructions}
-                                        onChange={(e) => setCheckoutForm({ ...checkoutForm, deliveryInstructions: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:outline-none"
-                                        style={{ focusRingColor: primaryColor }}
-                                        placeholder="Any special delivery instructions (optional)"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Preferred Delivery Time
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={checkoutForm.preferredTime}
-                                        onChange={(e) => setCheckoutForm({ ...checkoutForm, preferredTime: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:outline-none"
-                                        style={{ focusRingColor: primaryColor }}
-                                        placeholder="e.g., Morning, Afternoon, Evening (optional)"
-                                    />
-                                </div>
+                                {/* Product Variants Selection */}
+                                {items.length > 0 && (
+                                    <div className="border-t pt-4 mt-4" style={{ borderColor: `${primaryColor}20` }}>
+                                        <h4 className="font-semibold mb-3">Product Options</h4>
+                                        <div className="space-y-4">
+                                            {items.map((item) => {
+                                                const itemKey = `${item.productId}-${item.color || 'no-color'}-${item.size || 'no-size'}`;
+                                                const variant = itemVariants[itemKey] || { color: item.color, size: item.size };
+                                                
+                                                return (
+                                                    <div key={itemKey} className="p-3 bg-gray-50 rounded-md">
+                                                        <p className="text-sm font-medium text-gray-900 mb-2">{item.product.name}</p>
+                                                        
+                                                        {/* Color Selection */}
+                                                        {item.product.colors && item.product.colors.length > 0 && (
+                                                            <div className="mb-2">
+                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                                    Color
+                                                                </label>
+                                                                <select
+                                                                    value={variant.color || ''}
+                                                                    onChange={(e) => setItemVariants({
+                                                                        ...itemVariants,
+                                                                        [itemKey]: { ...variant, color: e.target.value || undefined }
+                                                                    })}
+                                                                    className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
+                                                                    style={{ focusRingColor: primaryColor }}
+                                                                >
+                                                                    <option value="">Select a color</option>
+                                                                    {item.product.colors.map((color: string) => (
+                                                                        <option key={color} value={color}>{color}</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        {/* Size Selection */}
+                                                        {item.product.sizes && item.product.sizes.length > 0 && (
+                                                            <div>
+                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                                    Size
+                                                                </label>
+                                                                <select
+                                                                    value={variant.size || ''}
+                                                                    onChange={(e) => setItemVariants({
+                                                                        ...itemVariants,
+                                                                        [itemKey]: { ...variant, size: e.target.value || undefined }
+                                                                    })}
+                                                                    className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
+                                                                    style={{ focusRingColor: primaryColor }}
+                                                                >
+                                                                    <option value="">Select a size</option>
+                                                                    {item.product.sizes.map((size: string) => (
+                                                                        <option key={size} value={size}>{size}</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Order Summary */}
                                 <div className="border-t pt-4 mt-4" style={{ borderColor: `${primaryColor}20` }}>
