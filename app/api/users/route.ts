@@ -6,6 +6,9 @@ import User from "@/models/users";
 import Plan from "@/models/plan";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import fs from "fs/promises";
+import fsSync from "fs";
+import path from "path";
 
 const ALLOWED_UPDATE_FIELDS = ["username", "email", "role", "active"]; // removed "plan"
 
@@ -236,9 +239,10 @@ export async function DELETE(req: NextRequest) {
         const Template = (await import('@/models/templates')).default;
         const AgentMemory = (await import('@/models/agentMemory')).default;
         const AgentVector = (await import('@/models/agentVector')).default;
+        const AgentCheckpoint = (await import('@/models/agentCheckpoint')).default;
         const WhatsAppMessage = (await import('@/models/whatsappMessage')).default;
 
-        // Delete all related records
+        // Delete all related records from database
         await Promise.all([
             Plan.deleteMany({ userId: deletedUser._id }),
             Store.deleteMany({ owner: deletedUser._id }),
@@ -251,12 +255,34 @@ export async function DELETE(req: NextRequest) {
             Template.deleteMany({ owner: deletedUser._id }),
             AgentMemory.deleteMany({ owner: deletedUser._id }),
             AgentVector.deleteMany({ owner: deletedUser._id }),
+            AgentCheckpoint.deleteMany({ owner: deletedUser._id }), // ✅ Added: Delete agent checkpoints
             WhatsAppMessage.deleteMany({ owner: deletedUser._id }),
         ]);
 
+        // ✅ Delete user's uploads folder and all files
+        try {
+            const userUploadsDir = path.join(process.cwd(), 'public', 'uploads', id);
+            
+            // Check if directory exists
+            if (fsSync.existsSync(userUploadsDir)) {
+                // Delete entire directory recursively
+                await fs.rm(userUploadsDir, { recursive: true, force: true });
+                console.log(`[User Deletion] Deleted uploads folder for user ${id}: ${userUploadsDir}`);
+            } else {
+                console.log(`[User Deletion] Uploads folder not found for user ${id}, skipping`);
+            }
+        } catch (uploadError: any) {
+            // Log error but don't fail the deletion - file system errors shouldn't block user deletion
+            console.error(`[User Deletion] Failed to delete uploads folder for user ${id}:`, uploadError.message);
+        }
+
         return NextResponse.json({
-        message: "User deleted successfully",
+        message: "User and all related data deleted successfully",
         user: sanitizeUser(deletedUser),
+        deleted: {
+            databaseRecords: true,
+            uploadsFolder: true,
+        },
         }, { status: 200 });
     } catch (error) {
         console.error("DELETE /api/users error:", error);

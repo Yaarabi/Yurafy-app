@@ -45,7 +45,10 @@ export default function InfoPage() {
             if (status === "loading") return;
             
             if (status === "unauthenticated") {
-                router.push(`/${params.locale}/login`);
+                // ✅ FIX: Normalize locale - extract first segment only
+                const localeRaw = String(params.locale || 'en');
+                const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+                router.push(`/${locale}/login`);
                 return;
             }
 
@@ -69,13 +72,16 @@ export default function InfoPage() {
 
                     // If store exists and onboarding is not completed (first-time flow)
                     if (storeResponse.ok && storeData._id && userData.onboardingCompleted === false) {
+                        // ✅ FIX: Normalize locale - extract first segment only
+                        const localeRaw = String(params.locale || 'en');
+                        const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
                         // If free plan, redirect to dashboard (onboarding should be completed)
                         if (plan === 'free') {
-                            router.push(`/${params.locale}/dashboard`);
+                            router.push(`/${locale}/dashboard`);
                             return;
                         }
                         // For paid plans, redirect to checkout
-                        router.push(`/${params.locale}/onboarding/checkout?plan=${plan || 'starter'}`);
+                        router.push(`/${locale}/onboarding/checkout?plan=${plan || 'starter'}`);
                         return;
                     }
                     

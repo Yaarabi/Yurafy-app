@@ -1,5 +1,5 @@
 import React from 'react';
-import { CashIcon, TruckIcon, QualityIcon } from '@/components/store/components/icons';
+import { CashIcon, TruckIcon, FashionIcon } from '@/components/store/components/icons';
 import { useStore } from '../../../hooks/useStore';
 import { motion, Variants } from 'framer-motion';
 
@@ -26,7 +26,7 @@ const Trust: React.FC = () => {
             description: 'We ensure your order gets to you as quickly as possible.',
         },
         {
-            Icon: QualityIcon,
+            Icon: FashionIcon,
             title: 'Quality Guaranteed',
             description: 'We stand behind the quality of our products, 100% satisfaction.',
         },

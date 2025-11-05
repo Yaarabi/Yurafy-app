@@ -183,9 +183,9 @@ export default function WhatsAppIntegrationPage() {
                     {/* Mobile Scroll Indicator */}
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none">
                         <div className="flex gap-1 opacity-50">
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse"></div>
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse"></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                         </div>
                     </div>
                 </div>
@@ -210,7 +210,7 @@ export default function WhatsAppIntegrationPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="max-w-2xl mx-auto text-center py-12"
                                 >
-                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                    <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                                         <Sparkles className="w-10 h-10 text-white" />
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
@@ -220,13 +220,13 @@ export default function WhatsAppIntegrationPage() {
                                         The AI Agent feature is available in:
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
-                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">AI WhatsApp Agent</div>
-                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Dedicated AI plan</div>
+                                        <div className="bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-2 border-[var(--brand-blue)]/30 dark:border-[var(--brand-blue)]/50 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-[var(--brand-blue)] dark:text-[var(--brand-blue)]">AI WhatsApp Agent</div>
+                                            <div className="text-sm text-[var(--brand-blue)]/80 dark:text-[var(--brand-blue)]/70">Dedicated AI plan</div>
                                         </div>
-                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
-                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">Visionary</div>
-                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Premium plan</div>
+                                        <div className="bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-2 border-[var(--brand-blue)]/30 dark:border-[var(--brand-blue)]/50 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-[var(--brand-blue)] dark:text-[var(--brand-blue)]">Visionary</div>
+                                            <div className="text-sm text-[var(--brand-blue)]/80 dark:text-[var(--brand-blue)]/70">Premium plan</div>
                                         </div>
                                     </div>
                                     <p className="text-gray-500 dark:text-gray-400 mb-6">
@@ -234,7 +234,7 @@ export default function WhatsAppIntegrationPage() {
                                     </p>
                                     <Link
                                         href="/onboarding/plan"
-                                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--brand-blue)] text-white rounded-lg font-semibold hover:bg-[var(--brand-blue)]/90 transition-all shadow-lg hover:shadow-xl"
                                     >
                                         <ArrowUpCircle className="w-5 h-5" />
                                         Upgrade Now
@@ -267,7 +267,7 @@ export default function WhatsAppIntegrationPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="max-w-2xl mx-auto text-center py-12"
                                 >
-                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                    <div className="w-20 h-20 bg-[var(--brand-blue)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                                         <Wrench className="w-10 h-10 text-white" />
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
@@ -277,13 +277,13 @@ export default function WhatsAppIntegrationPage() {
                                         AI Tools are available in:
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
-                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">AI WhatsApp Agent</div>
-                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Dedicated AI plan</div>
+                                        <div className="bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-2 border-[var(--brand-blue)]/30 dark:border-[var(--brand-blue)]/50 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-[var(--brand-blue)] dark:text-[var(--brand-blue)]">AI WhatsApp Agent</div>
+                                            <div className="text-sm text-[var(--brand-blue)]/80 dark:text-[var(--brand-blue)]/70">Dedicated AI plan</div>
                                         </div>
-                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-lg px-6 py-4">
-                                            <div className="font-semibold text-indigo-900 dark:text-indigo-200">Visionary</div>
-                                            <div className="text-sm text-indigo-700 dark:text-indigo-300">Premium plan</div>
+                                        <div className="bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-2 border-[var(--brand-blue)]/30 dark:border-[var(--brand-blue)]/50 rounded-lg px-6 py-4">
+                                            <div className="font-semibold text-[var(--brand-blue)] dark:text-[var(--brand-blue)]">Visionary</div>
+                                            <div className="text-sm text-[var(--brand-blue)]/80 dark:text-[var(--brand-blue)]/70">Premium plan</div>
                                         </div>
                                     </div>
                                     <p className="text-gray-500 dark:text-gray-400 mb-6">
@@ -291,7 +291,7 @@ export default function WhatsAppIntegrationPage() {
                                     </p>
                                     <Link
                                         href="/onboarding/plan"
-                                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--brand-blue)] text-white rounded-lg font-semibold hover:bg-[var(--brand-blue)]/90 transition-all shadow-lg hover:shadow-xl"
                                     >
                                         <ArrowUpCircle className="w-5 h-5" />
                                         Upgrade Now

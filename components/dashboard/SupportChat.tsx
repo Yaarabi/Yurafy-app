@@ -103,7 +103,7 @@ export default function SupportChat() {
                         <MessageSquare className="w-5 h-5" />
                         <div>
                             <h3 className="font-semibold">Support Chat</h3>
-                            <p className="text-xs text-indigo-100">We're here to help!</p>
+                            <p className="text-xs text-white/80">We're here to help!</p>
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ export default function SupportChat() {
             >
                 {loading ? (
                     <div className="flex items-center justify-center py-8">
-                        <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
+                        <Loader2 className="w-6 h-6 text-[var(--brand-blue)] animate-spin" />
                     </div>
                 ) : messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -195,7 +195,7 @@ export default function SupportChat() {
                     <button
                         onClick={sendMessage}
                         disabled={!input.trim() || sending}
-                        className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 py-2 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         {sending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

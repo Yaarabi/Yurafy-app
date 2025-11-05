@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export interface Message {
@@ -46,7 +46,10 @@ export function useAIStoreSetup(
 ) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const locale = searchParams.get('locale') || 'en';
+    const params = useParams();
+    // ✅ FIX: Get locale from params (URL path) instead of searchParams, normalize it
+    const localeRaw = String((params?.locale as string) || searchParams.get('locale') || 'en');
+    const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
 
     const [messages, setMessages] = useState<Message[]>([
         {

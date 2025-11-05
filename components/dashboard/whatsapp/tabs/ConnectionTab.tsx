@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useWhatsappStore } from "@/lib/zustand/whatsapp/useWhatsappStore"; 
+import { useWhatsappStore } from "@/lib/zustand/whatsapp/useWhatsappStore";
 
 export default function ConnectionTab() {
     const connected = useWhatsappStore((state) => state.connected);
@@ -47,7 +47,7 @@ export default function ConnectionTab() {
 
         const data = await res.json();
         const isConnected =
-            data?.account?.status === "connected" && data?.account?.verified;
+            data?.account?.status === "connected" && data?.account?.verified;   
         setConnected(isConnected);
 
         toast.success(
@@ -66,13 +66,12 @@ export default function ConnectionTab() {
     return (
         <div className="space-y-4">
         <p className="text-sm text-gray-600 dark:text-gray-300">
-            Manage your WhatsApp Business connection. Use the switch below to
+            Manage your WhatsApp Business connection. Use the switch below to   
             activate or deactivate integration.
         </p>
 
         <div className="flex items-center gap-3">
-            <label className="relative inline-flex items-center cursor-pointer">
-            <input
+            <label className="relative inline-flex items-center cursor-pointer">            <input                                                              
                 type="checkbox"
                 className="sr-only peer"
                 checked={!!connected}
@@ -81,11 +80,12 @@ export default function ConnectionTab() {
             />
             <div
                 className={`w-14 h-7 rounded-full transition-colors ${
-                connected ? "bg-green-600" : "bg-gray-200 dark:bg-gray-600"
+                connected ? "bg-green-600" : "bg-gray-200 dark:bg-gray-600"     
                 }`}
             ></div>
             <div
-                className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full 
+transition-transform ${
                 connected ? "translate-x-7" : ""
                 }`}
             ></div>

@@ -11,9 +11,33 @@ export default function CheckoutPage() {
     const router = useRouter();
     const params = useParams();
     const planKey = searchParams.get("plan");
-    // Get locale from URL params
-    const locale = (params?.locale as string) || searchParams.get("locale") || "en";
-    const plan = PLANS[planKey as keyof typeof PLANS];
+    // ✅ FIX: Normalize locale - extract first segment only, prevent duplication
+    const localeRaw = String((params?.locale as string) || searchParams.get("locale") || "en");
+    const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+    
+    // ✅ FIX: Validate plan key exists in PLANS object
+    if (!planKey) {
+        return (
+            <div className="min-h-screen flex items-center justify-center py-4 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6 bg-gradient-to-br from-gray-50 to-gray-100">
+                <div className="w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 text-center">
+                    <p className="text-base sm:text-lg md:text-xl text-red-600 font-medium mb-4">
+                        No plan selected.
+                    </p>
+                    <button
+                        onClick={() => router.push(`/${locale}/onboarding/plan`)}
+                        className="px-4 py-2 sm:px-6 sm:py-2.5 bg-indigo-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-indigo-700 transition-colors"
+                    >
+                        Choose a Plan
+                    </button>
+                </div>
+            </div>
+        );
+    }
+    
+    // ✅ FIX: Look up plan - try exact key first, then case-insensitive match
+    const plan = PLANS[planKey as keyof typeof PLANS] || 
+                 Object.entries(PLANS).find(([key]) => key.toLowerCase() === planKey.toLowerCase())?.[1] ||
+                 Object.values(PLANS).find(p => p.name.toLowerCase().replace(/\s+/g, '') === planKey.toLowerCase().replace(/\s+/g, ''));
 
     const [loading, setLoading] = useState(false);
 
@@ -27,11 +51,16 @@ export default function CheckoutPage() {
 
 
     if (!plan) {
+        // ✅ FIX: Better error message showing what plan was requested
+        const availablePlans = Object.keys(PLANS).join(", ");
         return (
             <div className="min-h-screen flex items-center justify-center py-4 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6 bg-gradient-to-br from-gray-50 to-gray-100">
                 <div className="w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 text-center">
-                    <p className="text-base sm:text-lg md:text-xl text-red-600 font-medium mb-4">
-                        Invalid plan selected.
+                    <p className="text-base sm:text-lg md:text-xl text-red-600 font-medium mb-2">
+                        Invalid plan selected: "{planKey}"
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Available plans: {availablePlans}
                     </p>
                     <button
                         onClick={() => router.push(`/${locale}/onboarding/plan`)}

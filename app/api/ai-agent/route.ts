@@ -63,6 +63,17 @@ export async function POST(req: NextRequest) {
         });
         }
 
+        // 🧩 Auto-find WhatsApp account if not provided
+        let waAccountId = account || null;
+        if (!waAccountId) {
+            // Automatically find owner's WhatsApp account
+            const waAccount = await WhatsAppAccount.findOne({ owner, status: "connected" });
+            if (waAccount) {
+                waAccountId = waAccount._id.toString();
+                console.log(`[AI Agent] Auto-assigned WhatsApp account ${waAccountId} to owner ${owner}`);
+            }
+        }
+
         // 🧩 Validate file (string URL, optional)
         if (file && typeof file !== "string") {
         return NextResponse.json(
@@ -83,7 +94,7 @@ export async function POST(req: NextRequest) {
         // 🧩 Create the AI agent
         const agent = await AIAgent.create({
         owner,
-        account: account || null,
+        account: waAccountId,
         enabled: true,
         prompt: typeof prompt === "string" ? prompt : "You are a helpful sales assistant.",
         templates: Array.isArray(templates) ? templates : [],
@@ -93,11 +104,12 @@ export async function POST(req: NextRequest) {
         });
 
         // 🧩 Sync WhatsApp account settings if linked
-        if (account) {
-        const waAccount = await WhatsAppAccount.findById(account);
+        if (waAccountId) {
+        const waAccount = await WhatsAppAccount.findById(waAccountId);
         if (waAccount) {
             waAccount.settings.aiAgent = true;
             await waAccount.save();
+            console.log(`[AI Agent] Enabled AI agent setting for WhatsApp account ${waAccountId}`);
         }
         }
 
@@ -132,7 +144,19 @@ export async function PUT(req: NextRequest) {
         if (typeof prompt === "string") updateData.prompt = prompt;
         if (typeof enabled === "boolean") updateData.enabled = enabled;
         if (file?.url) updateData.file = { url: file.url};
-        if (account && isValidObjectId(account)) updateData.account = account;
+        if (account && isValidObjectId(account)) {
+            updateData.account = account;
+        } else if (!account) {
+            // If account is not provided, try to auto-find owner's WhatsApp account
+            const existingAgent = await AIAgent.findOne({ owner });
+            if (!existingAgent || !existingAgent.account) {
+                const waAccount = await WhatsAppAccount.findOne({ owner, status: "connected" });
+                if (waAccount) {
+                    updateData.account = waAccount._id;
+                    console.log(`[AI Agent PUT] Auto-assigned WhatsApp account ${waAccount._id} to owner ${owner}`);
+                }
+            }
+        }
 
         // Update or create AI Agent
         const agent = await AIAgent.findOneAndUpdate(
@@ -147,6 +171,7 @@ export async function PUT(req: NextRequest) {
         if (waAccount) {
             waAccount.settings.aiAgent = agent.enabled;
             await waAccount.save();
+            console.log(`[AI Agent PUT] Synced AI agent setting with WhatsApp account ${agent.account}`);
         }
         }
 

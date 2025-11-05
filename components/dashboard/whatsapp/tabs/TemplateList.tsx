@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import toast from "react-hot-toast";
 
 interface Template {
@@ -15,9 +15,14 @@ interface Template {
     variables?: string[];
 }
 
-export default function TemplateList() {
+export interface TemplateListRef {
+    refresh: () => Promise<void>;
+}
+
+const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editData, setEditData] = useState<{
         name: string;
@@ -39,15 +44,23 @@ export default function TemplateList() {
 
     const fetchTemplates = async () => {
         try {
-        const res = await fetch("/api/whatsapp/templates");
+        setRefreshing(true);
+        const res = await fetch("/api/whatsapp/templates", { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch templates");
         const data = await res.json();
         setTemplates(Array.isArray(data.templates) ? data.templates : []);
         } catch (err) {
         console.error(err);
         toast.error("Could not load templates");
+        } finally {
+        setRefreshing(false);
         }
     };
+
+    // Expose refresh function via ref
+    useImperativeHandle(ref, () => ({
+        refresh: fetchTemplates,
+    }));
 
     useEffect(() => {
         fetchTemplates();
@@ -150,7 +163,8 @@ export default function TemplateList() {
         <div>
             <h3 className="text-lg font-medium mb-2">Existing Templates</h3>
             <ul className="space-y-2">
-                {templates.length === 0 && <li className="text-sm text-gray-400">No templates yet.</li>}
+                {templates.length === 0 && !refreshing && <li className="text-sm text-gray-400">No templates yet.</li>}
+                {refreshing && <li className="text-sm text-gray-400">Refreshing templates...</li>}
                 {templates.map((tpl) => (
                     <li key={tpl._id} className="bg-white dark:bg-gray-700 p-3 rounded space-y-2 border border-gray-200 dark:border-gray-600">
                         {editingId === tpl._id ? (
@@ -248,4 +262,8 @@ export default function TemplateList() {
             </ul>
         </div>
     );
-}
+});
+
+TemplateList.displayName = 'TemplateList';
+
+export default TemplateList;

@@ -2,214 +2,234 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
+import mongoose from "mongoose";
 import User from "@/models/users";
 import Plan from "@/models/plan";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import AIAgent from "@/models/ai-agent";
 import Store from "@/models/store";
 import crypto from "crypto";
+import { getPlanTemplate, normalizePlanKey, validatePlanFeatures } from "@/lib/utils/planUtils";
+
+// Encrypt WhatsApp token helper
+function encryptToken(token: string): string {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(
+        "aes-256-ctr",
+        Buffer.from(process.env.ENCRYPTION_KEY!, "hex"),
+        iv
+    );
+    const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);
+    return `${iv.toString("hex")}:${encrypted.toString("hex")}`;
+}
+
+// ------------------------
+// Generate a random webhook verify token
+// ------------------------
+function generateWebhookVerifyToken(): string {
+    // Generate a secure random token (6 bytes = 12 hex characters)
+    return crypto.randomBytes(6).toString('hex');
+}
 
 export async function POST(req: Request) {
+    const authSession = await getServerSession(authOptions);
+    if (!authSession?.user?.email) {
+        return NextResponse.json(
+            { verified: false, error: "Unauthorized" },
+            { status: 401 }
+        );
+    }
+
+    const { orderId, plan, planKey } = await req.json();
+    if (!orderId || !plan) {
+        return NextResponse.json(
+            { verified: false, error: "Missing order or plan" },
+            { status: 400 }
+        );
+    }
+
+    await connectDB();
+    const mongoSession = await mongoose.startSession();
+
     try {
-        await connectDB();
+        await mongoSession.withTransaction(async () => {
+            // ✅ IDEMPOTENCY CHECK: Check if this order was already processed
+            const existingPlan = await Plan.findOne({ paymentOrderId: orderId })
+                .session(mongoSession)
+                .lean();
+            
+            if (existingPlan) {
+                // Already processed - return success without re-processing
+                return NextResponse.json({ 
+                    verified: true, 
+                    message: "Payment already processed",
+                    planId: existingPlan._id.toString()
+                });
+            }
 
-        const session = await getServerSession(authOptions);
-        if (!session?.user?.email) {
-            return NextResponse.json(
-                { verified: false, error: "Unauthorized" },
-                { status: 401 }
-            );
-        }
+            // Get PayPal access token and verify order
+            const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID!;
+            const PAYPAL_SECRET = process.env.PAYPAL_SECRET!;
+            const PAYPAL_API = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
 
-        const { orderId, plan, planKey } = await req.json();
-        if (!orderId || !plan) {
-            return NextResponse.json(
-                { verified: false, error: "Missing order or plan" },
-                { status: 400 }
-            );
-        }
+            const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64");
+            const tokenRes = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Basic ${auth}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "grant_type=client_credentials",
+            });
 
-        const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID!;
-        const PAYPAL_SECRET = process.env.PAYPAL_SECRET!;
-        const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // switch to live later
+            if (!tokenRes.ok) {
+                throw new Error("Failed to get PayPal access token");
+            }
 
-        // Get PayPal access token
-        const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString("base64");
-        const tokenRes = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
-            method: "POST",
-            headers: {
-                Authorization: `Basic ${auth}`,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: "grant_type=client_credentials",
-        });
+            const tokenData = await tokenRes.json();
+            const accessToken = tokenData.access_token;
+            if (!accessToken) {
+                throw new Error("Failed to get PayPal access token");
+            }
 
-        const tokenData = await tokenRes.json();
-        const accessToken = tokenData.access_token;
-        if (!accessToken) {
-            return NextResponse.json(
-                { verified: false, error: "Failed to get PayPal access token" },
-                { status: 500 }
-            );
-        }
+            // Verify order with PayPal
+            const verifyRes = await fetch(`${PAYPAL_API}/v2/checkout/orders/${orderId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
-        // Verify order
-        const verifyRes = await fetch(`${PAYPAL_API}/v2/checkout/orders/${orderId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-            },
-        });
+            if (!verifyRes.ok) {
+                throw new Error("Failed to verify PayPal order");
+            }
 
-        const orderData = await verifyRes.json();
-        if (orderData.status !== "COMPLETED") {
-            return NextResponse.json(
-                { verified: false, error: "Order not completed" },
-                { status: 400 }
-            );
-        }
+            const orderData = await verifyRes.json();
+            if (orderData.status !== "COMPLETED") {
+                throw new Error("Order not completed");
+            }
 
-        // Find user
-        const user = await User.findOne({ email: session.user.email });
-        if (!user) {
-            return NextResponse.json(
-                { verified: false, error: "User not found" },
-                { status: 404 }
-            );
-        }
+            // Find user
+            const user = await User.findOne({ email: authSession.user.email })
+                .session(mongoSession);
+            
+            if (!user) {
+                throw new Error("User not found");
+            }
 
-        // Find or create user's plan
-        let userPlan: any;
-        const durationDays = 30;
-        const startDate = new Date();
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + durationDays);
-        const price = parseFloat(orderData.purchase_units?.[0]?.amount?.value || "0");
+            // Normalize plan key
+            const planKeyToUse = normalizePlanKey(planKey || plan);
+            
+            // ✅ PAYMENT VALIDATION: Get plan template and validate price
+            const planTemplate = await getPlanTemplate(planKeyToUse);
+            if (!planTemplate) {
+                throw new Error(`Invalid plan: ${planKeyToUse}`);
+            }
 
-        // Normalize planKey - use planKey from request if available, otherwise use plan
-        // Map common variations to proper planKey enum values
-        const planKeyMap: Record<string, string> = {
-            'starter': 'Starter',
-            'whatsapp': 'WhatsApp Automation',
-            'whatsapp automation': 'WhatsApp Automation',
-            'aiagent': 'AI WhatsApp Agent',
-            'ai whatsapp agent': 'AI WhatsApp Agent',
-            'ai agent': 'AI WhatsApp Agent',
-            'proseller': 'Pro Seller',
-            'pro seller': 'Pro Seller',
-            'visionary': 'Visionary',
-            'free': 'free',
-        };
+            const paidAmount = parseFloat(orderData.purchase_units?.[0]?.amount?.value || "0");
+            const expectedPrice = planTemplate.defaultPrice;
+            
+            // Allow small floating point differences (PayPal may round differently)
+            const priceDifference = Math.abs(paidAmount - expectedPrice);
+            if (priceDifference > 0.01 && expectedPrice > 0) {
+                throw new Error(
+                    `Payment amount mismatch: Expected $${expectedPrice.toFixed(2)}, got $${paidAmount.toFixed(2)}`
+                );
+            }
 
-        const planKeyToUse = planKey || plan;
-        const normalizedPlanKey = planKeyMap[planKeyToUse.toLowerCase()] || planKeyToUse;
+            // ✅ TRANSACTION SAFETY: All operations in transaction
+            const durationDays = planTemplate.defaultDurationDays;
+            const startDate = new Date();
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + durationDays);
+            const transactionId = `txn-${orderId}-${Date.now()}`;
 
-        if (user.currentPlanId) {
-            // Update existing plan (for upgrades)
-            userPlan = await Plan.findById(user.currentPlanId);
+            // Check for existing plan
+            let userPlan = user.currentPlanId 
+                ? await Plan.findById(user.currentPlanId).session(mongoSession)
+                : null;
+
             if (userPlan) {
-                userPlan.planKey = normalizedPlanKey as any;
-                userPlan.price = price;
+                // Update existing plan
+                userPlan.planKey = planKeyToUse;
+                userPlan.price = paidAmount;
                 userPlan.durationDays = durationDays;
                 userPlan.startDate = startDate;
                 userPlan.endDate = endDate;
                 userPlan.status = "active";
-                await userPlan.save();
+                userPlan.paymentOrderId = orderId;
+                userPlan.paymentProcessedAt = new Date();
+                userPlan.transactionId = transactionId;
+                await userPlan.save({ session: mongoSession });
+            } else {
+                // Create new plan
+                userPlan = new Plan({
+                    userId: user._id,
+                    planKey: planKeyToUse,
+                    price: paidAmount,
+                    durationDays: durationDays,
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: "active",
+                    paymentOrderId: orderId,
+                    paymentProcessedAt: new Date(),
+                    transactionId: transactionId,
+                });
+                await userPlan.save({ session: mongoSession });
+                user.currentPlanId = userPlan._id;
             }
-        }
 
-        // If no existing plan or plan not found, create a new one
-        if (!userPlan || !user.currentPlanId) {
-            userPlan = new Plan({
-                userId: user._id,
-                planKey: normalizedPlanKey as any,
-                price: price,
-                durationDays: durationDays,
-                startDate: startDate,
-                endDate: endDate,
-                status: "active",
-            });
-            await userPlan.save();
-            
-            // Update user's current plan reference
-            user.currentPlanId = userPlan._id;
-        }
-
-        // Update user flags
-        user.active = true;
-        // Only set onboardingCompleted to true if it was false (for first-time onboarding)
-        // Don't override it if user is upgrading
-        if (!user.onboardingCompleted) {
-            user.onboardingCompleted = true;
-        }
-        await user.save();
-
-        // Update store active status based on plan features
-        const planFeatures = await import("@/lib/config/planFeatures").then(m => m.planFeatures);
-        const currentPlanFeatures = planFeatures[normalizedPlanKey as keyof typeof planFeatures] || planFeatures.free;
-        const hasStoreFeature = currentPlanFeatures.store?.enabled === true;
-
-        if (hasStoreFeature) {
-            // Activate all user's stores if plan has store feature
-            const userStores = await Store.find({ owner: user._id });
-            for (const store of userStores) {
-                store.active = true;
-                await store.save();
+            // Update user flags
+            user.active = true;
+            if (!user.onboardingCompleted) {
+                user.onboardingCompleted = true;
             }
-        } else {
-            // Deactivate all user's stores if plan doesn't have store feature
-            const userStores = await Store.find({ owner: user._id });
-            for (const store of userStores) {
-                store.active = false;
-                await store.save();
+            await user.save({ session: mongoSession });
+
+            // ✅ RESOURCE MANAGEMENT: Update resources based on plan features
+            const features = planTemplate.features;
+
+            // Handle store activation/deactivation
+            if (features.store?.enabled) {
+                const userStores = await Store.find({ owner: user._id }).session(mongoSession);
+                for (const store of userStores) {
+                    store.active = true;
+                    await store.save({ session: mongoSession });
+                }
+            } else {
+                const userStores = await Store.find({ owner: user._id }).session(mongoSession);
+                for (const store of userStores) {
+                    store.active = false;
+                    await store.save({ session: mongoSession });
+                }
             }
-        }
 
-        // Check if plan includes WhatsApp functionality
-        const plansWithWhatsApp = ['whatsapp', 'aiAgent', 'proSeller', 'visionary'];
-        const hasWhatsApp = planKey && plansWithWhatsApp.includes(planKey);
-
-        // Check if plan includes AI Agent
-        const plansWithAIAgent = ['aiAgent', 'visionary'];
-        const hasAIAgent = planKey && plansWithAIAgent.includes(planKey);
-
-        // Create WhatsApp account if plan includes WhatsApp
-        if (hasWhatsApp) {
-            try {
-                // Helper function to encrypt token
-                const encryptToken = (token: string) => {
-                    const iv = crypto.randomBytes(16);
-                    const cipher = crypto.createCipheriv(
-                        "aes-256-ctr",
-                        Buffer.from(process.env.ENCRYPTION_KEY!, "hex"),
-                        iv
-                    );
-                    const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);
-                    return `${iv.toString("hex")}:${encrypted.toString("hex")}`;
-                };
-
-                // Check if WhatsApp account already exists
-                let waAccount = await WhatsAppAccount.findOne({ owner: user._id });
+            // Handle WhatsApp account creation/update
+            if (features.whatsapp?.enabled) {
+                let waAccount = await WhatsAppAccount.findOne({ owner: user._id })
+                    .session(mongoSession);
 
                 if (!waAccount) {
-                    // Create new WhatsApp account with temporary credentials
-                    // User will need to update these with real WhatsApp Cloud API credentials
+                    // Create placeholder account (user will configure later)
                     const tempToken = `temp-token-${Date.now()}-${Math.random().toString(36).substring(7)}`;
                     const waTokenEncrypted = encryptToken(tempToken);
+                    // Generate random webhook verify token for this account
+                    const webhookVerifyToken = generateWebhookVerifyToken();
 
-                    waAccount = await WhatsAppAccount.create({
+                    waAccount = new WhatsAppAccount({
                         owner: user._id,
                         waBusinessId: `temp-${Date.now()}`,
                         waNumberId: `temp-${Date.now()}`,
-                        waNumber: '+1234567890', // Placeholder - user needs to update
+                        waNumber: '+1234567890',
                         waTokenEncrypted,
+                        webhookVerifyToken: webhookVerifyToken, // Use generated verify token
                         verified: false,
                         status: "disconnected",
                         settings: {
-                            autoReply: hasAIAgent,
+                            autoReply: features.ai?.agent || false,
                             orderConfirmation: false,
                             ad: false,
-                            aiAgent: hasAIAgent,
+                            aiAgent: features.ai?.agent || false,
                         },
                         aiConfig: {
                             personality: "friendly assistant",
@@ -219,52 +239,130 @@ export async function POST(req: Request) {
                             orderConfirmation: null,
                             ad: null,
                         },
-                        active: true, // Set active when WhatsApp account is created
+                        active: true,
                     });
+                    await waAccount.save({ session: mongoSession });
                 } else {
-                    // Update existing account settings
-                    waAccount.settings.autoReply = hasAIAgent;
-                    waAccount.settings.aiAgent = hasAIAgent;
-                    waAccount.active = true; // Ensure active is true
-                    await waAccount.save();
+                    // Update existing account
+                    waAccount.settings.autoReply = features.ai?.agent || false;
+                    waAccount.settings.aiAgent = features.ai?.agent || false;
+                    waAccount.active = true;
+                    // Generate webhook verify token if missing
+                    if (!waAccount.webhookVerifyToken) {
+                        waAccount.webhookVerifyToken = generateWebhookVerifyToken();
+                    }
+                    await waAccount.save({ session: mongoSession });
                 }
 
-                // Create AI Agent if plan includes AI Agent
-                if (hasAIAgent) {
-                    const existingAgent = await AIAgent.findOne({ owner: user._id });
-                    
-                    if (!existingAgent) {
-                        await AIAgent.create({
+                // Create/update AI Agent if needed
+                if (features.ai?.agent) {
+                    let aiAgent = await AIAgent.findOne({ owner: user._id })
+                        .session(mongoSession);
+
+                    if (!aiAgent) {
+                        // ✅ Ensure WhatsApp account exists before creating AI agent
+                        if (!waAccount) {
+                            // Create placeholder WhatsApp account if it doesn't exist
+                            const tempToken = `temp-token-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+                            const waTokenEncrypted = encryptToken(tempToken);
+                            const webhookVerifyToken = generateWebhookVerifyToken();
+                            
+                            waAccount = new WhatsAppAccount({
+                                owner: user._id,
+                                waBusinessId: `temp-${Date.now()}`,
+                                waNumberId: `temp-${Date.now()}`,
+                                waNumber: '+1234567890',
+                                waTokenEncrypted,
+                                webhookVerifyToken,
+                                verified: false,
+                                status: "disconnected",
+                                settings: {
+                                    autoReply: false,
+                                    orderConfirmation: false,
+                                    ad: false,
+                                    aiAgent: true,
+                                },
+                                aiConfig: { personality: "friendly assistant" },
+                                preferredTemplates: { greeting: null, orderConfirmation: null, ad: null },
+                                active: true,
+                            });
+                            await waAccount.save({ session: mongoSession });
+                            console.log(`[PayPal/Onboarding] Created placeholder WhatsApp account for AI agent`);
+                        }
+                        
+                        aiAgent = new AIAgent({
                             owner: user._id,
-                            account: waAccount._id,
+                            account: waAccount._id, // ✅ Always assign WhatsApp account
                             enabled: true,
                             prompt: "You are a helpful sales assistant for the store. Help customers with product inquiries, orders, and provide excellent customer service.",
                             templates: [],
                             memory: "",
                             file: "",
-                            active: true, // Set active when AI agent is created
+                            active: true,
                         });
+                        await aiAgent.save({ session: mongoSession });
+                        console.log(`[PayPal/Onboarding] Created AI agent with WhatsApp account ${waAccount._id}`);
                     } else {
-                        // Update existing agent
-                        existingAgent.account = waAccount._id;
-                        existingAgent.enabled = true;
-                        existingAgent.active = true; // Ensure active is true
-                        await existingAgent.save();
+                        // ✅ Ensure account is assigned (update if missing)
+                        if (!aiAgent.account && waAccount) {
+                            aiAgent.account = waAccount._id;
+                            console.log(`[PayPal/Onboarding] Auto-assigned WhatsApp account ${waAccount._id} to existing AI agent`);
+                        } else if (!aiAgent.account) {
+                            // Find existing WhatsApp account if not provided
+                            const existingWaAccount = await WhatsAppAccount.findOne({ owner: user._id })
+                                .session(mongoSession);
+                            if (existingWaAccount) {
+                                aiAgent.account = existingWaAccount._id;
+                                console.log(`[PayPal/Onboarding] Auto-assigned existing WhatsApp account ${existingWaAccount._id} to AI agent`);
+                            }
+                        }
+                        aiAgent.enabled = true;
+                        aiAgent.active = true;
+                        await aiAgent.save({ session: mongoSession });
+                    }
+                } else {
+                    // Deactivate AI agent if not in plan
+                    const aiAgent = await AIAgent.findOne({ owner: user._id })
+                        .session(mongoSession);
+                    if (aiAgent) {
+                        aiAgent.active = false;
+                        aiAgent.enabled = false;
+                        await aiAgent.save({ session: mongoSession });
                     }
                 }
-            } catch (waError) {
-                console.error("Error creating WhatsApp account/AI agent:", waError);
-                // Don't fail the payment verification if WhatsApp account creation fails
-                // The payment is still valid, just log the error
+            } else {
+                // Deactivate WhatsApp and AI if not in plan
+                const waAccount = await WhatsAppAccount.findOne({ owner: user._id })
+                    .session(mongoSession);
+                if (waAccount) {
+                    waAccount.active = false;
+                    await waAccount.save({ session: mongoSession });
+                }
+
+                const aiAgent = await AIAgent.findOne({ owner: user._id })
+                    .session(mongoSession);
+                if (aiAgent) {
+                    aiAgent.active = false;
+                    aiAgent.enabled = false;
+                    await aiAgent.save({ session: mongoSession });
+                }
             }
-        }
+        });
 
         return NextResponse.json({ verified: true });
-    } catch (err) {
+    } catch (err: any) {
         console.error("PayPal verify error:", err);
+        
+        // ✅ ERROR RECOVERY: Return detailed error for retry
         return NextResponse.json(
-            { verified: false, error: "Server error" },
+            { 
+                verified: false, 
+                error: err.message || "Server error",
+                retryable: !err.message?.includes("already processed") && !err.message?.includes("amount mismatch")
+            },
             { status: 500 }
         );
+    } finally {
+        await mongoSession.endSession();
     }
 }

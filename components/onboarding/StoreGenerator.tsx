@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import StorePreviewWithEdit from './ai/components/StorePreviewWithEdit';
@@ -84,7 +84,10 @@ export default function StoreGenerator({
 }: StoreGeneratorProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const locale = searchParams.get('locale') || 'en';
+    const params = useParams();
+    // ✅ FIX: Get locale from params (URL path) instead of searchParams, normalize it
+    const localeRaw = String((params?.locale as string) || searchParams.get('locale') || 'en');
+    const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
 
     const [generating, setGenerating] = useState(true);
     const [storeData, setStoreData] = useState<any>(null);

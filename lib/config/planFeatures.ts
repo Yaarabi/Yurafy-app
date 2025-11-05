@@ -136,14 +136,14 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
     },
     "WhatsApp Automation": {
         store: {
-            enabled: true,
-            maxProducts: 50,
-            customDomain: true,
-            customTheme: true,
+            enabled: false,
+            maxProducts: 0,
+            customDomain: false,
+            customTheme: false,
             customCSS: false,
             customJS: false,
-            seo: true,
-            analytics: true,
+            seo: false,
+            analytics: false,
         },
         whatsapp: {
             enabled: true,
@@ -160,10 +160,10 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             languageSupport: [],
         },
         orders: {
-            enabled: true,
-            maxOrders: 100,
-            orderTracking: true,
-            notifications: true,
+            enabled: false,
+            maxOrders: 0,
+            orderTracking: false,
+            notifications: false,
         },
         analytics: {
             enabled: true,
@@ -179,14 +179,14 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
     },
     "AI WhatsApp Agent": {
         store: {
-            enabled: true,
-            maxProducts: 100,
-            customDomain: true,
-            customTheme: true,
+            enabled: false,
+            maxProducts: 0,
+            customDomain: false,
+            customTheme: false,
             customCSS: false,
             customJS: false,
-            seo: true,
-            analytics: true,
+            seo: false,
+            analytics: false,
         },
         whatsapp: {
             enabled: true,
@@ -203,10 +203,10 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             languageSupport: ["en", "fr", "ar"],
         },
         orders: {
-            enabled: true,
-            maxOrders: 500,
-            orderTracking: true,
-            notifications: true,
+            enabled: false,
+            maxOrders: 0,
+            orderTracking: false,
+            notifications: false,
         },
         analytics: {
             enabled: true,

@@ -27,13 +27,13 @@ export default function ChatInput({ input, setInput, onSend, loading, confirmati
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={confirmationData?.requiresConfirmation ? "Please use the confirmation buttons above..." : "Tell me about your business..."}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 disabled={isDisabled}
             />
             <button
                 onClick={onSend}
                 disabled={isDisabled || !input.trim()}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+                className="px-6 py-3 bg-[var(--brand-blue)] text-white rounded-xl hover:bg-[var(--brand-blue)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
             >
                 <Send className="w-5 h-5" />
                 Send

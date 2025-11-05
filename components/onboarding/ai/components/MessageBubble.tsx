@@ -16,21 +16,21 @@ export default function MessageBubble({ message, index }: MessageBubbleProps) {
             className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
         >
             {message.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-indigo-600" />
+                <div className="w-8 h-8 rounded-full bg-[var(--brand-blue)]/10 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-5 h-5 text-[var(--brand-blue)]" />
                 </div>
             )}
             <div
                 className={`max-w-[70%] rounded-2xl px-4 py-3 ${
                     message.role === 'user'
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-[var(--brand-blue)] text-white'
                         : 'bg-gray-100 text-gray-900'
                 }`}
             >
                 <p className="whitespace-pre-wrap">{message.content}</p>
             </div>
             {message.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[var(--brand-blue)] flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-sm font-semibold">Y</span>
                 </div>
             )}

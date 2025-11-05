@@ -15,17 +15,24 @@ export interface IWhatsAppMessage {
 
 export interface IWhatsAppConversation {
     _id: string;
-    owner: string; 
+    owner: string;
     customer: {
         name?: string;
-        phone: string; 
+        phone: string;
     };
     messages: IWhatsAppMessage[];
     lastMessage?: string;
     lastTimestamp?: number;
     unreadCount?: number;
-    status: "open" | "closed";
-    aiEnabled?: boolean; 
+    status: "open" | "closed" | "human_required";
+    aiEnabled?: boolean;
+    optInStatus?: "opted_in" | "opted_out" | "unknown"; // User consent for promotional messages
+    optInDate?: Date; // When user opted in
+    optOutDate?: Date; // When user opted out
+    metadata?: {
+        escalationReason?: string;
+        escalatedAt?: Date;
+    };
     createdAt: Date;
     updatedAt: Date;
 }
@@ -71,10 +78,21 @@ const WhatsAppConversationSchema = new Schema(
         unreadCount: { type: Number, default: 0 },
         status: {
             type: String,
-            enum: ["open", "closed"],
+            enum: ["open", "closed", "human_required"],
             default: "open",
         },
+        metadata: {
+            escalationReason: String,
+            escalatedAt: Date,
+        },
         aiEnabled: { type: Boolean, default: false },
+        optInStatus: {
+            type: String,
+            enum: ["opted_in", "opted_out", "unknown"],
+            default: "unknown",
+        },
+        optInDate: Date,
+        optOutDate: Date,
     },
     { timestamps: true }
 );

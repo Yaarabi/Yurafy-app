@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 
 export interface UserFeaturesData {
@@ -67,7 +67,7 @@ export function useUserFeatures() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchFeatures = async () => {
+    const fetchFeatures = useCallback(async () => {
         if (status === 'loading') return;
         if (status === 'unauthenticated' || !session?.user?.id) {
             setLoading(false);
@@ -97,11 +97,11 @@ export function useUserFeatures() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [status, session?.user?.id]); // Memoize with stable dependencies
 
     useEffect(() => {
         fetchFeatures();
-    }, [status, session]);
+    }, [fetchFeatures]); // Now we can safely depend on fetchFeatures since it's memoized
 
     return { data, loading, error, refetch: fetchFeatures };
 }

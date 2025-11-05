@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProfileHeader from '@/components/dashboard/setting/profileHeader';
@@ -13,7 +13,7 @@ import Link from 'next/link';
 import StoreSettings from '@/components/dashboard/setting/StoreSettings';
 import { useParams, useSearchParams } from 'next/navigation';
 import LogoLoader from '@/components/themePreview/loadder';
-import { ArrowRight, Crown, Zap, User, Package, MessageCircle, Globe, Palette, ChevronRight } from 'lucide-react';
+import { ArrowRight, Crown, Zap, User, Package, MessageCircle, Globe, Palette, ChevronRight, Lock, Copy, Check } from 'lucide-react';
 import { useUserFeatures } from '@/hooks/useUserFeatures';
 
 export default function SettingsPage() {
@@ -24,16 +24,21 @@ export default function SettingsPage() {
     const [whatsapp, setWhatsApp] = useState<any>(null);
     const [store, setStore] = useState<any>(null);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [copiedWebhookUrl, setCopiedWebhookUrl] = useState(false);
+    const [copiedVerifyToken, setCopiedVerifyToken] = useState(false);
+    
+         // Update local state when features data is loaded (ONLY on initial load)
+     useEffect(() => {
+         if (featuresData && !isInitialized) {
+             setUser(featuresData.user);
+             setWhatsApp(featuresData.features.whatsapp);
+             setStore(featuresData.features.store);
+             setIsInitialized(true);
+         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
+     }, [featuresData?.user?.id, featuresData?.features?.store?._id, featuresData?.features?.whatsapp?._id, isInitialized]); // Only depend on IDs to prevent unnecessary re-runs
 
-    // Update local state when features data is loaded (ONLY on initial load)
-    useEffect(() => {
-        if (featuresData && !isInitialized) {
-            setUser(featuresData.user);
-            setWhatsApp(featuresData.features.whatsapp);
-            setStore(featuresData.features.store);
-            setIsInitialized(true);
-        }
-    }, [featuresData, isInitialized]);
+
     
     // NOTE: We intentionally do NOT update state from featuresData after initialization
     // to prevent overwriting user edits. State is only updated from API responses.
@@ -49,16 +54,17 @@ export default function SettingsPage() {
     };
 
     // 👇 Tabs are built dynamically (no WhatsApp/Store unless they exist)
-    const tabs = [
+    // Memoize tabs array to prevent unnecessary re-renders
+    const tabs = useMemo(() => [
         'Profile',
         'Plan',
         ...(store ? ['Store'] : []),
         ...(whatsapp ? ['WhatsApp'] : []),
         'Language',
         'Mode',
-    ];
+    ], [store?._id, whatsapp?._id]); // Only recalculate when store/whatsapp IDs change
 
-    // Set active tab from URL query parameter
+    // Set active tab from URL query parameter (only once on mount or when tab param changes)
     useEffect(() => {
         const tabParam = searchParams.get('tab');
         if (tabParam) {
@@ -75,12 +81,15 @@ export default function SettingsPage() {
                 'Mode',
             ];
             
-            // Validate that the tab exists in the available tabs
-            if (availableTabs.includes(normalizedTab)) {
+            // Validate that the tab exists in the available tabs and only update if different
+            if (availableTabs.includes(normalizedTab) && activeTab !== normalizedTab) {
                 setActiveTab(normalizedTab);
             }
         }
-    }, [searchParams, store, whatsapp]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, store?._id, whatsapp?._id]); // Only react to searchParams and IDs, not full objects to prevent loops
+
+
 
     // --- Update User Field ---
     const updateField = async (field: string, value: string) => {
@@ -132,16 +141,27 @@ export default function SettingsPage() {
         }
     };
 
-    // --- Update WhatsApp Field ---
-    const updateWhatsAppField = async (field: string, value: any) => {
+        // --- Update WhatsApp Field ---
+    const updateWhatsAppField = async (field: string, value: any) => {        
         if (!whatsapp) return;
 
+        const originalWhatsApp = { ...whatsapp };
         const updated = { ...whatsapp, [field]: value };
         setWhatsApp(updated);
 
-        const payload: Record<string, any> = { [field]: value };
-        if (field === 'settings') payload.settings = { ...whatsapp.settings, ...value };
-        if (field === 'aiConfig') payload.aiConfig = { ...whatsapp.aiConfig, ...value };
+        const payload: Record<string, any> = {};
+        
+                 // Handle special fields
+         if (field === 'webhookSecret') {
+             // webhookSecret needs special handling - only send if value is provided
+             payload.webhookSecret = value;
+         } else if (field === 'settings') {
+            payload.settings = { ...whatsapp.settings, ...value };
+        } else if (field === 'aiConfig') {
+            payload.aiConfig = { ...whatsapp.aiConfig, ...value };
+        } else {
+            payload[field] = value;
+        }
 
         try {
         const res = await fetch(`/api/whatsapp/account`, {
@@ -158,10 +178,15 @@ export default function SettingsPage() {
             } else {
                 toast.success(`${field} updated successfully!`);
             }
-        } else toast.error(`Failed to update ${field}.`);
+                  } else {
+              setWhatsApp(originalWhatsApp);
+              const errorData = await res.json();
+              toast.error(errorData.error || `Failed to update ${field}.`);
+          }
         } catch (err) {
-        console.error('Error updating WhatsApp account:', err);
-        toast.error(`Error updating ${field}.`);
+            setWhatsApp(originalWhatsApp);
+            console.error('Error updating WhatsApp:', err);
+            toast.error(`Error updating ${field}.`);
         }
     };
 
@@ -241,6 +266,8 @@ export default function SettingsPage() {
         }
     };
 
+
+
     const params = useParams();
 
     if (loading) return <LogoLoader/>;
@@ -307,9 +334,9 @@ export default function SettingsPage() {
                     {/* Mobile Scroll Indicator */}
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none">
                         <div className="flex gap-1 opacity-50">
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse"></div>
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                            <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse"></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                         </div>
                     </div>
                 </div>
@@ -343,9 +370,9 @@ export default function SettingsPage() {
                                 <SettingsSection title="Plan">
                                     <div className="space-y-6">
                                         {/* Current Plan Display - Mobile Optimized */}
-                                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 sm:p-6 border border-indigo-200 dark:border-indigo-800">
+                                        <div className="bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-xl p-4 sm:p-6 border border-[var(--brand-blue)]/30 dark:border-[var(--brand-blue)]/40">
                                             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                                <div className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg flex-shrink-0">
+                                                <div className="p-3 bg-[var(--brand-blue)] rounded-xl shadow-lg flex-shrink-0">
                                                     {(featuresData?.plan?.planKey || user.plan || 'free').toLowerCase() === 'free' ? (
                                                         <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                                     ) : (
@@ -378,7 +405,7 @@ export default function SettingsPage() {
                                         <div className="flex justify-center">
                                             <Link
                                                 href={`/${params.locale}/onboarding/plan`}
-                                                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
+                                                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
                                             >
                                                 <Crown className="w-5 h-5" />
                                                 <span className="text-sm sm:text-base">Upgrade Plan</span>
@@ -411,6 +438,127 @@ export default function SettingsPage() {
                                         <EditableField label="Phone Number ID" value={whatsapp.waNumberId || ''} onSave={(val) => updateWhatsAppField('waNumberId', val)} />
                                         <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => updateWhatsAppField('waNumber', val)} />
                                         <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => updateWhatsAppField('waToken', val)} />
+
+                                        {/* Webhook Configuration Section */}
+                                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
+                                            <div className="flex items-center gap-2">
+                                                <Lock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                                                    Webhook Configuration
+                                                </h3>
+                                            </div>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                Configure webhook verification token and secret for secure webhook communication.
+                                                These are used to verify incoming webhook requests from Meta.
+                                            </p>
+                                            
+                                            <EditableField 
+                                                label="Webhook Secret" 
+                                                value={whatsapp.webhookSecretEncrypted ? "••••••••••••••••" : ''} 
+                                                onSave={async (val) => {
+                                                    // Only send webhookSecret if a value is provided (to avoid clearing existing secret)
+                                                    if (val && val.trim()) {
+                                                        await updateWhatsAppField('webhookSecret', val);
+                                                    } else {
+                                                        // If empty, don't update (keep existing secret) - throw to prevent save
+                                                        throw new Error('Enter a value to update the webhook secret, or leave empty to keep the current secret.');
+                                                    }
+                                                }} 
+                                            />
+
+                                            {/* Copy to Clipboard Fields */}
+                                            <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                    Copy these values for Meta webhook configuration:
+                                                </p>
+                                                
+                                                {/* Webhook URL */}
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                        Webhook URL
+                                                    </label>
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="text"
+                                                            readOnly
+                                                            value={`${typeof window !== 'undefined' ? window.location.origin : ''}/api/whatsapp/webhook`}
+                                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 cursor-pointer"
+                                                            onClick={(e) => (e.target as HTMLInputElement).select()}
+                                                        />
+                                                        <button
+                                                            onClick={async () => {
+                                                                const webhookUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/api/whatsapp/webhook`;
+                                                                try {
+                                                                    await navigator.clipboard.writeText(webhookUrl);
+                                                                    setCopiedWebhookUrl(true);
+                                                                    toast.success('Webhook URL copied to clipboard!');
+                                                                    setTimeout(() => setCopiedWebhookUrl(false), 2000);
+                                                                } catch (err) {
+                                                                    toast.error('Failed to copy webhook URL');
+                                                                }
+                                                            }}
+                                                            className="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                                        >
+                                                            {copiedWebhookUrl ? (
+                                                                <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                                            ) : (
+                                                                <Copy className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                                                                 {/* Verify Token - User's generated token */}
+                                                 <div className="space-y-1">
+                                                     <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                         Verify Token
+                                                     </label>
+                                                     <div className="flex items-center gap-2">
+                                                         <input
+                                                             type="text"
+                                                             readOnly
+                                                             value={whatsapp.webhookVerifyToken ? "••••••••••••••••" : 'Not generated yet'}
+                                                             className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 cursor-pointer"
+                                                             onClick={(e) => {
+                                                                 if (whatsapp.webhookVerifyToken) {
+                                                                     (e.target as HTMLInputElement).select();
+                                                                 }
+                                                             }}
+                                                         />
+                                                         <button
+                                                             onClick={async () => {
+                                                                 const verifyToken = whatsapp.webhookVerifyToken || '';
+                                                                 if (!verifyToken) {
+                                                                     toast.error('Verify token not available. Create a WhatsApp account first.');
+                                                                     return;
+                                                                 }
+                                                                 try {
+                                                                     await navigator.clipboard.writeText(verifyToken);
+                                                                     setCopiedVerifyToken(true);
+                                                                     toast.success('Verify token copied to clipboard!');
+                                                                     setTimeout(() => setCopiedVerifyToken(false), 2000);
+                                                                 } catch (err) {
+                                                                     toast.error('Failed to copy verify token');
+                                                                 }
+                                                             }}
+                                                             disabled={!whatsapp.webhookVerifyToken}
+                                                             className="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                         >
+                                                             {copiedVerifyToken ? (
+                                                                 <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                                             ) : (
+                                                                 <Copy className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                                                             )}
+                                                         </button>
+                                                     </div>
+                                                     {!whatsapp.webhookVerifyToken && (
+                                                         <p className="text-xs text-amber-600 dark:text-amber-400">
+                                                             Token will be generated automatically when you create your WhatsApp account
+                                                         </p>
+                                                     )}
+                                                 </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </SettingsSection>
                             </div>

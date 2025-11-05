@@ -26,7 +26,8 @@ const model = new ChatMistralAI({
 // Memory and Agent Caches
 // ------------------------------
 const ownerCheckpoint = new MemorySaver();
-const customerCheckpoints: Record<string, MemorySaver> = {};
+// Use MemorySaver for customer agents (DatabaseCheckpointSaver has compatibility issues with LangGraph)
+const customerCheckpointSaver = new MemorySaver();
 const agentCache: Record<string, Awaited<ReturnType<typeof createReactAgent>>> = {};
 
 // ------------------------------
@@ -102,16 +103,14 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
 
         const threadId = `wa-${ownerId}-${customerPhone}`;
 
-        // Create or reuse checkpoint per customer thread
-        let checkpoint = customerCheckpoints[threadId];
-        if (!checkpoint) customerCheckpoints[threadId] = checkpoint = new MemorySaver();
-
+        // Use MemorySaver for customer agents (in-memory checkpoints)
+        // Note: Checkpoints will be lost on server restart, but this ensures compatibility
         const safePrompt = sanitizePrompt(agentData.prompt);
 
         const agent = await createReactAgent({
         llm: model,
         tools,
-        checkpointSaver: checkpoint,
+        checkpointSaver: customerCheckpointSaver,
         prompt: `You are talking directly with a CUSTOMER of your owner with the phone number ${customerPhone}.
             Base your replies on the owner system prompt: "${safePrompt}". Your owner id is ${agentData.owner}. Be polite, helpful, and concise.`,
         });
@@ -121,7 +120,7 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
         {
             configurable: {
             thread_id: threadId,
-            recursionLimit: 5,
+            recursionLimit: 8, // ✅ Increased from 5 for complex queries
             },
         }
         );
@@ -129,6 +128,7 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
         return res.messages?.at(-1)?.content || "No response generated.";
     } catch (err) {
         console.error(`Customer agent error for ${ownerId} / ${customerPhone}:`, err);
-        return "Sorry, something went wrong while generating the response.";
+        // ✅ FIXED: Re-throw error for proper error handling upstream
+        throw err;
     }
 }

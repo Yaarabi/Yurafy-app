@@ -22,10 +22,11 @@ export async function GET(req: NextRequest) {
 
         const templates = await Template.find({ owner: userId }).sort({ createdAt: -1 });
 
-        // Optional: refresh pending templates from Meta
+        // ✅ FIX: Refresh pending/rejected templates from Meta to get latest status
         const rawToken = decryptToken(account.waTokenEncrypted);
         for (const template of templates) {
-            if (template.status === "PENDING") {
+            // Refresh status for PENDING templates, and also check REJECTED in case they were updated
+            if (template.status === "PENDING" || template.status === "REJECTED") {
                 try {
                     const nameSlug = template.name.trim().toLowerCase().replace(/\s+/g, "_");
                     const res = await fetch(
@@ -33,15 +34,37 @@ export async function GET(req: NextRequest) {
                         { headers: { Authorization: `Bearer ${rawToken}` } }
                     );
                     const metaData = await res.json();
+                    
+                    if (metaData.error) {
+                        console.error(`Meta fetch error for template ${template.name}:`, metaData.error);
+                        continue;
+                    }
+                    
                     if (metaData.data?.length > 0) {
                         const metaTemplate = metaData.data[0];
-                        template.status = metaTemplate.status || "PENDING";
-                        template.rejectionReason =
-                            metaTemplate.status === "REJECTED" ? metaTemplate.rejection_reason : undefined;
-                        await template.save();
+                        
+                        // ✅ FIX: Meta returns status as "APPROVED", "REJECTED", or "PENDING" (uppercase)
+                        // Also check review_status field
+                        const metaStatus = metaTemplate.status || metaTemplate.review_status;
+                        if (metaStatus) {
+                            const normalizedStatus = metaStatus.toUpperCase();
+                            if (normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING") {
+                                template.status = normalizedStatus;
+                                
+                                // Update rejection reason if rejected
+                                if (normalizedStatus === "REJECTED") {
+                                    template.rejectionReason = metaTemplate.rejection_reason || metaTemplate.reason || "Template rejected by Meta";
+                                } else {
+                                    // Clear rejection reason if approved
+                                    template.rejectionReason = undefined;
+                                }
+                                
+                                await template.save();
+                            }
+                        }
                     }
                 } catch (err) {
-                    console.error("Meta fetch error:", err);
+                    console.error(`Meta fetch error for template ${template.name}:`, err);
                 }
             }
         }
@@ -85,52 +108,105 @@ export async function POST(req: NextRequest) {
         // Build components
         const components: any[] = [];
         if (type === "TEXT") {
-            components.push({
-            type: "BODY",
-            text: content,
-            });
+            const bodyComponent: any = {
+                type: "BODY",
+                text: content,
+            };
+            // Add variables if provided
+            if (variables && variables.length > 0) {
+                bodyComponent.example = {
+                    body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                };
+            }
+            components.push(bodyComponent);
         } else {
             // Media templates must use HEADER with format
             components.push({
-            type: "HEADER",
-            format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
-            example: {
-                header_handle: [link], // array of example URLs
-            },
+                type: "HEADER",
+                format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
+                example: {
+                    header_handle: [link], // array of example URLs
+                },
             });
 
             if (caption) {
-            components.push({
-                type: "BODY",
-                text: caption,
-            });
+                const bodyComponent: any = {
+                    type: "BODY",
+                    text: caption,
+                };
+                // Add variables if provided
+                if (variables && variables.length > 0) {
+                    bodyComponent.example = {
+                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                    };
+                }
+                components.push(bodyComponent);
             }
         }
+        
         // Send to Meta
         try {
+            const templateName = name.trim().toLowerCase().replace(/\s+/g, "_");
             const res = await fetch(
                 `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
                 {
                     method: "POST",
                     headers: { Authorization: `Bearer ${rawToken}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        name: name.trim().toLowerCase().replace(/\s+/g, "_"),
+                        name: templateName,
                         category: "UTILITY",
                         language: "en_US",
                         components,
                     }),
                 }
             );
+            
             const metaData = await res.json();
+            console.log("Meta template creation response:", metaData);
+            
             if (metaData.error) {
                 newTemplate.status = "REJECTED";
-                newTemplate.rejectionReason = metaData.error.message;
+                newTemplate.rejectionReason = metaData.error.message || metaData.error.error_user_msg || "Template rejected by Meta";
+                await newTemplate.save();
+            } else if (metaData.id) {
+                // ✅ FIX: Meta returns id on success, status comes later via webhook or GET request
+                // Store Meta template ID for future reference
+                newTemplate.status = "PENDING"; // Always PENDING initially, Meta reviews asynchronously
+                
+                // Optionally fetch the template to get initial status
+                try {
+                    const statusRes = await fetch(
+                        `https://graph.facebook.com/v20.0/${metaData.id}`,
+                        { headers: { Authorization: `Bearer ${rawToken}` } }
+                    );
+                    const statusData = await statusRes.json();
+                    
+                    // ✅ FIX: Meta uses "status" field, normalize to uppercase
+                    if (statusData.status) {
+                        const normalizedStatus = statusData.status.toUpperCase();
+                        if (normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING") {
+                            newTemplate.status = normalizedStatus;
+                        }
+                        if (normalizedStatus === "REJECTED" && statusData.rejection_reason) {
+                            newTemplate.rejectionReason = statusData.rejection_reason;
+                        }
+                    }
+                } catch (statusErr) {
+                    console.error("Failed to fetch template status:", statusErr);
+                    // Continue with PENDING status
+                }
+                
+                await newTemplate.save();
             } else {
-                newTemplate.status = metaData.status || "PENDING";
+                // Unexpected response format
+                newTemplate.status = "PENDING";
+                await newTemplate.save();
             }
-            await newTemplate.save();
-        } catch (err) {
+        } catch (err: any) {
             console.error("Meta template creation failed:", err);
+            newTemplate.status = "REJECTED";
+            newTemplate.rejectionReason = err.message || "Failed to send template to Meta";
+            await newTemplate.save();
         }
 
         return NextResponse.json({ template: newTemplate });
@@ -172,60 +248,105 @@ export async function PUT(req: NextRequest) {
 
         const components: any[] = [];
 
-        if (type === "TEXT") {
-            components.push({
-            type: "BODY",
-            text: content,
-            });
-        } else {
-            // Media templates must use HEADER with format
-            components.push({
-            type: "HEADER",
-            format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
-            example: {
-                header_handle: [link], // array of example URLs
-            },
-            });
-
-            if (caption) {
-            components.push({
-                type: "BODY",
-                text: caption,
-            });
-            }
-        }
-
-        try {
-            const res = await fetch(
-            `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
-            {
-                method: "POST",
-                headers: {
-                Authorization: `Bearer ${rawToken}`,
-                "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                name: name.trim().toLowerCase().replace(/\s+/g, "_"),
-                category: "UTILITY",
-                language: "en_US",
-                components,
-                }),
-            }
-            );
-
-            const metaData = await res.json();
-            console.log("Template creation response:", metaData);
-
-            if (metaData.error) {
-            template.status = "REJECTED";
-            template.rejectionReason = metaData.error.message;
+            if (type === "TEXT") {
+                const bodyComponent: any = {
+                    type: "BODY",
+                    text: content,
+                };
+                // Add variables if provided
+                if (variables && variables.length > 0) {
+                    bodyComponent.example = {
+                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                    };
+                }
+                components.push(bodyComponent);
             } else {
-            // WhatsApp returns status in "status" or "review_status"
-            template.status = metaData.status || metaData.review_status || "PENDING";
+                // Media templates must use HEADER with format
+                components.push({
+                    type: "HEADER",
+                    format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
+                    example: {
+                        header_handle: [link], // array of example URLs
+                    },
+                });
+
+                if (caption) {
+                    const bodyComponent: any = {
+                        type: "BODY",
+                        text: caption,
+                    };
+                    // Add variables if provided
+                    if (variables && variables.length > 0) {
+                        bodyComponent.example = {
+                            body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                        };
+                    }
+                    components.push(bodyComponent);
+                }
             }
-        } catch (err) {
-            console.error("Meta template creation failed:", err);
-        }
+
+            try {
+                const templateName = name.trim().toLowerCase().replace(/\s+/g, "_");
+                const res = await fetch(
+                    `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${rawToken}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            name: templateName,
+                            category: "UTILITY",
+                            language: "en_US",
+                            components,
+                        }),
+                    }
+                );
+
+                const metaData = await res.json();
+                console.log("Meta template update response:", metaData);
+
+                if (metaData.error) {
+                    template.status = "REJECTED";
+                    template.rejectionReason = metaData.error.message || metaData.error.error_user_msg || "Template rejected by Meta";
+                } else if (metaData.id) {
+                    // ✅ FIX: Meta returns id on success, fetch status separately
+                    template.status = "PENDING";
+                    
+                    // Fetch the template status
+                    try {
+                        const statusRes = await fetch(
+                            `https://graph.facebook.com/v20.0/${metaData.id}`,
+                            { headers: { Authorization: `Bearer ${rawToken}` } }
+                        );
+                        const statusData = await statusRes.json();
+                        
+                        // ✅ FIX: Normalize status from Meta
+                        if (statusData.status) {
+                            const normalizedStatus = statusData.status.toUpperCase();
+                            if (normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING") {
+                                template.status = normalizedStatus;
+                            }
+                            if (normalizedStatus === "REJECTED" && statusData.rejection_reason) {
+                                template.rejectionReason = statusData.rejection_reason;
+                            } else if (normalizedStatus !== "REJECTED") {
+                                template.rejectionReason = undefined;
+                            }
+                        }
+                    } catch (statusErr) {
+                        console.error("Failed to fetch template status:", statusErr);
+                        // Continue with PENDING status
+                    }
+                } else {
+                    // Unexpected response
+                    template.status = "PENDING";
+                }
+            } catch (err: any) {
+                console.error("Meta template creation failed:", err);
+                template.status = "REJECTED";
+                template.rejectionReason = err.message || "Failed to send template to Meta";
+            }
         }
 
         await template.save();

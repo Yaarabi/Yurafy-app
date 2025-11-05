@@ -20,3 +20,15 @@ export  const connectDB = async ()=>{
     }
 
 }
+
+/**
+ * Get MongoDB client for transactions
+ * Returns the mongoose connection which supports transactions
+ */
+export async function getMongoClient() {
+    await connectDB();
+    if (!mongoose.connection.db) {
+        throw new Error("Database not connected");
+    }
+    return mongoose.connection.getClient();
+}

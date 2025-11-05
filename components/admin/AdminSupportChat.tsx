@@ -220,11 +220,11 @@ export default function AdminSupportChat() {
                 {selectedUser ? (
                     <>
                         {/* Chat Header */}
-                        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-[var(--brand-blue)] text-white">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="font-semibold">{selectedConversation?.user?.username || 'Unknown User'}</h3>
-                                    <p className="text-xs text-indigo-100">{selectedConversation?.user?.email || 'No email'}</p>
+                                    <p className="text-xs text-white/80">{selectedConversation?.user?.email || 'No email'}</p>
                                 </div>
                                 <button
                                     onClick={() => setSelectedUser(null)}

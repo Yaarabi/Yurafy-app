@@ -95,18 +95,26 @@ export default function PlanPage() {
         setLoading(planKey)
 
         try {
+            // ✅ FIX: Normalize locale - extract first segment only, remove slashes
+            const localeRaw = String(params.locale || 'en');
+            const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+            
             // Free plan → redirect to info page to create store
             if (planTypes.FREE.includes(planKey)) {
-                router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
+                router.push(`/${locale}/onboarding/info?plan=${planKey}`)
                 return
             }
 
             // If this is an upgrade (user has completed onboarding), use upgrade API
             if (isUpgrade) {
+                // ✅ FIX: Use normalized locale
+                const localeRaw = String(params.locale || 'en');
+                const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+                
                 const response = await fetch('/api/upgrade', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ planKey }),
+                    body: JSON.stringify({ planKey, locale }),
                 });
 
                 if (!response.ok) {
@@ -127,7 +135,7 @@ export default function PlanPage() {
 
                 // Wait a bit for toast to show
                 setTimeout(() => {
-                    router.push(`/${params.locale}${result.redirectTo}`);
+                    router.push(`${result.redirectTo}`);
                 }, 500);
                 return;
             }
@@ -136,20 +144,20 @@ export default function PlanPage() {
             // WhatsApp-only plans → redirect directly to checkout
             // WhatsApp account will be created after successful payment
             if (planTypes.WHATSAPP_ONLY.includes(planKey)) {
-                router.push(`/${params.locale}/onboarding/checkout?plan=${planKey}`)
+                router.push(`/${locale}/onboarding/checkout?plan=${planKey}`)
                 return
             }
 
             // Store-only plans → redirect to onboarding/info to create store first
             if (planTypes.STORE_ONLY.includes(planKey)) {
-                router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
+                router.push(`/${locale}/onboarding/info?plan=${planKey}`)
                 return
             }
 
             // Mixed plans (Store + WhatsApp) → redirect to info page to create store first
             // WhatsApp account will be created after successful payment
             if (planTypes.MIXED.includes(planKey)) {
-                router.push(`/${params.locale}/onboarding/info?plan=${planKey}`)
+                router.push(`/${locale}/onboarding/info?plan=${planKey}`)
                 return
             }
         } catch (error) {

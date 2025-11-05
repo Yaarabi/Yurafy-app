@@ -4,7 +4,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import VariableDropdown from "./TemplateEditor";
 
-export default function AddTemplate() {
+interface AddTemplateProps {
+    onSuccess?: () => void;
+    onClose?: () => void;
+}
+
+export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
     const [loading, setLoading] = useState(false);
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
@@ -89,6 +94,10 @@ export default function AddTemplate() {
         });
         setMediaFile(null);
         setUploadedUrl(null);
+        
+        // Trigger refresh and close modal
+        if (onSuccess) onSuccess();
+        if (onClose) onClose();
         } catch (err: any) {
         console.error(err);
         toast.error(err.message || "Save failed");

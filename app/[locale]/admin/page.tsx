@@ -7,14 +7,16 @@ import {
     Users, Store, ShoppingCart, MessageSquare, TrendingUp, 
     Shield, UserCheck, XCircle, Clock, CheckCircle,
     AlertTriangle, Activity, BarChart3, Settings, Bot,
-    Building2
+    Building2, Upload, Package
 } from "lucide-react";
 import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminPlanMonitoring from "@/components/admin/AdminPlanMonitoring";
+import AdminPlanManagement from "@/components/admin/AdminPlanManagement";
 import AdminSupportChat from "@/components/admin/AdminSupportChat";
 import AdminStoresManagement from "@/components/admin/AdminStoresManagement";
 import AdminAccountsManagement from "@/components/admin/AdminAccountsManagement";
 import AdminAgentsManagement from "@/components/admin/AdminAgentsManagement";
+import AdminUploadsManagement from "@/components/admin/AdminUploadsManagement";
 
 interface OverviewData {
     counts: {
@@ -34,7 +36,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'stores' | 'accounts' | 'agents' | 'support'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'stores' | 'accounts' | 'agents' | 'support' | 'uploads'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -161,6 +163,17 @@ export default function AdminPage() {
                             Plans & Limits
                         </button>
                         <button
+                            onClick={() => setActiveTab('plan-templates')}
+                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'plan-templates'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Package className="w-4 h-4 inline mr-2" />
+                            Plan Templates
+                        </button>
+                        <button
                             onClick={() => setActiveTab('stores')}
                             className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'stores'
@@ -203,6 +216,17 @@ export default function AdminPage() {
                         >
                             <MessageSquare className="w-4 h-4 inline mr-2" />
                             Support
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('uploads')}
+                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'uploads'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Upload className="w-4 h-4 inline mr-2" />
+                            Uploads
                         </button>
                     </div>
                 </div>
@@ -312,6 +336,14 @@ export default function AdminPage() {
                         <AdminPlanMonitoring />
                     </motion.div>
                 )}
+                {activeTab === 'plan-templates' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminPlanManagement />
+                    </motion.div>
+                )}
 
                 {activeTab === 'stores' && (
                     <motion.div
@@ -347,6 +379,9 @@ export default function AdminPage() {
                     >
                         <AdminSupportChat />
                     </motion.div>
+                )}
+                {activeTab === 'uploads' && (
+                    <AdminUploadsManagement />
                 )}
             </div>
         </div>
