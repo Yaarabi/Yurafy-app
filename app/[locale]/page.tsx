@@ -5,11 +5,12 @@ import AboutSection from "@/components/home/AboutSection";
 import HowItWorks from "@/components/home/HowItWorks";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import PlansSection from "@/components/home/PlansSection";
+import ServicesSection from "@/components/home/otherServicesSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
+import FAQsSection from "@/components/home/FAQsSection";
 import CallToAction from "@/components/home/CallToAction";
 import Footer from "@/components/home/Footer";
-import ServicesSection from "@/components/home/otherServicesSection";
-import LoginForm from "@/components/login/loginForm";
+
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <PlansSection />
       <ServicesSection/>
       <TestimonialsSection />
+      <FAQsSection />
       <CallToAction />
       <Footer />
     </>

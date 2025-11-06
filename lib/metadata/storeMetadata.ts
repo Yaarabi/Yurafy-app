@@ -10,15 +10,15 @@ export async function generateStoreMetadata(domain: string) {
 
     if (!store) {
         return {
-            title: "Store Not Found | Yura",
+            title: "Store Not Found | Yurafy",
             description: "This store could not be found.",
         };
     }
 
-    const title = `${store.brandName} | Yura Store`;
+    const title = `${store.brandName} | Yurafy Store`;
     const description =
         store.description ||
-        `Discover products from ${store.brandName}, your trusted online store powered by Yura.`;
+        `Discover products from ${store.brandName}, your trusted online store powered by Yurafy.`;
 
     const logo = store.logoUrl?.startsWith("http")
         ? store.logoUrl

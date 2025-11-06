@@ -42,7 +42,7 @@ const Logo: React.FC<LogoProps> = ({ size = 28 }) => (
             opacity="0.9"
         />
         </svg>
-        <span className="font-semibold tracking-wide text-gray-800 dark:text-gray-100 hover:text-[var(--brand-blue)] transition-colors">Yura IT</span>
+        <span className="font-semibold tracking-wide text-gray-800 dark:text-gray-100 hover:text-[var(--brand-blue)] transition-colors">Yurafy</span>
     </div>
 );
 

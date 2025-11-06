@@ -105,9 +105,10 @@ export async function POST(req: NextRequest) {
             status: "PENDING",
         });
 
-        // Build components
+        // Build components according to Meta WhatsApp Business API policies
         const components: any[] = [];
         if (type === "TEXT") {
+            // Text templates only need BODY component
             const bodyComponent: any = {
                 type: "BODY",
                 text: content,
@@ -120,16 +121,55 @@ export async function POST(req: NextRequest) {
             }
             components.push(bodyComponent);
         } else {
-            // Media templates must use HEADER with format
-            components.push({
+            // ✅ FIXED: Media templates (IMAGE, VIDEO, DOCUMENT) must use HEADER with proper format
+            // Meta requires header_handle for media URLs or header_link for external URLs
+            // For template creation, we use header_handle with example URLs
+            
+            // Normalize media type to Meta's expected format
+            let metaFormat: string;
+            switch (type) {
+                case "IMAGE":
+                    metaFormat = "IMAGE";
+                    break;
+                case "VIDEO":
+                    metaFormat = "VIDEO";
+                    break;
+                case "DOCUMENT":
+                    metaFormat = "DOCUMENT";
+                    break;
+                case "AUDIO":
+                    metaFormat = "DOCUMENT"; // Audio files are sent as documents
+                    break;
+                default:
+                    metaFormat = "IMAGE";
+            }
+            
+            const headerComponent: any = {
                 type: "HEADER",
-                format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
-                example: {
-                    header_handle: [link], // array of example URLs
-                },
-            });
+                format: metaFormat,
+            };
+            
+            // ✅ FIXED: Meta requires header_handle for uploaded media or header_link for external URLs
+            // Check if link is a WhatsApp handle or external URL
+            if (link) {
+                // If it's a WhatsApp handle (starts with https://lookaside.fbsbx.com or similar)
+                // Otherwise treat as external URL
+                if (link.includes('fbsbx.com') || link.includes('scontent') || link.includes('fbcdn')) {
+                    headerComponent.example = {
+                        header_handle: [link], // WhatsApp uploaded media handle
+                    };
+                } else {
+                    // External URL - use header_link
+                    headerComponent.example = {
+                        header_link: [link], // External URL
+                    };
+                }
+            }
+            
+            components.push(headerComponent);
 
-            if (caption) {
+            // ✅ FIXED: Media templates can have BODY with caption (optional)
+            if (caption && caption.trim()) {
                 const bodyComponent: any = {
                     type: "BODY",
                     text: caption,
@@ -140,6 +180,16 @@ export async function POST(req: NextRequest) {
                         body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
                     };
                 }
+                components.push(bodyComponent);
+            } else if (!caption && variables && variables.length > 0) {
+                // If no caption but variables exist, still need BODY component for variables
+                const bodyComponent: any = {
+                    type: "BODY",
+                    text: " ", // Empty body with variables (Meta allows this)
+                };
+                bodyComponent.example = {
+                    body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                };
                 components.push(bodyComponent);
             }
         }
@@ -154,7 +204,7 @@ export async function POST(req: NextRequest) {
                     headers: { Authorization: `Bearer ${rawToken}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
                         name: templateName,
-                        category: "UTILITY",
+                        category: type === "TEXT" ? "UTILITY" : "MARKETING", // ✅ FIXED: Media templates should use MARKETING category
                         language: "en_US",
                         components,
                     }),
@@ -246,9 +296,11 @@ export async function PUT(req: NextRequest) {
         if (account) {
         const rawToken = decryptToken(account.waTokenEncrypted);
 
+        // Build components according to Meta WhatsApp Business API policies
         const components: any[] = [];
 
             if (type === "TEXT") {
+                // Text templates only need BODY component
                 const bodyComponent: any = {
                     type: "BODY",
                     text: content,
@@ -261,26 +313,65 @@ export async function PUT(req: NextRequest) {
                 }
                 components.push(bodyComponent);
             } else {
-                // Media templates must use HEADER with format
-                components.push({
+                // ✅ FIXED: Media templates (IMAGE, VIDEO, DOCUMENT) must use HEADER with proper format
+                let metaFormat: string;
+                switch (type) {
+                    case "IMAGE":
+                        metaFormat = "IMAGE";
+                        break;
+                    case "VIDEO":
+                        metaFormat = "VIDEO";
+                        break;
+                    case "DOCUMENT":
+                        metaFormat = "DOCUMENT";
+                        break;
+                    case "AUDIO":
+                        metaFormat = "DOCUMENT";
+                        break;
+                    default:
+                        metaFormat = "IMAGE";
+                }
+                
+                const headerComponent: any = {
                     type: "HEADER",
-                    format: type, // "IMAGE" | "VIDEO" | "DOCUMENT"
-                    example: {
-                        header_handle: [link], // array of example URLs
-                    },
-                });
+                    format: metaFormat,
+                };
+                
+                // ✅ FIXED: Use header_handle for WhatsApp media or header_link for external URLs
+                if (link) {
+                    if (link.includes('fbsbx.com') || link.includes('scontent') || link.includes('fbcdn')) {
+                        headerComponent.example = {
+                            header_handle: [link],
+                        };
+                    } else {
+                        headerComponent.example = {
+                            header_link: [link],
+                        };
+                    }
+                }
+                
+                components.push(headerComponent);
 
-                if (caption) {
+                // ✅ FIXED: Media templates can have BODY with caption (optional)
+                if (caption && caption.trim()) {
                     const bodyComponent: any = {
                         type: "BODY",
                         text: caption,
                     };
-                    // Add variables if provided
                     if (variables && variables.length > 0) {
                         bodyComponent.example = {
                             body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
                         };
                     }
+                    components.push(bodyComponent);
+                } else if (!caption && variables && variables.length > 0) {
+                    const bodyComponent: any = {
+                        type: "BODY",
+                        text: " ",
+                    };
+                    bodyComponent.example = {
+                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                    };
                     components.push(bodyComponent);
                 }
             }
@@ -297,7 +388,7 @@ export async function PUT(req: NextRequest) {
                         },
                         body: JSON.stringify({
                             name: templateName,
-                            category: "UTILITY",
+                            category: type === "TEXT" ? "UTILITY" : "MARKETING", // ✅ FIXED: Media templates use MARKETING category
                             language: "en_US",
                             components,
                         }),

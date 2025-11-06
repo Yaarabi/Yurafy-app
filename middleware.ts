@@ -27,7 +27,7 @@ function getSubdomain(hostname: string): string | null {
 const intlMiddleware = createMiddleware({
     locales: ['en', 'fr', 'ar'],
     defaultLocale: 'en',
-    localePrefix: 'always',
+    localePrefix: 'as-needed', // Hide default locale (en) from URLs
 });
 
 // --- Main middleware handler ---
@@ -35,6 +35,13 @@ export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     const subdomain = getSubdomain(hostname);
     const pathname = request.nextUrl.pathname;
+
+    // Redirect /en/* to /* (hide default locale)
+    if (pathname.startsWith('/en/') || pathname === '/en') {
+        const url = request.nextUrl.clone();
+        url.pathname = pathname.replace(/^\/en/, '') || '/';
+        return NextResponse.redirect(url);
+    }
 
     // Skip protected or internal routes
     if (
@@ -56,15 +63,15 @@ export default function middleware(request: NextRequest) {
         // --- Store subdomain handling ---
         const url = request.nextUrl.clone();
 
-        // Detect locale or default to 'en'
-        const localeMatch = pathname.match(/^\/(en|fr|ar)/);
+        // Detect locale or default to 'en' (exclude 'en' from matching since it's hidden)
+        const localeMatch = pathname.match(/^\/(fr|ar)/);
         const locale = localeMatch ? localeMatch[1] : 'en';
 
-        // Remove locale prefix from path
-        const pathWithoutLocale = pathname.replace(/^\/(en|fr|ar)/, '') || '/';
+        // Remove locale prefix from path (only fr/ar, not en)
+        const pathWithoutLocale = pathname.replace(/^\/(fr|ar)/, '') || '/';
 
         // Determine destination path
-        if (pathname === '/' || pathname.match(/^\/(en|fr|ar)\/?$/)) {
+        if (pathname === '/' || pathname.match(/^\/(fr|ar)\/?$/)) {
             url.pathname = `/${locale}/${subdomain}`;
         } else if (pathWithoutLocale.startsWith('/shop/')) {
             url.pathname = `/${locale}/${subdomain}${pathWithoutLocale}`;

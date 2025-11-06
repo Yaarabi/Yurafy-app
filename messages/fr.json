@@ -1,34 +1,18 @@
 {
     "AboutSection": {
         "title": "Qui Nous Sommes",
-        "description": "Yura IT est une entreprise technologique innovante dédiée à aider les petites entreprises à se développer en ligne. Nous combinons l'IA, l'automatisation et le développement web expert pour fournir des solutions intelligentes qui font gagner du temps et augmentent les ventes. Que vous soyez un artisan local, un commerçant ou un vendeur en ligne, nos outils vous aident à atteindre vos clients plus rapidement et efficacement.",
-        "highlight1": "Descriptions de produits générées par l'IA pour un contenu instantané et de haute qualité",
-        "highlight2": "Bot Instagram pour publication et engagement automatisés",
-        "highlight3": "Bot WhatsApp pour la communication client et les mises à jour de commandes",
-        "highlight4": "Pages produits personnalisées pour présenter et vendre vos produits"
+        "description": "Yurafy est une plateforme technologique de pointe dédiée à l'autonomisation des entreprises de toutes tailles avec des solutions d'automatisation pilotées par l'IA. Nous combinons l'intelligence artificielle, l'automatisation et le développement web expert pour fournir des solutions intelligentes qui rationalisent les opérations, augmentent les ventes et font gagner un temps précieux. Que vous soyez un artisan local, un détaillant, un vendeur e-commerce ou une entreprise en croissance, nos outils complets vous aident à atteindre vos clients plus rapidement, plus intelligemment et plus efficacement.",
+        "highlight1": "Génération de contenu par l'IA pour des descriptions de produits et du contenu marketing instantanés et de haute qualité",
+        "highlight2": "Solutions de messagerie WhatsApp automatisées et d'engagement client",
+        "highlight3": "Développement de magasins web personnalisés avec design réactif et optimisation SEO",
+        "highlight4": "Plateforme complète d'automatisation commerciale des pages produits à la communication client"
     },
     "FeaturesSection": {
-        "title": "Automatisation Tout-en-Un pour les Vendeurs",
-        "feature1": {
-        "title": "Descriptions de Produits IA",
-        "description": "Générez des descriptions de produits convaincantes en arabe, français et anglais."
-        },
-        "feature2": {
-        "title": "Pages Produits",
-        "description": "Pages d’atterrissage personnalisées pour chaque produit, prêtes à partager avec les clients."
-        },
-        "feature3": {
-        "title": "Bot Instagram",
-        "description": "Planifiez automatiquement les publications, hashtags et légendes."
-        },
-        "feature4": {
-        "title": "Bot WhatsApp",
-        "description": "Automatisez les messages, mises à jour de commandes et campagnes."
-        }
+        "title": "Automatisation Tout-en-Un pour les Vendeurs"
     },
     "Footer": {
-        "companyName": "Yura IT",
-        "companyDescription": "Soutenir les PME marocaines avec l'automatisation pilotée par l'IA. Créez, publiez et développez facilement.",
+        "companyName": "Yurafy",
+        "companyDescription": "Autonomiser les entreprises avec l'automatisation pilotée par l'IA. Créez, publiez et développez sans effort.",
         "navigation": {
         "title": "Navigation",
         "home": "Accueil",
@@ -39,8 +23,8 @@
         },
         "resources": {
         "title": "Ressources",
+        "resources": "Ressources",
         "blog": "Blog",
-        "faqs": "FAQs",
         "support": "Support",
         "terms": "Conditions & Confidentialité"
         },
@@ -50,20 +34,20 @@
         "phone": "Téléphone",
         "address": "Adresse"
         },
-        "copyright": "© 2025 Yura IT – Tous droits réservés."
+        "copyright": "© 2025 Yurafy – Tous droits réservés."
     },
     "HeroSection": {
         "language": "FR",
         "login": "Se Connecter",
         "signup": "S'inscrire",
-        "logoAlt": "Logo Yura IT",
-        "title": "Yura IT – Automatisation IA - Solutions Intelligentes",
-        "subtitle": "Simplifiez vos réseaux sociaux, augmentez vos ventes et gagnez du temps avec du contenu produit généré par l'IA, l'automatisation Instagram & WhatsApp et des pages produits personnalisées.",
+        "logoAlt": "Logo Yurafy",
+        "title": "Yurafy – Plateforme d'Automatisation Commerciale Pilotée par l'IA",
+        "subtitle": "Transformez votre entreprise avec l'automatisation pilotée par l'IA. Créez de magnifiques magasins, automatisez la messagerie WhatsApp et développez sans effort avec des solutions intelligentes.",
         "cta": {
         "getStarted": "Commencer Gratuitement",
         "learnMore": "En Savoir Plus"
         },
-        "dashboardAlt": "Maquette du tableau de bord vendeur"
+        "dashboardAlt": "Maquette du tableau de bord commercial"
     },
     "HowItWorks": {
         "title": "Comment Ça Marche",
@@ -85,74 +69,47 @@
         }
     },
     "OtherServicesSection": {
-        "title": "Développez Plus Malin avec les Services Yura IT",
-        "subtitle": "Découvrez comment Yura IT peut aider votre entreprise à prospérer avec le développement web, l'automatisation IA et les solutions d'intégration.",
+        "title": "Transformez Votre Entreprise avec des Solutions Web Personnalisées",
+        "subtitle": "Vous cherchez un site web entièrement personnalisé ? Notre équipe d'experts construit des sites web magnifiques et réactifs adaptés à votre marque unique et aux besoins de votre entreprise. Du concept au lancement, nous livrons des expériences web exceptionnelles qui génèrent des résultats.",
         "service1": {
         "title": "Développement Web Sur Mesure",
-        "description": "Création de sites web rapides, réactifs et modernes, adaptés à vos besoins."
+        "description": "Sites web professionnels et réactifs construits à partir de zéro. Nous créons des sites rapides, optimisés pour le SEO qui représentent parfaitement votre marque et convertissent les visiteurs en clients."
         },
         "service2": {
-        "title": "Solutions IA",
-        "description": "Intégration de l'IA pour automatiser les tâches, générer du contenu et optimiser les flux de travail."
+        "title": "Solutions Pilotées par l'IA",
+        "description": "Intégrez l'IA de pointe pour automatiser les flux de travail, générer du contenu et fournir des interactions client intelligentes qui s'adaptent à votre entreprise."
         },
         "service3": {
-        "title": "Automatisation & Intégrations",
-        "description": "Connectez vos applications, réseaux sociaux et canaux de communication pour simplifier vos opérations."
+        "title": "Automatisation Commerciale",
+        "description": "Connectez vos applications, réseaux sociaux et canaux de communication en un système automatisé transparent qui fonctionne 24/7 pour développer votre entreprise."
         },
         "cta": {
-        "contact": "Contactez-Nous"
+        "contact": "Commencer"
         }
     },
     "PlansSection": {
-    "title": "Des offres flexibles pour votre entreprise",
+    "title": "Des Plans Flexibles pour Votre Entreprise",
     "mostPopular": "⭐ Le plus populaire",
-    "choosePlan": "Choisir ce plan",
-    "starter": {
-        "name": "Départ",
-        "feature1": "Pages produits",
-        "feature2": "Contenu généré par IA",
-        "price": "5$/mois"
-    },
-    "whatsapp": {
-        "name": "Bot WhatsApp",
-        "feature1": "Départ + automatisation WhatsApp",
-        "price": "20$/mois"
-    },
-    "aiAgent": {
-        "name": "Bot Insta",
-        "feature1": "Départ + automatisation Instagram",
-        "price": "10$/mois"
-    },
-    "creator": {
-        "name": "Créateur",
-        "feature1": "Outils de contenu avancés",
-        "price": "15$/mois"
-    },
-    "proSeller": {
-        "name": "Vendeur Pro",
-        "feature1": "Toutes les fonctionnalités incluses",
-        "price": "30$/mois"
-    },
-    "visionary": {
-        "name": "Visionnaire",
-        "feature1": "Vendeur Pro + support prioritaire",
-        "price": "50$/mois"
-    }
+    "choosePlan": "Choisir le Plan"
     },
     "TestimonialsSection": {
-        "title": "Ce Que Nos Vendeurs Disent",
+        "title": "Ce Que Nos Clients Disent",
         "testimonial1": {
-        "quote": "Yura IT rend la publication sur Instagram sans effort — mes produits atteignent plus de clients que jamais.",
-        "name": "Fatima, Artisan"
+        "quote": "Yurafy a transformé mon entreprise. L'automatisation IA me fait gagner des heures chaque jour, et mes ventes ont augmenté de 40% depuis que j'utilise la plateforme.",
+        "name": "Fatima, Propriétaire E-commerce"
         },
         "testimonial2": {
-        "quote": "Les descriptions IA me font gagner des heures chaque semaine. Le bot WhatsApp informe instantanément mes clients.",
-        "name": "Youssef, Commerçant"
+        "quote": "L'automatisation WhatsApp est incroyable. Mes clients reçoivent des réponses instantanées, et je peux me concentrer sur le développement de mon entreprise au lieu de répondre aux messages toute la journée.",
+        "name": "Youssef, Détaillant"
+        },
+        "testimonial3": {
+        "quote": "Le service de développement web personnalisé a dépassé mes attentes. Mon nouveau site web a l'air professionnel et convertit beaucoup mieux qu'avant.",
+        "name": "Sarah, Propriétaire d'Entreprise"
         }
     },
     "CallToAction": {
-        "headline": "Prêt à Développer Votre Entreprise avec Yura IT ?",
-        "cta": "Commencez Maintenant"
+        "headline": "Prêt à Transformer Votre Entreprise avec Yurafy ?",
+        "cta": "Commencer Maintenant"
     },
     "HeroSectionLogin": {
         "signup": "S'inscrire",
@@ -195,17 +152,22 @@
 
     "errorRequired": "Ce champ est obligatoire",
     "errorInvalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "errorInvalidPhone": "Veuillez entrer un numéro de téléphone valide",
     "errorPasswordMismatch": "Les mots de passe ne correspondent pas",
+    "errorAcceptTerms": "Vous devez accepter les conditions générales pour continuer",
     "errorInvalidCredentials": "E-mail ou mot de passe incorrect. Veuillez réessayer.",
     "errorAccountExists": "Un compte avec cet e-mail existe déjà.",
-    "errorUnexpected": "Une erreur s’est produite. Veuillez réessayer.",
+    "errorUnexpected": "Une erreur s'est produite. Veuillez réessayer.",
+
+    "acceptTermsLabel": "J'accepte la",
+    "termsAndPrivacy": "Politique de Confidentialité et Conditions",
 
     "successSignup": "Compte créé avec succès ! Redirection en cours...",
     "successLogin": "Bienvenue à nouveau !"
     },
     "FooterLogin": {
-        "companyDescription": "Renforcer les entreprises avec l'automatisation propulsée par l'IA.",
-        "copyright": "© 2025 Yura IT – Tous droits réservés."
+        "companyDescription": "Autonomiser les entreprises avec l'automatisation pilotée par l'IA.",
+        "copyright": "© 2025 Yurafy – Tous droits réservés."
     },
     "common": {
         "appTitle": "Tableau de bord vendeur",
@@ -347,22 +309,164 @@
         "rightsReserved": "Tous droits réservés."
     },
     "whatsappPage": {
-        "title": "Paramètres WhatsApp",
-        "subtitle": "Gérez votre automatisation WhatsApp et les agents IA.",
-        "noPlan": {
-            "title": "Aucun plan WhatsApp actif",
-            "description": "Pour accéder aux fonctionnalités WhatsApp, veuillez sélectionner un plan incluant le bot WhatsApp.",
-            "cta": "Voir les plans"
+        "title": "Automatisation WhatsApp",
+        "description": "Automatisez vos interactions clients et les mises à jour de commandes avec notre bot WhatsApp. Envoyez des messages instantanés, des confirmations de commande et des campagnes promotionnelles directement sur WhatsApp de vos clients.",
+        "currentPlan": "Plan Actuel : ",
+        "notSubscribed": "Vous n'êtes abonné à aucun plan WhatsApp.",
+        "subscribeCTA": "Abonnez-vous à un plan pour activer l'automatisation WhatsApp.",
+        "featuresTitle": "Fonctionnalités du Bot WhatsApp",
+        "feature1": {
+            "title": "Messages Automatisés",
+            "description": "Envoyez automatiquement des confirmations de commande, des mises à jour d'expédition et des notifications de livraison."
         },
-        "automation": {
-            "title": "Automatisation WhatsApp",
-            "description": "Configurez des messages automatisés pour les mises à jour de commandes, les promotions et plus encore.",
-            "setupCta": "Configurer l'automatisation"
+        "feature2": {
+            "title": "Campagnes de Diffusion",
+            "description": "Créez et envoyez des messages promotionnels à tous vos clients en une fois."
         },
-        "aiAgent": {
-            "title": "Agent IA WhatsApp",
-            "description": "Utilisez l'IA pour répondre automatiquement aux questions des clients et fournir une assistance 24/7.",
-            "setupCta": "Configurer l'agent IA"
+        "feature3": {
+            "title": "Support Client",
+            "description": "Utilisez le bot pour répondre instantanément aux questions courantes des clients."
+        },
+        "feature4": {
+            "title": "Configuration Facile",
+            "description": "Connectez votre compte WhatsApp Business en quelques clics."
+        },
+        "aiAgentTitle": "Passer à l'Agent WhatsApp IA",
+        "aiAgentDescription": "Élevez vos interactions client au niveau supérieur avec notre agent WhatsApp piloté par l'IA. Il peut comprendre et répondre aux demandes des clients, fournir des recommandations personnalisées et gérer des conversations complexes.",
+        "aiFeature1": {
+            "title": "Compréhension du Langage Naturel",
+            "description": "L'agent IA peut comprendre les messages des clients et répondre de manière appropriée."
+        },
+        "aiFeature2": {
+            "title": "Réponses Personnalisées",
+            "description": "Fournissez des recommandations adaptées basées sur les préférences et l'historique des commandes des clients."
+        },
+        "aiFeature3": {
+            "title": "Disponibilité 24/7",
+            "description": "L'agent IA est toujours disponible pour assister vos clients, même en dehors des heures d'ouverture."
+        },
+        "aiFeature4": {
+            "title": "Intégration Transparente",
+            "description": "Intégrez facilement l'agent IA avec votre compte WhatsApp Business existant."
+        },
+        "subscribeButton": "S'abonner Maintenant",
+        "manageSubscriptionButton": "Gérer l'Abonnement"
+    },
+    "Resources": {
+        "title": "Ressources",
+        "description": "Accédez à des ressources utiles, des guides et du support pour vous aider à réussir avec Yurafy.",
+        "blog": {
+            "title": "Blog",
+            "description": "Lisez nos derniers articles, conseils et insights sur l'automatisation commerciale, l'IA et l'e-commerce."
+        },
+        "support": {
+            "title": "Support",
+            "description": "Obtenez de l'aide de notre équipe de support via chat, e-mail ou téléphone."
+        },
+        "terms": {
+            "title": "Conditions & Confidentialité",
+            "description": "Consultez nos conditions de service et notre politique de confidentialité pour comprendre comment nous protégeons vos données."
+        }
+    },
+    "Blog": {
+        "title": "Blog",
+        "description": "Restez informé des derniers insights, conseils et meilleures pratiques pour l'automatisation commerciale et les solutions pilotées par l'IA.",
+        "empty": "Aucun article de blog disponible pour le moment. Revenez bientôt pour des mises à jour !",
+        "post1": {
+            "title": "Commencer avec Yurafy : Guide Complet",
+            "excerpt": "Apprenez comment configurer votre compte Yurafy, connecter vos comptes professionnels et commencer à automatiser vos flux de travail en quelques minutes. Ce guide complet couvre tout, de la création de compte aux fonctionnalités avancées."
+        },
+        "post2": {
+            "title": "Comment l'Automatisation IA Peut Transformer Votre Entreprise",
+            "excerpt": "Découvrez la puissance de l'automatisation pilotée par l'IA et comment elle peut vous aider à gagner du temps, augmenter les ventes et développer vos opérations commerciales. Exemples concrets et histoires de succès de clients Yurafy."
+        },
+        "post3": {
+            "title": "Automatisation WhatsApp Business : Meilleures Pratiques",
+            "excerpt": "Apprenez comment utiliser efficacement l'automatisation WhatsApp pour l'engagement client, la gestion des commandes et les campagnes marketing. Conseils et stratégies d'experts de l'industrie."
+        }
+    },
+    "FAQs": {
+        "title": "Questions Fréquemment Posées",
+        "description": "Trouvez des réponses aux questions les plus courantes sur Yurafy.",
+        "faq1": {
+            "question": "Qu'est-ce que Yurafy ?",
+            "answer": "Yurafy est une plateforme d'automatisation commerciale pilotée par l'IA qui aide les entreprises à créer des magasins en ligne, automatiser la messagerie WhatsApp et rationaliser les opérations avec des solutions intelligentes. Nous combinons le développement web, l'automatisation IA et les outils d'engagement client en une plateforme complète."
+        },
+        "faq2": {
+            "question": "Combien coûte Yurafy ?",
+            "answer": "Yurafy propose des plans tarifaires flexibles à partir d'un niveau gratuit avec des fonctionnalités de base. Les plans payants vont de 11$/mois pour Starter à 50$/mois pour Visionary, avec des plans pour entreprises de toutes tailles. Visitez notre page tarifaire pour voir des comparaisons détaillées de fonctionnalités."
+        },
+        "faq3": {
+            "question": "Ai-je besoin de connaissances techniques pour utiliser Yurafy ?",
+            "answer": "Aucune connaissance technique n'est requise ! Yurafy est conçu pour être convivial et intuitif. Nos outils pilotés par l'IA vous guident dans la configuration, et notre équipe de support est toujours disponible pour vous aider. La plupart des utilisateurs peuvent commencer à utiliser la plateforme en quelques minutes."
+        },
+        "faq4": {
+            "question": "Puis-je personnaliser le design de mon magasin ?",
+            "answer": "Oui ! Yurafy propose plusieurs thèmes préconçus et vous permet de personnaliser les couleurs, les polices et les mises en page. Pour les plans Pro Seller et Visionary, vous pouvez également ajouter du CSS et JavaScript personnalisés pour un contrôle de design complet."
+        },
+        "faq5": {
+            "question": "Comment fonctionne l'automatisation WhatsApp ?",
+            "answer": "Yurafy s'intègre avec l'API WhatsApp Business pour automatiser les interactions client. Vous pouvez configurer des réponses automatiques, des confirmations de commande, des notifications d'expédition et des campagnes de diffusion. L'agent IA peut gérer les demandes des clients 24/7, fournissant des réponses instantanées."
+        },
+        "faq6": {
+            "question": "Mes données sont-elles sécurisées ?",
+            "answer": "Absolument. Nous prenons la sécurité des données au sérieux et utilisons un cryptage de niveau industriel, une authentification sécurisée et des audits de sécurité réguliers. Vos données sont stockées en toute sécurité et jamais partagées avec des tiers sans votre consentement. Lisez notre Politique de Confidentialité pour plus de détails."
+        },
+        "stillHaveQuestions": "Vous avez encore des questions ?",
+        "contactSupport": "Notre équipe de support est là pour vous aider à réussir avec Yurafy.",
+        "contactButton": "Contacter le Support"
+    },
+    "Support": {
+        "title": "Centre de Support",
+        "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
+        "chat": {
+            "title": "Chat en Direct",
+            "description": "Chattez avec notre équipe de support en temps réel pour une aide instantanée.",
+            "action": "Démarrer le Chat"
+        },
+        "email": {
+            "title": "Support par E-mail",
+            "description": "Envoyez-nous un e-mail et nous répondrons dans les 24 heures.",
+            "action": "Envoyer un E-mail"
+        },
+        "phone": {
+            "title": "Support Téléphonique",
+            "description": "Appelez-nous directement pour une assistance immédiate.",
+            "action": "Appeler Maintenant"
+        },
+        "hours": {
+            "title": "Heures de Support",
+            "description": "Lundi - Vendredi : 9h00 - 18h00 (GMT+1) | Samedi : 10h00 - 14h00"
+        }
+    },
+    "Terms": {
+        "title": "Conditions de Service & Politique de Confidentialité",
+        "description": "Veuillez lire attentivement ces conditions avant d'utiliser Yurafy. En utilisant nos services, vous acceptez ces conditions.",
+        "lastUpdated": "Dernière mise à jour : Janvier 2025",
+        "section1": {
+            "title": "1. Acceptation des Conditions",
+            "content": "En accédant et en utilisant Yurafy, vous acceptez et acceptez d'être lié par les termes et conditions de cet accord. Si vous n'acceptez pas de respecter ce qui précède, veuillez ne pas utiliser ce service."
+        },
+        "section2": {
+            "title": "2. Licence d'Utilisation",
+            "content": "L'autorisation est accordée d'utiliser temporairement Yurafy à des fins personnelles ou commerciales. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre, et sous cette licence vous ne pouvez pas : modifier ou copier les matériaux ; utiliser les matériaux à des fins commerciales ou pour un affichage public ; tenter de rétroconcevoir tout logiciel contenu dans Yurafy ; supprimer toute mention de droits d'auteur ou autres mentions de propriété des matériaux."
+        },
+        "section3": {
+            "title": "3. Politique de Confidentialité",
+            "content": "Nous respectons votre vie privée et nous nous engageons à protéger vos informations personnelles. Nous collectons uniquement les informations nécessaires pour fournir nos services et améliorer votre expérience. Vos données sont cryptées, stockées en toute sécurité et jamais partagées avec des tiers sans votre consentement explicite. Pour des informations détaillées sur la collecte de données, l'utilisation et vos droits, veuillez consulter notre Politique de Confidentialité complète."
+        },
+        "section4": {
+            "title": "4. Disponibilité du Service",
+            "content": "Nous nous efforçons de maintenir une haute disponibilité de nos services, mais nous ne garantissons pas un accès ininterrompu. Yurafy peut être temporairement indisponible en raison de maintenance, de mises à jour ou de circonstances imprévues. Nous ne sommes pas responsables des pertes résultant d'interruptions de service."
+        },
+        "section5": {
+            "title": "5. Limitation de Responsabilité",
+            "content": "En aucun cas Yurafy ou ses fournisseurs ne seront responsables des dommages résultant de l'utilisation ou de l'incapacité à utiliser les matériaux sur Yurafy, même si Yurafy ou un représentant autorisé a été notifié oralement ou par écrit de la possibilité de tels dommages."
+        },
+        "questions": {
+            "title": "Des questions sur nos Conditions ?",
+            "description": "Si vous avez des questions sur nos Conditions de Service ou notre Politique de Confidentialité, n'hésitez pas à nous contacter.",
+            "button": "Contacter le Support"
         }
     }
 }

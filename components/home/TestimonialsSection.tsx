@@ -15,6 +15,10 @@ export default function TestimonialsSection() {
             quote: t("testimonial2.quote"), 
             name: t("testimonial2.name") 
         },
+        ...(t("testimonial3.quote") ? [{
+            quote: t("testimonial3.quote"), 
+            name: t("testimonial3.name") 
+        }] : []),
     ];
 
     return (
@@ -22,7 +26,7 @@ export default function TestimonialsSection() {
             <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-14 text-gray-900">
                 {t("title")}
             </h2>
-            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 px-6">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
                 {testimonials.map((t, i) => (
                     <motion.div
                         key={i}

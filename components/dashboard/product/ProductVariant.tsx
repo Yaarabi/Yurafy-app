@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, X, Plus } from 'lucide-react';
 
 interface ProductVariantsProps {
     sizes: string[];
@@ -9,7 +9,7 @@ interface ProductVariantsProps {
     onChange: (updated: { sizes: string[]; colors: string[] }) => void;
 }
 
-const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Quick select options
 const COLOR_OPTIONS = [
     'Black', 'White', 'Red', 'Blue', 'Green',
     'Yellow', 'Purple', 'Pink', 'Gray', 'Orange', 'Brown',
@@ -18,6 +18,25 @@ const COLOR_OPTIONS = [
 export default function ProductVariants({ sizes, colors, onChange }: ProductVariantsProps) {
     const [selectedSizes, setSelectedSizes] = useState<string[]>(sizes || []);
     const [selectedColors, setSelectedColors] = useState<string[]>(colors || []);
+    const [newSizeInput, setNewSizeInput] = useState(''); // ✅ Added: Manual size input
+
+    // ✅ Added: Add custom size manually
+    const addCustomSize = () => {
+        const size = newSizeInput.trim();
+        if (size && !selectedSizes.includes(size)) {
+            const updated = [...selectedSizes, size];
+            setSelectedSizes(updated);
+            onChange({ sizes: updated, colors: selectedColors });
+            setNewSizeInput('');
+        }
+    };
+
+    // ✅ Added: Remove size
+    const removeSize = (size: string) => {
+        const updated = selectedSizes.filter((s) => s !== size);
+        setSelectedSizes(updated);
+        onChange({ sizes: updated, colors: selectedColors });
+    };
 
     const toggleSize = (size: string) => {
         const updated = selectedSizes.includes(size)
@@ -37,10 +56,12 @@ export default function ProductVariants({ sizes, colors, onChange }: ProductVari
 
     return (
         <div className="flex flex-col gap-8 mt-6">
-        {/* Sizes */}
+        {/* Sizes - ✅ Updated: Manual input support */}
         <div>
             <h3 className="text-gray-100 font-semibold mb-3">Available Sizes</h3>
-            <div className="flex flex-wrap gap-3">
+            
+            {/* Quick select buttons */}
+            <div className="flex flex-wrap gap-3 mb-4">
             {SIZE_OPTIONS.map((size) => {
                 const isActive = selectedSizes.includes(size);
                 return (
@@ -60,6 +81,47 @@ export default function ProductVariants({ sizes, colors, onChange }: ProductVari
                 );
             })}
             </div>
+
+            {/* ✅ Added: Manual size input */}
+            <div className="flex gap-2 mb-4">
+                <input
+                    type="text"
+                    value={newSizeInput}
+                    onChange={(e) => setNewSizeInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && addCustomSize()}
+                    placeholder="Add custom size (e.g., 40, 42, L, XL)"
+                    className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                    type="button"
+                    onClick={addCustomSize}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                    <Plus className="w-4 h-4" />
+                    Add
+                </button>
+            </div>
+
+            {/* ✅ Added: Display selected custom sizes */}
+            {selectedSizes.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {selectedSizes.map((size) => (
+                        <div
+                            key={size}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-full text-sm"
+                        >
+                            <span>{size}</span>
+                            <button
+                                type="button"
+                                onClick={() => removeSize(size)}
+                                className="hover:bg-indigo-700 rounded-full p-0.5 transition-colors"
+                            >
+                                <X className="w-3 h-3" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
 
         {/* Colors */}

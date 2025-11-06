@@ -7,7 +7,7 @@ export async function generateProductMetadata(slug: string) {
 
     if (!product) {
         return {
-            title: 'Product not found | Yura IT',
+            title: 'Product not found | Yurafy',
             description: 'This product could not be found.',
             openGraph: {
                 title: 'Product not found',
@@ -29,8 +29,8 @@ export async function generateProductMetadata(slug: string) {
         : `${baseUrl}${product.mainImage}`;
 
     return {
-        title: `${product.name} | ${store?.brandName || 'Yura IT'}`,
-        description: product.description || 'Shop the best products on Yura IT',
+        title: `${product.name} | ${store?.brandName || 'Yurafy'}`,
+        description: product.description || 'Shop the best products on Yurafy',
         openGraph: {
             title: product.name,
             description: product.description || '',

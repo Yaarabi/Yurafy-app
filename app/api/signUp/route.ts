@@ -10,11 +10,29 @@ export async function POST(req: Request) {
         const username = body.username?.trim();
         const email = body.email?.trim().toLowerCase();
         const password = body.password?.trim();
+        const phone = body.phone?.trim();
+        const acceptTerms = body.acceptTerms === true;
 
         // Validate required fields
         if (!username || !email || !password) {
         return NextResponse.json(
             { error: "All fields are required." },
+            { status: 400 }
+        );
+        }
+
+        // Validate terms acceptance
+        if (!acceptTerms) {
+        return NextResponse.json(
+            { error: "You must accept the terms and conditions." },
+            { status: 400 }
+        );
+        }
+
+        // Validate phone format if provided (optional field)
+        if (phone && !/^\+?[\d\s\-()]{8,}$/.test(phone)) {
+        return NextResponse.json(
+            { error: "Please enter a valid phone number." },
             { status: 400 }
         );
         }
@@ -39,6 +57,7 @@ export async function POST(req: Request) {
         username,
         email,
         password: hashedPassword,
+        phone: phone || undefined,
         role: "user",
         active: false,
         });

@@ -1,0 +1,34 @@
+# Yurafy - AI-Powered Business Automation Platform
+
+## About Yurafy
+Yurafy is a cutting-edge technology platform dedicated to empowering businesses of all sizes with AI-driven automation solutions. We combine artificial intelligence, automation, and expert web development to deliver intelligent solutions that streamline operations, increase sales, and save valuable time.
+
+## Core Features
+- AI-Powered Content Generation: Generate instant, high-quality product descriptions and marketing copy
+- WhatsApp Business Automation: Automate customer interactions, order confirmations, and marketing campaigns
+- Custom Web Store Development: Professional, responsive websites with SEO optimization
+- AI WhatsApp Agent: Intelligent 24/7 customer support with natural language understanding
+- Business Automation: Connect apps, social media, and communication channels into seamless workflows
+
+## Pricing Plans
+- Free: Test all features with limited usage (5 products, 10 orders)
+- Starter: $11/month - Basic store setup with branding and domain (50 products)
+- WhatsApp Automation: $11/month - Automate messaging with WhatsApp Cloud API (500 contacts)
+- AI WhatsApp Agent: $21/month - Automation + AI-powered assistant (1000 contacts)
+- Pro Seller: $25/month - Starter + WhatsApp Automation (500 products, 2000 contacts)
+- Visionary: $50/month - All features, unlimited products, AI agent, custom CSS/JS
+
+
+## Support
+- Email: support@yurafy.com
+- Phone: +212 600 000 000
+- Support Hours: Monday - Friday: 9:00 AM - 6:00 PM (GMT+1)
+
+## Languages Supported
+- English (en)
+- French (fr)
+- Arabic (ar)
+
+## Last Updated
+January 2025
+

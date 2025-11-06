@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { SerializedStore } from '@/lib/data/products';
 import { IProduct } from '@/models/products';
 import { CartProvider } from './CartContext';
@@ -31,18 +31,45 @@ export const StoreProvider: React.FC<{
     const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
     const [productOptions, setProductOptions] = useState<Record<string, any>>({});
     const [allProducts, setAllProducts] = useState<IProduct[]>(products);
+    
+    // ✅ FIXED: Use ref to track previous products and prevent infinite loop
+    const prevProductsRef = useRef<IProduct[]>(products);
+    const getProductsString = (prods: IProduct[]): string => {
+        try {
+            return JSON.stringify((prods || []).map(p => p?._id || '').filter(Boolean).sort());
+        } catch {
+            return '';
+        }
+    };
+    const productsStringRef = useRef<string>(getProductsString(products));
 
-    // Update selectedStore and products when initialStore changes (for real-time preview updates)
+    // Update selectedStore when initialStore changes (for real-time preview updates)
     useEffect(() => {
         if (initialStore) {
             setSelectedStore(initialStore);
         }
     }, [initialStore]);
 
-    // Update products when products prop changes
+    // ✅ FIXED: Update products when products prop changes (using ref comparison to prevent infinite loop)
     useEffect(() => {
-        setAllProducts(products);
-    }, [products]);
+        // Normalize products array
+        const normalizedProducts = products || [];
+        const normalizedPrevProducts = prevProductsRef.current || [];
+        
+        // Compare using JSON stringified sorted IDs to avoid unnecessary updates
+        const currentProductsString = getProductsString(normalizedProducts);
+        
+        // Only update if products actually changed (different IDs or length)
+        const hasChanged = 
+            currentProductsString !== productsStringRef.current || 
+            normalizedPrevProducts.length !== normalizedProducts.length;
+        
+        if (hasChanged) {
+            prevProductsRef.current = normalizedProducts;
+            productsStringRef.current = currentProductsString;
+            setAllProducts(normalizedProducts);
+        }
+    }, [products]); // Safe to depend on products array now
 
     const selectStore = useCallback((id: string) => {
         const s = allStores.find((st) => st._id === id) ?? null;

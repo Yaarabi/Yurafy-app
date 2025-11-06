@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import InputField from './inputFailed';
 import Button from './button';
 import { useSignUp } from '@/hooks/auth/login';
 import toast from 'react-hot-toast';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 export default function SignupForm() {
     const t = useTranslations('Auth');
@@ -18,13 +19,14 @@ export default function SignupForm() {
     const [form, setForm] = useState({
         username: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
+        acceptTerms: false,
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
@@ -37,6 +39,10 @@ export default function SignupForm() {
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
             newErrors.email = t('errorInvalidEmail');
         }
+        // Phone is optional, but if provided, validate format (PhoneInput returns formatted number with country code)
+        if (form.phone && form.phone.trim() && form.phone.trim().length < 8) {
+            newErrors.phone = t('errorInvalidPhone') || 'Please enter a valid phone number';
+        }
         if (!form.password) {
             newErrors.password = t('errorRequired');
         } else if (form.password.length < 6) {
@@ -44,6 +50,9 @@ export default function SignupForm() {
         }
         if (form.password !== form.confirmPassword) {
             newErrors.confirmPassword = t('errorPasswordMismatch') || 'Passwords do not match';
+        }
+        if (!form.acceptTerms) {
+            newErrors.acceptTerms = t('errorAcceptTerms') || 'You must accept the terms and conditions';
         }
 
         setErrors(newErrors);
@@ -56,9 +65,10 @@ export default function SignupForm() {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [e.target.name]: value,
         });
         setErrors((prev) => ({ ...prev, [e.target.name]: '' }));
     };
@@ -72,6 +82,10 @@ export default function SignupForm() {
         formData.append('username', form.username.trim());
         formData.append('email', form.email.trim().toLowerCase());
         formData.append('password', form.password.trim());
+        if (form.phone && form.phone.trim()) {
+            formData.append('phone', form.phone.trim());
+        }
+        formData.append('acceptTerms', form.acceptTerms.toString());
 
         try {
             const result = await signUpUser(formData);
@@ -89,67 +103,16 @@ export default function SignupForm() {
         }
     };
 
-    const handleGoogleSignUp = async () => {
-        try {
-            setGoogleLoading(true);
-            await signIn('google', {
-                callbackUrl: `/${params.locale}/dashboard`,
-                redirect: true,
-            });
-        } catch (error) {
-            console.error('Google sign-up error:', error);
-            toast.error('Failed to sign up with Google');
-            setGoogleLoading(false);
-        }
-    };
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-md mx-auto mt-20 p-8 bg-white shadow-xl rounded-2xl w-full"
+            className="max-w-md mx-auto mt-20 p-8 bg-white shadow-xl rounded-2xl w-full border border-blue-50"
         >
             <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">
                 {t('signupTitle') || 'Create your account'}
             </h2>
-
-            {/* Google Sign Up Button */}
-            <button
-                type="button"
-                onClick={handleGoogleSignUp}
-                disabled={googleLoading || loading}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 mb-6 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.58c2.18-2.01 3.44-4.97 3.44-8.09z"
-                    />
-                    <path
-                        fill="#34A853"
-                        d="M12 23c3.24 0 5.95-1.08 7.93-2.91l-3.58-2.77c-1.08.72-2.45 1.16-4.35 1.16-3.34 0-6.17-2.25-7.18-5.29H1.18v2.84C3.15 20.53 7.24 23 12 23z"
-                    />
-                    <path
-                        fill="#FBBC05"
-                        d="M4.82 14.19c-.25-.72-.38-1.49-.38-2.19s.13-1.47.38-2.19V7.17H1.18C.43 8.45 0 9.95 0 11.5s.43 3.05 1.18 4.33l3.64-2.64z"
-                    />
-                    <path
-                        fill="#EA4335"
-                        d="M12 4.75c1.88 0 3.57.65 4.9 1.9l3.58-3.58C17.95 1.19 15.24 0 12 0 7.24 0 3.15 2.47 1.18 6.17l3.64 2.84c1.01-3.04 3.84-5.26 7.18-5.26z"
-                    />
-                </svg>
-                {googleLoading ? 'Signing up...' : 'Sign up with Google'}
-            </button>
-
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-                </div>
-            </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <InputField
@@ -172,6 +135,40 @@ export default function SignupForm() {
                     error={errors.email}
                     required
                 />
+                {/* Phone Input */}
+                <div className="space-y-1">
+                    <label
+                        htmlFor="phone"
+                        className="block text-gray-700 mb-1 font-medium"
+                    >
+                        {t('phoneLabel')}
+                    </label>
+                    <div className={errors.phone ? 'border-red-500 rounded-lg' : ''}>
+                        <PhoneInput
+                            defaultCountry="ma"
+                            value={form.phone}
+                            onChange={(phone) => {
+                                setForm({ ...form, phone });
+                                setErrors((prev) => ({ ...prev, phone: '' }));
+                            }}
+                            className={`w-full ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm focus:ring-2 transition-all duration-200`}
+                            inputStyle={{
+                                width: '100%',
+                                padding: '0.625rem 1rem',
+                                border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                                borderRadius: '0.5rem',
+                                outline: 'none',
+                            }}
+                            buttonStyle={{
+                                border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                                borderRadius: '0.5rem 0 0 0.5rem',
+                            }}
+                        />
+                    </div>
+                    {errors.phone && (
+                        <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                    )}
+                </div>
                 <InputField
                     label={t('passwordLabel')}
                     placeholder={t('passwordPlaceholder')}
@@ -193,9 +190,45 @@ export default function SignupForm() {
                     required
                 />
 
+                {/* Terms and Conditions Checkbox */}
+                <div className="space-y-1">
+                    <div className="flex items-start gap-3">
+                        <input
+                            type="checkbox"
+                            id="acceptTerms"
+                            name="acceptTerms"
+                            checked={form.acceptTerms}
+                            onChange={handleChange}
+                            className="mt-1 h-4 w-4 border-gray-300 rounded focus:ring-2 focus:ring-offset-0 transition-colors"
+                            style={{ 
+                                accentColor: '#0ea5e9',
+                                '--tw-ring-color': '#0ea5e9'
+                            } as React.CSSProperties}
+                        />
+                        <label htmlFor="acceptTerms" className="text-sm text-gray-700">
+                            {t('acceptTermsLabel') || 'I accept the'}{' '}
+                            <a
+                                href={`/${params.locale}/terms`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium underline transition-colors"
+                                style={{ color: '#0ea5e9' }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = '#0284c7'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = '#0ea5e9'}
+                            >
+                                {t('termsAndPrivacy') || 'Terms & Privacy Policy'}
+                            </a>
+                            <span className="text-red-400 ml-1">*</span>
+                        </label>
+                    </div>
+                    {errors.acceptTerms && (
+                        <p className="text-red-500 text-xs mt-1 ml-7">{errors.acceptTerms}</p>
+                    )}
+                </div>
+
                 <Button
                     text={loading ? (t('loadingSignup') || 'Creating account...') : (t('submitSignup') || 'Create Account')}
-                    disabled={loading || googleLoading}
+                    disabled={loading}
                 />
             </form>
 
@@ -203,7 +236,10 @@ export default function SignupForm() {
                 {t('alreadyHaveAccount') || 'Already have an account?'}{' '}
                 <a
                     href={`/${params.locale}/login`}
-                    className="text-indigo-600 hover:text-indigo-700 font-medium hover:underline"
+                    className="font-medium hover:underline transition-colors"
+                    style={{ color: '#0ea5e9' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#0284c7'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#0ea5e9'}
                 >
                     {tTitle('login') || 'Sign in'}
                 </a>

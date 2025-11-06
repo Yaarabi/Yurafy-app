@@ -68,8 +68,23 @@ export async function POST(req: NextRequest) {
             AIAgent.findOne({ owner: userId, active: true }),
         ]);
 
+        // ✅ FIXED: Check if store is properly configured (not just placeholder)
         const hasStore = !!store;
+        const isStoreConfigured = hasStore && 
+            store.brandName && 
+            store.brandName !== 'My Store' &&
+            store.description && 
+            store.description !== 'Store setup in progress';
+        
+        // ✅ FIXED: Check if WhatsApp account is properly connected (not just placeholder)
         const hasWhatsApp = !!whatsappAccount;
+        const isWhatsAppConnected = hasWhatsApp && 
+            whatsappAccount.status === 'connected' && 
+            whatsappAccount.verified &&
+            whatsappAccount.waBusinessId && 
+            !whatsappAccount.waBusinessId.startsWith('draft-') &&
+            !whatsappAccount.waBusinessId.startsWith('temp-');
+        
         const hasAIAgent = !!aiAgent;
 
         // Determine what the selected plan needs based on features
@@ -79,100 +94,42 @@ export async function POST(req: NextRequest) {
             needsAIAgent: features.ai?.agent === true,
         };
 
-        // Track what we created
+        // Track what we created (but don't create placeholders if user needs to configure)
         const created: string[] = [];
 
-        // ✅ IMPROVED: Create store if needed and missing (check for domain conflicts)
-        if (planNeeds.needsStore && !hasStore) {
-            // Check for existing inactive stores first
+        // ✅ FIXED: Don't create placeholder stores/WhatsApp accounts during upgrade
+        // Instead, redirect to appropriate setup pages if needed
+        // Only reactivate existing inactive stores if they're already configured
+        if (planNeeds.needsStore && !isStoreConfigured) {
+            // Check for existing inactive stores that are already configured
             const existingStore = await Store.findOne({ owner: userId });
             
-            if (existingStore && !existingStore.active) {
-                // Reactivate existing store - ensure all required fields are present
+            if (existingStore && !existingStore.active && 
+                existingStore.brandName && existingStore.brandName !== 'My Store' &&
+                existingStore.description && existingStore.description !== 'Store setup in progress') {
+                // Reactivate existing configured store
                 existingStore.active = true;
-                
-                // ✅ FIX: Ensure all required fields are present (provide defaults if missing)
-                if (!existingStore.hero || !existingStore.hero.title || !existingStore.hero.subtitle || !existingStore.hero.imageUrl) {
-                    existingStore.hero = {
-                        title: existingStore.hero?.title || "Welcome to " + (existingStore.brandName || "My Store"),
-                        subtitle: existingStore.hero?.subtitle || "Your one-stop shop for quality products",
-                        imageUrl: existingStore.hero?.imageUrl || "/placeholder-hero.jpg",
-                    };
-                }
-                
-                if (!existingStore.about || !existingStore.about.title || !existingStore.about.description) {
-                    existingStore.about = {
-                        title: existingStore.about?.title || "About Us",
-                        description: existingStore.about?.description || "We are dedicated to providing the best products and services to our customers.",
-                    };
-                }
-                
-                if (!existingStore.footer || !existingStore.footer.text) {
-                    existingStore.footer = {
-                        text: existingStore.footer?.text || `© ${new Date().getFullYear()} ${existingStore.brandName || "My Store"}. All rights reserved.`,
-                    };
-                }
-                
                 await existingStore.save();
                 created.push('store');
-            } else if (!existingStore) {
-                // Generate unique domain
-                let domain = `store-${userId.toString().slice(-6)}`;
-                let domainExists = await Store.findOne({ domain });
-                let counter = 1;
-                
-                // Ensure domain is unique
-                while (domainExists) {
-                    domain = `store-${userId.toString().slice(-6)}-${counter}`;
-                    domainExists = await Store.findOne({ domain });
-                    counter++;
-                }
-                
-                // ✅ FIX: Include all required fields when creating a new store
-                await Store.create({
-                    owner: userId,
-                    brandName: "My Store",
-                    domain: domain,
-                    description: "Store setup in progress",
-                    themeId: 1,
-                    theme: {
-                        primaryColor: "#6366f1",
-                        secondaryColor: "#8b5cf6",
-                        textColor: "#1f2937",
-                    },
-                    themeStructure: {
-                        header: true,
-                        hero: true,
-                        about: true,
-                        trust: true,
-                        productGrid: true,
-                        footer: true,
-                    },
-                    hero: {
-                        title: "Welcome to My Store",
-                        subtitle: "Your one-stop shop for quality products",
-                        imageUrl: "/placeholder-hero.jpg",
-                    },
-                    about: {
-                        title: "About Us",
-                        description: "We are dedicated to providing the best products and services to our customers.",
-                    },
-                    footer: {
-                        text: `© ${new Date().getFullYear()} My Store. All rights reserved.`,
-                    },
-                    active: true,
-                });
-                created.push('store');
+                // Update isStoreConfigured after reactivation
+                // (will be checked again in redirect logic)
             }
+            // If no store or unconfigured store exists, redirect to info page (handled below)
         }
 
-        // ✅ IMPROVED: Create WhatsApp account if needed and missing (avoid duplicates)
-        if (planNeeds.needsWhatsApp && !hasWhatsApp) {
-            // Check for existing inactive WhatsApp account
+        // ✅ FIXED: Don't create placeholder WhatsApp accounts during upgrade
+        // Only reactivate existing inactive accounts if they're already configured
+        if (planNeeds.needsWhatsApp && !isWhatsAppConnected) {
+            // Check for existing inactive WhatsApp account that's already configured
             const existingWaAccount = await WhatsAppAccount.findOne({ owner: userId });
             
-            if (existingWaAccount && !existingWaAccount.active) {
-                // Reactivate existing account
+            if (existingWaAccount && !existingWaAccount.active &&
+                existingWaAccount.status === 'connected' &&
+                existingWaAccount.verified &&
+                existingWaAccount.waBusinessId &&
+                !existingWaAccount.waBusinessId.startsWith('draft-') &&
+                !existingWaAccount.waBusinessId.startsWith('temp-')) {
+                // Reactivate existing configured account
                 existingWaAccount.active = true;
                 existingWaAccount.settings.aiAgent = planNeeds.needsAIAgent;
                 // Generate webhook verify token if missing
@@ -181,42 +138,10 @@ export async function POST(req: NextRequest) {
                 }
                 await existingWaAccount.save();
                 created.push('whatsapp');
-            } else if (!existingWaAccount) {
-                // Create new placeholder account
-                const placeholderToken = encryptToken(`draft-${userId}-${Date.now()}`);
-                const draftBusinessId = `draft-${userId.toString().slice(-8)}`;
-                const draftNumberId = `draft-${userId.toString().slice(-8)}`;
-                const draftNumber = `+10000000000`;
-                // Generate random webhook verify token for this account
-                const webhookVerifyToken = generateWebhookVerifyToken();
-
-                await WhatsAppAccount.create({
-                    owner: userId,
-                    waBusinessId: draftBusinessId,
-                    waNumberId: draftNumberId,
-                    waNumber: draftNumber,
-                    waTokenEncrypted: placeholderToken,
-                    webhookVerifyToken: webhookVerifyToken, // Use generated verify token
-                    verified: false,
-                    status: 'disconnected',
-                    settings: {
-                        autoReply: planNeeds.needsAIAgent,
-                        orderConfirmation: false,
-                        ad: false,
-                        aiAgent: planNeeds.needsAIAgent,
-                    },
-                    aiConfig: {
-                        personality: "friendly assistant",
-                    },
-                    preferredTemplates: {
-                        greeting: null,
-                        orderConfirmation: null,
-                        ad: null,
-                    },
-                    active: true,
-                });
-                created.push('whatsapp');
+                // Update isWhatsAppConnected after reactivation
+                // (will be checked again in redirect logic)
             }
+            // If no WhatsApp account or unconfigured account exists, redirect to WhatsApp setup (handled below)
         }
 
         // ✅ IMPROVED: Create AI Agent if needed and missing
@@ -299,25 +224,53 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // ✅ FIXED: Determine redirect path with locale included
+        // ✅ FIXED: Re-check configuration status after reactivation
+        // After reactivating stores/WhatsApp accounts, we need to verify they're still configured
+        let finalStoreConfigured = isStoreConfigured;
+        let finalWhatsAppConnected = isWhatsAppConnected;
+        
+        if (created.includes('store')) {
+            // Re-check store after reactivation
+            const reactivatedStore = await Store.findOne({ owner: userId, active: true });
+            finalStoreConfigured = reactivatedStore && 
+                reactivatedStore.brandName && 
+                reactivatedStore.brandName !== 'My Store' &&
+                reactivatedStore.description && 
+                reactivatedStore.description !== 'Store setup in progress';
+        }
+        
+        if (created.includes('whatsapp')) {
+            // Re-check WhatsApp after reactivation
+            const reactivatedWa = await WhatsAppAccount.findOne({ owner: userId, active: true });
+            finalWhatsAppConnected = reactivatedWa && 
+                reactivatedWa.status === 'connected' && 
+                reactivatedWa.verified &&
+                reactivatedWa.waBusinessId && 
+                !reactivatedWa.waBusinessId.startsWith('draft-') &&
+                !reactivatedWa.waBusinessId.startsWith('temp-');
+        }
+
+        // ✅ FIXED: Determine redirect path based on what user needs to configure
         let redirectTo = '';
 
         if (planKey.toLowerCase() === 'free') {
             redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
-        } else if (normalizedPlanKey === 'Starter') {
-            redirectTo = hasStore || created.includes('store')
-                ? `/${locale}/onboarding/checkout?plan=${planKey}`
-                : `/${locale}/onboarding/info?plan=${planKey}`;
-        } else if (features.whatsapp?.enabled && !features.store?.enabled) {
-            // WhatsApp-only plans
-            redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
-        } else if (features.store?.enabled && features.whatsapp?.enabled) {
-            // Mixed plans (Pro Seller, Visionary)
-            redirectTo = hasStore || created.includes('store')
-                ? `/${locale}/onboarding/checkout?plan=${planKey}`
-                : `/${locale}/onboarding/info?plan=${planKey}`;
         } else {
-            redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
+            // ✅ FIXED: Check if user needs to configure store first
+            if (planNeeds.needsStore && !finalStoreConfigured) {
+                // User needs store features but doesn't have a properly configured store
+                redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
+            } 
+            // ✅ FIXED: Check if user needs to configure WhatsApp first
+            else if (planNeeds.needsWhatsApp && !finalWhatsAppConnected) {
+                // User needs WhatsApp features but doesn't have a connected WhatsApp account
+                // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
+                redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
+            } 
+            // ✅ FIXED: Both store and WhatsApp are ready, go to checkout
+            else {
+                redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
+            }
         }
 
         return NextResponse.json({

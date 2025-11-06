@@ -16,15 +16,152 @@ export default function HeroSection() {
     const handleLogin = () => router.push(`/${params.locale}/login`);
     const handleSignup = () => router.push(`/${params.locale}/signup`);
     const handleGetStarted = () => router.push(`/${params.locale}/signup`);
-    const handleLearnMore = () => router.push(`/${params.locale}#how-it-works`);
+    const handleLearnMore = () => {
+        const element = document.getElementById('how-it-works');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     return (
-        <section className="relative overflow-hidden py-20 px-6 sm:px-10 lg:px-16">
-            {/* Background Gradient with Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-indigo-600 to-cyan-500"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.25),_transparent_60%)]"></div>
-            <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-blue-400 opacity-30 blur-3xl rounded-full"></div>
-            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-purple-400 opacity-20 blur-2xl rounded-full"></div>
+        <section id="home" className="relative overflow-hidden py-20 px-6 sm:px-10 lg:px-16" style={{ backgroundColor: '#0ea5e9' }}>
+            {/* Background decorations */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.15),_transparent_60%)]"></div>
+            
+            {/* Geometric shapes - Smart/tech inspired - More visible */}
+            {/* Large floating hexagons */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.25, scale: 1, rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute top-20 right-10 w-40 h-40 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                </svg>
+            </motion.div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.3, scale: 1, rotate: [360, 0] }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="absolute bottom-20 left-10 w-36 h-36 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                </svg>
+            </motion.div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.2, scale: 1, rotate: [0, -360] }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                className="absolute top-1/2 left-1/4 w-28 h-28 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.25" />
+                </svg>
+            </motion.div>
+            
+            {/* Medium hexagons */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.2, scale: 1, rotate: [360, 0] }}
+                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                className="absolute top-1/3 right-1/3 w-24 h-24 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                </svg>
+            </motion.div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.18, scale: 1, rotate: [0, 360] }}
+                transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+                className="absolute bottom-1/3 left-1/3 w-20 h-20 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                </svg>
+            </motion.div>
+            
+            {/* Circuit pattern nodes - More visible */}
+            <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
+            <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
+            <div className="absolute bottom-1/3 left-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
+            <div className="absolute top-1/5 right-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
+            <div className="absolute bottom-1/5 left-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
+            <div className="absolute top-1/2 left-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
+            <div className="absolute top-1/2 right-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
+            
+            {/* Connection lines - More visible */}
+            <svg className="absolute inset-0 w-full h-full opacity-30 pointer-events-none">
+                <line x1="25%" y1="25%" x2="33%" y2="33%" stroke="white" strokeWidth="1.5" />
+                <line x1="67%" y1="33%" x2="75%" y2="25%" stroke="white" strokeWidth="1.5" />
+                <line x1="75%" y1="75%" x2="67%" y2="67%" stroke="white" strokeWidth="1.5" />
+                <line x1="33%" y1="67%" x2="25%" y2="75%" stroke="white" strokeWidth="1.5" />
+                <line x1="20%" y1="20%" x2="33%" y2="33%" stroke="white" strokeWidth="1.2" />
+                <line x1="80%" y1="80%" x2="67%" y2="67%" stroke="white" strokeWidth="1.2" />
+                <line x1="67%" y1="50%" x2="50%" y2="50%" stroke="white" strokeWidth="1.2" />
+                <line x1="33%" y1="50%" x2="50%" y2="50%" stroke="white" strokeWidth="1.2" />
+                <line x1="50%" y1="25%" x2="50%" y2="50%" stroke="white" strokeWidth="1" />
+                <line x1="50%" y1="75%" x2="50%" y2="50%" stroke="white" strokeWidth="1" />
+            </svg>
+            
+            {/* Y letter geometric shapes - More visible */}
+            <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 0.15, y: 0 }}
+                transition={{ duration: 2, delay: 0.5 }}
+                className="absolute top-1/2 right-1/4 w-48 h-48 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <path d="M50,10 L50,50 L30,70 L50,50 L70,70" stroke="white" strokeWidth="3" fill="none" opacity="0.4" />
+                </svg>
+            </motion.div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 0.12, scale: 1 }}
+                transition={{ duration: 2, delay: 0.8 }}
+                className="absolute top-1/4 left-1/5 w-32 h-32 pointer-events-none"
+            >
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <path d="M50,10 L50,50 L30,70 L50,50 L70,70" stroke="white" strokeWidth="2.5" fill="none" opacity="0.35" />
+                </svg>
+            </motion.div>
+            
+            {/* Floating dots pattern - More visible */}
+            <div className="absolute top-1/2 left-1/5 w-2 h-2 bg-white/60 rounded-full"></div>
+            <div className="absolute top-2/3 right-1/5 w-2.5 h-2.5 bg-white/60 rounded-full"></div>
+            <div className="absolute bottom-1/4 left-2/3 w-2 h-2 bg-white/60 rounded-full"></div>
+            <div className="absolute top-1/6 left-1/2 w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+            <div className="absolute bottom-1/6 right-1/2 w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+            <div className="absolute top-3/4 left-1/3 w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+            
+            {/* Additional hexagon grid pattern */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+                <svg className="w-full h-full" viewBox="0 0 200 200">
+                    <defs>
+                        <pattern id="hero-hexagons" width="50" height="50" patternUnits="userSpaceOnUse">
+                            <polygon points="25,5 45,15 45,35 25,45 5,35 5,15" fill="none" stroke="white" strokeWidth="1" opacity="0.3" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#hero-hexagons)" />
+                </svg>
+            </div>
+            
+            {/* Geometric circles */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.15, scale: 1 }}
+                transition={{ duration: 3 }}
+                className="absolute top-1/4 right-1/6 w-20 h-20 border-2 border-white/40 rounded-full pointer-events-none"
+            ></motion.div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 0.12, scale: 1 }}
+                transition={{ duration: 3, delay: 0.5 }}
+                className="absolute bottom-1/4 left-1/6 w-16 h-16 border-2 border-white/40 rounded-full pointer-events-none"
+            ></motion.div>
 
             <div className="relative z-10 max-w-7xl mx-auto flex flex-col min-h-[80vh] text-white">
                 {/* Top Bar */}

@@ -1,15 +1,15 @@
 import React from 'react';
 import { useStore } from '../hooks/useStore';
-import { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/icons';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 
-const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'twitter'; href: string }> = ({
+const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string }> = ({
     platform,
     href,
 }) => {
     const Icon = {
-        facebook: FacebookIcon,
-        instagram: InstagramIcon,
-        twitter: TwitterIcon,
+        facebook: FaFacebook,
+        instagram: FaInstagram,
+        tiktok: FaTiktok,
     }[platform];
 
     return (
@@ -50,8 +50,8 @@ const Footer: React.FC = () => {
                         {socialLinks.instagram && (
                             <SocialIcon platform="instagram" href={socialLinks.instagram} />
                         )}
-                        {socialLinks.twitter && (
-                            <SocialIcon platform="twitter" href={socialLinks.twitter} />
+                        {socialLinks.tiktok && (
+                            <SocialIcon platform="tiktok" href={socialLinks.tiktok} />
                         )}
                     </div>
                 </div>

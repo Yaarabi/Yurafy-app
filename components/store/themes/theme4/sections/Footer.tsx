@@ -1,16 +1,16 @@
 import React from 'react';
 import { useStore } from '@/components/store/hooks/useStore'; 
-import { FacebookIcon, InstagramIcon, TwitterIcon } from '@/components/store/components/icons';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 
-const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'twitter'; href: string; color: string }> = ({
+const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
     href,
     color,
 }) => {
     const Icon = {
-        facebook: FacebookIcon,
-        instagram: InstagramIcon,
-        twitter: TwitterIcon,
+        facebook: FaFacebook,
+        instagram: FaInstagram,
+        tiktok: FaTiktok,
     }[platform];
 
     return (
@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
                             <SocialIcon platform="instagram" href={socialLinks.instagram} color={primaryColor} />
                         )}
                         {socialLinks.twitter && (
-                            <SocialIcon platform="twitter" href={socialLinks.twitter} color={primaryColor} />
+                            <SocialIcon platform="tiktok" href={socialLinks.tiktok} color={primaryColor} />
                         )}
                     </div>
                 </div>

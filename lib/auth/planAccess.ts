@@ -26,9 +26,9 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
     const user = await User.findById(userId).populate('currentPlanId');
     if (!user || !user.currentPlanId) {
         return {
-            isValid: false,
+            isValid: true, // Free plan is always valid
             planKey: "free",
-            isExpired: true,
+            isExpired: false, // Free plan never expires
             daysRemaining: 0,
             endDate: undefined,
             features: {},
@@ -38,9 +38,9 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
     const plan = await Plan.findById(user.currentPlanId);
     if (!plan) {
         return {
-            isValid: false,
+            isValid: true, // Free plan is always valid
             planKey: "free",
-            isExpired: true,
+            isExpired: false, // Free plan never expires
             daysRemaining: 0,
             endDate: undefined,
             features: {},
@@ -82,7 +82,8 @@ export async function checkFeatureAccess(
         return { hasAccess: false, reason: "User plan not found" };
     }
 
-    if (planStatus.isExpired) {
+    // Free plans never expire, so skip expiration check for free plans
+    if (planStatus.isExpired && planStatus.planKey !== "free") {
         return { hasAccess: false, reason: "Plan has expired" };
     }
 
@@ -109,7 +110,8 @@ export async function requireFeature(
         return { allowed: false, error: "Plan not found" };
     }
 
-    if (planStatus.isExpired) {
+    // Free plans never expire, so skip expiration check for free plans
+    if (planStatus.isExpired && planStatus.planKey !== "free") {
         return {
             allowed: false,
             error: `Your plan has expired. Please renew to continue using this feature.`,

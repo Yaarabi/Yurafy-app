@@ -1,5 +1,5 @@
 import React from 'react';
-import { CashIcon, TruckIcon, FashionIcon } from '@/components/store/components/icons';
+import { FaDollarSign, FaTruck, FaShieldAlt } from 'react-icons/fa';
 import { useStore } from '../../../hooks/useStore';
 import { motion, Variants } from 'framer-motion';
 
@@ -16,17 +16,17 @@ const Trust: React.FC = () => {
 
     const features = [
         {
-            Icon: CashIcon,
+            Icon: FaDollarSign,
             title: 'Pay on Delivery',
             description: 'Pay when you receive your order. No upfront payment required.',
         },
         {
-            Icon: TruckIcon,
+            Icon: FaTruck,
             title: 'Fast Shipping',
             description: 'We ensure your order gets to you as quickly as possible.',
         },
         {
-            Icon: FashionIcon,
+            Icon: FaShieldAlt,
             title: 'Quality Guaranteed',
             description: 'We stand behind the quality of our products, 100% satisfaction.',
         },
@@ -61,7 +61,7 @@ const Trust: React.FC = () => {
                                     borderColor: primaryColor
                                 }}
                             >
-                                <feature.Icon className="h-8 w-8 text-white" />
+                                <feature.Icon className="text-2xl text-white" />
                             </div>
                             <h4 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h4>
                             <p className="text-gray-600 leading-relaxed">{feature.description}</p>

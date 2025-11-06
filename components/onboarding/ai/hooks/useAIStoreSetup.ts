@@ -41,7 +41,7 @@ export function useAIStoreSetup(
     plan: string,
     selectedTheme?: SelectedTheme | null,
     selectedThemeStructure?: SelectedThemeStructure | null,
-    selectedProductPageStructure?: SelectedProductPageStructure | null,
+    // ✅ Removed: selectedProductPageStructure - no longer needed
     onComplete?: (storeData: any) => void
 ) {
     const router = useRouter();
@@ -54,13 +54,11 @@ export function useAIStoreSetup(
     const [messages, setMessages] = useState<Message[]>([
         {
             role: 'assistant',
-            content: selectedTheme && selectedThemeStructure && selectedProductPageStructure
-                ? `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. I see you've selected Theme #${selectedTheme.themeId}, configured your store structure, and product page features - excellent choices! Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
-                : selectedTheme && selectedThemeStructure
-                    ? `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. I see you've selected Theme #${selectedTheme.themeId} and configured your store structure - excellent choices! Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
-                    : selectedTheme
-                        ? `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. I see you've selected Theme #${selectedTheme.themeId} - great choice! Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
-                        : `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
+            content: selectedTheme && selectedThemeStructure
+                ? `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. I see you've selected Theme #${selectedTheme.themeId} and configured your store structure - excellent choices! Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
+                : selectedTheme
+                    ? `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. I see you've selected Theme #${selectedTheme.themeId} - great choice! Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
+                    : `Hello! I'm your AI store setup assistant. I'll help you create your online store step by step. Let's start! What kind of business are you running? Tell me about your brand, products, or services.`
         }
     ]);
     const [input, setInput] = useState('');
@@ -115,7 +113,7 @@ export function useAIStoreSetup(
                         threadId: threadId || undefined,
                         selectedTheme: selectedTheme || undefined,
                         selectedThemeStructure: selectedThemeStructure || undefined,
-                        selectedProductPageStructure: selectedProductPageStructure || undefined,
+                        // ✅ Removed: selectedProductPageStructure - no longer needed
                     }),
             });
 
@@ -297,24 +295,54 @@ export function useAIStoreSetup(
     const handleSaveAndRedirect = async (data: any) => {
         setSaving(true);
         try {
-            // Send final store data to API to save
-            const response = await fetch('/api/onboarding/ai-setup', {
+            // Use current storeData state (which includes any user edits)
+            const currentData = data || storeData;
+            
+            // Transform data to match store API format
+            const storePayload = {
+                brandName: currentData.brandName,
+                domain: currentData.domain,
+                description: currentData.description,
+                themeId: selectedTheme?.themeId || currentData.themeId || 1,
+                theme: {
+                    primaryColor: selectedTheme?.theme?.primaryColor || currentData.theme?.primaryColor || '#3B82F6',
+                    secondaryColor: selectedTheme?.theme?.secondaryColor || currentData.theme?.secondaryColor,
+                    textColor: selectedTheme?.theme?.textColor || currentData.theme?.textColor,
+                },
+                themeStructure: selectedThemeStructure || currentData.themeStructure || {
+                    header: true,
+                    hero: true,
+                    about: true,
+                    trust: true,
+                    productGrid: true,
+                    footer: true,
+                },
+                hero: {
+                    title: currentData.hero?.title || '',
+                    subtitle: currentData.hero?.subtitle || '',
+                    imageUrl: currentData.hero?.imageUrl || '',
+                },
+                about: {
+                    title: currentData.about?.title || '',
+                    description: currentData.about?.description || '',
+                },
+                footer: {
+                    text: currentData.footer?.text || '',
+                },
+                socialLinks: currentData.socialLinks || {},
+                headerLinks: currentData.headerLinks || [],
+            };
+
+            // Send to store API
+            const response = await fetch('/api/store', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: "Save store with these details",
-                    plan,
-                    threadId: threadId || undefined,
-                    selectedTheme: selectedTheme || undefined,
-                    selectedThemeStructure: selectedThemeStructure || undefined,
-                    selectedProductPageStructure: selectedProductPageStructure || undefined,
-                    finalStoreData: data || storeData,
-                }),
+                body: JSON.stringify(storePayload),
             });
 
             const responseData = await response.json();
 
-            if (responseData.success && responseData.storeCreated) {
+            if (response.ok && responseData.store) {
                 toast.success('Store saved successfully!');
                 onComplete?.(responseData);
                 // Redirect to checkout

@@ -1,7 +1,7 @@
 
 import { connectDB } from "@/lib/db/mongoDB";
 import Store, { IStore } from "@/models/store";
-import User from "@/models/users";
+import User, { IUser } from "@/models/users";
 
 
 export interface SerializedStore {
@@ -39,7 +39,7 @@ export interface SerializedStore {
     socialLinks?: {
         facebook?: string;
         instagram?: string;
-        twitter?: string;
+        tiktok?: string;
     };
     headerLinks: Array<{
         label: string;
@@ -97,7 +97,7 @@ export function serializeStore(store: any): SerializedStore {
         socialLinks: store.socialLinks ? {
             facebook: store.socialLinks.facebook,
             instagram: store.socialLinks.instagram,
-            twitter: store.socialLinks.twitter,
+            tiktok: store.socialLinks.tiktok,
         } : undefined,
         headerLinks: store.headerLinks ? store.headerLinks.map((link: any) => ({
             label: link.label,
@@ -128,8 +128,8 @@ export async function getStoreByDomain(domain: string): Promise<SerializedStore 
     // If store doesn't have a logoUrl, fetch the user's logo as fallback
     if (!serialized.logoUrl && storeDoc.owner) {
         try {
-            const user = await User.findById(storeDoc.owner).select('logo').lean();
-            if (user?.logo) {
+            const user = await User.findById(storeDoc.owner).select('logo').lean() as IUser | null;
+            if (user && user.logo) {
                 serialized.logoUrl = user.logo;
             }
         } catch (error) {

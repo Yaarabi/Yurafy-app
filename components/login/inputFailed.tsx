@@ -42,8 +42,9 @@ export default function InputField({
             required={required}
             aria-invalid={!!error}
             className={`w-full px-4 py-2.5 rounded-lg bg-gray-50 text-gray-900 border 
-            ${error ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 focus:ring-indigo-500'}
+            ${error ? 'border-red-500 focus:ring-red-400' : 'border-gray-300'}
             focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200`}
+            style={error ? undefined : { '--tw-ring-color': '#0ea5e9' } as React.CSSProperties}
         />
 
         {error && (

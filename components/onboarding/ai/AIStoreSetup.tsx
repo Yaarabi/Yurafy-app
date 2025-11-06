@@ -37,13 +37,13 @@ export default function AIStoreSetup({
     plan, 
     selectedTheme,
     selectedThemeStructure,
-    selectedProductPageStructure,
+    // ✅ Removed: selectedProductPageStructure - no longer needed
     onComplete 
 }: { 
     plan: string;
     selectedTheme?: SelectedTheme | null;
     selectedThemeStructure?: SelectedThemeStructure | null;
-    selectedProductPageStructure?: SelectedProductPageStructure | null;
+    // ✅ Removed: selectedProductPageStructure - no longer needed
     onComplete: (storeData: any) => void;
 }) {
     const {
@@ -61,7 +61,7 @@ export default function AIStoreSetup({
         handleEditField,
         handleSaveAndRedirect,
         saving,
-    } = useAIStoreSetup(plan, selectedTheme, selectedThemeStructure, selectedProductPageStructure, onComplete);
+    } = useAIStoreSetup(plan, selectedTheme, selectedThemeStructure, onComplete);
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">

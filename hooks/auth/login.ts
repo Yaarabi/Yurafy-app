@@ -98,16 +98,22 @@ export function useSignUp() {
         const username = formData.get("username")?.toString().trim();
         const email = formData.get("email")?.toString().trim().toLowerCase();
         const password = formData.get("password")?.toString().trim();
+        const phone = formData.get("phone")?.toString().trim();
+        const acceptTerms = formData.get("acceptTerms")?.toString() === 'true';
 
         if (!username || !email || !password) {
         return "All fields are required.";
+        }
+
+        if (!acceptTerms) {
+        return "You must accept the terms and conditions.";
         }
 
         try {
         const res = await fetch("/api/signUp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify({ username, email, password, phone, acceptTerms }),
         });
 
         const data = await res.json();

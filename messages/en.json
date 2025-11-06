@@ -2,11 +2,11 @@
 {
     "AboutSection": {
         "title": "Who We Are",
-        "description": "Yura IT is a forward-thinking technology company dedicated to helping small businesses grow online. We combine AI, automation, and expert web development to deliver smart solutions that save time and increase sales. Whether you’re a local artisan, retailer, or online seller, our tools help you reach your customers faster and smarter.",
-        "highlight1": "AI-generated product descriptions for instant, high-quality content",
-        "highlight2": "Instagram bot for automated posting and engagement",
-        "highlight3": "WhatsApp bot for customer communication and order updates",
-        "highlight4": "Custom product pages to showcase and sell your products"
+        "description": "Yurafy is a cutting-edge technology platform dedicated to empowering businesses of all sizes with AI-driven automation solutions. We combine artificial intelligence, automation, and expert web development to deliver intelligent solutions that streamline operations, increase sales, and save valuable time. Whether you're a local artisan, retailer, e-commerce seller, or growing enterprise, our comprehensive tools help you reach customers faster, smarter, and more effectively.",
+        "highlight1": "AI-powered content generation for instant, high-quality product descriptions and marketing copy",
+        "highlight2": "Automated WhatsApp messaging and customer engagement solutions",
+        "highlight3": "Custom web store development with responsive design and SEO optimization",
+        "highlight4": "Complete business automation platform from product pages to customer communication"
     },
     "FeaturesSection": {
         "title": "All-in-One Automation for Sellers",
@@ -29,8 +29,8 @@
     },
     
     "Footer": {
-        "companyName": "Yura IT",
-        "companyDescription": "Empowering Moroccan SMEs with AI-driven automation. Create, post, and grow effortlessly.",
+        "companyName": "Yurafy",
+        "companyDescription": "Empowering businesses with AI-driven automation. Create, post, and grow effortlessly.",
         "navigation": {
         "title": "Navigation",
         "home": "Home",
@@ -41,6 +41,7 @@
         },
         "resources": {
         "title": "Resources",
+        "resources": "Resources",
         "blog": "Blog",
         "faqs": "FAQs",
         "support": "Support",
@@ -52,20 +53,20 @@
         "phone": "Phone",
         "address": "Address"
         },
-        "copyright": "© 2025 Yura IT – All rights reserved."
+        "copyright": "© 2025 Yurafy – All rights reserved."
     },
     "HeroSection": {
     "language": "EN",
     "login": "Login",
     "signup": "Sign Up",
-    "logoAlt": "Yura IT Logo",
-    "title": "Yura IT – AI-Powered Automation - Smart Solutions",
-    "subtitle": "Simplify your social media, boost sales, and save time with AI-generated product content, Instagram & WhatsApp automation, and custom product pages.",
+    "logoAlt": "Yurafy Logo",
+    "title": "Yurafy – AI-Powered Business Automation Platform",
+    "subtitle": "Transform your business with AI-driven automation. Create stunning stores, automate WhatsApp messaging, and scale effortlessly with intelligent solutions.",
     "cta": {
         "getStarted": "Get Started Free",
         "learnMore": "Learn More"
     },
-    "dashboardAlt": "Seller dashboard mockup"
+    "dashboardAlt": "Business dashboard mockup"
     },
     
     "HowItWorks": {
@@ -90,75 +91,48 @@
     },
     
     "OtherServicesSection": {
-        "title": "Grow Smarter with Yura IT Services",
-        "subtitle": "Explore how Yura IT can help your business thrive with web development, AI-powered automation, and integration solutions.",
+        "title": "Transform Your Business with Custom Web Solutions",
+        "subtitle": "Looking for a fully custom website? Our expert team builds stunning, responsive websites tailored to your unique brand and business needs. From concept to launch, we deliver exceptional web experiences that drive results.",
         "service1": {
         "title": "Custom Web Development",
-        "description": "Building fast, responsive, and modern websites tailored to your business needs."
+        "description": "Professional, responsive websites built from scratch. We create fast-loading, SEO-optimized sites that perfectly represent your brand and convert visitors into customers."
         },
         "service2": {
-        "title": "AI Solutions",
-        "description": "Integrating AI to automate tasks, generate content, and optimize workflows."
+        "title": "AI-Powered Solutions",
+        "description": "Integrate cutting-edge AI to automate workflows, generate content, and provide intelligent customer interactions that scale with your business."
         },
         "service3": {
-        "title": "Automation & Integrations",
-        "description": "Connecting apps, social media, and communication channels to streamline operations."
+        "title": "Business Automation",
+        "description": "Connect your apps, social media, and communication channels into a seamless automated system that works 24/7 to grow your business."
         },
         "cta": {
-        "contact": "Contact Us"
+        "contact": "Get Started"
         }
     },
     
     "PlansSection": {
     "title": "Flexible Plans to Fit Your Business",
     "mostPopular": "⭐ Most Popular",
-    "choosePlan": "Choose Plan",
-    "starter": {
-        "name": "Starter",
-        "feature1": "Product pages",
-        "feature2": "AI-generated content",
-        "price": "$5/mo"
-    },
-    "whatsapp": {
-        "name": "WhatsApp Bot",
-        "feature1": "Starter + WhatsApp automation",
-        "price": "$20/mo"
-    },
-    "aiAgent": {
-        "name": "Insta Bot",
-        "feature1": "Starter + Instagram automation",
-        "price": "$10/mo"
-    },
-    "creator": {
-        "name": "Creator",
-        "feature1": "Advanced content tools",
-        "price": "$15/mo"
-    },
-    "proSeller": {
-        "name": "Pro Seller",
-        "feature1": "All features included",
-        "price": "$30/mo"
-    },
-    "visionary": {
-        "name": "Visionary",
-        "feature1": "Pro Seller + priority support",
-        "price": "$50/mo"
-    }
+    "choosePlan": "Choose Plan"
     }, 
     "TestimonialsSection": {
-        "title": "What Our Sellers Say",
+        "title": "What Our Customers Say",
         "testimonial1": {
-        "quote": "Yura IT made posting on Instagram effortless — my products reach more clients than ever.",
-        "name": "Fatima, Artisan"
+        "quote": "Yurafy transformed my business. The AI automation saves me hours every day, and my sales have increased by 40% since using the platform.",
+        "name": "Fatima, E-commerce Owner"
         },
         "testimonial2": {
-        "quote": "AI descriptions save me hours every week. The WhatsApp bot keeps my customers informed instantly.",
+        "quote": "The WhatsApp automation is incredible. My customers get instant responses, and I can focus on growing my business instead of answering messages all day.",
         "name": "Youssef, Retailer"
+        },
+        "testimonial3": {
+        "quote": "The custom web development service exceeded my expectations. My new website looks professional and converts so much better than before.",
+        "name": "Sarah, Business Owner"
         }
     },
     
     "CallToAction": {
-        "headline": "Ready to Grow Your Business with Yura IT?",
+        "headline": "Ready to Transform Your Business with Yurafy?",
         "cta": "Get Started Now"
     },
     "HeroSectionLogin": {
@@ -202,17 +176,22 @@
 
     "errorRequired": "This field is required",
     "errorInvalidEmail": "Please enter a valid email address",
+    "errorInvalidPhone": "Please enter a valid phone number",
     "errorPasswordMismatch": "Passwords do not match",
+    "errorAcceptTerms": "You must accept the terms and conditions to continue",
     "errorInvalidCredentials": "Invalid email or password. Please try again.",
     "errorAccountExists": "An account with this email already exists.",
     "errorUnexpected": "Something went wrong. Please try again.",
+
+    "acceptTermsLabel": "I accept the",
+    "termsAndPrivacy": "Terms & Privacy Policy",
 
     "successSignup": "Account created successfully! Redirecting...",
     "successLogin": "Welcome back!"
     },
     "FooterLogin": {
         "companyDescription": "Empowering with AI-driven automation.",
-        "copyright": "© 2025 Yura IT – All rights reserved."
+        "copyright": "© 2025 Yurafy – All rights reserved."
     },
     "common": {
         "appTitle": "Seller Dashboard",
@@ -399,7 +378,129 @@
         },
         "subscribeButton": "Subscribe Now",
         "manageSubscriptionButton": "Manage Subscription"
+    },
+    "Resources": {
+        "title": "Resources",
+        "description": "Access helpful resources, guides, and support to help you succeed with Yurafy.",
+        "blog": {
+            "title": "Blog",
+            "description": "Read our latest articles, tips, and insights on business automation, AI, and e-commerce."
+        },
+        "faqs": {
+            "title": "FAQs",
+            "description": "Find answers to common questions about Yurafy features, pricing, and usage."
+        },
+        "support": {
+            "title": "Support",
+            "description": "Get help from our support team via chat, email, or phone."
+        },
+        "terms": {
+            "title": "Terms & Privacy",
+            "description": "Review our terms of service and privacy policy to understand how we protect your data."
+        }
+    },
+    "Blog": {
+        "title": "Blog",
+        "description": "Stay updated with the latest insights, tips, and best practices for business automation and AI-powered solutions.",
+        "empty": "No blog posts available yet. Check back soon for updates!",
+        "post1": {
+            "title": "Getting Started with Yurafy: A Complete Guide",
+            "excerpt": "Learn how to set up your Yurafy account, connect your business accounts, and start automating your workflows in minutes. This comprehensive guide covers everything from account creation to advanced features."
+        },
+        "post2": {
+            "title": "How AI Automation Can Transform Your Business",
+            "excerpt": "Discover the power of AI-driven automation and how it can help you save time, increase sales, and scale your business operations. Real-world examples and success stories from Yurafy customers."
+        },
+        "post3": {
+            "title": "WhatsApp Business Automation: Best Practices",
+            "excerpt": "Learn how to effectively use WhatsApp automation for customer engagement, order management, and marketing campaigns. Tips and strategies from industry experts."
+        }
+    },
+    "FAQs": {
+        "title": "Frequently Asked Questions",
+        "description": "Find answers to the most common questions about Yurafy.",
+        "faq1": {
+            "question": "What is Yurafy?",
+            "answer": "Yurafy is an AI-powered business automation platform that helps businesses create online stores, automate WhatsApp messaging, and streamline operations with intelligent solutions. We combine web development, AI automation, and customer engagement tools into one comprehensive platform."
+        },
+        "faq2": {
+            "question": "How much does Yurafy cost?",
+            "answer": "Yurafy offers flexible pricing plans starting from a free tier with basic features. Paid plans range from $11/month for Starter to $50/month for Visionary, with plans for businesses of all sizes. Visit our pricing page to see detailed feature comparisons."
+        },
+        "faq3": {
+            "question": "Do I need technical knowledge to use Yurafy?",
+            "answer": "No technical knowledge is required! Yurafy is designed to be user-friendly and intuitive. Our AI-powered tools guide you through setup, and our support team is always available to help. Most users can start using the platform within minutes."
+        },
+        "faq4": {
+            "question": "Can I customize my store design?",
+            "answer": "Yes! Yurafy offers multiple pre-designed themes and allows you to customize colors, fonts, and layouts. For Pro Seller and Visionary plans, you can also add custom CSS and JavaScript for complete design control."
+        },
+        "faq5": {
+            "question": "How does WhatsApp automation work?",
+            "answer": "Yurafy integrates with WhatsApp Business API to automate customer interactions. You can set up auto-replies, order confirmations, shipping notifications, and broadcast campaigns. The AI agent can handle customer inquiries 24/7, providing instant responses."
+        },
+        "faq6": {
+            "question": "Is my data secure?",
+            "answer": "Absolutely. We take data security seriously and use industry-standard encryption, secure authentication, and regular security audits. Your data is stored securely and never shared with third parties without your consent. Read our Privacy Policy for more details."
+        },
+        "stillHaveQuestions": "Still have questions?",
+        "contactSupport": "Our support team is here to help you succeed with Yurafy.",
+        "contactButton": "Contact Support"
+    },
+    "Support": {
+        "title": "Support Center",
+        "description": "Get the help you need to succeed with Yurafy. Our support team is available via multiple channels.",
+        "chat": {
+            "title": "Live Chat",
+            "description": "Chat with our support team in real-time for instant help.",
+            "action": "Start Chat"
+        },
+        "email": {
+            "title": "Email Support",
+            "description": "Send us an email and we'll respond within 24 hours.",
+            "action": "Send Email"
+        },
+        "phone": {
+            "title": "Phone Support",
+            "description": "Call us directly for immediate assistance.",
+            "action": "Call Now"
+        },
+        "hours": {
+            "title": "Support Hours",
+            "description": "Monday - Friday: 9:00 AM - 6:00 PM (GMT+1) | Saturday: 10:00 AM - 2:00 PM"
+        }
+    },
+    "Terms": {
+        "title": "Terms of Service & Privacy Policy",
+        "description": "Please read these terms carefully before using Yurafy. By using our services, you agree to these terms.",
+        "lastUpdated": "Last Updated: January 2025",
+        "section1": {
+            "title": "1. Acceptance of Terms",
+            "content": "By accessing and using Yurafy, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service."
+        },
+        "section2": {
+            "title": "2. Use License",
+            "content": "Permission is granted to temporarily use Yurafy for personal or commercial business purposes. This is the grant of a license, not a transfer of title, and under this license you may not: modify or copy the materials; use the materials for any commercial purpose or for any public display; attempt to reverse engineer any software contained in Yurafy; remove any copyright or other proprietary notations from the materials."
+        },
+        "section3": {
+            "title": "3. Privacy Policy",
+            "content": "We respect your privacy and are committed to protecting your personal information. We collect only the information necessary to provide our services and improve your experience. Your data is encrypted, stored securely, and never shared with third parties without your explicit consent. For detailed information about data collection, usage, and your rights, please review our complete Privacy Policy."
+        },
+        "section4": {
+            "title": "4. Service Availability",
+            "content": "We strive to maintain high availability of our services, but we do not guarantee uninterrupted access. Yurafy may be temporarily unavailable due to maintenance, updates, or unforeseen circumstances. We are not liable for any losses resulting from service interruptions."
+        },
+        "section5": {
+            "title": "5. Limitation of Liability",
+            "content": "In no event shall Yurafy or its suppliers be liable for any damages arising out of the use or inability to use the materials on Yurafy, even if Yurafy or an authorized representative has been notified orally or in writing of the possibility of such damage."
+        },
+        "questions": {
+            "title": "Questions about our Terms?",
+            "description": "If you have any questions about our Terms of Service or Privacy Policy, please don't hesitate to contact us.",
+            "button": "Contact Support"
+        }
     }
+}
 
 
 

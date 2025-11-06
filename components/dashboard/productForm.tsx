@@ -54,12 +54,18 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         brand: '',
         mainImage: '',
         images: [],
+        imageDescriptions: [], // ✅ Added: Image descriptions
         sizes: [],
         colors: [],
+        bundles: { // ✅ Added: Bundle configuration
+            type: 'buy_x_get_y',
+            enabled: false,
+        },
         ...initialValues,
     });
 
     const [showVariants, setShowVariants] = useState(false);
+    const [showBundles, setShowBundles] = useState(false); // ✅ Added: Bundle section toggle
     const [errors, setErrors] = useState<Partial<Record<keyof IProduct, string>>>({});
 
     useEffect(() => {
@@ -213,12 +219,25 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
                 const ext = url.split('.').pop()?.toLowerCase();
                 if (ext?.match(/(jpg|jpeg|png|webp|gif)/)) {
                     return (
-                    <img
-                        key={idx}
-                        src={url}
-                        alt={`Preview ${idx + 1}`}
-                        className="w-28 h-28 object-cover rounded-lg border border-gray-700"
-                    />
+                    <div key={idx} className="relative">
+                        <img
+                            src={url}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-28 h-28 object-cover rounded-lg border border-gray-700"
+                        />
+                        {/* ✅ Added: Quick image description input */}
+                        <input
+                            type="text"
+                            value={values.imageDescriptions?.[idx] || ''}
+                            onChange={(e) => {
+                                const descs = [...(values.imageDescriptions || [])];
+                                descs[idx] = e.target.value;
+                                setValues(prev => ({ ...prev, imageDescriptions: descs }));
+                            }}
+                            placeholder="Description"
+                            className="absolute bottom-0 left-0 right-0 px-2 py-1 text-xs bg-black bg-opacity-70 text-white rounded-b-lg border-t border-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                        />
+                    </div>
                     );
                 } else if (ext?.match(/(mp4|webm|ogg)/)) {
                     return (
@@ -245,6 +264,33 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
             </div>
         </div>
 
+        {/* ✅ Added: Image Descriptions Section */}
+        {values.images && values.images.length > 0 && (
+            <div className="mt-4">
+                <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
+                    Image Descriptions (Optional)
+                </label>
+                <div className="flex flex-col gap-2">
+                    {values.images.map((url, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500 dark:text-gray-400 w-12">Img {idx + 1}:</span>
+                            <input
+                                type="text"
+                                value={values.imageDescriptions?.[idx] || ''}
+                                onChange={(e) => {
+                                    const descs = [...(values.imageDescriptions || [])];
+                                    descs[idx] = e.target.value;
+                                    setValues(prev => ({ ...prev, imageDescriptions: descs }));
+                                }}
+                                placeholder="Enter description for this image"
+                                className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
         {/* Sizes & Colors */}
         <div className="mt-4">
             <button
@@ -265,6 +311,156 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
                 }
                 />
             </div>
+            )}
+        </div>
+
+        {/* ✅ Added: Bundles & Promotions Section */}
+        <div className="mt-4">
+            <button
+                type="button"
+                onClick={() => setShowBundles((prev) => !prev)}
+                className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-medium"
+            >
+                {showBundles ? 'Hide Bundles & Promotions' : 'Manage Bundles & Promotions'}
+            </button>
+
+            {showBundles && (
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-2 mb-4">
+                        <input
+                            type="checkbox"
+                            id="bundleEnabled"
+                            checked={values.bundles?.enabled || false}
+                            onChange={(e) => {
+                                setValues(prev => ({
+                                    ...prev,
+                                    bundles: {
+                                        ...prev.bundles,
+                                        type: prev.bundles?.type || 'buy_x_get_y',
+                                        enabled: e.target.checked,
+                                    }
+                                }));
+                            }}
+                            className="w-4 h-4 rounded text-brand-blue focus:ring-brand-blue"
+                        />
+                        <label htmlFor="bundleEnabled" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Enable Bundle/Promotion
+                        </label>
+                    </div>
+
+                    {values.bundles?.enabled && (
+                        <div className="space-y-4">
+                            {/* Bundle Type */}
+                            <div>
+                                <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
+                                    Promotion Type
+                                </label>
+                                <select
+                                    value={values.bundles?.type || 'buy_x_get_y'}
+                                    onChange={(e) => {
+                                        setValues(prev => ({
+                                            ...prev,
+                                            bundles: {
+                                                ...prev.bundles,
+                                                type: e.target.value as 'buy_x_get_y' | 'special_price' | 'percentage_off',
+                                                enabled: true,
+                                            }
+                                        }));
+                                    }}
+                                    className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                                >
+                                    <option value="buy_x_get_y">Buy X Get Y Free</option>
+                                    <option value="special_price">Special Bundle Price</option>
+                                    <option value="percentage_off">Percentage Off</option>
+                                </select>
+                            </div>
+
+                            {/* Buy X Get Y */}
+                            {values.bundles?.type === 'buy_x_get_y' && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Input
+                                        label="Buy Quantity (e.g., 2)"
+                                        name="buyQuantity"
+                                        type="number"
+                                        min="1"
+                                        value={values.bundles?.buyQuantity || ''}
+                                        onChange={(e) => {
+                                            setValues(prev => ({
+                                                ...prev,
+                                                bundles: {
+                                                    ...prev.bundles,
+                                                    buyQuantity: parseInt(e.target.value) || 0,
+                                                    enabled: true,
+                                                }
+                                            }));
+                                        }}
+                                    />
+                                    <Input
+                                        label="Get Quantity Free (e.g., 1)"
+                                        name="getQuantity"
+                                        type="number"
+                                        min="0"
+                                        value={values.bundles?.getQuantity || ''}
+                                        onChange={(e) => {
+                                            setValues(prev => ({
+                                                ...prev,
+                                                bundles: {
+                                                    ...prev.bundles,
+                                                    getQuantity: parseInt(e.target.value) || 0,
+                                                    enabled: true,
+                                                }
+                                            }));
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Special Price */}
+                            {values.bundles?.type === 'special_price' && (
+                                <Input
+                                    label="Special Bundle Price"
+                                    name="specialPrice"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={values.bundles?.specialPrice || ''}
+                                    onChange={(e) => {
+                                        setValues(prev => ({
+                                            ...prev,
+                                            bundles: {
+                                                ...prev.bundles,
+                                                specialPrice: parseFloat(e.target.value) || 0,
+                                                enabled: true,
+                                            }
+                                        }));
+                                    }}
+                                />
+                            )}
+
+                            {/* Percentage Off */}
+                            {values.bundles?.type === 'percentage_off' && (
+                                <Input
+                                    label="Discount Percentage (e.g., 20)"
+                                    name="percentageOff"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value={values.bundles?.percentageOff || ''}
+                                    onChange={(e) => {
+                                        setValues(prev => ({
+                                            ...prev,
+                                            bundles: {
+                                                ...prev.bundles,
+                                                percentageOff: parseFloat(e.target.value) || 0,
+                                                enabled: true,
+                                            }
+                                        }));
+                                    }}
+                                />
+                            )}
+                        </div>
+                    )}
+                </div>
             )}
         </div>
 

@@ -16,11 +16,26 @@ export default function LocaleSwitcher() {
 
     const switchLocale = (newLocale: string) => {
         if (newLocale !== locale) {
-        const segments = pathname.split('/');
-        segments[1] = newLocale; // replace first segment with new locale
-        const newPathname = segments.join('/');
-        router.replace(newPathname);
-        router.refresh();
+            const segments = pathname.split('/').filter(Boolean); // Remove empty strings
+            
+            // Check if current path has a locale prefix (fr or ar)
+            const hasLocalePrefix = segments.length > 0 && ['fr', 'ar'].includes(segments[0]);
+            
+            // If current path has locale prefix, remove it to get the base path
+            const basePath = hasLocalePrefix ? segments.slice(1) : segments;
+            
+            let newPathname: string;
+            
+            if (newLocale === 'en') {
+                // English is the default locale - no prefix needed
+                newPathname = basePath.length > 0 ? `/${basePath.join('/')}` : '/';
+            } else {
+                // Other locales need a prefix
+                newPathname = basePath.length > 0 ? `/${newLocale}/${basePath.join('/')}` : `/${newLocale}`;
+            }
+            
+            router.replace(newPathname);
+            router.refresh();
         }
     };
 

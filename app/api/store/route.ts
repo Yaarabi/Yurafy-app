@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import Store from "@/models/store";
+import User from "@/models/users";
 
 connectDB();
 
@@ -106,6 +107,13 @@ export async function POST(req: NextRequest) {
             socialLinks: socialLinks || {},
             headerLinks: headerLinks || [],
         });
+
+        // Mark onboarding as completed when store is created
+        if (ownerId) {
+            await User.findByIdAndUpdate(ownerId, { 
+                onboardingCompleted: true 
+            }, { new: true });
+        }
 
         // Return serialized store via getStoreByDomain for consistency
         const serialized = await getStoreByDomain(store.domain);

@@ -28,7 +28,7 @@ const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
     "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
     "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "whatsapp", "settings", "support"],
     "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
-    "free": ["dashboard", "settings", "support"],
+    "free": ["dashboard", "products", "orders", "settings", "support"],
 };
 
 export default function SidebarNav({

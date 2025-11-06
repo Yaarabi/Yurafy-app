@@ -12,14 +12,6 @@ export interface IStore extends Document {
         secondaryColor?: string;
         textColor?: string;
     };
-    themeStructure: {
-        header: boolean;
-        hero: boolean;
-        about: boolean;
-        trust: boolean;
-        productGrid: boolean;
-        footer: boolean;
-    };
     hero: {
         title: string;
         subtitle: string;
@@ -35,7 +27,7 @@ export interface IStore extends Document {
     socialLinks: {
         facebook?: string;
         instagram?: string;
-        twitter?: string;
+        tiktok?: string;
     };
     headerLinks: Array<{
         label: string;
@@ -79,14 +71,6 @@ const storeSchema = new Schema<IStore>(
         textColor: { type: String, trim: true },
         },
 
-        themeStructure: {
-            header: { type: Boolean, default: true },
-            hero: { type: Boolean, default: true },
-            about: { type: Boolean, default: true },
-            trust: { type: Boolean, default: true },
-            productGrid: { type: Boolean, default: true },
-            footer: { type: Boolean, default: true },
-        },
 
         hero: {
         title: { type: String, required: true, trim: true },
@@ -104,9 +88,9 @@ const storeSchema = new Schema<IStore>(
         },
 
         socialLinks: {
-        facebook: { type: String, trim: true },
-        instagram: { type: String, trim: true },
-        twitter: { type: String, trim: true },
+        facebook: { type: String, trim: true, default: 'www.facebook.com' },
+        instagram: { type: String, trim: true, default: 'www.instagram.com' },
+        tiktok: { type: String, trim: true, default: 'www.tiktok.com' },
         },
 
         headerLinks: [

@@ -4,7 +4,6 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import ThemeSelector from "@/components/onboarding/ThemeSelector";
-import ProductPageStructureSelector from "@/components/onboarding/ProductPageStructureSelector";
 import StoreBasicInfoForm from "@/components/onboarding/StoreBasicInfoForm";
 import StoreGenerator from "@/components/onboarding/StoreGenerator";
 
@@ -18,17 +17,7 @@ export default function InfoPage() {
         themeId: number;
         theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
     } | null>(null);
-    const [selectedProductPageStructure, setSelectedProductPageStructure] = useState<{
-        productDetails: boolean;
-        productImages: boolean;
-        productDescription: boolean;
-        productPrice: boolean;
-        productVariants: boolean;
-        orderForm: boolean;
-        relatedProducts: boolean;
-        reviews: boolean;
-    } | null>(null);
-    const [showProductPageStructure, setShowProductPageStructure] = useState(false);
+    // ✅ Removed: ProductPageStructure state - using default values instead
     const [showBasicInfoForm, setShowBasicInfoForm] = useState(false);
     const [basicInfo, setBasicInfo] = useState<{
         brandName: string;
@@ -106,24 +95,7 @@ export default function InfoPage() {
 
     const handleThemeSelect = (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string }) => {
         setSelectedTheme({ themeId, theme });
-        // Small delay for smooth transition, then go directly to product page structure
-        setTimeout(() => {
-            setShowProductPageStructure(true);
-        }, 300);
-    };
-
-    const handleProductPageStructureSelect = (productPageStructure: {
-        productDetails: boolean;
-        productImages: boolean;
-        productDescription: boolean;
-        productPrice: boolean;
-        productVariants: boolean;
-        orderForm: boolean;
-        relatedProducts: boolean;
-        reviews: boolean;
-    }) => {
-        setSelectedProductPageStructure(productPageStructure);
-        // Small delay for smooth transition
+        // ✅ FIXED: Redirect directly to form after theme selection
         setTimeout(() => {
             setShowBasicInfoForm(true);
         }, 300);
@@ -189,7 +161,7 @@ export default function InfoPage() {
 
     const handleBackFromBasicInfo = () => {
         setShowBasicInfoForm(false);
-        setSelectedProductPageStructure(null);
+        setSelectedTheme(null);
     };
 
     // Show loading state while checking
@@ -204,22 +176,12 @@ export default function InfoPage() {
         );
     }
 
-    // Show theme selector first
-    if (!selectedTheme || !showProductPageStructure) {
+    // ✅ FIXED: Show theme selector first, then redirect directly to form
+    if (!selectedTheme || !showBasicInfoForm) {
         return <ThemeSelector onThemeSelect={handleThemeSelect} />;
     }
 
-    // Show product page structure selector after theme is selected
-    if (!showBasicInfoForm || !selectedProductPageStructure) {
-        return (
-            <ProductPageStructureSelector
-                onSelect={handleProductPageStructureSelect}
-                selectedTheme={selectedTheme}
-            />
-        );
-    }
-
-    // Show basic info form after product page structure is selected
+    // ✅ FIXED: Show basic info form after theme is selected
     if (!showGenerator || !basicInfo) {
         return (
             <StoreBasicInfoForm
@@ -241,11 +203,11 @@ export default function InfoPage() {
         footer: true,
     };
 
+    // ✅ FIXED: Product page structure removed - no longer needed
     return (
         <StoreGenerator
             selectedTheme={selectedTheme}
             selectedThemeStructure={defaultThemeStructure}
-            selectedProductPageStructure={selectedProductPageStructure}
             basicInfo={basicInfo}
             plan={plan || "Starter"}
             onBack={handleBackFromGenerator}

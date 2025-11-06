@@ -14,8 +14,17 @@ export interface IProduct {
     brand?: string;
     mainImage: string;
     images: string[];
-    sizes?: string[];
+    imageDescriptions?: string[]; // ✅ Added: Descriptions for each image
+    sizes?: string[]; // ✅ Changed: Now accepts any string (e.g., "L", "40", "XL")
     colors?: string[];
+    bundles?: { // ✅ Added: Bundle/promotion configuration
+        type: "buy_x_get_y" | "special_price" | "percentage_off";
+        buyQuantity?: number; // For "buy_x_get_y": buy 2
+        getQuantity?: number; // For "buy_x_get_y": get 1 free
+        specialPrice?: number; // For "special_price": price for bundle
+        percentageOff?: number; // For "percentage_off": discount percentage
+        enabled: boolean;
+    };
     salesCount: number;
     createdAt: Date;
     updatedAt: Date;
@@ -62,8 +71,20 @@ const ProductSchema = new Schema(
         },
         mainImage: { type: String, required: true },
         images: [{ type: String, required: false }],
-        sizes: [{ type: String }],
+        imageDescriptions: [{ type: String }], // ✅ Added: Image descriptions
+        sizes: [{ type: String }], // ✅ Changed: Accepts any string values
         colors: [{ type: String }],
+        bundles: { // ✅ Added: Bundle/promotion configuration
+            type: {
+                type: String,
+                enum: ["buy_x_get_y", "special_price", "percentage_off"],
+            },
+            buyQuantity: { type: Number }, // e.g., buy 2
+            getQuantity: { type: Number }, // e.g., get 1 free
+            specialPrice: { type: Number }, // e.g., $50 for bundle
+            percentageOff: { type: Number }, // e.g., 20% off
+            enabled: { type: Boolean, default: false },
+        },
         salesCount: { 
             type: Number, 
             default: 0,

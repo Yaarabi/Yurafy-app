@@ -41,14 +41,14 @@ const StorePage: React.FC = () => {
                     <Hero />
                 </div>
             )}
-            {themeStructure.about && (
-                <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-                    <About />
-                </div>
-            )}
             {themeStructure.productGrid && (
                 <div className="py-24" style={{ backgroundColor: '#f9fafb' }}>
                     <ProductGrid />
+                </div>
+            )}
+            {themeStructure.about && (
+                <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+                    <About />
                 </div>
             )}
             {themeStructure.trust && (

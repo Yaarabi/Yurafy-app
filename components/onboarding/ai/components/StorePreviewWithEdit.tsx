@@ -84,7 +84,7 @@ interface StorePreviewData {
     socialLinks?: {
         facebook?: string;
         instagram?: string;
-        twitter?: string;
+        tiktok?: string;
     };
     headerLinks?: Array<{
         label: string;
@@ -130,7 +130,34 @@ export default function StorePreviewWithEdit({
 
     const saveEdit = () => {
         if (editingField) {
-            onEdit(editingField, editValue);
+            // Handle nested fields like "socialLinks.facebook" or "hero.title"
+            if (editingField.includes('.')) {
+                const [parent, child] = editingField.split('.');
+                if (parent === 'socialLinks') {
+                    const currentSocialLinks = data.socialLinks || {};
+                    onEdit('socialLinks', {
+                        ...currentSocialLinks,
+                        [child]: editValue,
+                    });
+                } else if (parent === 'hero' && data.hero) {
+                    onEdit('hero', {
+                        ...data.hero,
+                        [child]: editValue,
+                    });
+                } else if (parent === 'about' && data.about) {
+                    onEdit('about', {
+                        ...data.about,
+                        [child]: editValue,
+                    });
+                } else if (parent === 'footer' && data.footer) {
+                    onEdit('footer', {
+                        ...data.footer,
+                        [child]: editValue,
+                    });
+                }
+            } else {
+                onEdit(editingField, editValue);
+            }
             setEditingField(null);
             setEditValue('');
         }
@@ -259,52 +286,6 @@ export default function StorePreviewWithEdit({
                         />
                     </div>
 
-
-                    {/* Store Structure */}
-                    {data.themeStructure && (
-                        <div className="space-y-4 mb-6">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-3">Store Structure</h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                {Object.entries(data.themeStructure).map(([key, enabled]) => {
-                                    const icons: Record<string, any> = {
-                                        header: Navigation,
-                                        hero: ImageIcon,
-                                        about: Info,
-                                        trust: Shield,
-                                        productGrid: Grid,
-                                        footer: FileText,
-                                    };
-                                    const Icon = icons[key] || FileText;
-                                    const labels: Record<string, string> = {
-                                        header: 'Header',
-                                        hero: 'Hero',
-                                        about: 'About',
-                                        trust: 'Trust',
-                                        productGrid: 'Products',
-                                        footer: 'Footer',
-                                    };
-
-                                    return (
-                                        <div
-                                            key={key}
-                                            className={`p-3 rounded-lg border-2 flex items-center gap-2 ${
-                                                enabled
-                                                    ? 'bg-green-50 border-green-300'
-                                                    : 'bg-gray-50 border-gray-200'
-                                            }`}
-                                        >
-                                            <Icon className={`w-4 h-4 ${enabled ? 'text-green-600' : 'text-gray-400'}`} />
-                                            <span className={`text-sm font-medium ${enabled ? 'text-green-800' : 'text-gray-500'}`}>
-                                                {labels[key] || key}
-                                            </span>
-                                            {enabled && <Check className="w-4 h-4 text-green-600 ml-auto" />}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
                     {/* Hero Section */}
                     {data.hero && (
                         <div className="space-y-4 mb-6">
@@ -364,28 +345,30 @@ export default function StorePreviewWithEdit({
                     )}
 
                     {/* Social Links */}
-                    {data.socialLinks && (data.socialLinks.facebook || data.socialLinks.instagram || data.socialLinks.twitter) && (
-                        <div className="mb-6">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-3">Social Links</h4>
-                            <div className="flex flex-wrap gap-3">
-                                {data.socialLinks.facebook && (
-                                    <span className="text-xs px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                        Facebook
-                                    </span>
-                                )}
-                                {data.socialLinks.instagram && (
-                                    <span className="text-xs px-3 py-1.5 bg-pink-100 text-pink-700 rounded-full font-medium">
-                                        Instagram
-                                    </span>
-                                )}
-                                {data.socialLinks.twitter && (
-                                    <span className="text-xs px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                        Twitter
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    )}
+                    <div className="space-y-4 mb-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Social Links</h4>
+                        <EditableField
+                            field="socialLinks.facebook"
+                            label="Facebook URL"
+                            value={data.socialLinks?.facebook || ''}
+                            icon={Globe}
+                            type="url"
+                        />
+                        <EditableField
+                            field="socialLinks.instagram"
+                            label="Instagram URL"
+                            value={data.socialLinks?.instagram || ''}
+                            icon={Globe}
+                            type="url"
+                        />
+                        <EditableField
+                            field="socialLinks.tiktok"
+                            label="TikTok URL"
+                            value={data.socialLinks?.tiktok || ''}
+                            icon={Globe}
+                            type="url"
+                        />
+                    </div>
 
                     {/* Theme Preview Button */}
                     <div className="pt-4 border-t border-gray-200 mb-4">

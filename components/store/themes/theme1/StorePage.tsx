@@ -21,14 +21,14 @@ const StorePage: React.FC = () => {
         footer: true,
     };
     
-    // Tech Theme Layout: Hero -> Trust -> Product Grid -> About -> Footer
+    // Tech Theme Layout: Hero -> Product Grid -> About -> Trust -> Footer
     return (
         <main>
             {themeStructure.header && <Header />}
             {themeStructure.hero && <Hero />}
-            {themeStructure.trust && <Trust />}
             {themeStructure.productGrid && <ProductGrid />}
             {themeStructure.about && <About />}
+            {themeStructure.trust && <Trust />}
             {themeStructure.footer && <Footer />}
         </main>
     );

@@ -3,7 +3,6 @@ import User from "@/models/users";
 import Plan from "@/models/plan";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
 declare module "next-auth" {
@@ -50,10 +49,6 @@ async function getUserPlan(userId: string): Promise<string | null> {
 
 export const authOptions: NextAuthOptions = {
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || "",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-        }),
         CredentialsProvider({
             name: "Credentials",
             id: "credentials",
@@ -100,59 +95,13 @@ export const authOptions: NextAuthOptions = {
         maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     callbacks: {
-        async signIn({ user, account, profile }) {
-            if (account?.provider === "google") {
-                await connectDB();
-
-                // Check if user exists
-                let dbUser = await User.findOne({ email: user.email });
-                
-                if (!dbUser) {
-                    // Create new user from Google account
-                    const username = user.name?.replace(/\s+/g, "").toLowerCase() || 
-                                   user.email?.split("@")[0] || 
-                                   `user${Date.now()}`;
-                    
-                    dbUser = new User({
-                        username,
-                        email: user.email,
-                        role: "user",
-                        active: true,
-                    });
-                    
-                    await dbUser.save();
-
-                    // Create default free plan
-                    const freePlan = new Plan({
-                        userId: dbUser._id,
-                        planKey: "free",
-                        price: 0,
-                        durationDays: 365,
-                        startDate: new Date(),
-                        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-                        status: "active",
-                    });
-                    
-                    const savedPlan = await freePlan.save();
-                    dbUser.currentPlanId = savedPlan._id;
-                    await dbUser.save();
-                }
-
-                // Update user object for JWT
-                user.id = dbUser._id.toString();
-                user.role = dbUser.role;
-                user.username = dbUser.username;
-            }
-            
-            return true;
-        },
-        async jwt({ token, user, account }) {
+        async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
                 token.role = user.role;
                 token.username = user.username;
                 
-                // Fetch plan for both credentials and Google
+                // Fetch plan for user
                 if (user.id) {
                     const plan = await getUserPlan(user.id);
                     token.plan = plan || "free";

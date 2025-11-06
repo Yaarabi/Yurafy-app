@@ -39,12 +39,12 @@ const StorePage: React.FC = () => {
                     <Hero />
                 </div>
             )}
-            {themeStructure.about && <About />}
             {themeStructure.productGrid && (
                 <div className="py-16" style={{ backgroundColor: '#ffffff' }}>
                     <ProductGrid />
                 </div>
             )}
+            {themeStructure.about && <About />}
             {themeStructure.trust && <Trust />}
             {themeStructure.footer && <Footer />}
         </main>
