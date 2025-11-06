@@ -203,7 +203,7 @@ export const THEME_PREVIEWS: ThemePreview[] = [
 
 // Shows preview stores for each theme (1-10) like Shopify theme marketplace
 
-export interface ThemePreview {
+export interface ThemePreviewDemo {
     themeId: number;
     name: string;
     description: string;
@@ -228,7 +228,7 @@ export interface ThemePreview {
     };
 }
 
-export const themePreviews: ThemePreview[] = [
+export const themePreviews: ThemePreviewDemo[] = [
     {
         themeId: 1,
         name: "Tech Modern",

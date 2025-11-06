@@ -36,6 +36,13 @@ export default function OrderForm({ product, formRef }: OrderFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Validate phone number - must be more than just country code
+        const phoneDigits = form.phone.replace(/\D/g, ''); // Remove all non-digits
+        if (!form.phone || form.phone.trim() === '' || phoneDigits.length < 10) {
+            toast.error('Veuillez entrer un numéro de téléphone complet');
+            return;
+        }
+
         const orderData = {
         owner: product.owner,
         products: [
@@ -101,12 +108,15 @@ export default function OrderForm({ product, formRef }: OrderFormProps) {
                 required
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
             />
-            <PhoneInput
-                defaultCountry="ma"
-                value={form.phone}
-                onChange={(phone) => setForm({ ...form, phone })}
-                className="w-full border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
-            />
+            <div>
+                <PhoneInput
+                    defaultCountry="ma"
+                    value={form.phone}
+                    onChange={(phone) => setForm({ ...form, phone })}
+                    className="w-full border rounded-md shadow-sm focus:ring-2 focus:ring-[var(--primary-color)] outline-none"
+                    required
+                />
+            </div>
             <textarea
             name="address"
             placeholder="Adresse"

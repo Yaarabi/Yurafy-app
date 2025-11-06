@@ -1,6 +1,7 @@
 import { connectDB } from '../db/mongoDB';
 import Product from '@/models/products';
 import Store, { IStore } from '@/models/store';
+import User, { IUser } from '@/models/users';
 import { IProduct } from '@/models/products';
 import { serializeStore, SerializedStore } from './store';
 
@@ -34,6 +35,8 @@ function serializeProductWithStore(product: any, store?: any): {
         mainImage: product.mainImage || '',
         sizes: product.sizes || [],
         colors: product.colors || [],
+        imageDescriptions: product.imageDescriptions || [],
+        bundles: product.bundles || undefined,
     };
 
     const serializedStore: SerializedStore | null = store ? serializeStore(store) : null;
@@ -58,7 +61,22 @@ export async function getProductWithStoreBySlug(slug: string): Promise<{
         storeDoc = await Store.findOne({ owner: productDoc.owner }).lean<IStore>();
     }
 
-    return serializeProductWithStore(productDoc, storeDoc);
+    const { product, store } = serializeProductWithStore(productDoc, storeDoc);
+    
+    // If store doesn't have a logoUrl, fetch the user's logo as fallback (same logic as getStoreByDomain)
+    if (store && !store.logoUrl && storeDoc?.owner) {
+        try {
+            const user = await User.findById(storeDoc.owner).select('logo').lean() as IUser | null;
+            if (user && user.logo) {
+                store.logoUrl = user.logo;
+            }
+        } catch (error) {
+            // Silently fail if user lookup fails
+            console.error('Error fetching user logo:', error);
+        }
+    }
+
+    return { product, store };
 }
 
 

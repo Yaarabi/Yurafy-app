@@ -32,7 +32,14 @@ const OrderForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.fullName || !formData.phone || !formData.address) {
+        // Validate phone number - must be more than just country code
+        const phoneDigits = formData.phone.replace(/\D/g, ''); // Remove all non-digits
+        if (!formData.phone || formData.phone.trim() === '' || phoneDigits.length < 10) {
+            setSubmissionState({ status: 'error', message: 'Phone number is required. Please enter a complete phone number (not just country code).' });
+            return;
+        }
+
+        if (!formData.fullName || !formData.address) {
             setSubmissionState({ status: 'error', message: 'Full Name, Phone, and Address are required.' });
             return;
         }
@@ -246,6 +253,7 @@ const OrderForm: React.FC = () => {
                         onChange={(phone) => setFormData({ ...formData, phone })}
                         className="mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none"
                         style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
+                        required
                     />
                 </div>
                 <div>

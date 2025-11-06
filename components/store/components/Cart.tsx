@@ -68,6 +68,14 @@ const Cart: React.FC = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
+        // Validate phone number - must be more than just country code
+        const phoneDigits = checkoutForm.phone.replace(/\D/g, ''); // Remove all non-digits
+        if (!checkoutForm.phone || checkoutForm.phone.trim() === '' || phoneDigits.length < 10) {
+            toast.error('Phone number is required. Please enter a complete phone number (not just country code).');
+            setIsSubmitting(false);
+            return;
+        }
+
         if (!selectedStore?.owner) {
             toast.error('Store information is missing');
             setIsSubmitting(false);
@@ -318,6 +326,7 @@ const Cart: React.FC = () => {
                                         onChange={(phone) => setCheckoutForm({ ...checkoutForm, phone })}
                                         className="w-full border rounded-md focus:ring-2 focus:outline-none"
                                         style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
+                                        required
                                     />
                                 </div>
 

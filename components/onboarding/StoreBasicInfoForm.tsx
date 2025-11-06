@@ -250,7 +250,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 value={brandName}
                                 onChange={(e) => handleBrandNameChange(e.target.value)}
                                 placeholder="e.g., My Awesome Store"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
                                 style={{ focusRingColor: primaryColor }}
                                 required
                             />
@@ -262,16 +262,16 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 Store Domain <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
-                                <div className="flex items-center">
-                                    <span className="text-gray-500 mr-2">yura.com/</span>
-                                    <div className="flex-1">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                    <span className="text-gray-500 text-sm sm:text-base whitespace-nowrap pt-2 sm:pt-0">yura.com/</span>
+                                    <div className="flex-1 w-full">
                                         <input
                                             id="domain"
                                             type="text"
                                             value={domain}
                                             onChange={(e) => handleDomainChange(e.target.value)}
                                             placeholder="my-awesome-store"
-                                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-all ${
+                                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-all text-base ${
                                                 domainError ? 'border-red-500' : isValidDomain ? 'border-green-500' : 'border-gray-300'
                                             }`}
                                             style={{ focusRingColor: primaryColor }}
@@ -281,13 +281,13 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 </div>
                                 
                                 {validatingDomain && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 sm:top-1/2">
                                         <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
                                     </div>
                                 )}
                                 
                                 {!validatingDomain && domain && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 sm:top-1/2">
                                         {isValidDomain ? (
                                             <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -322,7 +322,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Briefly describe your store, products, or services... (at least 20 characters)"
                                 rows={4}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none text-base"
                                 style={{ focusRingColor: primaryColor }}
                                 required
                                 minLength={20}
@@ -340,7 +340,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             <div className="space-y-3">
                                 {logoPreview ? (
                                     <div className="relative inline-block">
-                                        <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
+                                        <div className="w-32 h-32 sm:w-40 sm:h-40 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
                                             <img
                                                 src={logoPreview}
                                                 alt="Logo preview"
@@ -350,16 +350,16 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                         <button
                                             type="button"
                                             onClick={handleRemoveLogo}
-                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                            className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 active:scale-95 transition-all touch-manipulation shadow-lg"
                                             title="Remove logo"
                                         >
-                                            <X className="w-4 h-4" />
+                                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </button>
                                     </div>
                                 ) : (
                                     <div
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gray-400 transition-colors bg-gray-50"
+                                        className="relative border-2 border-dashed border-gray-300 rounded-lg p-8 sm:p-10 cursor-pointer hover:border-gray-400 active:scale-[0.98] transition-all bg-gray-50 touch-manipulation"
                                     >
                                         <input
                                             ref={fileInputRef}
@@ -401,7 +401,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 <button
                                     type="button"
                                     onClick={onBack}
-                                    className="flex-1 px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                    className="flex-1 px-6 py-3.5 sm:py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all touch-manipulation"
                                 >
                                     Back
                                 </button>
@@ -409,9 +409,9 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             <button
                                 type="submit"
                                 disabled={!isFormValid}
-                                className={`flex-1 px-6 py-3 rounded-lg font-medium text-white transition-all ${
+                                className={`flex-1 px-6 py-3.5 sm:py-3 rounded-lg font-medium text-white text-base transition-all touch-manipulation ${
                                     isFormValid 
-                                        ? 'hover:opacity-90 hover:shadow-lg transform hover:scale-[1.02]' 
+                                        ? 'hover:opacity-90 hover:shadow-lg active:scale-95' 
                                         : 'opacity-50 cursor-not-allowed'
                                 }`}
                                 style={{ backgroundColor: isFormValid ? primaryColor : '#9CA3AF' }}

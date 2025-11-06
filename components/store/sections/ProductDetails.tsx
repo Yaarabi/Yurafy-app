@@ -44,19 +44,37 @@ const ProductDetails: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Image Gallery */}
             <div>
-                <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-4">
+                <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-4 relative">
                     <img src={mainImage} alt={selectedProduct.name} className="w-full h-full object-cover object-center" />
+                    {/* Image Description Overlay */}
+                    {selectedProduct.imageDescriptions && selectedProduct.imageDescriptions.length > 0 && (
+                        (() => {
+                            const allImages = [selectedProduct.mainImage, ...(selectedProduct.images || [])];
+                            const imageIndex = allImages.indexOf(mainImage);
+                            const description = imageIndex > 0 ? selectedProduct.imageDescriptions[imageIndex - 1] : null;
+                            return description ? (
+                                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 text-sm">
+                                    {description}
+                                </div>
+                            ) : null;
+                        })()
+                    )}
                 </div>
                 <div className="flex space-x-2">
-                    {[selectedProduct.mainImage, ...selectedProduct.images].map((img, idx) => (
-                        <button 
-                            key={idx} 
-                            onClick={() => setMainImage(img)}
-                            className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
-                        >
-                            <img src={img} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
-                        </button>
-                    ))}
+                    {[selectedProduct.mainImage, ...(selectedProduct.images || [])].map((img, idx) => {
+                        const allImages = [selectedProduct.mainImage, ...(selectedProduct.images || [])];
+                        const description = idx > 0 && selectedProduct.imageDescriptions ? selectedProduct.imageDescriptions[idx - 1] : null;
+                        return (
+                            <button 
+                                key={idx} 
+                                onClick={() => setMainImage(img)}
+                                className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
+                                title={description || `${selectedProduct.name} thumbnail ${idx + 1}`}
+                            >
+                                <img src={img} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -69,6 +87,33 @@ const ProductDetails: React.FC = () => {
                 <div className="mt-6">
                     <p className="text-base text-gray-700">{selectedProduct.description}</p>
                 </div>
+
+                {/* Bundles & Promotions - Only show if bundles exist and are enabled */}
+                {selectedProduct.bundles && selectedProduct.bundles.enabled === true && (
+                    <div className="mt-6 p-4 rounded-lg border-2" style={{ 
+                        borderColor: primaryColor,
+                        backgroundColor: `${primaryColor}15`
+                    }}>
+                        <h3 className="text-lg font-bold mb-2" style={{ color: primaryColor }}>
+                            Special Offer! 🎉
+                        </h3>
+                        {selectedProduct.bundles.type === 'buy_x_get_y' && selectedProduct.bundles.buyQuantity && selectedProduct.bundles.getQuantity && (
+                            <p className="text-base text-gray-700">
+                                Buy {selectedProduct.bundles.buyQuantity} Get {selectedProduct.bundles.getQuantity} Free!
+                            </p>
+                        )}
+                        {selectedProduct.bundles.type === 'special_price' && selectedProduct.bundles.specialPrice && (
+                            <p className="text-base text-gray-700">
+                                Special Bundle Price: ${selectedProduct.bundles.specialPrice.toFixed(2)}
+                            </p>
+                        )}
+                        {selectedProduct.bundles.type === 'percentage_off' && selectedProduct.bundles.percentageOff && (
+                            <p className="text-base text-gray-700">
+                                {selectedProduct.bundles.percentageOff}% Off on Bundles!
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Product Variants UI */}
                 <ProductVariantsUI

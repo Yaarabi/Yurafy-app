@@ -182,15 +182,15 @@ export default function StorePreviewWithEdit({
 
         return (
             <div className="p-4 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-indigo-600" />
-                        <span className="text-sm font-semibold text-gray-700">{label}</span>
+                <div className="flex items-center justify-between mb-2 gap-2">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <Icon className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                        <span className="text-sm font-semibold text-gray-700 truncate">{label}</span>
                     </div>
                     {!isEditing && (
                         <button
                             onClick={() => startEdit(field, value)}
-                            className="p-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
+                            className="p-2 rounded-lg hover:bg-indigo-50 active:scale-95 transition-all touch-manipulation flex-shrink-0"
                             title="Edit"
                         >
                             <Edit2 className="w-4 h-4 text-indigo-600" />
@@ -219,14 +219,14 @@ export default function StorePreviewWithEdit({
                         <div className="flex gap-2">
                             <button
                                 onClick={saveEdit}
-                                className="flex-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1"
+                                className="flex-1 px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 active:scale-95 transition-all touch-manipulation flex items-center justify-center gap-1"
                             >
                                 <Check className="w-3 h-3" />
                                 Save
                             </button>
                             <button
                                 onClick={cancelEdit}
-                                className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 active:scale-95 transition-all touch-manipulation flex items-center gap-1"
                             >
                                 <X className="w-3 h-3" />
                                 Cancel
@@ -252,13 +252,13 @@ export default function StorePreviewWithEdit({
                     className="bg-white rounded-xl shadow-xl border-2 border-indigo-200 p-6 mb-6"
                 >
                     {/* Header */}
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6 pb-4 border-b border-gray-200">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0">
                             <Store className="w-6 h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-gray-900">Store Preview</h3>
-                            <p className="text-sm text-gray-600">Review and edit your store information before final submission</p>
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Store Preview</h3>
+                            <p className="text-xs sm:text-sm text-gray-600">Review and edit your store information before final submission</p>
                         </div>
                     </div>
 
@@ -376,12 +376,12 @@ export default function StorePreviewWithEdit({
                             onClick={() => setShowThemePreview(true)}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+                            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 touch-manipulation text-base"
                         >
                             <Eye className="w-5 h-5" />
                             <span>Preview Your Store Theme</span>
                         </motion.button>
-                        <p className="text-xs text-gray-500 text-center mt-2">
+                        <p className="text-xs text-gray-500 text-center mt-2 px-2">
                             See how your store will look with the generated content
                         </p>
                     </div>
@@ -400,7 +400,7 @@ export default function StorePreviewWithEdit({
                             whileTap={{ scale: 0.98 }}
                             onClick={() => onSave(data)}
                             disabled={loading}
-                            className="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full px-6 py-4 sm:py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                         >
                             {loading ? (
                                 <>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
@@ -18,11 +18,35 @@ interface ProductFormProps {
     onSubmit?: (values: Partial<IProduct>) => void;
     loading?: boolean;
     initialValues?: Partial<IProduct>;
+    onReset?: () => void;
 }
 
-export default function ProductForm({ onSubmit, loading, initialValues }: ProductFormProps) {
+export default function ProductForm({ onSubmit, loading, initialValues, onReset }: ProductFormProps) {
     const t = useTranslations('products.form');
     const { data: session } = useSession();
+    
+    // Default initial state
+    const getInitialState = () => ({
+        owner: session?.user?.id,
+        name: '',
+        slug: '',
+        description: '',
+        price: 0,
+        discount: 0,
+        stock: 0,
+        category: '',
+        brand: '',
+        mainImage: '',
+        images: [],
+        imageDescriptions: [],
+        sizes: [],
+        colors: [],
+        bundles: {
+            type: 'buy_x_get_y' as const,
+            enabled: false,
+        },
+        ...initialValues,
+    });
 
     const PRODUCT_CATEGORIES = [
         'Fashion & Apparel',
@@ -42,27 +66,7 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         'Office & Business',
     ];
 
-    const [values, setValues] = useState<Partial<IProduct>>({
-        owner: session?.user?.id,
-        name: '',
-        slug: '',
-        description: '',
-        price: 0,
-        discount: 0,
-        stock: 0,
-        category: '',
-        brand: '',
-        mainImage: '',
-        images: [],
-        imageDescriptions: [], // ✅ Added: Image descriptions
-        sizes: [],
-        colors: [],
-        bundles: { // ✅ Added: Bundle configuration
-            type: 'buy_x_get_y',
-            enabled: false,
-        },
-        ...initialValues,
-    });
+    const [values, setValues] = useState<Partial<IProduct>>(getInitialState());
 
     const [showVariants, setShowVariants] = useState(false);
     const [showBundles, setShowBundles] = useState(false); // ✅ Added: Bundle section toggle
@@ -73,6 +77,48 @@ export default function ProductForm({ onSubmit, loading, initialValues }: Produc
         setValues((prev) => ({ ...prev, owner: session.user.id as string }));
         }
     }, [session]);
+
+    // Reset form function
+    const resetForm = useCallback(() => {
+        const resetState = {
+            owner: session?.user?.id,
+            name: '',
+            slug: '',
+            description: '',
+            price: 0,
+            discount: 0,
+            stock: 0,
+            category: '',
+            brand: '',
+            mainImage: '',
+            images: [],
+            imageDescriptions: [],
+            sizes: [],
+            colors: [],
+            bundles: {
+                type: 'buy_x_get_y' as const,
+                enabled: false,
+            },
+        };
+        setValues(resetState);
+        setErrors({});
+        setShowVariants(false);
+        setShowBundles(false);
+        // Reset file inputs
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach((input) => {
+            (input as HTMLInputElement).value = '';
+        });
+    }, [session?.user?.id]);
+
+    // Expose reset function to parent
+    useEffect(() => {
+        // Store reset function in a way that parent can call it
+        (window as any).__productFormReset = resetForm;
+        return () => {
+            delete (window as any).__productFormReset;
+        };
+    }, [resetForm]);
 
     const handleImageUpload = async (
         e: ChangeEvent<HTMLInputElement>,

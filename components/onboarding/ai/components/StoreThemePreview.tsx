@@ -8,6 +8,7 @@ import ThemeRenderer from '@/components/store/themes/ThemeRenderer';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
 import { SerializedStore } from '@/lib/data/store';
 import { IProduct } from '@/models/products';
+import { FAKE_PRODUCTS } from '@/components/store/constants/data';
 
 interface StoreThemePreviewProps {
     storeData: SerializedStore | null;
@@ -18,7 +19,7 @@ interface StoreThemePreviewProps {
 
 export default function StoreThemePreview({ 
     storeData, 
-    products = [], 
+    products = FAKE_PRODUCTS, 
     visible, 
     onClose 
 }: StoreThemePreviewProps) {
@@ -138,7 +139,7 @@ export default function StoreThemePreview({
                                 }}
                             >
                                 <ThemeInjector theme={previewStore.theme} />
-                                <StoreProvider stores={[previewStore]} initialStore={previewStore}>
+                                <StoreProvider stores={[previewStore]} initialStore={previewStore} products={products}>
                                     <ThemeRenderer themeId={themeId} currentPage="STORE_PAGE" />
                                 </StoreProvider>
                             </div>

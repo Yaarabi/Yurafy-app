@@ -53,6 +53,13 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
     };
 
     const handleSubmit = async () => {
+        // Validate phone number - must be more than just country code
+        const phoneDigits = phone.replace(/\D/g, ''); // Remove all non-digits
+        if (!phone || phone.trim() === '' || phoneDigits.length < 10) {
+            toast.error('Phone number is required. Please enter a complete phone number (not just country code).');
+            return;
+        }
+
         if (!fullName || !address || products.length === 0 || products.some(p => !p.name)) {
             toast.error('Please fill all required fields and add at least one product with a name.');
             return;
@@ -100,9 +107,9 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
 
                 {/* Customer Info */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} />
-                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} />
-                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Address" value={address} onChange={e => setAddress(e.target.value)} />
+                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Full Name *" value={fullName} onChange={e => setFullName(e.target.value)} required />
+                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Phone *" value={phone} onChange={e => setPhone(e.target.value)} required />
+                    <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Address *" value={address} onChange={e => setAddress(e.target.value)} required />
                 </div>
 
                 {/* Products */}

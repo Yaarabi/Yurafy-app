@@ -23,7 +23,12 @@ export default function NewProductPage() {
             throw new Error(err.message || 'Something went wrong');
         }
 
-        // Optional: clear the form or show a success message
+        // Clear the form after successful creation
+        if ((window as any).__productFormReset) {
+            (window as any).__productFormReset();
+        }
+        
+        // Show success message
         alert(t('createSuccess')); 
         } catch (error: any) {
         console.error(error);
@@ -40,7 +45,7 @@ export default function NewProductPage() {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('createTitle')}</h2>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-            <ProductForm onSubmit={create} loading={loading} />
+            <ProductForm onSubmit={create} loading={loading} onReset={() => {}} />
             </div>
         </div>
         </div>

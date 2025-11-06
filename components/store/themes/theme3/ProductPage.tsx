@@ -8,9 +8,10 @@ import OrderForm from '../../sections/OrderForm';
 import Trust from './sections/Trust';
 import { ArrowLeftIcon } from '../../components/icons';
 import { motion } from 'framer-motion';
+import ImageDescriptions from '@/components/productPage/ImageDescriptions';
 
 const ProductPage: React.FC = () => {
-    const { selectedStore } = useStore();
+    const { selectedStore, selectedProduct } = useStore();
     const router = useRouter();
     const params = useParams();
 
@@ -82,6 +83,12 @@ const ProductPage: React.FC = () => {
                         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border-4" style={{ borderColor: primaryColor }}>
                             <OrderForm />
                         </div>
+                        {/* Image Descriptions - Below Order Form */}
+                        {selectedProduct && (
+                            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border-2 border-gray-200">
+                                <ImageDescriptions product={selectedProduct} />
+                            </div>
+                        )}
                     </div>
                     {/* Trust Section */}
                     <div className="mt-8 sm:mt-12 lg:mt-16">

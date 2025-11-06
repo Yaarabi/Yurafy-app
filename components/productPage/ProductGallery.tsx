@@ -8,12 +8,14 @@ import { motion } from 'framer-motion';
 interface ProductGalleryProps {
     mainImage: string;
     images?: string[];
+    imageDescriptions?: string[];
     alt: string;
 }
 
-export default function ProductGallery({ mainImage, images = [], alt }: ProductGalleryProps) {
+export default function ProductGallery({ mainImage, images = [], imageDescriptions = [], alt }: ProductGalleryProps) {
     const [selected, setSelected] = useState(mainImage);
     const allImages = [mainImage, ...images];
+    const allDescriptions = imageDescriptions ? ['', ...imageDescriptions] : [];
 
     return (
         <div
@@ -37,6 +39,12 @@ export default function ProductGallery({ mainImage, images = [], alt }: ProductG
             fill
             className="object-cover transition-transform duration-500 hover:scale-105"
             />
+            {/* Image Description Overlay */}
+            {allDescriptions[allImages.indexOf(selected)] && (
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 text-sm">
+                    {allDescriptions[allImages.indexOf(selected)]}
+                </div>
+            )}
         </motion.div>
 
         {/* Thumbnails */}
@@ -51,6 +59,7 @@ export default function ProductGallery({ mainImage, images = [], alt }: ProductG
                     ? 'border-[var(--primary-color)]'
                     : 'border-transparent hover:border-[var(--primary-color)/40]'
                 }`}
+                title={allDescriptions[idx] || `${alt}-${idx}`}
                 >
                 <Image
                     src={img}

@@ -5,6 +5,7 @@ import { Check, Sparkles, Store, MessageCircle, Bot, Crown, Zap } from "lucide-r
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import toast from "react-hot-toast"
+import { FaCheck } from "react-icons/fa"
 
 export const PLANS = {
     free: { 
@@ -206,90 +207,84 @@ export default function PlanPage() {
                 </div>
 
                 {/* Plans Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {Object.entries(PLANS).map(([key, plan], index) => {
                         const Icon = plan.icon
                         const isLoading = loading === key
                         const isPopular = key === 'proSeller'
+                        const isHighlighted = key === 'visionary'
 
                         return (
                             <motion.div
                                 key={key}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className={`relative flex flex-col rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden ${
-                                    isPopular 
-                                        ? 'ring-4 ring-yellow-400 ring-offset-4 ring-offset-white scale-105' 
-                                        : 'bg-white'
+                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                                whileInView={{ scale: 1, opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                whileHover={{ y: -8, scale: 1.02 }}
+                                className={`relative p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 cursor-pointer touch-manipulation active:scale-[0.98] ${
+                                    isHighlighted
+                                        ? `bg-gradient-to-br ${plan.color} text-white border-2 border-transparent`
+                                        : "bg-white border-2 border-gray-200 hover:border-blue-400"
                                 }`}
                             >
-                                {isPopular && (
-                                    <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg">
-                                        MOST POPULAR
-                                    </div>
+                                {(isHighlighted || isPopular) && (
+                                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
+                                        {isHighlighted ? "⭐ Best Value" : "⭐ Popular"}
+                                    </span>
                                 )}
-
-                                {/* Gradient Header */}
-                                <div className={`bg-gradient-to-r ${plan.color} p-6 text-white`}>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <Icon className="w-8 h-8" />
-                                        {plan.price === 0 && (
-                                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">
-                                                FREE
-                                            </span>
-                                        )}
+                                <div className={`flex items-center gap-3 mb-4 ${isHighlighted ? "text-white" : "text-gray-900"}`}>
+                                    <div className={`p-3 rounded-lg bg-gradient-to-br ${plan.color} bg-opacity-10 ${isHighlighted ? "bg-opacity-20" : ""}`}>
+                                        <Icon className={`w-6 h-6 ${isHighlighted ? "text-white" : `text-gradient-to-r ${plan.color.split(' ')[1]}`}`} />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
-                                    <p className="text-white/90 text-sm mb-4">{plan.description}</p>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-4xl font-extrabold">
-                                            {plan.price === 0 ? 'Free' : `$${plan.price}`}
+                                    <h3 className={`text-2xl font-bold ${isHighlighted ? "text-white" : "text-gray-900"}`}>
+                                        {plan.name}
+                                    </h3>
+                                </div>
+                                <p className={`text-sm mb-4 ${isHighlighted ? "text-blue-100" : "text-gray-600"}`}>
+                                    {plan.description}
+                                </p>
+                                <div className="mb-6">
+                                    <span className={`text-4xl font-extrabold ${isHighlighted ? "text-yellow-300" : "text-blue-600"}`}>
+                                        ${plan.price}
+                                    </span>
+                                    {plan.price > 0 && (
+                                        <span className={`text-lg ml-2 ${isHighlighted ? "text-blue-100" : "text-gray-500"}`}>
+                                            /mo
                                         </span>
-                                        {plan.price > 0 && (
-                                            <span className="text-white/70 text-lg">/mo</span>
-                                        )}
-                                    </div>
+                                    )}
                                 </div>
-
-                                {/* Features */}
-                                <div className="p-6 flex-grow">
-                                    <ul className="space-y-3">
-                                        {plan.features.map((feature, idx) => (
-                                            <li key={idx} className="flex items-start gap-3">
-                                                <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-gray-700">{feature}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                {/* CTA Button */}
-                                <div className="p-6 pt-0">
-                                    <button
-                                        onClick={() => handlePlanSelect(key)}
-                                        disabled={isLoading}
-                                        className={`w-full py-3 px-6 rounded-xl font-semibold text-white transition-all duration-200 ${
-                                            plan.price === 0
-                                                ? 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800'
-                                                : `bg-gradient-to-r ${plan.color} hover:opacity-90`
-                                        } disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                <span>Processing...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span>
-                                                    {isUpgrade ? 'Upgrade to' : 'Select'} {plan.name}
-                                                </span>
-                                                {isPopular && <Crown className="w-5 h-5" />}
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+                                <ul className="space-y-3 mb-8">
+                                    {plan.features.map((f, idx) => (
+                                        <li key={idx} className={`flex items-center gap-2 ${isHighlighted ? "text-blue-50" : "text-gray-700"}`}>
+                                            <FaCheck className={`flex-shrink-0 ${isHighlighted ? "text-yellow-300" : "text-green-500"}`} /> 
+                                            <span className="text-sm">{f}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <button
+                                    onClick={() => handlePlanSelect(key)}
+                                    disabled={isLoading}
+                                    className={`w-full py-3 sm:py-3.5 rounded-lg font-semibold text-base transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 ${
+                                        isHighlighted
+                                            ? "bg-white text-blue-600 hover:bg-gray-100 shadow-lg"
+                                            : `bg-gradient-to-r ${plan.color} text-white hover:shadow-lg`
+                                    }`}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            <span>Processing...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>
+                                                {plan.price === 0 ? "Get Started Free" : isUpgrade ? 'Upgrade to' : 'Choose Plan'}
+                                            </span>
+                                            {isPopular && <Crown className="w-5 h-5" />}
+                                        </>
+                                    )}
+                                </button>
                             </motion.div>
                         )
                     })}
