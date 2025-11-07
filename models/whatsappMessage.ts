@@ -32,6 +32,15 @@ export interface IWhatsAppConversation {
     metadata?: {
         escalationReason?: string;
         escalatedAt?: Date;
+        // Contact tracking metadata
+        autoReplySent?: boolean;
+        autoReplySentAt?: Date;
+        orderConfirmationSent?: boolean;
+        orderConfirmationSentAt?: Date;
+        adTemplateSent?: boolean;
+        adTemplateSentAt?: Date;
+        lastReadAt?: Date;
+        lastReadStatus?: "read" | "delivered" | "sent";
     };
     createdAt: Date;
     updatedAt: Date;
@@ -84,6 +93,18 @@ const WhatsAppConversationSchema = new Schema(
         metadata: {
             escalationReason: String,
             escalatedAt: Date,
+            // Contact tracking metadata
+            autoReplySent: { type: Boolean, default: false },
+            autoReplySentAt: Date,
+            orderConfirmationSent: { type: Boolean, default: false },
+            orderConfirmationSentAt: Date,
+            adTemplateSent: { type: Boolean, default: false },
+            adTemplateSentAt: Date,
+            lastReadAt: Date,
+            lastReadStatus: {
+                type: String,
+                enum: ["read", "delivered", "sent"],
+            },
         },
         aiEnabled: { type: Boolean, default: false },
         optInStatus: {

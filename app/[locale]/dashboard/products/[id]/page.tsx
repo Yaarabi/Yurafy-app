@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import ProductForm from '@/components/dashboard/productForm';
 import { IProduct } from '@/models/products';
+import LogoLoader from '@/components/themePreview/loadder';
 
 export default function EditProductPage() {
     const t = useTranslations('products');
@@ -58,7 +59,7 @@ export default function EditProductPage() {
     }
 
     if (fetching) {
-        return <p className="text-gray-500 dark:text-gray-400">{t('loading')}</p>;
+        return <LogoLoader />;
     }
 
     return (

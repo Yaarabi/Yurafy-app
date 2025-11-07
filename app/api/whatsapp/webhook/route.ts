@@ -5,6 +5,8 @@ import WhatsAppConversation, { IWhatsAppMessage } from "@/models/whatsappMessage
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import crypto from "crypto";
 import Template, { ITemplate } from "@/models/templates";
+import { encryptMessage } from "@/lib/whatsapp/messageEncryption";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 
 
@@ -132,13 +134,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
         }
         
-        const message = bodyObj.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-        if (!message) {
-            // Handle non-message events (statuses, etc.)
-            return NextResponse.json({ received: true });
-        }
-
-        const phoneNumberId = bodyObj.entry?.[0]?.changes?.[0]?.value?.metadata?.phone_number_id;
+        const value = bodyObj.entry?.[0]?.changes?.[0]?.value;
+        const phoneNumberId = value?.metadata?.phone_number_id;
+        
         if (!phoneNumberId) {
             console.error("[Webhook POST] Missing phone_number_id in webhook payload");
             return NextResponse.json({ error: "Missing phone_number_id" }, { status: 400 });
@@ -154,6 +152,69 @@ export async function POST(req: NextRequest) {
         if (!account) {
             console.warn(`[Webhook POST] Account not found for phone_number_id: ${phoneNumberId}`);
             return NextResponse.json({ ignored: true, reason: "Account not found" });
+        }
+
+        // Handle status updates (opt-in/opt-out)
+        const statuses = value?.statuses;
+        if (statuses && statuses.length > 0) {
+            // Handle message status updates (sent, delivered, read, etc.)
+            for (const status of statuses) {
+                const recipientId = status.recipient_id;
+                if (recipientId) {
+                    // Update conversation's last read status if message was read
+                    if (status.status === 'read') {
+                        await WhatsAppConversation.findOneAndUpdate(
+                            { owner: account.owner, "customer.phone": recipientId },
+                            {
+                                $set: {
+                                    "metadata.lastReadStatus": "read",
+                                    "metadata.lastReadAt": new Date(),
+                                },
+                            }
+                        );
+                    }
+                }
+            }
+        }
+
+        // Handle contacts (opt-in/opt-out events)
+        const contacts = value?.contacts;
+        if (contacts && contacts.length > 0) {
+            for (const contact of contacts) {
+                const phone = contact.wa_id;
+                if (phone) {
+                    // Normalize phone number for consistent database queries
+                    const normalizedPhone = normalizePhoneNumber(phone);
+                    
+                    // Check if this is an opt-in or opt-out event
+                    // WhatsApp sends profile information when user opts in
+                    // We'll update the conversation's optInStatus based on whether we can get profile info
+                    const profile = contact.profile;
+                    if (profile) {
+                        // User opted in - update conversation
+                        await WhatsAppConversation.findOneAndUpdate(
+                            { owner: account.owner, "customer.phone": normalizedPhone },
+                            {
+                                $set: {
+                                    optInStatus: "opted_in",
+                                    optInDate: new Date(),
+                                    optOutDate: null,
+                                    "customer.name": profile.name || undefined,
+                                    "customer.phone": normalizedPhone,
+                                },
+                            },
+                            { upsert: true }
+                        );
+                    }
+                }
+            }
+        }
+
+        // Handle messages
+        const message = value?.messages?.[0];
+        if (!message) {
+            // No message to process, but status updates may have been handled above
+            return NextResponse.json({ received: true });
         }
         
         // Verify webhook signature if secret is configured
@@ -206,25 +267,50 @@ export async function POST(req: NextRequest) {
         const messageText = message.text?.body || "";
         const waMessageId = message.id;
 
+        // Normalize phone number for consistent database queries
+        // This ensures all messages from the same phone number go to the same conversation
+        // regardless of opt-in/opt-out status
+        const normalizedPhone = normalizePhoneNumber(from);
 
-        // Save conversation with message
+        // Check for opt-out keywords (STOP, UNSUBSCRIBE, etc.)
+        const optOutKeywords = ['stop', 'unsubscribe', 'optout', 'opt-out', 'cancel'];
+        const isOptOutMessage = optOutKeywords.some(keyword => 
+            messageText.toLowerCase().trim().includes(keyword)
+        );
+
+        // Encrypt message text before saving
+        const encryptedText = encryptMessage(messageText);
+        
+        // Prepare update data
+        const updateData: any = {
+            lastMessage: encryptedText, // Store encrypted
+            lastTimestamp: Number(message.timestamp) * 1000, // Convert to milliseconds
+            status: "open",
+            "customer.phone": normalizedPhone, // Ensure phone is normalized
+        };
+
+        // If user sends opt-out message, update opt-out status
+        if (isOptOutMessage) {
+            updateData.optInStatus = "opted_out";
+            updateData.optOutDate = new Date();
+        }
+        
+        // Save conversation with message (encrypted)
+        // Use normalized phone number to ensure all messages from the same number
+        // (whether opted in or opted out) go to the same conversation
         const conv = await WhatsAppConversation.findOneAndUpdate(
-            { owner: account.owner, "customer.phone": from },
+            { owner: account.owner, "customer.phone": normalizedPhone },
             {
                 $push: {
                     messages: {
                         waMessageId: waMessageId,
-                        from,
-                        text: messageText,
+                        from: normalizedPhone,
+                        text: encryptedText, // Store encrypted
                         direction: "incoming",
                         timestamp: Number(message.timestamp) * 1000, // Convert to milliseconds
                     },
                 },
-                $set: {
-                    lastMessage: messageText,
-                    lastTimestamp: Number(message.timestamp) * 1000, // Convert to milliseconds
-                    status: "open",
-                },
+                $set: updateData,
                 $inc: { unreadCount: 1 },
             },
             { upsert: true, new: true }

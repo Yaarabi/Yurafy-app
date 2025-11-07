@@ -57,29 +57,43 @@ const Header: React.FC = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b"
+            className="relative bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b overflow-hidden"
             style={{ borderColor: `${primaryColor}30` }}
         >
-            <div className="container mx-auto px-4 sm:px-6">
+            {/* Tech Circuit Pattern Background */}
+            <div className="absolute inset-0 opacity-5 pointer-events-none">
+                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <line x1="0" y1="0" x2="100" y2="100" stroke={primaryColor} strokeWidth="0.3" />
+                    <line x1="100" y1="0" x2="0" y2="100" stroke={primaryColor} strokeWidth="0.3" />
+                    <circle cx="50" cy="50" r="20" fill="none" stroke={primaryColor} strokeWidth="0.2" />
+                </svg>
+            </div>
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6 py-3 sm:py-4">
-                    {/* Logo - Always show both logo and brand name */}
+                    {/* Logo - Tech Style with Circuit Accent */}
                     <button
                         onClick={handleLogoClick}
-                        className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity min-w-0"
+                        className="group flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity min-w-0 relative"
                     >
                         {selectedStore.logoUrl && (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${selectedStore.brandName} logo`}
-                                className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${selectedStore.brandName} logo`}
+                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
+                                />
+                                {/* Tech Badge */}
+                                <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500 border border-white animate-pulse"></div>
+                            </div>
                         )}
-                        <h1 
-                            className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold truncate"
-                            style={{ color: primaryColor }}
-                        >
-                            {selectedStore.brandName}
-                        </h1>
+                        <div className="flex flex-col">
+                            <h1 
+                                className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold truncate"
+                                style={{ color: primaryColor }}
+                            >
+                                {selectedStore.brandName}
+                            </h1>
+                        </div>
                     </button>
 
                     {/* Navigation Links */}

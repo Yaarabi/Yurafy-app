@@ -46,35 +46,18 @@ const ProductDetails: React.FC = () => {
             <div>
                 <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-4 relative">
                     <img src={mainImage} alt={selectedProduct.name} className="w-full h-full object-cover object-center" />
-                    {/* Image Description Overlay */}
-                    {selectedProduct.imageDescriptions && selectedProduct.imageDescriptions.length > 0 && (
-                        (() => {
-                            const allImages = [selectedProduct.mainImage, ...(selectedProduct.images || [])];
-                            const imageIndex = allImages.indexOf(mainImage);
-                            const description = imageIndex > 0 ? selectedProduct.imageDescriptions[imageIndex - 1] : null;
-                            return description ? (
-                                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 text-sm">
-                                    {description}
-                                </div>
-                            ) : null;
-                        })()
-                    )}
                 </div>
                 <div className="flex space-x-2">
-                    {[selectedProduct.mainImage, ...(selectedProduct.images || [])].map((img, idx) => {
-                        const allImages = [selectedProduct.mainImage, ...(selectedProduct.images || [])];
-                        const description = idx > 0 && selectedProduct.imageDescriptions ? selectedProduct.imageDescriptions[idx - 1] : null;
-                        return (
-                            <button 
-                                key={idx} 
-                                onClick={() => setMainImage(img)}
-                                className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
-                                title={description || `${selectedProduct.name} thumbnail ${idx + 1}`}
-                            >
-                                <img src={img} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
-                            </button>
-                        );
-                    })}
+                    {[selectedProduct.mainImage, ...(selectedProduct.images || [])].map((img, idx) => (
+                        <button 
+                            key={idx} 
+                            onClick={() => setMainImage(img)}
+                            className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
+                            title={`${selectedProduct.name} thumbnail ${idx + 1}`}
+                        >
+                            <img src={img} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
+                        </button>
+                    ))}
                 </div>
             </div>
 

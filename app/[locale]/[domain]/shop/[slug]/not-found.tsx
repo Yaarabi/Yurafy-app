@@ -6,7 +6,7 @@ import { Home, ArrowRight, SearchX, Sparkles, Package } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-indigo-900/20 dark:to-purple-900/20 flex items-center justify-center px-6 py-24 sm:py-32 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-sky-50 to-blue-50 dark:from-gray-900 dark:via-sky-900/20 dark:to-blue-900/20 flex items-center justify-center px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center max-w-2xl mx-auto">
         {/* Animated 404 Badge */}
         <motion.div
@@ -16,8 +16,8 @@ export default function NotFound() {
           className="inline-flex items-center justify-center mb-8"
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-2xl sm:text-3xl font-extrabold px-8 py-4 rounded-full shadow-lg">
+            <div className="absolute inset-0 rounded-full blur-xl opacity-50 animate-pulse" style={{ backgroundColor: 'var(--brand-blue)' }}></div>
+            <div className="relative text-white text-2xl sm:text-3xl font-extrabold px-8 py-4 rounded-full shadow-lg" style={{ backgroundColor: 'var(--brand-blue)' }}>
               404
             </div>
           </div>
@@ -30,8 +30,8 @@ export default function NotFound() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mb-6"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full mb-4">
-            <Package className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4" style={{ backgroundColor: 'var(--brand-blue)', opacity: 0.1 }}>
+            <Package className="w-10 h-10" style={{ color: 'var(--brand-blue)' }} />
           </div>
         </motion.div>
 
@@ -64,7 +64,10 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            style={{ backgroundColor: 'var(--brand-blue)' }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
             <Home className="w-5 h-5" />
             <span>Go back home</span>
@@ -72,7 +75,10 @@ export default function NotFound() {
           
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border-2 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 dark:hover:border-indigo-600 transition-all duration-200 shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border-2 transition-all duration-200 shadow-md hover:shadow-lg"
+            style={{ borderColor: 'var(--brand-blue)' }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--brand-blue)'}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--brand-blue)'}
           >
             <span>Browse Shop</span>
             <ArrowRight className="w-5 h-5" />

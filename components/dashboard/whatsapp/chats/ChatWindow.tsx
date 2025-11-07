@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { IWhatsAppConversation, IWhatsAppMessage } from "@/models/whatsappMessage";
 import { AlertCircle, UserCheck, UserX, Bot, Info } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ChatWindow({
     conversation,
@@ -11,9 +12,19 @@ export default function ChatWindow({
     conversation: IWhatsAppConversation;
     onBack: () => void;
 }) {
-    const [messages, setMessages] = useState<IWhatsAppMessage[]>(conversation.messages || []);
+    const t = useTranslations('whatsapp.chat');
+    
+    // Sort messages by timestamp to ensure chronological order
+    const sortedMessages = [...(conversation.messages || [])].sort((a, b) => a.timestamp - b.timestamp);
+    const [messages, setMessages] = useState<IWhatsAppMessage[]>(sortedMessages);
     const [input, setInput] = useState("");
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    // Update messages when conversation changes
+    useEffect(() => {
+        const sorted = [...(conversation.messages || [])].sort((a, b) => a.timestamp - b.timestamp);
+        setMessages(sorted);
+    }, [conversation.messages]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,7 +45,7 @@ export default function ChatWindow({
                     : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600'
             }`}>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <button onClick={onBack} className="md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 flex-shrink-0">← Back</button>
+                    <button onClick={onBack} className="md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 flex-shrink-0">← {t('back')}</button>
                     <div className="flex-1 min-w-0">
                         <div className="font-medium text-gray-800 dark:text-white truncate">
                             {conversation.customer.name || conversation.customer.phone}
@@ -43,19 +54,19 @@ export default function ChatWindow({
                             {conversation.status === 'human_required' && (
                                 <span className="inline-flex items-center gap-1 text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
                                     <AlertCircle className="w-3 h-3" />
-                                    Human Support Required
+                                    {t('status.humanRequired')}
                                 </span>
                             )}
                             {conversation.optInStatus === 'opted_in' && (
                                 <span className="inline-flex items-center gap-1 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
                                     <UserCheck className="w-3 h-3" />
-                                    Opted In
+                                    {t('status.optedIn')}
                                 </span>
                             )}
                             {conversation.optInStatus === 'opted_out' && (
                                 <span className="inline-flex items-center gap-1 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
                                     <UserX className="w-3 h-3" />
-                                    Opted Out
+                                    {t('status.optedOut')}
                                 </span>
                             )}
                         </div>
@@ -73,7 +84,7 @@ export default function ChatWindow({
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-700">
                 {messages.length === 0 ? (
                     <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-                        No messages yet
+                        {t('empty.noMessages')}
                     </div>
                 ) : (
                     messages.map((msg: IWhatsAppMessage, idx) => {
@@ -81,29 +92,57 @@ export default function ChatWindow({
                         const isAI = msg.isAIResponse;
 
                         return (
-                            <div key={msg.waMessageId || idx} className={`flex ${outgoing ? "justify-end" : "justify-start"} items-start gap-2`}>
-                                {!outgoing && isAI && (
-                                    <Bot className="w-4 h-4 text-[var(--brand-blue)] mt-1 flex-shrink-0" />
-                                )}
-                                <div className={`max-w-[75%] px-3 py-2 rounded-lg text-sm relative ${
-                                    outgoing 
-                                        ? "bg-[var(--brand-blue)] text-white" 
-                                        : "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
-                                }`}>
-                                    <div className="flex items-center gap-2">
-                                        <span>{msg.text}</span>
-                                        {isAI && (
-                                            <Bot className="w-3 h-3 opacity-70" />
+                            <div 
+                                key={msg.waMessageId || `msg-${idx}-${msg.timestamp}`} 
+                                className={`flex ${outgoing ? "justify-end" : "justify-start"} items-start gap-2 mb-2`}
+                            >
+                                {/* Avatar/Icon for incoming messages */}
+                                {!outgoing && (
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                        {isAI ? (
+                                            <Bot className="w-4 h-4 text-[var(--brand-blue)]" />
+                                        ) : (
+                                            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                {(conversation.customer.name || conversation.customer.phone || 'U').charAt(0).toUpperCase()}
+                                            </span>
                                         )}
                                     </div>
-                                    <div className={`text-[10px] mt-1 ${
+                                )}
+                                
+                                {/* Message bubble */}
+                                <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm shadow-sm ${
+                                    outgoing 
+                                        ? "bg-[var(--brand-blue)] text-white rounded-br-sm" 
+                                        : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-bl-sm border border-gray-200 dark:border-gray-600"
+                                }`}>
+                                    <div className="flex items-start gap-2">
+                                        <span className="break-words whitespace-pre-wrap">{msg.text || t('empty.noText')}</span>
+                                        {outgoing && isAI && (
+                                            <Bot className="w-3 h-3 opacity-70 flex-shrink-0 mt-0.5" />
+                                        )}
+                                    </div>
+                                    <div className={`text-[10px] mt-1.5 flex items-center gap-1 ${
                                         outgoing 
-                                            ? "text-white/70" 
-                                            : "text-gray-500 dark:text-gray-300"
+                                            ? "text-white/80" 
+                                            : "text-gray-500 dark:text-gray-400"
                                     }`}>
-                                        {new Date(msg.timestamp).toLocaleTimeString()}
+                                        <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        {outgoing && (
+                                            <span className="ml-1">
+                                                {conversation.metadata?.lastReadStatus === 'read' ? '✓✓' : '✓'}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
+
+                                {/* Avatar/Icon for outgoing messages */}
+                                {outgoing && (
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--brand-blue)]/20 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-[var(--brand-blue)]">
+                                            {t('you')}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         );
                     })
@@ -113,3 +152,4 @@ export default function ChatWindow({
         </div>
     );
 }
+

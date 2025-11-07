@@ -24,7 +24,15 @@ export async function GET(req: NextRequest) {
         const agent = await AIAgent.findOne({ owner });
         if (!agent) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
 
-        return NextResponse.json({ agent });
+        // Serialize enabledTools Map to object for JSON response
+        const agentObj = agent.toObject();
+        if (agentObj.enabledTools && agentObj.enabledTools instanceof Map) {
+            agentObj.enabledTools = Object.fromEntries(agentObj.enabledTools);
+        } else if (!agentObj.enabledTools) {
+            agentObj.enabledTools = {};
+        }
+
+        return NextResponse.json({ agent: agentObj });
     } catch (err) {
         console.error("GET AI agent error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
@@ -186,7 +194,7 @@ export async function PATCH(req: NextRequest) {
     try {
         await connectDB();
         const body = await req.json();
-        const { owner, account, enabled, prompt, templates, memory, file } = body;
+        const { owner, account, enabled, prompt, templates, memory, file, enabledTools } = body;
 
         if (!owner) {
         return NextResponse.json({ error: "Missing owner ID" }, { status: 400 });
@@ -207,10 +215,42 @@ export async function PATCH(req: NextRequest) {
         if (Array.isArray(templates)) agent.templates = templates;
         if (typeof memory === "string") agent.memory = memory;
         if (typeof file === "string") agent.file = file;
+        
+        // Handle enabledTools - convert object to Map if provided
+        if (enabledTools && typeof enabledTools === "object" && enabledTools !== null) {
+            // Clear existing enabledTools map
+            if (agent.enabledTools) {
+                agent.enabledTools.clear();
+            } else {
+                // Initialize as Map if it doesn't exist
+                agent.enabledTools = new Map();
+            }
+            
+            // Set each tool's enabled status
+            Object.entries(enabledTools).forEach(([toolName, isEnabled]) => {
+                if (typeof isEnabled === "boolean") {
+                    agent.enabledTools.set(toolName, isEnabled);
+                }
+            });
+        }
 
         await agent.save();
 
-        return NextResponse.json({ agent, message: "Agent updated successfully" });
+        // Clear agent cache if enabledTools were updated
+        if (enabledTools) {
+            const { clearAgentCache } = await import("@/lib/agent/agent");
+            clearAgentCache(owner);
+        }
+
+        // Serialize enabledTools Map to object for JSON response
+        const agentObj = agent.toObject();
+        if (agentObj.enabledTools && agentObj.enabledTools instanceof Map) {
+            agentObj.enabledTools = Object.fromEntries(agentObj.enabledTools);
+        } else if (!agentObj.enabledTools) {
+            agentObj.enabledTools = {};
+        }
+
+        return NextResponse.json({ agent: agentObj, message: "Agent updated successfully" });
     } catch (err) {
         console.error("PATCH AI agent error:", err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });

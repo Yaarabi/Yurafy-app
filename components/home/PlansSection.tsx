@@ -28,7 +28,7 @@ export default function PlansSection() {
             description: "Basic store setup with branding and domain.",
             icon: Store,
             color: "from-blue-400 to-blue-600",
-            features: ["50 Products", "Custom Domain", "Custom Theme", "SEO Tools"],
+            features: ["500 Orders", "Custom Domain", "Custom Theme", "SEO Tools"],
         },
         {
             key: "whatsapp",
@@ -55,7 +55,7 @@ export default function PlansSection() {
             description: "Starter + WhatsApp Automation for serious sellers.",
             icon: Crown,
             color: "from-yellow-400 to-orange-600",
-            features: ["500 Products", "Store + WhatsApp", "2000 Contacts", "Priority Support"],
+            features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Custom CSS/JS", "Priority Support"],
             popular: true,
         },
         {
@@ -65,14 +65,15 @@ export default function PlansSection() {
             description: "Pro Seller + AI Agent for full power scaling.",
             icon: Sparkles,
             color: "from-blue-500 to-blue-700",
-            features: ["Unlimited Products", "All Features", "AI Agent", "Custom CSS/JS", "Priority Support"],
+            features: ["Unlimited Orders", "All Features", "AI Agent", "Priority Support"],
             highlighted: true,
         },
     ];
 
     const handlePlanClick = (planKey: string) => {
         const locale = params.locale || 'en';
-        router.push(`/${locale}/onboarding/plan?plan=${planKey}`);
+        // Redirect to signup page with plan parameter
+        router.push(`/${locale}/signup?plan=${planKey}`);
     };
 
     return (

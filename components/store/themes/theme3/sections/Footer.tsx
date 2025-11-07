@@ -1,6 +1,8 @@
 import React from 'react';
 import { useStore } from '@/components/store/hooks/useStore'; 
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { Sparkles } from 'lucide-react';
+import GeometricDecorations from '../../shared/GeometricDecorations';
 
 const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
@@ -42,7 +44,7 @@ const Footer: React.FC = () => {
     if (!footerText) footerText = 'All rights reserved.';
 
     const socialLinks = selectedStore.socialLinks || {};
-    const primaryColor = selectedStore.theme?.primaryColor || '#16a34a';
+    const primaryColor = selectedStore.theme?.primaryColor || '#a78bfa';
     
     // Header links (same as in Header component)
     const headerLinks = [
@@ -53,26 +55,39 @@ const Footer: React.FC = () => {
 
     return (
         <footer 
-            className="text-white py-16"
+            className="relative text-white py-12 sm:py-16 overflow-hidden"
             style={{ background: `linear-gradient(135deg, ${primaryColor}, ${selectedStore.theme?.secondaryColor || primaryColor})` }}
         >
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Floral Geometric Pattern */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <GeometricDecorations type="floral" color="#ffffff" />
+            </div>
+            
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Logo and Links Section */}
                 <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-                    {/* Logo */}
-                    <div className="flex flex-col items-center md:items-start gap-2">
+                    {/* Logo with Beauty Badge */}
+                    <div className="flex flex-col items-center md:items-start">
                         {selectedStore.logoUrl ? (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${brandName} logo`}
-                                className="h-12 w-auto object-contain mb-2"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${brandName} logo`}
+                                    className="h-12 w-auto object-contain mb-4"
+                                />
+                                <div className="absolute -top-1 -right-1">
+                                    <Sparkles className="w-4 h-4 text-white" />
+                                </div>
+                            </div>
                         ) : (
-                            <div className="flex items-center gap-2">
-                                <span className="text-3xl">🌱</span>
-                                <h3 className="text-2xl font-bold text-white">{brandName}</h3>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Sparkles className="w-6 h-6 text-white" />
+                                <h3 className="text-xl sm:text-2xl font-bold text-white">{brandName}</h3>
                             </div>
                         )}
+                        <span className="text-xs text-white/80 uppercase tracking-wider">
+                            Beauty & Personal Care
+                        </span>
                     </div>
 
                     {/* Navigation Links */}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Lock, BarChart3, TrendingUp, ShoppingCart, Package, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import RevenueChart from "@/components/dashboard/home/RevenueChart";
 import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
 import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
@@ -34,6 +35,8 @@ interface PlanAwareDashboardProps {
 }
 
 export default function PlanAwareDashboard({ orders, products, templatesCount = 0, featuresData }: PlanAwareDashboardProps) {
+    const t = useTranslations('dashboard');
+    
     // Use featuresData if provided, otherwise fall back to plan API (for backward compatibility)
     const planKey = featuresData?.plan?.planKey || "free";
     const userPlan = featuresData?.plan;
@@ -70,12 +73,12 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                         <div>
                             <p className="font-semibold">
                                 {isExpired
-                                    ? "Your plan has expired"
-                                    : `Plan: ${planKey}`}
+                                    ? t('plan.expired')
+                                    : `${t('plan.planLabel')}: ${planKey}`}
                             </p>
                             {userPlan.currentPlan?.endDate && !isExpired && (
                                 <p className="text-sm mt-1 opacity-90">
-                                    Expires: {new Date(userPlan.currentPlan.endDate).toLocaleDateString('en-US', { 
+                                    {t('plan.expires')}: {new Date(userPlan.currentPlan.endDate).toLocaleDateString('en-US', { 
                                         year: 'numeric', 
                                         month: 'long', 
                                         day: 'numeric' 
@@ -86,49 +89,63 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                                 <div className="mt-2 flex flex-wrap gap-4 text-sm">
                                     {userPlan.limits.maxProducts !== undefined && (
                                         <span>
-                                            Products: {userPlan.usage.products} / {userPlan.limits.maxProducts}
+                                            {t('plan.products')}: {userPlan.usage.products} / {userPlan.limits.maxProducts}
                                         </span>
                                     )}
                                     {userPlan.limits.maxOrders !== undefined && (
                                         <span>
-                                            Orders: {userPlan.usage.orders} / {userPlan.limits.maxOrders}
+                                            {t('plan.orders')}: {userPlan.usage.orders} / {userPlan.limits.maxOrders}
                                         </span>
                                     )}
                                     {userPlan.limits.maxContacts !== undefined && (
                                         <span>
-                                            Contacts: {userPlan.usage.contacts} / {userPlan.limits.maxContacts}
+                                            {t('plan.contacts')}: {userPlan.usage.contacts} / {userPlan.limits.maxContacts}
                                         </span>
                                     )}
                                 </div>
                             )}
                         </div>
-                        <Link
-                            href="/dashboard/settings?tab=plan"
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-                        >
-                            {isExpired ? "Renew Plan" : "Upgrade Plan"}
-                        </Link>
+                        {/* Only show upgrade/renew button if not Visionary plan */}
+                        {planKey.toLowerCase() !== 'visionary' && (
+                            <Link
+                                href="/dashboard/settings?tab=plan"
+                                className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
+                            >
+                                {isExpired ? t('plan.renewPlan') : t('plan.upgradePlan')}
+                            </Link>
+                        )}
+                        {/* Show renew button if expired, even for Visionary */}
+                        {isExpired && planKey.toLowerCase() === 'visionary' && (
+                            <Link
+                                href="/dashboard/settings?tab=plan"
+                                className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
+                            >
+                                {t('plan.renewPlan')}
+                            </Link>
+                        )}
                     </div>
                 </motion.div>
             )}
 
             {/* Statistics Overview Cards */}
             {statistics && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {hasOrders && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                        ${statistics.totalRevenue.toLocaleString()}
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.totalRevenue')}</p>
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
+                                        ${statistics.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </p>
                                 </div>
-                                <TrendingUp className="w-8 h-8 text-green-500" />
+                                <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg flex-shrink-0 ml-2">
+                                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand-blue)]" />
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -137,16 +154,18 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Products</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.products')}</p>
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         {statistics.productsCount}
                                     </p>
                                 </div>
-                                <Package className="w-8 h-8 text-blue-500" />
+                                <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg flex-shrink-0 ml-2">
+                                    <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand-blue)]" />
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -155,16 +174,18 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.orders')}</p>
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         {statistics.ordersCount}
                                     </p>
                                 </div>
-                                <ShoppingCart className="w-8 h-8 text-purple-500" />
+                                <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg flex-shrink-0 ml-2">
+                                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand-blue)]" />
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -173,16 +194,18 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Templates</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.templates')}</p>
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         {templatesCount}
                                     </p>
                                 </div>
-                                <BarChart3 className="w-8 h-8 text-indigo-500" />
+                                <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg flex-shrink-0 ml-2">
+                                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand-blue)]" />
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -190,7 +213,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
             )}
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Revenue Chart - Only for plans with orders */}
                 {hasOrders ? (
                     <RevenueChart orders={orders} />
@@ -214,7 +237,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Products Chart - Only for store plans */}
                 {isStorePlan ? (
                     <TopProductsChart products={products} />
@@ -256,18 +279,18 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-xl shadow-lg"
+                    className="bg-gradient-to-r from-[var(--brand-blue)] to-[#0284c7] text-white p-4 sm:p-6 rounded-xl shadow-lg border border-[var(--brand-blue)]/20"
                 >
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-xl font-bold mb-2">Unlock Full Features</h3>
-                            <p className="text-indigo-100">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex-1">
+                            <h3 className="text-lg sm:text-xl font-bold mb-2">Unlock Full Features</h3>
+                            <p className="text-sm sm:text-base text-white/90">
                                 Upgrade your plan to access advanced analytics, store management, WhatsApp automation, and more!
                             </p>
                         </div>
                         <Link
                             href="/onboarding/plan"
-                            className="px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors whitespace-nowrap"
+                            className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-[var(--brand-blue)] rounded-lg font-semibold hover:bg-gray-100 transition-colors whitespace-nowrap text-sm sm:text-base shadow-sm hover:shadow-md"
                         >
                             View Plans
                         </Link>
@@ -301,7 +324,7 @@ function PlanLockedCard({
                 </p>
                 <Link
                     href="/dashboard/settings?tab=plan"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
                 >
                     <TrendingUp className="w-4 h-4" />
                     Upgrade Plan

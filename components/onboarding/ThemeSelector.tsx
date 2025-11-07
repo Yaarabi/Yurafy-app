@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Sparkles, Eye, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { storeThemes } from '@/public/themes';
 import { THEME_PREVIEWS } from '@/components/store/constants/themePreviews';
 import { StoreProvider } from '@/components/store/context/StoreContext';
@@ -22,7 +23,8 @@ const ColorCustomizationPanel = ({
     textColor,
     currentTheme,
     isSelectedTheme,
-    updatePreviewColor
+    updatePreviewColor,
+    t
 }: {
     primaryColor: string;
     secondaryColor: string;
@@ -30,14 +32,15 @@ const ColorCustomizationPanel = ({
     currentTheme: any;
     isSelectedTheme: boolean;
     updatePreviewColor: (type: 'primary' | 'secondary' | 'text', value: string, isSelectedTheme: boolean) => void;
+    t: any;
 }) => (
     <>
         <div className="mb-4">
             <h4 className="text-lg font-bold text-gray-900 mb-2">
-                Customize Colors
+                {t('customizeColors')}
             </h4>
             <p className="text-xs text-gray-600">
-                Adjust colors in real-time
+                {t('adjustColors')}
             </p>
         </div>
         
@@ -45,7 +48,7 @@ const ColorCustomizationPanel = ({
             {/* Primary Color */}
             <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-gray-700">
-                    Primary Color
+                    {t('primaryColor')}
                 </label>
                 <div className="flex items-center gap-2">
                     <input
@@ -87,7 +90,7 @@ const ColorCustomizationPanel = ({
             {currentTheme.theme.secondaryColor && (
                 <div className="flex flex-col gap-2">
                     <label className="block text-sm font-medium text-gray-700">
-                        Secondary Color
+                        {t('secondaryColor')}
                     </label>
                     <div className="flex items-center gap-2">
                         <input
@@ -129,7 +132,7 @@ const ColorCustomizationPanel = ({
             {/* Text Color */}
             <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-gray-700">
-                    Text Color
+                    {t('textColor')}
                 </label>
                 <div className="flex items-center gap-2">
                     <input
@@ -171,6 +174,7 @@ const ColorCustomizationPanel = ({
 );
 
 export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
+    const t = useTranslations('themes');
     const [selectedThemeIndex, setSelectedThemeIndex] = useState<number | null>(null);
     const [previewThemeId, setPreviewThemeId] = useState<number | null>(null);
     const [previewPage, setPreviewPage] = useState<'STORE_PAGE' | 'PRODUCT_PAGE'>('STORE_PAGE');
@@ -339,7 +343,8 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                     style={{
                         transform: `scale(${scale})`,
                         transformOrigin: 'top center',
-                        maxWidth: '1600px',
+                        width: '100%',
+                        maxWidth: '100%',
                         margin: '0 auto',
                     }}
                 >
@@ -419,20 +424,20 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                     <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                         <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-indigo-600" />
                         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800">
-                            Choose Your Store Theme
+                            {t('title')}
                         </h1>
                     </div>
                     <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-4">
-                        Select a theme that matches your brand identity. Preview each theme to see how it looks with sample content. You can customize the primary color after selection.
+                        {t('subtitle')}
                     </p>
                 </motion.div>
 
-                {/* Theme Grid */}
+                {/* Theme Grid - Mobile Optimized */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6 w-full"
                 >
                     {storeThemes.slice(0, 10).map((theme, index) => {
                         const themeId = index + 1;
@@ -447,7 +452,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                className={`relative flex flex-col rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition-all duration-300 bg-white shadow-lg hover:shadow-2xl overflow-hidden w-full ${
+                                className={`relative flex flex-col rounded-xl sm:rounded-2xl border-2 p-2 sm:p-3 md:p-4 transition-all duration-300 bg-white shadow-lg hover:shadow-2xl overflow-hidden w-full ${
                                     isSelected
                                         ? 'border-indigo-500 ring-2 sm:ring-4 ring-indigo-200 sm:scale-105 shadow-2xl'
                                         : 'border-gray-200 hover:border-gray-300 sm:hover:scale-[1.02]'
@@ -468,7 +473,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                 <button
                                     onClick={(e) => handlePreview(themeId, e)}
                                     className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20 bg-white/95 backdrop-blur-md text-gray-700 rounded-lg sm:rounded-xl p-2 sm:p-2.5 hover:bg-white active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-200 touch-manipulation"
-                                    title={isPreviewing ? 'Close Preview' : 'Preview Theme'}
+                                    title={isPreviewing ? t('closePreview') : t('previewTheme')}
                                 >
                                     <Eye className={`w-4 h-4 sm:w-5 sm:h-5 ${isPreviewing ? 'text-indigo-600' : ''}`} />
                                 </button>
@@ -489,16 +494,25 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                     {isPreviewing && (
                                         <div className="absolute inset-0 bg-indigo-600/20 backdrop-blur-sm flex items-center justify-center z-10">
                                             <span className="text-white text-xs font-bold bg-indigo-600 px-3 py-1.5 rounded-full shadow-xl border-2 border-white">
-                                                Preview Active
+                                                {t('previewActive')}
                                             </span>
                                         </div>
                                     )}
 
-                                    {/* Simplified Theme UI Preview */}
-                                    <div className="w-full h-full p-2 flex flex-col gap-1 pointer-events-none">
+                                    {/* Simplified Theme UI Preview with Category-Specific Styling */}
+                                    <div className="w-full h-full p-2 flex flex-col gap-1 pointer-events-none relative overflow-hidden">
+                                        {/* Geometric Pattern Overlay (subtle) */}
+                                        <div 
+                                            className="absolute inset-0 opacity-5"
+                                            style={{ 
+                                                backgroundImage: `radial-gradient(circle at 20% 50%, ${theme.theme.primaryColor} 0%, transparent 50%),
+                                                                 radial-gradient(circle at 80% 50%, ${theme.theme.secondaryColor || theme.theme.primaryColor} 0%, transparent 50%)`,
+                                            }}
+                                        />
+                                        
                                         {/* Header Bar */}
                                         <div 
-                                            className="h-3 rounded-sm flex items-center justify-between px-1"
+                                            className="h-3 rounded-sm flex items-center justify-between px-1 relative z-10"
                                             style={{ backgroundColor: theme.theme.primaryColor }}
                                         >
                                             <div className="w-8 h-1.5 rounded bg-white/30"></div>
@@ -509,7 +523,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                             </div>
                                         </div>
                                         
-                                        {/* Hero Section Preview */}
+                                        {/* Hero Section Preview with Enhanced Styling */}
                                         <div 
                                             className="flex-1 rounded-sm relative overflow-hidden"
                                             style={{ 
@@ -518,41 +532,93 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                     : `linear-gradient(135deg, ${theme.theme.primaryColor}, ${theme.theme.secondaryColor || theme.theme.primaryColor})`
                                             }}
                                         >
+                                            {/* Category Badge in Preview */}
+                                            {theme.category && (
+                                                <div className="absolute top-1 left-1 z-10">
+                                                    <div 
+                                                        className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tight backdrop-blur-sm border"
+                                                        style={{
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                                            color: 'white',
+                                                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                        }}
+                                                    >
+                                                        {theme.category.split(' / ')[0].split(' & ')[0]}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
                                             {/* Hero Content Placeholder */}
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center p-2 z-10">
                                                 <div className="w-12 h-1.5 rounded bg-white/40 mb-1"></div>
                                                 <div className="w-16 h-1 rounded bg-white/30"></div>
                                             </div>
+                                            
+                                            {/* Subtle Geometric Pattern */}
+                                            <div className="absolute inset-0 opacity-10">
+                                                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                                    <line x1="0" y1="0" x2="100" y2="100" stroke="white" strokeWidth="0.5" />
+                                                    <line x1="100" y1="0" x2="0" y2="100" stroke="white" strokeWidth="0.5" />
+                                                    <circle cx="50" cy="50" r="20" fill="none" stroke="white" strokeWidth="0.5" />
+                                                </svg>
+                                            </div>
                                         </div>
                                         
-                                        {/* Product Cards Preview */}
-                                        <div className="flex gap-1 h-6">
+                                        {/* Product Cards Preview with Enhanced Styling */}
+                                        <div className="flex gap-1 h-6 relative z-10">
                                             <div 
-                                                className="flex-1 rounded-sm bg-white border"
+                                                className="flex-1 rounded-sm bg-white border relative overflow-hidden"
                                                 style={{ borderColor: `${theme.theme.primaryColor}30` }}
                                             >
                                                 <div className="h-3 bg-gray-100 rounded-t-sm"></div>
                                                 <div className="h-2 px-1 pt-0.5">
                                                     <div className="h-1 bg-gray-200 rounded w-3/4"></div>
                                                 </div>
+                                                {/* Corner accent */}
+                                                <div 
+                                                    className="absolute top-0 right-0 w-2 h-2"
+                                                    style={{ 
+                                                        borderTop: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderRight: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderTopRightRadius: '0.125rem',
+                                                    }}
+                                                />
                                             </div>
                                             <div 
-                                                className="flex-1 rounded-sm bg-white border"
+                                                className="flex-1 rounded-sm bg-white border relative overflow-hidden"
                                                 style={{ borderColor: `${theme.theme.primaryColor}30` }}
                                             >
                                                 <div className="h-3 bg-gray-100 rounded-t-sm"></div>
                                                 <div className="h-2 px-1 pt-0.5">
                                                     <div className="h-1 bg-gray-200 rounded w-3/4"></div>
                                                 </div>
+                                                {/* Corner accent */}
+                                                <div 
+                                                    className="absolute top-0 right-0 w-2 h-2"
+                                                    style={{ 
+                                                        borderTop: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderRight: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderTopRightRadius: '0.125rem',
+                                                    }}
+                                                />
                                             </div>
                                             <div 
-                                                className="flex-1 rounded-sm bg-white border"
+                                                className="flex-1 rounded-sm bg-white border relative overflow-hidden"
                                                 style={{ borderColor: `${theme.theme.primaryColor}30` }}
                                             >
                                                 <div className="h-3 bg-gray-100 rounded-t-sm"></div>
                                                 <div className="h-2 px-1 pt-0.5">
                                                     <div className="h-1 bg-gray-200 rounded w-3/4"></div>
                                                 </div>
+                                                {/* Corner accent */}
+                                                <div 
+                                                    className="absolute top-0 right-0 w-2 h-2"
+                                                    style={{ 
+                                                        borderTop: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderRight: `2px solid ${theme.theme.primaryColor}`,
+                                                        borderTopRightRadius: '0.125rem',
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -563,11 +629,27 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
 
                                 {/* Theme Name & Description */}
                                 <div className="mb-3 px-1 sm:px-2">
+                                    {/* Category Badge */}
+                                    {theme.category && (
+                                        <div className="mb-2">
+                                            <span
+                                                className="inline-block text-[9px] sm:text-[10px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-semibold uppercase tracking-wide"
+                                                style={{
+                                                    backgroundColor: `${theme.theme.primaryColor}15`,
+                                                    color: theme.theme.primaryColor,
+                                                    border: `1px solid ${theme.theme.primaryColor}30`,
+                                                }}
+                                            >
+                                                {theme.category}
+                                            </span>
+                                        </div>
+                                    )}
+                                    
                                     <h3 className="font-bold text-gray-900 text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2">
-                                        {preview?.name || theme.name}
+                                        {t(`themeNames.${themeId}`) || preview?.name || theme.name}
                                     </h3>
                                     <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 mb-2 sm:mb-3 leading-relaxed">
-                                        {preview?.description || 'Modern store design'}
+                                        {preview?.description || (theme.category ? `Perfect for ${theme.category.toLowerCase()}` : 'Modern store design')}
                                     </p>
 
                                     {/* Features Tags */}
@@ -585,45 +667,45 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                     )}
                                 </div>
 
-                                {/* Color Swatches - Larger and more visible */}
-                                <div className="flex items-center justify-center gap-2 sm:gap-3 mt-auto px-1 sm:px-2 pb-2 sm:pb-3">
+                                {/* Color Swatches - Mobile Optimized */}
+                                <div className="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3 mt-auto px-1 sm:px-2 pb-2 sm:pb-3">
                                     <div className="flex flex-col items-center gap-0.5 sm:gap-1">
                                         <div
-                                            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
+                                            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-1 sm:ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
                                             style={{ 
                                                 backgroundColor: theme.theme.primaryColor,
                                                 borderColor: theme.theme.primaryColor,
-                                                boxShadow: `0 0 0 2px ${theme.theme.primaryColor}40, 0 4px 6px -1px rgba(0, 0, 0, 0.1)`,
+                                                boxShadow: `0 0 0 1px ${theme.theme.primaryColor}40, 0 2px 4px -1px rgba(0, 0, 0, 0.1)`,
                                             }}
-                                            title="Primary Color"
+                                            title={t('primaryColor')}
                                         />
-                                        <span className="text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-600">Primary</span>
+                                        <span className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs font-medium text-gray-600 hidden sm:inline">{t('primaryColor')}</span>
                                     </div>
                                     {theme.theme.secondaryColor && (
                                         <div className="flex flex-col items-center gap-0.5 sm:gap-1">
                                             <div
-                                                className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
+                                                className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-1 sm:ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
                                                 style={{ 
                                                     backgroundColor: theme.theme.secondaryColor,
                                                     borderColor: theme.theme.secondaryColor,
-                                                    boxShadow: `0 0 0 2px ${theme.theme.secondaryColor}40, 0 4px 6px -1px rgba(0, 0, 0, 0.1)`,
+                                                    boxShadow: `0 0 0 1px ${theme.theme.secondaryColor}40, 0 2px 4px -1px rgba(0, 0, 0, 0.1)`,
                                                 }}
-                                                title="Secondary Color"
+                                                title={t('secondaryColor')}
                                             />
-                                            <span className="text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-600">Secondary</span>
+                                            <span className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs font-medium text-gray-600 hidden sm:inline">{t('secondaryColor')}</span>
                                         </div>
                                     )}
                                     <div className="flex flex-col items-center gap-0.5 sm:gap-1">
                                         <div
-                                            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
+                                            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl border-2 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 ring-1 sm:ring-2 ring-offset-1 sm:ring-offset-2 ring-opacity-40"
                                             style={{ 
                                                 backgroundColor: theme.theme.textColor,
                                                 borderColor: theme.theme.textColor,
-                                                boxShadow: `0 0 0 2px ${theme.theme.textColor}40, 0 4px 6px -1px rgba(0, 0, 0, 0.1)`,
+                                                boxShadow: `0 0 0 1px ${theme.theme.textColor}40, 0 2px 4px -1px rgba(0, 0, 0, 0.1)`,
                                             }}
-                                            title="Text Color"
+                                            title={t('textColor')}
                                         />
-                                        <span className="text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-600">Text</span>
+                                        <span className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs font-medium text-gray-600 hidden sm:inline">{t('textColor')}</span>
                                     </div>
                                 </div>
 
@@ -660,9 +742,9 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                             >
                                 <Sparkles className="w-5 h-5" />
                                 <span className="hidden sm:inline">
-                                    Continue with {storeThemes[selectedThemeIndex].name}
+                                    {t('continueWith')} {t(`themeNames.${selectedThemeIndex + 1}`) || storeThemes[selectedThemeIndex].name}
                                 </span>
-                                <span className="sm:hidden">Continue</span>
+                                <span className="sm:hidden">{t('continue')}</span>
                                 <motion.span
                                     animate={{ x: [0, 5, 0] }}
                                     transition={{ repeat: Infinity, duration: 1.5 }}
@@ -683,20 +765,20 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 onClick={() => setPreviewThemeId(null)}
-                                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4"
                             >
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="bg-white rounded-2xl shadow-2xl w-full max-w-[95vw] max-h-[95vh] overflow-hidden flex flex-col m-4"
-                                >
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:w-auto sm:h-auto sm:max-w-[100vw] sm:max-h-[100vh] max-w-full max-h-full overflow-hidden flex flex-col m-0"
+                            >
                                     {/* Preview Header */}
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 flex-shrink-0 gap-3 sm:gap-0">
                                         <div className="flex-1 min-w-0">
                                             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate">
-                                                {THEME_PREVIEWS.find(p => p.themeId === previewThemeId)?.name || `Theme ${previewThemeId}`}
+                                                {t(`themeNames.${previewThemeId}`) || THEME_PREVIEWS.find(p => p.themeId === previewThemeId)?.name || `Theme ${previewThemeId}`}
                                             </h3>
                                             <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
                                                 {THEME_PREVIEWS.find(p => p.themeId === previewThemeId)?.description || 'Preview this theme'}
@@ -713,7 +795,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                 }`}
                                             >
-                                                Store
+                                                {t('store')}
                                             </button>
                                             <button
                                                 onClick={() => setPreviewPage('PRODUCT_PAGE')}
@@ -723,7 +805,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                 }`}
                                             >
-                                                Product
+                                                {t('product')}
                                             </button>
                                             <button
                                                 onClick={() => setShowColorPanel(!showColorPanel)}
@@ -764,6 +846,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                             currentTheme={currentTheme}
                                                             isSelectedTheme={isSelectedTheme}
                                                             updatePreviewColor={updatePreviewColor}
+                                                            t={t}
                                                         />
                                                     </div>
                                                     
@@ -780,7 +863,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                 <div className="p-4">
                                                                     <div className="flex items-center justify-between mb-4">
                                                                         <h4 className="text-lg font-bold text-gray-900">
-                                                                            Customize Colors
+                                                                            {t('customizeColors')}
                                                                         </h4>
                                                                         <button
                                                                             onClick={() => setShowColorPanel(false)}
@@ -796,6 +879,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                                         currentTheme={currentTheme}
                                                                         isSelectedTheme={isSelectedTheme}
                                                                         updatePreviewColor={updatePreviewColor}
+                                                                        t={t}
                                                                     />
                                                                 </div>
                                                             </motion.div>
@@ -805,10 +889,12 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                             );
                                         })()}
 
-                                        {/* Preview Content - Store Page or Product Page */}
-                                        <div className="flex-1 overflow-auto bg-gray-50 min-h-0">
-                                            <div className="min-h-full flex items-start justify-center p-2 sm:p-4 md:p-6">
-                                                {previewStoreElement}
+                                        {/* Preview Content - Store Page or Product Page - Full Width */}
+                                        <div className="flex-1 overflow-auto bg-gray-50 min-h-0 w-full">
+                                            <div className="min-h-full flex items-start justify-center p-0 sm:p-2 md:p-4 lg:p-6 w-full">
+                                                <div className="w-full max-w-full h-full">
+                                                    {previewStoreElement}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -844,7 +930,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                                 className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation"
                                             >
                                                 <Check className="w-4 h-4" />
-                                                Select This Theme
+                                                {t('selectThisTheme')}
                                             </button>
                                         </div>
                                     </div>

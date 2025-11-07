@@ -10,21 +10,27 @@ interface LogoUploaderProps {
 export default function LogoUploader({ logoUrl, onUpload }: LogoUploaderProps) {
     return (
         <div className="flex items-center gap-4">
-        {logoUrl ? (
-            <Image
-            src={logoUrl}
-            alt="Logo"
-            width={64}
-            height={64}
-            className="w-16 h-16 rounded-full object-cover border border-gray-200 dark:border-gray-600"
-            />
+        {logoUrl && logoUrl.trim() ? (
+            <div className="relative">
+                <Image
+                    src={logoUrl}
+                    alt="Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600"
+                    onError={(e) => {
+                        // Hide image on error
+                        (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                />
+            </div>
         ) : (
-            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600">
             <FaUser size={28} className="text-gray-500 dark:text-gray-300" />
             </div>
         )}
 
-        <label className="px-3 py-1 rounded-md bg-brand-blue text-white text-sm cursor-pointer hover:opacity-90 transition">
+        <label className="px-3 py-1 rounded-md bg-[var(--brand-blue)] text-white text-sm cursor-pointer hover:opacity-90 transition">
             Change Logo
             <input
             type="file"

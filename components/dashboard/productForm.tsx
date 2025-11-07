@@ -38,7 +38,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         brand: '',
         mainImage: '',
         images: [],
-        imageDescriptions: [],
+        descriptionsImage: [],
         sizes: [],
         colors: [],
         bundles: {
@@ -92,7 +92,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             brand: '',
             mainImage: '',
             images: [],
-            imageDescriptions: [],
+            descriptionsImage: [],
             sizes: [],
             colors: [],
             bundles: {
@@ -122,7 +122,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
 
     const handleImageUpload = async (
         e: ChangeEvent<HTMLInputElement>,
-        field: 'mainImage' | 'images'
+        field: 'mainImage' | 'images' | 'descriptionsImage'
     ) => {
         const files = e.target.files;
         if (!files) return;
@@ -161,6 +161,8 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         [field]:
             field === 'mainImage'
             ? uploadedUrls[0]
+            : field === 'descriptionsImage'
+            ? [...(prev.descriptionsImage || []), ...uploadedUrls]
             : [...(prev.images || []), ...uploadedUrls],
         }));
     };
@@ -169,10 +171,21 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value, type } = e.target;
-        setValues((prev) => ({
-        ...prev,
-        [name]: type === 'number' ? Number(value) : value,
-        }));
+        // For numeric fields (price, discount, stock), parse as number but keep as string in state
+        // This allows text input for flexible values like "buy 2 for $10"
+        if (name === 'price' || name === 'discount' || name === 'stock') {
+            // Allow empty string or numeric values
+            const numValue = value === '' ? 0 : (isNaN(Number(value)) ? 0 : Number(value));
+            setValues((prev) => ({
+                ...prev,
+                [name]: numValue,
+            }));
+        } else {
+            setValues((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     }
 
     function validate(): boolean {
@@ -209,9 +222,9 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
 
         {/* Price, Discount, Stock */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Input label={t('price')} name="price" type="number" value={values.price || 0} onChange={handleChange} error={errors.price} />
-            <Input label={t('discount')} name="discount" type="number" value={values.discount || 0} onChange={handleChange} />
-            <Input label={t('stock')} name="stock" type="number" value={values.stock || 0} onChange={handleChange} error={errors.stock} />
+            <Input label={t('price')} name="price" type="text" value={values.price || ''} onChange={handleChange} error={errors.price} placeholder="0.00" />
+            <Input label={t('discount')} name="discount" type="text" value={values.discount || ''} onChange={handleChange} placeholder="0" />
+            <Input label={t('stock')} name="stock" type="text" value={values.stock || ''} onChange={handleChange} error={errors.stock} placeholder="0" />
         </div>
 
         {/* Brand & Category */}
@@ -271,18 +284,6 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                             alt={`Preview ${idx + 1}`}
                             className="w-28 h-28 object-cover rounded-lg border border-gray-700"
                         />
-                        {/* ✅ Added: Quick image description input */}
-                        <input
-                            type="text"
-                            value={values.imageDescriptions?.[idx] || ''}
-                            onChange={(e) => {
-                                const descs = [...(values.imageDescriptions || [])];
-                                descs[idx] = e.target.value;
-                                setValues(prev => ({ ...prev, imageDescriptions: descs }));
-                            }}
-                            placeholder="Description"
-                            className="absolute bottom-0 left-0 right-0 px-2 py-1 text-xs bg-black bg-opacity-70 text-white rounded-b-lg border-t border-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-blue"
-                        />
                     </div>
                     );
                 } else if (ext?.match(/(mp4|webm|ogg)/)) {
@@ -310,32 +311,45 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             </div>
         </div>
 
-        {/* ✅ Added: Image Descriptions Section */}
-        {values.images && values.images.length > 0 && (
-            <div className="mt-4">
-                <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
-                    Image Descriptions (Optional)
-                </label>
-                <div className="flex flex-col gap-2">
-                    {values.images.map((url, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500 dark:text-gray-400 w-12">Img {idx + 1}:</span>
-                            <input
-                                type="text"
-                                value={values.imageDescriptions?.[idx] || ''}
-                                onChange={(e) => {
-                                    const descs = [...(values.imageDescriptions || [])];
-                                    descs[idx] = e.target.value;
-                                    setValues(prev => ({ ...prev, imageDescriptions: descs }));
-                                }}
-                                placeholder="Enter description for this image"
-                                className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+        {/* Description Images Section */}
+        <div className="mt-4">
+            <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
+                Description Images (Optional)
+            </label>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Images to display in the description section (different from main image and product images)
+            </p>
+            <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleImageUpload(e, 'descriptionsImage')}
+                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+            />
+            {values.descriptionsImage && values.descriptionsImage.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {values.descriptionsImage.map((url, idx) => (
+                        <div key={idx} className="relative">
+                            <img
+                                src={url}
+                                alt={`Description image ${idx + 1}`}
+                                className="w-24 h-24 object-cover rounded-lg border border-gray-700"
                             />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const newImages = values.descriptionsImage?.filter((_, i) => i !== idx) || [];
+                                    setValues(prev => ({ ...prev, descriptionsImage: newImages }));
+                                }}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                                ×
+                            </button>
                         </div>
                     ))}
                 </div>
-            </div>
-        )}
+            )}
+        </div>
 
         {/* Sizes & Colors */}
         <div className="mt-4">
@@ -425,83 +439,100 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                             {values.bundles?.type === 'buy_x_get_y' && (
                                 <div className="grid grid-cols-2 gap-4">
                                     <Input
-                                        label="Buy Quantity (e.g., 2)"
+                                        label={t('buyQuantity') || "Buy Quantity (e.g., 2)"}
                                         name="buyQuantity"
-                                        type="number"
-                                        min="1"
+                                        type="text"
                                         value={values.bundles?.buyQuantity || ''}
                                         onChange={(e) => {
                                             setValues(prev => ({
                                                 ...prev,
                                                 bundles: {
                                                     ...prev.bundles,
-                                                    buyQuantity: parseInt(e.target.value) || 0,
+                                                    buyQuantity: e.target.value,
                                                     enabled: true,
                                                 }
                                             }));
                                         }}
+                                        placeholder="2"
                                     />
                                     <Input
-                                        label="Get Quantity Free (e.g., 1)"
+                                        label={t('getQuantity') || "Get Quantity Free (e.g., 1)"}
                                         name="getQuantity"
-                                        type="number"
-                                        min="0"
+                                        type="text"
                                         value={values.bundles?.getQuantity || ''}
                                         onChange={(e) => {
                                             setValues(prev => ({
                                                 ...prev,
                                                 bundles: {
                                                     ...prev.bundles,
-                                                    getQuantity: parseInt(e.target.value) || 0,
+                                                    getQuantity: e.target.value,
                                                     enabled: true,
                                                 }
                                             }));
                                         }}
+                                        placeholder="1"
                                     />
                                 </div>
                             )}
 
-                            {/* Special Price */}
+                            {/* Special Price - Buy X for Y */}
                             {values.bundles?.type === 'special_price' && (
-                                <Input
-                                    label="Special Bundle Price"
-                                    name="specialPrice"
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={values.bundles?.specialPrice || ''}
-                                    onChange={(e) => {
-                                        setValues(prev => ({
-                                            ...prev,
-                                            bundles: {
-                                                ...prev.bundles,
-                                                specialPrice: parseFloat(e.target.value) || 0,
-                                                enabled: true,
-                                            }
-                                        }));
-                                    }}
-                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Input
+                                        label={t('buyQuantity') || "Buy Quantity (e.g., 2)"}
+                                        name="buyQuantity"
+                                        type="text"
+                                        value={values.bundles?.buyQuantity || ''}
+                                        onChange={(e) => {
+                                            setValues(prev => ({
+                                                ...prev,
+                                                bundles: {
+                                                    ...prev.bundles,
+                                                    buyQuantity: e.target.value,
+                                                    enabled: true,
+                                                }
+                                            }));
+                                        }}
+                                        placeholder="2"
+                                    />
+                                    <Input
+                                        label={t('specialPrice') || "Special Price (e.g., 10.00)"}
+                                        name="specialPrice"
+                                        type="text"
+                                        value={values.bundles?.specialPrice || ''}
+                                        onChange={(e) => {
+                                            setValues(prev => ({
+                                                ...prev,
+                                                bundles: {
+                                                    ...prev.bundles,
+                                                    specialPrice: e.target.value,
+                                                    enabled: true,
+                                                }
+                                            }));
+                                        }}
+                                        placeholder="10.00"
+                                    />
+                                </div>
                             )}
 
                             {/* Percentage Off */}
                             {values.bundles?.type === 'percentage_off' && (
                                 <Input
-                                    label="Discount Percentage (e.g., 20)"
+                                    label={t('percentageOff') || "Discount Percentage (e.g., 20)"}
                                     name="percentageOff"
-                                    type="number"
-                                    min="0"
-                                    max="100"
+                                    type="text"
                                     value={values.bundles?.percentageOff || ''}
                                     onChange={(e) => {
                                         setValues(prev => ({
                                             ...prev,
                                             bundles: {
                                                 ...prev.bundles,
-                                                percentageOff: parseFloat(e.target.value) || 0,
+                                                percentageOff: e.target.value,
                                                 enabled: true,
                                             }
                                         }));
                                     }}
+                                    placeholder="20"
                                 />
                             )}
                         </div>

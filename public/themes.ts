@@ -1,81 +1,20 @@
 
 export const storeThemes = [
-    // 1. Classic Green
+    // 1. Electronics & Consumer Tech - Tech Blue with Circuit Patterns
     {
-        name: "Classic Green",
+        name: "Tech Circuit",
+        category: "Electronics & Consumer Tech",
         theme: {
-        primaryColor: "#22c55e",
-        secondaryColor: "#16a34a",
+        primaryColor: "#0ea5e9",
+        secondaryColor: "#0369a1",
         textColor: "#f3f4f6",
-        gradient: { from: "#22c55e", via: "#4ade80", to: "#16a34a" },
+        gradient: { from: "#0ea5e9", via: "#3b82f6", to: "#0369a1" },
         },
     },
-    // 2. Modern Blue
+    // 2. Fashion / Apparel & Footwear - Elegant Rose with Geometric Patterns
     {
-        name: "Modern Blue",
-        theme: {
-        primaryColor: "#3b82f6",
-        secondaryColor: "#2563eb",
-        textColor: "#f3f4f6",
-        gradient: { from: "#60a5fa", via: "#3b82f6", to: "#2563eb" },
-        
-        },
-    },
-    // 3. Luxury Black & Gold
-    {
-        name: "Luxury Black & Gold",
-        theme: {
-        primaryColor: "#eab308",
-        secondaryColor: "#ca8a04",
-        textColor: "#f3f4f6",
-        gradient: { from: "#facc15", via: "#fcd34d", to: "#ca8a04" },
-        },
-    },
-    // 4. Soft Purple
-    {
-        name: "Soft Purple",
-        theme: {
-        primaryColor: "#8b5cf6",
-        secondaryColor: "#7c3aed",
-        textColor: "#f3f4f6",
-        gradient: { from: "#c4b5fd", via: "#a78bfa", to: "#7c3aed" },
-    
-        },
-    },
-    // 5. Sunset Coral
-    {
-        name: "Sunset Coral",
-        theme: {
-        primaryColor: "#f97316",
-        secondaryColor: "#ea580c",
-        textColor: "#f3f4f6",
-        gradient: { from: "#fdba74", via: "#fb923c", to: "#ea580c" },
-        },
-    },
-    // 6. Minimal Gray
-    {
-        name: "Minimal Gray",
-        theme: {
-        primaryColor: "#4b5563",
-        secondaryColor: "#374151",
-        textColor: "#f3f4f6",
-        gradient: { from: "#6b7280", via: "#9ca3af", to: "#374151" },
-        },
-    },
-    // 7. Ocean Teal
-    {
-        name: "Ocean Teal",
-        theme: {
-        primaryColor: "#14b8a6",
-        secondaryColor: "#0d9488",
-        textColor: "#f3f4f6",
-        gradient: { from: "#5eead4", via: "#2dd4bf", to: "#0d9488" },
-
-        },
-    },
-    // 8. Rose Blush
-    {
-        name: "Rose Blush",
+        name: "Elegant Rose",
+        category: "Fashion / Apparel & Footwear",
         theme: {
         primaryColor: "#f43f5e",
         secondaryColor: "#be123c",
@@ -83,24 +22,92 @@ export const storeThemes = [
         gradient: { from: "#fb7185", via: "#f472b6", to: "#be123c" },
         },
     },
-    // 9. Emerald Forest
+    // 3. Beauty & Personal Care - Soft Lavender with Floral Patterns
     {
-        name: "Emerald Forest",
+        name: "Lavender Dream",
+        category: "Beauty & Personal Care",
         theme: {
-        primaryColor: "#10b981",
-        secondaryColor: "#047857",
+        primaryColor: "#a78bfa",
+        secondaryColor: "#7c3aed",
         textColor: "#f3f4f6",
-        gradient: { from: "#34d399", via: "#22c55e", to: "#047857" },
+        gradient: { from: "#c4b5fd", via: "#a78bfa", to: "#7c3aed" },
         },
     },
-    // 10. Arctic White
+    // 4. Home & Garden / Furniture / Decor - Natural Green with Organic Patterns
     {
-        name: "Arctic White",
+        name: "Natural Green",
+        category: "Home & Garden / Furniture / Decor",
         theme: {
-        primaryColor: "#0ea5e9",
-        secondaryColor: "#0369a1",
+        primaryColor: "#22c55e",
+        secondaryColor: "#16a34a",
         textColor: "#f3f4f6",
-        gradient: { from: "#38bdf8", via: "#7dd3fc", to: "#0369a1" },
+        gradient: { from: "#22c55e", via: "#4ade80", to: "#16a34a" },
+        },
+    },
+    // 5. Mobile Accessories / Wearables / Smart Gadgets - Modern Cyan with Tech Patterns
+    {
+        name: "Modern Cyan",
+        category: "Mobile Accessories / Wearables / Smart Gadgets",
+        theme: {
+        primaryColor: "#06b6d4",
+        secondaryColor: "#0891b2",
+        textColor: "#f3f4f6",
+        gradient: { from: "#22d3ee", via: "#06b6d4", to: "#0891b2" },
+        },
+    },
+    // 6. Traditional / Handicraft / Local Crafts & Textiles - Warm Amber with Cultural Patterns
+    {
+        name: "Warm Amber",
+        category: "Traditional / Handicraft / Local Crafts & Textiles",
+        theme: {
+        primaryColor: "#f59e0b",
+        secondaryColor: "#b45309",
+        textColor: "#f3f4f6",
+        gradient: { from: "#fbbf24", via: "#fcd34d", to: "#b45309" },
+        },
+    },
+    // 7. Food & Drink / Grocery / Perishables - Fresh Orange with Organic Patterns
+    {
+        name: "Fresh Orange",
+        category: "Food & Drink / Grocery / Perishables",
+        theme: {
+        primaryColor: "#f97316",
+        secondaryColor: "#ea580c",
+        textColor: "#f3f4f6",
+        gradient: { from: "#fdba74", via: "#fb923c", to: "#ea580c" },
+        },
+    },
+    // 8. Toys / Games / Kids Products - Playful Pink with Fun Patterns
+    {
+        name: "Playful Pink",
+        category: "Toys / Games / Kids Products",
+        theme: {
+        primaryColor: "#ec4899",
+        secondaryColor: "#be185d",
+        textColor: "#f3f4f6",
+        gradient: { from: "#f9a8d4", via: "#f472b6", to: "#be185d" },
+        },
+    },
+    // 9. Health & Wellness / Personal Health Products - Clean Teal with Wellness Patterns
+    {
+        name: "Clean Teal",
+        category: "Health & Wellness / Personal Health Products",
+        theme: {
+        primaryColor: "#14b8a6",
+        secondaryColor: "#0d9488",
+        textColor: "#f3f4f6",
+        gradient: { from: "#5eead4", via: "#2dd4bf", to: "#0d9488" },
+        },
+    },
+    // 10. Computers / Laptops / Peripherals - Professional Indigo with Tech Patterns
+    {
+        name: "Professional Indigo",
+        category: "Computers / Laptops / Peripherals",
+        theme: {
+        primaryColor: "#6366f1",
+        secondaryColor: "#4338ca",
+        textColor: "#f3f4f6",
+        gradient: { from: "#818cf8", via: "#6366f1", to: "#4338ca" },
         },
     },
     // 11. Midnight Indigo

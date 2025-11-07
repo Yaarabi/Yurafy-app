@@ -6,6 +6,7 @@ import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
+import GeometricDecorations from "../../shared/GeometricDecorations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0 },
@@ -20,7 +21,7 @@ const ProductGrid: React.FC = () => {
     
     if (!selectedStore) return null;
 
-    const primaryColor = selectedStore.theme?.primaryColor || '#4b5563';
+    const primaryColor = selectedStore.theme?.primaryColor || '#22c55e';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -38,18 +39,48 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="py-24 bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                <motion.h3
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
+        <div id="products" className="relative py-24 bg-gradient-to-b from-green-50 to-white overflow-hidden">
+            {/* Organic Geometric Pattern */}
+            <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />
+            
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl z-10">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-center mb-20 tracking-tight"
-                    style={{ color: primaryColor }}
+                    className="text-center mb-20"
                 >
-                    Products
-                </motion.h3>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
+                        style={{ 
+                            backgroundColor: `${primaryColor}15`,
+                            borderColor: `${primaryColor}30`,
+                        }}
+                    >
+                        <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
+                            🏡 Home & Garden
+                        </span>
+                    </motion.div>
+                    <motion.h3
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-center mb-4 tracking-tight"
+                        style={{ color: primaryColor }}
+                    >
+                        Products
+                    </motion.h3>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                    </div>
+                </motion.div>
 
                 {products.length === 0 ? (
                     <p className="text-center text-gray-400 text-xl font-light">No products available.</p>
@@ -71,8 +102,16 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                className="group bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
+                                className="group relative bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
                             >
+                                {/* Organic Corner Accent */}
+                                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden z-10">
+                                    <div 
+                                        className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
+                                        style={{ borderTopColor: primaryColor }}
+                                    ></div>
+                                </div>
+                                
                                 <div className="relative overflow-hidden h-80">
                                     <motion.img
                                         src={product.mainImage}
@@ -81,6 +120,14 @@ const ProductGrid: React.FC = () => {
                                         whileHover={{ scale: 1.05 }}
                                         transition={{ duration: 0.8, ease: "easeOut" }}
                                     />
+                                    {/* Organic Overlay */}
+                                    <div 
+                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                                        style={{ backgroundColor: primaryColor }}
+                                    >
+                                        <GeometricDecorations type="organic" color={primaryColor} className="opacity-30" />
+                                    </div>
+                                    
                                 </div>
                                 <div className="p-8 flex-grow flex flex-col justify-between">
                                     <div>

@@ -10,6 +10,7 @@ import OrdersActions from './OrdersActions';
 import UpdateOrderModal from './UpdateOrderModal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import BulkActionsMenu from './BulkActionsMenu';
+import { ShoppingCart } from 'lucide-react';
 
 type OrdersFiltersType = {
     product: string;
@@ -86,7 +87,7 @@ export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTable
     };
 
     const handleDeleteOrder = async (orderId: string) => {
-        if (!confirm('Are you sure you want to delete this order?')) return;
+        if (!confirm(t('deleteConfirm'))) return;
         try {
             const res = await fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' });
             if (res.ok) setOrders((prev) => prev.filter((o) => o._id !== orderId));
@@ -112,7 +113,7 @@ export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTable
     };
 
     return (
-        <div className="space-y-6 relative">
+        <div className="space-y-4 sm:space-y-6 relative">
             {/* Actions */}
             <OrdersActions orders={orders} setOrders={setOrders} setShowAddModal={setShowAddModal} />
 
@@ -122,101 +123,109 @@ export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTable
             {/* Orders Table */}
             <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead>
-                        <tr className="bg-gray-50 dark:bg-gray-800/80">
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <thead className="bg-gray-50 dark:bg-gray-800/80">
+                        <tr>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="h-4 w-4 rounded border-gray-300 text-[var(--brand-blue)] focus:ring-[var(--brand-blue)] dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                         checked={selectedOrders.length === filteredOrders.length && filteredOrders.length > 0}
                                         onChange={toggleSelectAll}
                                         disabled={!hasWhatsApp}
                                         aria-label="select all orders"
-                                        title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
+                                        title={!hasWhatsApp ? t('whatsappRequired') : undefined}
                                     />
                                 </label>
                             </th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">#</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Phone</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Address</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Products</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                            <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">#</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('columns.customer')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">{t('columns.phone')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">{t('columns.address')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('columns.products')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('columns.total')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('columns.status')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">{t('columns.date')}</th>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('actions')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {loading ? (
                             <tr>
-                                <td colSpan={10} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    <div className="flex items-center justify-center space-x-2">
-                                        <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-brand-blue rounded-full animate-spin"></div>
-                                        <span>Loading orders...</span>
+                                <td colSpan={10} className="px-4 py-12 text-center">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-8 h-8 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('loading')}</p>
                                     </div>
                                 </td>
                             </tr>
                         ) : filteredOrders.length === 0 ? (
                             <tr>
-                                <td colSpan={10} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No orders found</td>
+                                <td colSpan={10} className="px-4 py-12 text-center">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <ShoppingCart className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('empty')}</p>
+                                    </div>
+                                </td>
                             </tr>
                         ) : (
                             filteredOrders.map((order, idx) => (
                                 <tr
                                     key={order._id}
                                     className={`bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
-                                        selectedOrders.includes(order._id) ? 'bg-gray-100 dark:bg-gray-700/60' : ''
+                                        selectedOrders.includes(order._id) ? 'bg-[var(--brand-blue)]/5 dark:bg-[var(--brand-blue)]/10' : ''
                                     }`}
                                 >
-                                    <td className="px-4 py-4 whitespace-nowrap">
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
                                         <input
                                             type="checkbox"
-                                            className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="h-4 w-4 rounded border-gray-300 text-[var(--brand-blue)] focus:ring-[var(--brand-blue)] disabled:opacity-50 disabled:cursor-not-allowed"
                                             checked={selectedOrders.includes(order._id)}
                                             onChange={() => toggleSelect(order._id)}
                                             disabled={!hasWhatsApp}
                                             aria-label={`select order ${idx + 1}`}
-                                            title={!hasWhatsApp ? "WhatsApp feature required" : undefined}
+                                            title={!hasWhatsApp ? t('whatsappRequired') : undefined}
                                         />
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{idx + 1}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{order.shippingAddress.fullName}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{order.shippingAddress.phone}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{order.shippingAddress.address}</td>
-                                    <td className="px-4 py-4 text-sm">
-                                        <div className="flex flex-col gap-2 min-w-[200px]">
-                                            {order.products.map((p, i) => (
-                                                <div key={i} className="flex flex-wrap items-center gap-2 bg-gray-50 dark:bg-gray-700/50 p-2 rounded-lg">
-                                                    <span className="font-medium text-gray-900 dark:text-gray-100">{p.name}</span>
-                                                    <span className="text-sm text-gray-500 dark:text-gray-400">{p.quantity}×</span>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-200 hidden sm:table-cell">{idx + 1}</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-200 truncate max-w-[120px] sm:max-w-none">{order.shippingAddress.fullName}</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-200 hidden md:table-cell">{order.shippingAddress.phone}</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-200 truncate max-w-[150px] hidden lg:table-cell">{order.shippingAddress.address}</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm">
+                                        <div className="flex flex-col gap-1.5 sm:gap-2 min-w-[120px] sm:min-w-[200px]">
+                                            {order.products.slice(0, 2).map((p, i) => (
+                                                <div key={i} className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-gray-50 dark:bg-gray-700/50 p-1.5 sm:p-2 rounded-lg">
+                                                    <span className="font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate">{p.name}</span>
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{p.quantity}×</span>
                                                 </div>
                                             ))}
+                                            {order.products.length > 2 && (
+                                                <span className="text-xs text-[var(--brand-blue)] font-medium">{t('moreProducts', { count: order.products.length - 2 })}</span>
+                                            )}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">{order.totalAmount} MAD</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm">
-                                        <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${getStatusStyle(order.status)}`}>
-                                            {order.status}
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-semibold text-[var(--brand-blue)]">{order.totalAmount} MAD</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                                        <span className={`inline-flex px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium ${getStatusStyle(order.status)}`}>
+                                            {t(`status.${order.status}`)}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm">
-                                        <div className="flex items-center gap-2">
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">{new Date(order.createdAt).toLocaleDateString()}</td>
+                                    <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                                        <div className="flex items-center gap-1.5 sm:gap-2">
                                             <button
                                                 onClick={() => setEditingOrder(order)}
-                                                className="p-2 rounded-full bg-brand-blue hover:bg-brand-blue/90 dark:hover:bg-brand-blue/80 text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue/50 dark:focus:ring-brand-blue/40"
-                                                title="Edit Order"
+                                                className="p-1.5 sm:p-2 rounded-lg bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 dark:hover:bg-[var(--brand-blue)]/80 text-white flex items-center justify-center transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)]/50 dark:focus:ring-[var(--brand-blue)]/40"
+                                                title={t('edit')}
                                             >
-                                                <FaEdit className="w-4 h-4" />
+                                                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteOrder(order._id)}
-                                                className="p-2 rounded-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 dark:focus:ring-red-600/40"
-                                                title="Delete Order"
+                                                className="p-1.5 sm:p-2 rounded-lg bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white flex items-center justify-center transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50 dark:focus:ring-red-600/40"
+                                                title={t('delete')}
                                             >
-                                                <FaTrash className="w-4 h-4" />
+                                                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
                                             </button>
                                         </div>
                                     </td>

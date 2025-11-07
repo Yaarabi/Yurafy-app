@@ -33,7 +33,7 @@ export default function DashboardClient() {
     const templatesCount = featuresData.statistics.templatesCount || 0;
 
     return (
-        <div className="p-6 space-y-6 mx-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
             <DashboardHeader/>
             <PlanAwareDashboard 
                 orders={orders} 

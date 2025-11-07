@@ -2,6 +2,7 @@ import axios from "axios";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppConversation from "@/models/whatsappMessage";
 import { normalizePhoneNumber } from "./phoneNormalize";
+import { encryptMessage } from "./messageEncryption";
 
 /**
  * Send a WhatsApp message using WhatsApp Cloud API
@@ -83,12 +84,15 @@ export async function sendWhatsAppMessage(
             throw apiError;
         }
 
-        // Prepare message object for conversation
+        // Encrypt message text before saving
+        const encryptedText = encryptMessage(messageText);
+        
+        // Prepare message object for conversation (with encrypted text)
         const newMessage = {
             from: account.waNumber,
             to: normalizedPhone,
             type: "text",
-            text: messageText,
+            text: encryptedText, // Store encrypted
             direction: "outgoing",
             status: "sent",
             timestamp: Date.now(),
@@ -106,7 +110,7 @@ export async function sendWhatsAppMessage(
                     aiEnabled: account.settings?.aiAgent || false,
                 },
                 $push: { messages: newMessage },
-                $set: { lastMessage: messageText, lastTimestamp: newMessage.timestamp },
+                $set: { lastMessage: encryptedText, lastTimestamp: newMessage.timestamp }, // Store encrypted
             },
             { upsert: true, new: true }
         );

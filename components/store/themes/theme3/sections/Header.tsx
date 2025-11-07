@@ -7,7 +7,8 @@ import { useRouter, useParams } from "next/navigation";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
+import GeometricDecorations from "../../shared/GeometricDecorations";
 
 const Header: React.FC = () => {
     const { selectedStore, selectProduct } = useStore();
@@ -24,7 +25,7 @@ const Header: React.FC = () => {
         { label: "Products", href: "#products" },
         { label: "Contact", href: "#contact" },
     ];
-    const primaryColor = selectedStore.theme?.primaryColor || '#16a34a';
+    const primaryColor = selectedStore.theme?.primaryColor || '#a78bfa';
     const cartItemsCount = getTotalItems();
 
     const handleLogoClick = (e: React.MouseEvent) => {
@@ -56,25 +57,35 @@ const Header: React.FC = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="bg-white shadow-md sticky top-0 z-50 border-b-4"
-            style={{ borderColor: primaryColor }}
+            className="relative bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b-2 overflow-hidden"
+            style={{ borderColor: `${primaryColor}40` }}
         >
-            <div className="container mx-auto px-4 sm:px-6">
+            {/* Floral Geometric Pattern */}
+            <div className="absolute inset-0 opacity-5 pointer-events-none">
+                <GeometricDecorations type="floral" color={primaryColor} />
+            </div>
+            
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6 py-3 sm:py-4">
-                    {/* Logo - Always show both logo and brand name */}
+                    {/* Logo - Beauty Style with Floral Accent */}
                     <button
                         onClick={handleLogoClick}
-                        className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity min-w-0"
+                        className="group flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity min-w-0 relative"
                     >
                         {selectedStore.logoUrl && (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${selectedStore.brandName} logo`}
-                                className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${selectedStore.brandName} logo`}
+                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
+                                />
+                                {/* Beauty Badge */}
+                                <div className="absolute -top-1 -right-1">
+                                    <Sparkles className="w-3 h-3 text-purple-500" />
+                                </div>
+                            </div>
                         )}
-                        <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-                            <span className="text-base sm:text-lg md:text-xl lg:text-2xl flex-shrink-0">🌱</span>
+                        <div className="flex flex-col">
                             <h1 
                                 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold truncate"
                                 style={{ color: primaryColor }}

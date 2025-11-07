@@ -49,7 +49,7 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
             {editing ? (
                 <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
                     <input
-                        className="flex-1 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                        className="flex-1 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] dark:focus:ring-[var(--brand-blue)] transition"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
@@ -60,14 +60,14 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
                     />
                     <div className="flex gap-2">
                         <button
-                            className="px-4 py-2 rounded-md bg-[var(--brand-blue)] text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 rounded-lg bg-[var(--brand-blue)] text-white text-sm font-medium hover:bg-[var(--brand-blue)]/90 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={handleSave}
                             disabled={saving || input === value}
                         >
                             {saving ? 'Saving...' : 'Save'}
                         </button>
                         <button
-                            className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
                             onClick={handleCancel}
                             disabled={saving}
                         >
@@ -76,12 +76,12 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
                     </div>
                 </div>
             ) : (
-                <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-md px-3 py-2 min-h-[40px]">
+                <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 min-h-[40px]">
                     <span className="text-gray-800 dark:text-gray-100 text-sm flex-1 truncate">
                         {value || <em className="text-gray-500 dark:text-gray-400">Not set</em>}
                     </span>
                     <button
-                        className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:opacity-80 transition ml-2 flex-shrink-0"
+                        className="text-[var(--brand-blue)] dark:text-[var(--brand-blue)] text-sm font-medium hover:opacity-80 transition ml-2 flex-shrink-0"
                         onClick={() => setEditing(true)}
                     >
                         Edit

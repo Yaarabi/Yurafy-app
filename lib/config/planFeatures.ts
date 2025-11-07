@@ -95,7 +95,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
     Starter: {
         store: {
             enabled: true,
-            maxProducts: 50,
             customDomain: true,
             customTheme: true,
             customCSS: false,
@@ -118,7 +117,7 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
         },
         orders: {
             enabled: true,
-            maxOrders: 100,
+            maxOrders: 500,
             orderTracking: true,
             notifications: true,
         },
@@ -223,7 +222,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
     "Pro Seller": {
         store: {
             enabled: true,
-            maxProducts: 500,
             customDomain: true,
             customTheme: true,
             customCSS: true,
@@ -247,6 +245,7 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
         },
         orders: {
             enabled: true,
+            maxOrders: 1500,
             orderTracking: true,
             notifications: true,
         },
@@ -267,8 +266,8 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             enabled: true,
             customDomain: true,
             customTheme: true,
-            customCSS: true,
-            customJS: true,
+            customCSS: false,
+            customJS: false,
             seo: true,
             analytics: true,
         },

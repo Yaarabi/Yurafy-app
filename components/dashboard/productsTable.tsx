@@ -5,8 +5,11 @@ import { IProduct } from "@/models/products";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
+import { Package } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function ProductsTable() {
+    const t = useTranslations('products');
     const { data: session } = useSession();
     const [products, setProducts] = useState<IProduct[]>([]);
     const [loading, setLoading] = useState(true);
@@ -16,10 +19,10 @@ export default function ProductsTable() {
 
     const columns = [
         { key: "index", label: "#" },
-        { key: "name", label: "Name" },
-        { key: "price", label: "Price" },
-        { key: "stock", label: "Stock" },
-        { key: "salesCount", label: "Sold" },
+        { key: "name", label: t('columns.name') },
+        { key: "price", label: t('columns.price') },
+        { key: "stock", label: t('columns.stock') },
+        { key: "salesCount", label: t('columns.salesCount') },
     ] as const;
 
     useEffect(() => {
@@ -55,7 +58,7 @@ export default function ProductsTable() {
     if (!session) return null; // render nothing while redirecting
 
     async function handleDelete(id: string) {
-        if (!confirm("Are you sure you want to delete this product?")) return;
+        if (!confirm(t('deleteConfirm'))) return;
 
         try {
             const res = await fetch(`/api/products?id=${id}`, { method: "DELETE" });
@@ -67,48 +70,60 @@ export default function ProductsTable() {
     }
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
+        <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                     <tr>
                         {columns.map((col) => (
-                            <th key={col.key} className="px-4 py-3 text-left font-semibold text-gray-800 dark:text-gray-200 uppercase tracking-wider">
+                            <th key={col.key} className="px-3 sm:px-4 py-3 text-left font-semibold text-xs sm:text-sm text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                                 {col.label}
                             </th>
                         ))}
-                        <th className="px-4 py-3 text-gray-800 dark:text-gray-200 font-semibold uppercase tracking-wider">Actions</th>
+                        <th className="px-3 sm:px-4 py-3 text-gray-700 dark:text-gray-300 font-semibold text-xs sm:text-sm uppercase tracking-wider">{t('actions')}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {loading ? (
                         <tr>
-                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                                Loading products...
+                            <td colSpan={columns.length + 1} className="px-4 py-12 text-center">
+                                <div className="flex flex-col items-center gap-2">
+                                    <div className="w-8 h-8 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin"></div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('loading')}</p>
+                                </div>
                             </td>
                         </tr>
                     ) : products.length === 0 ? (
                         <tr>
-                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                                No products found
+                            <td colSpan={columns.length + 1} className="px-4 py-12 text-center">
+                                <div className="flex flex-col items-center gap-2">
+                                    <Package className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('empty')}</p>
+                                </div>
                             </td>
                         </tr>
                     ) : (
                         products.map((row, i) => (
-                            <tr key={row._id} className={`border-t border-gray-200 dark:border-gray-700 transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/40 ${i % 2 === 0 ? "bg-gray-50/50 dark:bg-gray-800/30" : ""}`}>
-                                <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{i + 1}</td>
-                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200 font-medium">{row.name}</td>
-                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">${row.price}</td>
-                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{row.stock}</td>
-                                <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{row.salesCount}</td>
-                                <td className="px-4 py-3">
-                                    <div className="flex gap-3">
-                                        <button onClick={() => (window.location.href = `/${locale}/dashboard/products/${row._id}`)}
-                                                className="text-[var(--brand-blue)] hover:text-[var(--brand-blue)]/80 transition-transform hover:scale-110" title="Edit product">
-                                            <FaEdit />
+                            <tr key={row._id} className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">{i + 1}</td>
+                                <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-800 dark:text-gray-200 font-medium truncate max-w-[150px] sm:max-w-none">{row.name}</td>
+                                <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-800 dark:text-gray-200 font-semibold text-[var(--brand-blue)]">${row.price?.toFixed(2)}</td>
+                                <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-800 dark:text-gray-200">{row.stock || 0}</td>
+                                <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-800 dark:text-gray-200">{row.salesCount || 0}</td>
+                                <td className="px-3 sm:px-4 py-3">
+                                    <div className="flex gap-2 sm:gap-3">
+                                        <button 
+                                            onClick={() => router.push(`/${locale}/dashboard/products/${row._id}`)}
+                                            className="p-1.5 sm:p-2 text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10 dark:hover:bg-[var(--brand-blue)]/20 rounded-lg transition-all hover:scale-110" 
+                                            title="Edit product"
+                                        >
+                                            <FaEdit className="w-4 h-4" />
                                         </button>
-                                        <button onClick={() => handleDelete(row._id ?? "")}
-                                                className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-transform hover:scale-110" title="Delete product">
-                                            <FaTrash />
+                                        <button 
+                                            onClick={() => handleDelete(row._id ?? "")}
+                                            className="p-1.5 sm:p-2 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all hover:scale-110" 
+                                            title="Delete product"
+                                        >
+                                            <FaTrash className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </td>

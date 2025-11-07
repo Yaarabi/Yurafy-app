@@ -22,7 +22,7 @@ export const PLANS = {
         description: "Basic store setup with branding and domain.",
         icon: Store,
         color: "from-blue-400 to-blue-600",
-        features: ["50 Products", "Custom Domain", "Custom Theme", "SEO Tools"]
+        features: ["500 Orders", "Custom Domain", "Custom Theme", "SEO Tools"]
     },
     whatsapp: { 
         name: "WhatsApp Automation", 
@@ -46,7 +46,7 @@ export const PLANS = {
         description: "Starter + WhatsApp Automation for serious sellers.",
         icon: Crown,
         color: "from-yellow-400 to-orange-600",
-        features: ["500 Products", "Store + WhatsApp", "2000 Contacts", "Priority Support"]
+        features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Custom CSS/JS", "Priority Support"]
     },
     visionary: { 
         name: "Visionary", 
@@ -54,7 +54,7 @@ export const PLANS = {
         description: "Pro Seller + AI Agent for full power scaling.",
         icon: Sparkles,
         color: "from-indigo-400 via-purple-500 to-pink-600",
-        features: ["Unlimited Products", "All Features", "AI Agent", "Custom CSS/JS", "Priority Support"]
+        features: ["Unlimited Orders", "All Features", "AI Agent", "Priority Support"]
     },
 }
 

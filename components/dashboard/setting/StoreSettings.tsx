@@ -41,7 +41,7 @@ export default function StoreSettings({ store, onUpdate, onUploadLogo, locale }:
         <SettingsSection title="Social Links">
             <EditableField label="Facebook" value={store.socialLinks?.facebook || ''} onSave={(val) => onUpdate('socialLinks', { ...store.socialLinks, facebook: val })} />
             <EditableField label="Instagram" value={store.socialLinks?.instagram || ''} onSave={(val) => onUpdate('socialLinks', { ...store.socialLinks, instagram: val })} />
-            <EditableField label="Twitter" value={store.socialLinks?.twitter || ''} onSave={(val) => onUpdate('socialLinks', { ...store.socialLinks, twitter: val })} />
+            <EditableField label="TikTok" value={store.socialLinks?.tiktok || ''} onSave={(val) => onUpdate('socialLinks', { ...store.socialLinks, tiktok: val })} />
         </SettingsSection>
         </>
     );

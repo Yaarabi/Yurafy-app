@@ -5,7 +5,8 @@ import { IAIAgent } from "@/models/ai-agent";
 import { ITemplate } from "@/models/templates";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { Trash2, Save, X } from "lucide-react";
+import { Trash2, Save, X, ToggleLeft, ToggleRight } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 interface ToolsTabProps {
     agent: IAIAgent;
@@ -13,9 +14,24 @@ interface ToolsTabProps {
     updateAgent: (payload: any) => Promise<void>;
 }
 
+// All available tools with their descriptions
+const AVAILABLE_TOOLS = [
+    { name: "search_order", description: "Search for customer orders by name, phone, ID, or status", category: "Orders" },
+    { name: "update_order_status", description: "Update the status of an existing order", category: "Orders" },
+    { name: "create_order", description: "Create a new order for a customer", category: "Orders" },
+    { name: "search_product", description: "Search for products by name, category, brand, or slug", category: "Products" },
+    { name: "store_agent_action", description: "Store or update what the AI agent did or observed about a customer", category: "Memory" },
+    { name: "get_agent_memory", description: "Retrieve stored summary of previous actions or customer situations", category: "Memory" },
+    { name: "brand_info_retrieval", description: "Search through brand's uploaded knowledge (manuals, FAQs, documents)", category: "Brand Info" },
+    { name: "template_guide", description: "Suggests relevant templates to use when responding to customers", category: "Templates" },
+    { name: "send_template", description: "Send an approved WhatsApp template message to a customer", category: "Templates" },
+];
+
 export default function ToolsTab({ agent, availableTemplates, updateAgent }: ToolsTabProps) {
+    const t = useTranslations('whatsapp.tools');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [savingFile, setSavingFile] = useState(false);
+    const [updatingTool, setUpdatingTool] = useState<string | null>(null);
 
     // Save file & generate embeddings
     const handleSaveFile = async () => {
@@ -34,7 +50,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
 
         // 2. Update agent
         await updateAgent({ file: fileUrl });
-        toast.success("File saved to agent");
+        toast.success(t('file.saved'));
 
         // 3. Generate embeddings
         const embedRes = await fetch("/api/ai-agent/embed", {
@@ -43,7 +59,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
             body: JSON.stringify({ agentId: agent._id }),
         });
         if (!embedRes.ok) throw new Error("Embedding failed");
-        toast.success("Embeddings generated successfully");
+        toast.success(t('file.embeddingsGenerated'));
 
         setSelectedFile(null);
         } catch (err) {
@@ -73,19 +89,123 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
 
         // Update agent
         await updateAgent({ file: "" });
-        toast.success("File and embeddings deleted");
+        toast.success(t('file.deleted'));
         } catch (err) {
         console.error(err);
-        toast.error("Delete failed");
+        toast.error(t('file.deleteError'));
         }
     };
 
+    // Handle tool toggle
+    const handleToolToggle = async (toolName: string, enabled: boolean) => {
+        setUpdatingTool(toolName);
+        try {
+            const currentEnabledTools = agent.enabledTools || {};
+            const updatedEnabledTools = {
+                ...currentEnabledTools,
+                [toolName]: enabled,
+            };
+            
+            // Update agent without causing page refresh
+            await updateAgent({ enabledTools: updatedEnabledTools });
+            toast.success(enabled ? t('tool.enabled', { tool: toolName }) : t('tool.disabled', { tool: toolName }));
+        } catch (err) {
+            console.error(err);
+            toast.error(t('tool.updateError'));
+        } finally {
+            setUpdatingTool(null);
+        }
+    };
+
+    // Check if a tool is enabled (defaults to true if not set)
+    const isToolEnabled = (toolName: string): boolean => {
+        const enabledTools = agent.enabledTools || {};
+        return enabledTools[toolName] !== false; // Default to enabled if not explicitly set
+    };
+
+    // Group tools by category
+    const toolsByCategory = AVAILABLE_TOOLS.reduce((acc, tool) => {
+        if (!acc[tool.category]) {
+            acc[tool.category] = [];
+        }
+        acc[tool.category].push(tool);
+        return acc;
+    }, {} as Record<string, typeof AVAILABLE_TOOLS>);
+
     return (
-        <SettingsSection title="AI Agent Configuration">
+        <div className="space-y-6">
+        {/* Tools Enable/Disable Section */}
+        <SettingsSection title={t('section.tools.title')}>
+            <div className="space-y-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    {t('section.tools.description')}
+                </p>
+                
+                {Object.entries(toolsByCategory).map(([category, tools]) => (
+                    <div key={category} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                            {t(`categories.${category}`, { defaultValue: category })}
+                        </h3>
+                        <div className="space-y-3">
+                            {tools.map((tool) => {
+                                const enabled = isToolEnabled(tool.name);
+                                const isUpdating = updatingTool === tool.name;
+                                
+                                return (
+                                    <div
+                                        key={tool.name}
+                                        className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {t(`tools.${tool.name}.name`, { defaultValue: tool.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) })}
+                                                </span>
+                                                {enabled && (
+                                                    <span className="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
+                                                        {t('tool.enabledLabel')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                {t(`tools.${tool.name}.description`, { defaultValue: tool.description })}
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleToolToggle(tool.name, !enabled);
+                                            }}
+                                            disabled={isUpdating}
+                                            className={`flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:ring-offset-2 ${
+                                                enabled
+                                                    ? 'bg-[var(--brand-blue)]'
+                                                    : 'bg-gray-300 dark:bg-gray-600'
+                                            } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                            aria-label={enabled ? t('tool.disable', { tool: tool.name }) : t('tool.enable', { tool: tool.name })}
+                                        >
+                                            <span
+                                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                                    enabled ? 'translate-x-6' : 'translate-x-1'
+                                                }`}
+                                            />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </SettingsSection>
+
         {/* Existing templates */}
+        <SettingsSection title={t('section.templates.title')}>
         <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-            Existing Templates
+            {t('section.templates.label')}
             </label>
             {agent.templates && agent.templates.length > 0 ? (
             <ul className="list-disc list-inside space-y-1">
@@ -100,10 +220,10 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                         try {
                         const updated = agent.templates.filter((t) => t !== tpl);
                         await updateAgent({ templates: updated });
-                        toast.success(`Template "${tpl}" deleted`);
+                        toast.success(t('template.deleted', { template: tpl }));
                         } catch (err) {
                         console.error(err);
-                        toast.error("Failed to delete template");
+                        toast.error(t('template.deleteError'));
                         }
                     }}
                     className="p-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
@@ -114,25 +234,25 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                 ))}
             </ul>
             ) : (
-            <p className="text-gray-500 dark:text-gray-300">No templates yet.</p>
+            <p className="text-gray-500 dark:text-gray-300">{t('template.empty')}</p>
             )}
 
             <TemplateSelector
-            label="Add Another Template"
+            label={t('template.addLabel')}
             templates={availableTemplates}
             selected=""
             onChange={async (name) => {
                 if (!name) return;
                 if (agent.templates?.includes(name)) {
-                toast.error("Template already exists");
+                toast.error(t('template.exists'));
                 return;
                 }
                 try {
                 await updateAgent({ templates: [...(agent.templates || []), name] });
-                toast.success(`Template "${name}" added`);
+                toast.success(t('template.added', { template: name }));
                 } catch (err) {
                 console.error(err);
-                toast.error("Failed to add template");
+                toast.error(t('template.addError'));
                 }
             }}
             />
@@ -141,7 +261,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
         {/* File Upload for RAG */}
         <div className="mt-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-            File Upload (for RAG)
+            {t('file.uploadLabel')}
             </label>
 
             {agent.file ? (
@@ -152,14 +272,14 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                 rel="noopener noreferrer"
                 className="text-blue-600 dark:text-blue-400 underline"
                 >
-                Current File
+                {t('file.currentFile')}
                 </a>
                 <button
                 onClick={handleDeleteFileAndChunks}
                 className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
                 >
                 <Trash2 size={16} />
-                Delete
+                {t('file.delete')}
                 </button>
             </div>
             ) : (
@@ -178,14 +298,14 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                     className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     >
                     <Save size={16} />
-                    {savingFile ? "Saving..." : "Save File & Generate Embeddings"}
+                    {savingFile ? t('file.saving') : t('file.saveAndGenerate')}
                     </button>
                     <button
                     onClick={() => setSelectedFile(null)}
                     className="flex items-center gap-1 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition"
                     >
                     <X size={16} />
-                    Cancel
+                    {t('file.cancel')}
                     </button>
                 </div>
                 )}
@@ -193,5 +313,6 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
             )}
         </div>
         </SettingsSection>
+        </div>
     );
 }

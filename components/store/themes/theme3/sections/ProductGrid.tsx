@@ -6,6 +6,7 @@ import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
+import GeometricDecorations from "../../shared/GeometricDecorations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -20,7 +21,7 @@ const ProductGrid: React.FC = () => {
     
     if (!selectedStore) return null;
 
-    const primaryColor = selectedStore.theme?.primaryColor || '#16a34a';
+    const primaryColor = selectedStore.theme?.primaryColor || '#a78bfa';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -38,8 +39,11 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="py-20 bg-green-50">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="products" className="relative py-20 bg-gradient-to-b from-purple-50 to-white overflow-hidden">
+            {/* Floral Geometric Pattern */}
+            <GeometricDecorations type="floral" color={primaryColor} className="opacity-5" />
+            
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 z-10">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -47,17 +51,28 @@ const ProductGrid: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <div className="inline-flex items-center gap-2 px-6 py-3 mb-6 rounded-full"
-                        style={{ backgroundColor: `${primaryColor}20` }}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
+                        style={{ 
+                            backgroundColor: `${primaryColor}15`,
+                            borderColor: `${primaryColor}30`,
+                        }}
                     >
                         <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            🌱 Sustainable Products
+                            ✨ Beauty Products
                         </span>
-                    </div>
-                    <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: primaryColor }}>
+                    </motion.div>
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style={{ color: primaryColor }}>
                         Our Products
                     </h3>
-                    <div className="w-32 h-2 mx-auto rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                    </div>
                 </motion.div>
 
                 {products.length === 0 ? (
@@ -80,8 +95,16 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                className="group bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-4 border-transparent hover:border-[var(--color-primary)]"
+                                className="group relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-2 border-transparent hover:border-[var(--color-primary)]"
                             >
+                                {/* Floral Corner Accent */}
+                                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden z-10">
+                                    <div 
+                                        className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
+                                        style={{ borderTopColor: primaryColor }}
+                                    ></div>
+                                </div>
+                                
                                 <div className="relative overflow-hidden h-72">
                                     <motion.img
                                         src={product.mainImage}
@@ -90,11 +113,14 @@ const ProductGrid: React.FC = () => {
                                         whileHover={{ scale: 1.1 }}
                                         transition={{ duration: 0.6 }}
                                     />
-                                    <div className="absolute top-4 right-4 px-3 py-1 bg-white rounded-full text-xs font-bold uppercase tracking-wider"
-                                        style={{ color: primaryColor }}
+                                    {/* Floral Overlay */}
+                                    <div 
+                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                                        style={{ backgroundColor: primaryColor }}
                                     >
-                                        Eco
+                                        <GeometricDecorations type="floral" color={primaryColor} className="opacity-30" />
                                     </div>
+                                    
                                 </div>
                                 <div className="p-6 flex-grow flex flex-col justify-between">
                                     <div>

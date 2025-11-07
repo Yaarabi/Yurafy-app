@@ -125,6 +125,18 @@ export async function POST(req: Request) {
                     token
                 );
 
+                // Track order confirmation sent
+                await WhatsAppConversation.findOneAndUpdate(
+                    { owner: ownerId, "customer.phone": customerPhone },
+                    {
+                        $set: {
+                            "metadata.orderConfirmationSent": true,
+                            "metadata.orderConfirmationSentAt": new Date(),
+                        },
+                    },
+                    { upsert: true }
+                );
+
                 results.push({ orderId: order._id, phone: customerPhone, status: "sent" });
 
                 // Delay to avoid rate limits

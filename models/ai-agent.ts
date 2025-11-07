@@ -10,6 +10,7 @@ export interface IAIAgent extends Document {
     memory?: string; // single string summary
     file?:string;
     active?: boolean;
+    enabledTools?: Record<string, boolean>; // Tool enable/disable settings (toolName -> enabled)
     createdAt: Date;
     updatedAt: Date;
 }
@@ -30,6 +31,11 @@ const AIAgentSchema = new Schema(
             type: Boolean, 
             default: false,
             index: true, // Index for filtering active agents
+        },
+        enabledTools: {
+            type: Map,
+            of: Boolean,
+            default: {},
         },
     },
     { timestamps: true }

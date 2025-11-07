@@ -114,6 +114,18 @@ export const POST = withRateLimit(async (req: NextRequest) => {
             return createErrorResponse("Product with this slug already exists", 409, "DUPLICATE_SLUG");
         }
 
+        // Check plan limits before creating product
+        try {
+            const { canPerformAction } = await import('@/lib/utils/planLimits');
+            const canCreate = await canPerformAction(userId, 'create_product');
+            if (!canCreate.allowed) {
+                return createErrorResponse(canCreate.reason || "Plan limit reached", 403, "PLAN_LIMIT_REACHED");
+            }
+        } catch (error) {
+            console.error('Error checking plan limits:', error);
+            // Continue with product creation if limit check fails
+        }
+
         // Create product with authenticated user as owner
         const product = new Product({
             ...body,
@@ -123,6 +135,15 @@ export const POST = withRateLimit(async (req: NextRequest) => {
         });
 
         await product.save();
+
+        // Check if limit is reached after creation and deactivate if needed
+        try {
+            const { deactivateFeaturesOnLimitReached } = await import('@/lib/utils/planLimits');
+            await deactivateFeaturesOnLimitReached(userId);
+        } catch (error) {
+            console.error('Error checking/deactivating features after product creation:', error);
+            // Don't fail product creation if limit check fails
+        }
 
         logger.info("Product created", { productId: product._id, ownerId: userId });
         return NextResponse.json({ message: "Product created successfully", product }, { status: 201 });

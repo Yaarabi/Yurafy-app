@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppConversation from "@/models/whatsappMessage";
+import { decryptMessage } from "@/lib/whatsapp/messageEncryption";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 // ✅ Get all conversations for the logged-in owner
 export async function GET(req: NextRequest) {
@@ -16,7 +18,21 @@ export async function GET(req: NextRequest) {
         const conversations = await WhatsAppConversation.find({ owner: session.user.id })
             .sort({ lastTimestamp: -1 }); // latest first
 
-        return NextResponse.json({ conversations });
+        // Decrypt messages before sending to client
+        const decryptedConversations = conversations.map(conv => {
+            const decryptedMessages = conv.messages.map((msg: any) => ({
+                ...msg.toObject(),
+                text: msg.text ? decryptMessage(msg.text) : msg.text,
+            }));
+            
+            return {
+                ...conv.toObject(),
+                messages: decryptedMessages,
+                lastMessage: conv.lastMessage ? decryptMessage(conv.lastMessage) : conv.lastMessage,
+            };
+        });
+
+        return NextResponse.json({ conversations: decryptedConversations });
     } catch (err) {
         console.error("GET /messages error:", err);
         return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
@@ -35,27 +51,46 @@ export async function POST(req: NextRequest) {
         if (!phone || !message)
             return NextResponse.json({ error: "Missing phone or message" }, { status: 400 });
 
+        // Normalize phone number for consistent database queries
+        const normalizedPhone = normalizePhoneNumber(phone);
+
+        // Encrypt message text before saving
+        const { encryptMessage } = await import("@/lib/whatsapp/messageEncryption");
+        const encryptedText = message.text ? encryptMessage(message.text) : "";
+        
         const newMessage = {
             ...message,
+            text: encryptedText, // Store encrypted
             direction: "outgoing",
             timestamp: Date.now(),
         };
 
-        // Push new message and keep only latest 10 messages
+        // Push new message and keep only latest 12 messages
+        // Use normalized phone number to ensure all messages go to the same conversation
         const conversation = await WhatsAppConversation.findOneAndUpdate(
-            { owner: session.user.id, "customer.phone": phone },
+            { owner: session.user.id, "customer.phone": normalizedPhone },
             {
                 $push: { messages: { $each: [newMessage], $slice: -12 } },
                 $set: {
-                    lastMessage: message.text || "",
+                    lastMessage: encryptedText, // Store encrypted
                     lastTimestamp: newMessage.timestamp,
-                    "customer.phone": phone,
+                    "customer.phone": normalizedPhone, // Ensure phone is normalized
                 },
             },
             { upsert: true, new: true }
         );
 
-        return NextResponse.json({ success: true, conversation });
+        // Decrypt before returning
+        const decryptedConversation = {
+            ...conversation.toObject(),
+            messages: conversation.messages.map((msg: any) => ({
+                ...msg.toObject(),
+                text: msg.text ? decryptMessage(msg.text) : msg.text,
+            })),
+            lastMessage: conversation.lastMessage ? decryptMessage(conversation.lastMessage) : conversation.lastMessage,
+        };
+
+        return NextResponse.json({ success: true, conversation: decryptedConversation });
     } catch (err) {
         console.error("POST /messages error:", err);
         return NextResponse.json({ error: "Failed to send message" }, { status: 500 });

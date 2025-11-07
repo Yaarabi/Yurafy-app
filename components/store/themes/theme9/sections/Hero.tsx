@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
+import GeometricDecorations from '../../shared/GeometricDecorations';
 
 const Hero: React.FC = () => {
     const { selectedStore } = useStore();
@@ -8,24 +9,34 @@ const Hero: React.FC = () => {
     if (!selectedStore) return null;
 
     const { hero } = selectedStore;
-    const primaryColor = selectedStore.theme?.primaryColor || '#1F2937';
+    const primaryColor = selectedStore.theme?.primaryColor || '#14b8a6';
 
     return (
-        <div className="relative text-white min-h-[90vh] flex items-center justify-center overflow-hidden">
-            <div 
-                className="absolute inset-0 bg-cover bg-center opacity-20" 
-                style={{ backgroundImage: `url(${hero.imageUrl})` }}
-            ></div>
+        <div className="relative text-white min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-900 to-teal-800">
+            {/* Wellness Geometric Pattern */}
+            <GeometricDecorations type="wellness" color={primaryColor} />
+            
+            {/* Hero Image Overlay */}
+            {hero.imageUrl && (
+                <div 
+                    className="absolute inset-0 bg-cover bg-center opacity-20" 
+                    style={{ backgroundImage: `url(${hero.imageUrl})` }}
+                ></div>
+            )}
+            
+            {/* Gradient Overlay */}
             <div 
                 className="absolute inset-0" 
                 style={{ background: `linear-gradient(180deg, ${primaryColor}, ${primaryColor}dd)` }}
             ></div>
-            <div className="relative container mx-auto px-6 text-center max-w-4xl">
+            
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl z-10">
+                
                 <motion.h2 
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.2 }}
-                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-light mb-8 tracking-tight leading-none"
+                    className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light mb-8 tracking-tight leading-none"
                     style={{ color: selectedStore.theme?.textColor || '#ffffff' }}
                 >
                     {hero.title}
@@ -41,7 +52,7 @@ const Hero: React.FC = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.4 }}
-                    className="text-2xl sm:text-3xl md:text-4xl max-w-2xl mx-auto mb-16 font-light tracking-wide"
+                    className="text-xl sm:text-2xl md:text-3xl max-w-2xl mx-auto mb-16 font-light tracking-wide"
                     style={{ color: `${selectedStore.theme?.textColor || '#ffffff'}dd` }}
                 >
                     {hero.subtitle}
@@ -53,13 +64,21 @@ const Hero: React.FC = () => {
                 >
                     <a 
                         href="#products" 
-                        className="inline-block border-2 px-12 py-4 text-xl font-light tracking-wide hover:bg-white hover:text-[var(--color-primary)] transition-all duration-500"
+                        className="group relative inline-flex items-center gap-2 border-2 px-10 py-4 text-lg sm:text-xl font-light tracking-wide hover:bg-white hover:text-[var(--color-primary)] transition-all duration-500 overflow-hidden"
                         style={{ 
                             borderColor: selectedStore.theme?.textColor || '#ffffff',
-                            color: selectedStore.theme?.textColor || '#ffffff'
-                        }}
+                            color: selectedStore.theme?.textColor || '#ffffff',
+                            '--color-primary': primaryColor
+                        } as React.CSSProperties}
                     >
-                        Shop Now
+                        <span className="relative z-10">Shop Now</span>
+                        <motion.span
+                            className="relative z-10"
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                            💚
+                        </motion.span>
                     </a>
                 </motion.div>
             </div>

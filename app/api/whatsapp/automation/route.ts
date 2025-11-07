@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppAccount from "@/models/whatsappAccount";
+import WhatsAppConversation from "@/models/whatsappMessage";
 import { decryptToken, getTemplate } from "../webhook/route";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import { generateCustomerAIResponse } from "@/lib/agent/agent";
@@ -75,6 +76,19 @@ export async function POST(req: NextRequest) {
             );
             if (greetingTemplate) {
                 await sendWhatsAppMessage(account, from, greetingTemplate, decryptedToken);
+                
+                // Track auto reply sent
+                await WhatsAppConversation.findOneAndUpdate(
+                    { owner: account.owner, "customer.phone": from },
+                    {
+                        $set: {
+                            "metadata.autoReplySent": true,
+                            "metadata.autoReplySentAt": new Date(),
+                        },
+                    },
+                    { upsert: true }
+                );
+                
                 return NextResponse.json({ type: "autoReply", success: true });
             }
         }

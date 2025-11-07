@@ -14,7 +14,7 @@ export interface IProduct {
     brand?: string;
     mainImage: string;
     images: string[];
-    imageDescriptions?: string[]; // ✅ Added: Descriptions for each image
+    descriptionsImage?: string[]; // Images for description section (different from mainImage and images)
     sizes?: string[]; // ✅ Changed: Now accepts any string (e.g., "L", "40", "XL")
     colors?: string[];
     bundles?: { // ✅ Added: Bundle/promotion configuration
@@ -71,7 +71,7 @@ const ProductSchema = new Schema(
         },
         mainImage: { type: String, required: true },
         images: [{ type: String, required: false }],
-        imageDescriptions: [{ type: String }], // ✅ Added: Image descriptions
+        descriptionsImage: [{ type: String }], // Images for description section (different from mainImage and images)
         sizes: [{ type: String }], // ✅ Changed: Accepts any string values
         colors: [{ type: String }],
         bundles: { // ✅ Added: Bundle/promotion configuration

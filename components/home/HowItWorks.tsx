@@ -39,7 +39,7 @@ export default function HowItWorks() {
 
     const handleGetStarted = () => {
         const locale = params.locale || 'en';
-        router.push(`/${locale}/onboarding/plan`);
+        router.push(`/${locale}/signup`);
     };
 
     return (

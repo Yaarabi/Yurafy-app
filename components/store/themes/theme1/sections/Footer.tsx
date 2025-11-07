@@ -1,6 +1,8 @@
 import React from 'react';
 import { useStore } from '@/components/store/hooks/useStore'; 
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { Cpu } from 'lucide-react';
+import GeometricDecorations from '../../shared/GeometricDecorations';
 
 const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
@@ -55,23 +57,37 @@ const Footer: React.FC = () => {
 
     return (
         <footer 
-            className="text-white py-12"
+            className="relative text-white py-12 sm:py-16 overflow-hidden"
             style={{ background: `linear-gradient(135deg, ${primaryColor}, ${selectedStore.theme?.secondaryColor || primaryColor})` }}
         >
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Tech Circuit Pattern */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <GeometricDecorations type="circuit" color="#ffffff" />
+            </div>
+            
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Logo and Links Section */}
                 <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-                    {/* Logo */}
+                    {/* Logo with Tech Badge */}
                     <div className="flex flex-col items-center md:items-start">
                         {selectedStore.logoUrl ? (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${brandName} logo`}
-                                className="h-12 w-auto object-contain mb-4"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${brandName} logo`}
+                                    className="h-12 w-auto object-contain mb-4"
+                                />
+                                <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white animate-pulse"></div>
+                            </div>
                         ) : (
-                            <h3 className="text-2xl font-bold text-white mb-4">{brandName}</h3>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Cpu className="w-6 h-6 text-white" />
+                                <h3 className="text-xl sm:text-2xl font-bold text-white">{brandName}</h3>
+                            </div>
                         )}
+                        <span className="text-xs text-white/80 uppercase tracking-wider">
+                            Electronics & Consumer Tech
+                        </span>
                     </div>
 
                     {/* Navigation Links */}

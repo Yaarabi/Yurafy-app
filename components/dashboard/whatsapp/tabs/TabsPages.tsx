@@ -32,7 +32,7 @@ import ToolsTab from "@/components/dashboard/whatsapp/tabs/ToolsTab";
 export default function WhatsAppIntegrationPage() {
     const [activeTab, setActiveTab] = useState("Connection");
     const [agent, setAgent] = useState<IAIAgent | undefined>(undefined);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Start with true to show loader
     const [availableTemplates, setAvailableTemplates] = useState<ITemplate[]>([]);
     const [userPlan, setUserPlan] = useState<string>("free");
 
@@ -73,13 +73,11 @@ export default function WhatsAppIntegrationPage() {
         };
 
         const fetchAgent = async () => {
-        setLoading(true);
         try {
             const session = await getSession();
             const userId = session?.user?.id;
             if (!userId) {
             toast.error("User not authenticated");
-            setLoading(false);
             return;
             }
 
@@ -89,8 +87,6 @@ export default function WhatsAppIntegrationPage() {
         } catch (err) {
             console.error(err);
             toast.error("Failed to load agent settings");
-        } finally {
-            setLoading(false);
         }
         };
 
@@ -105,28 +101,55 @@ export default function WhatsAppIntegrationPage() {
         }
         };
 
-        fetchUserPlan();
-        fetchAgent();
-        fetchTemplates();
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                await Promise.all([
+                    fetchUserPlan(),
+                    fetchAgent(),
+                    fetchTemplates()
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadData();
     }, []);
 
 
     const updateAgent = async (payload: any) => {
         if (!agent) return;
         try {
+        // Don't set loading to true here to avoid showing full page loader
+        // Only show a toast notification
+        const session = await getSession();
+        const userId = session?.user?.id;
+        if (!userId) {
+            toast.error("User not authenticated");
+            return;
+        }
+
         const res = await fetch(`/api/ai-agent`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...agent, ...payload }),
+            body: JSON.stringify({ 
+                owner: userId, // Ensure owner is always included
+                ...payload 
+            }),
         });
+        
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Update failed");
+        }
+        
         const data = await res.json();
         setAgent(data.agent);
         toast.success("Agent updated");
         } catch (err) {
         console.error(err);
-        toast.error("Update failed");
-        } finally {
-        setLoading(false);
+        toast.error(err instanceof Error ? err.message : "Update failed");
         }
     };
 

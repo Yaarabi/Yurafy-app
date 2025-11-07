@@ -7,7 +7,8 @@ import { useRouter, useParams } from "next/navigation";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
+import GeometricDecorations from "../../shared/GeometricDecorations";
 
 const Header: React.FC = () => {
     const { selectedStore, selectProduct } = useStore();
@@ -24,7 +25,7 @@ const Header: React.FC = () => {
         { label: "Products", href: "#products" },
         { label: "Contact", href: "#contact" },
     ];
-    const primaryColor = selectedStore.theme?.primaryColor || '#ca8a04';
+    const primaryColor = selectedStore.theme?.primaryColor || '#f43f5e';
     const cartItemsCount = getTotalItems();
 
     const handleLogoClick = (e: React.MouseEvent) => {
@@ -58,29 +59,42 @@ const Header: React.FC = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b-2"
+            className="relative bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b-2 overflow-hidden"
             style={{ borderColor: `${primaryColor}40` }}
         >
-            <div className="container mx-auto px-4 sm:px-6">
+            {/* Elegant Geometric Pattern */}
+            <div className="absolute inset-0 opacity-5 pointer-events-none">
+                <GeometricDecorations type="elegant" color={primaryColor} />
+            </div>
+            
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <div className="flex items-center justify-between gap-4 md:gap-6 py-4">
-                    {/* Logo - Always show both logo and brand name */}
+                    {/* Logo - Elegant Fashion Style */}
                     <button
                         onClick={handleLogoClick}
-                        className="flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity"
+                        className="group flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity relative"
                     >
                         {selectedStore.logoUrl && (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${selectedStore.brandName} logo`}
-                                className="h-8 sm:h-10 lg:h-12 w-auto object-contain"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${selectedStore.brandName} logo`}
+                                    className="h-8 sm:h-10 lg:h-12 w-auto object-contain"
+                                />
+                                {/* Fashion Badge */}
+                                <div className="absolute -top-1 -right-1">
+                                    <Sparkles className="w-3 h-3 text-rose-500" />
+                                </div>
+                            </div>
                         )}
-                        <h1 
-                            className="text-xl sm:text-2xl lg:text-3xl font-bold italic"
-                            style={{ color: primaryColor }}
-                        >
-                            {selectedStore.brandName}
-                        </h1>
+                        <div className="flex flex-col">
+                            <h1 
+                                className="text-xl sm:text-2xl lg:text-3xl font-bold italic tracking-tight"
+                                style={{ color: primaryColor }}
+                            >
+                                {selectedStore.brandName}
+                            </h1>
+                        </div>
                     </button>
 
                     {/* Navigation Links */}

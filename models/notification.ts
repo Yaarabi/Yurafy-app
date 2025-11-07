@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface INotification extends Document {
     owner: mongoose.Types.ObjectId;
-    type: 'support_reply' | 'order_update' | 'plan_expiry' | 'plan_warning' | 'system' | 'admin_message';
+    type: 'support_reply' | 'order_update' | 'plan_expiry' | 'plan_warning' | 'plan_limit_reached' | 'plan_subscription' | 'welcome' | 'system' | 'admin_message';
     title: string;
     message: string;
     read: boolean;
@@ -17,7 +17,7 @@ const NotificationSchema = new Schema<INotification>(
         owner: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
         type: {
             type: String,
-            enum: ['support_reply', 'order_update', 'plan_expiry', 'plan_warning', 'system', 'admin_message'],
+            enum: ['support_reply', 'order_update', 'plan_expiry', 'plan_warning', 'plan_limit_reached', 'plan_subscription', 'welcome', 'system', 'admin_message'],
             required: true,
         },
         title: { type: String, required: true },

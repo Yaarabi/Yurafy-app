@@ -7,6 +7,9 @@ import { z } from "zod";
 import { connectDB } from "@/lib/db/mongoDB";
 import AIAgent, { IAIAgent } from "@/models/ai-agent";
 import Template from "@/models/templates";
+import WhatsAppAccount from "@/models/whatsappAccount";
+import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
+import { decryptToken } from "@/app/api/whatsapp/webhook/route";
 
 /**
  * Helper function to get templates for an AI agent.
@@ -78,6 +81,72 @@ export const templateGuideTool = tool(
         schema: z.object({
         agentOwnerId: z.string().describe("your owner ID"),
         query: z.string().describe("Customer question or topic to find relevant templates"),
+        }),
+    }
+);
+
+/**
+ * LangChain Tool: Send Template Message
+ * Allows AI agent to send approved WhatsApp templates to customers
+ */
+export const sendTemplateTool = tool(
+    async ({ agentOwnerId, customerPhone, templateName, variableValues }) => {
+        await connectDB();
+
+        try {
+            // Get AI agent
+            const agent = await AIAgent.findOne({ owner: agentOwnerId }).lean<IAIAgent>();
+            if (!agent || !agent.account) {
+                return "Error: AI agent or WhatsApp account not found.";
+            }
+
+            // Get WhatsApp account
+            const waAccount = await WhatsAppAccount.findById(agent.account);
+            if (!waAccount || waAccount.status !== "connected") {
+                return "Error: WhatsApp account not connected.";
+            }
+
+            // Get template
+            const template = await Template.findOne({
+                owner: new mongoose.Types.ObjectId(agentOwnerId),
+                name: templateName,
+                status: "APPROVED"
+            }).lean();
+
+            if (!template) {
+                return `Error: Template "${templateName}" not found or not approved.`;
+            }
+
+            // Decrypt token
+            const token = decryptToken(waAccount.waTokenEncrypted);
+
+            // Normalize phone number
+            let phone = customerPhone.replace(/\D/g, "");
+            if (!phone.startsWith("+")) phone = "+" + phone;
+
+            // Send template message
+            await sendTemplateMessage(
+                waAccount,
+                phone,
+                template,
+                variableValues || [],
+                token
+            );
+
+            return `Successfully sent template "${templateName}" to ${phone}.`;
+        } catch (err: any) {
+            console.error("Send template tool error:", err);
+            return `Error sending template: ${err.message || "Unknown error"}`;
+        }
+    },
+    {
+        name: "send_template",
+        description: "Send an approved WhatsApp template message to a customer. Use this when you need to send a structured message like order confirmations, promotions, or notifications.",
+        schema: z.object({
+            agentOwnerId: z.string().describe("Your owner ID"),
+            customerPhone: z.string().describe("Customer phone number (with country code, e.g., +1234567890)"),
+            templateName: z.string().describe("Name of the approved template to send"),
+            variableValues: z.array(z.string()).optional().describe("Array of values to replace template variables ({{1}}, {{2}}, etc.)"),
         }),
     }
 );

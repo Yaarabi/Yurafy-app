@@ -1,6 +1,8 @@
 import React from 'react';
 import { useStore } from '@/components/store/hooks/useStore'; 
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { Monitor } from 'lucide-react';
+import GeometricDecorations from '../../shared/GeometricDecorations';
 
 const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
@@ -44,7 +46,7 @@ const Footer: React.FC = () => {
     if (!footerText) footerText = 'All rights reserved.';
 
     const socialLinks = selectedStore.socialLinks || {};
-    const primaryColor = selectedStore.theme?.primaryColor || '#F59E0B';
+    const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
     
     // Header links (same as in Header component)
     const headerLinks = [
@@ -55,24 +57,39 @@ const Footer: React.FC = () => {
 
     return (
         <footer 
-            className="text-white py-16 relative overflow-hidden"
+            className="relative text-white py-12 sm:py-16 overflow-hidden"
             style={{ background: `linear-gradient(135deg, ${primaryColor}, ${selectedStore.theme?.secondaryColor || primaryColor})` }}
         >
-            <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 transform rotate-45 origin-top-left rounded-full"></div>
+            {/* Professional Geometric Pattern */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <GeometricDecorations type="professional" color="#ffffff" />
+            </div>
+            
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Logo and Links Section */}
                 <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-                    {/* Logo */}
+                    {/* Logo with Computers/Peripherals Badge */}
                     <div className="flex flex-col items-center md:items-start">
                         {selectedStore.logoUrl ? (
-                            <img
-                                src={selectedStore.logoUrl}
-                                alt={`${brandName} logo`}
-                                className="h-12 w-auto object-contain mb-4"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={selectedStore.logoUrl}
+                                    alt={`${brandName} logo`}
+                                    className="h-12 w-auto object-contain mb-4"
+                                />
+                                <div className="absolute -top-1 -right-1">
+                                    <Monitor className="w-4 h-4 text-white" />
+                                </div>
+                            </div>
                         ) : (
-                            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-4">{brandName}</h3>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Monitor className="w-6 h-6 text-white" />
+                                <h3 className="text-xl sm:text-2xl font-bold text-white">{brandName}</h3>
+                            </div>
                         )}
+                        <span className="text-xs text-white/80 uppercase tracking-wider">
+                            Computers & Peripherals
+                        </span>
                     </div>
 
                     {/* Navigation Links */}
@@ -81,7 +98,7 @@ const Footer: React.FC = () => {
                             <a
                                 key={link.label}
                                 href={link.href}
-                                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-black uppercase tracking-wide"
+                                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-semibold"
                             >
                                 {link.label}
                             </a>
@@ -91,23 +108,23 @@ const Footer: React.FC = () => {
                     {/* Social Links */}
                     <div className="flex space-x-4">
                         {socialLinks.facebook && (
-                            <SocialIcon platform="facebook" href={socialLinks.facebook} color={primaryColor} />
+                            <SocialIcon platform="facebook" href={socialLinks.facebook} color="#ffffff" />
                         )}
                         {socialLinks.instagram && (
-                            <SocialIcon platform="instagram" href={socialLinks.instagram} color={primaryColor} />
+                            <SocialIcon platform="instagram" href={socialLinks.instagram} color="#ffffff" />
                         )}
                         {socialLinks.twitter && (
-                            <SocialIcon platform="tiktok" href={socialLinks.tiktok} color={primaryColor} />
+                            <SocialIcon platform="tiktok" href={socialLinks.tiktok} color="#ffffff" />
                         )}
                     </div>
                 </div>
 
                 {/* Copyright */}
                 <div className="border-t border-white/20 pt-6 mt-6">
-                    <p className="text-center text-sm text-white/90 font-bold uppercase tracking-wider">
+                    <p className="text-center text-sm text-white/90 font-semibold">
                         &copy; {new Date().getFullYear()} {brandName}. {footerText}
                     </p>
-                    <p className="text-center text-xs text-white/70 mt-2 font-bold uppercase tracking-wider">
+                    <p className="text-center text-xs text-white/70 mt-2 font-semibold">
                         Powered by Yurafy
                     </p>
                 </div>

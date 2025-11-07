@@ -28,7 +28,7 @@ interface OverviewData {
     };
     recent: {
         users: any[];
-        orders: any[];
+        plans: any[];
     };
 }
 
@@ -36,7 +36,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'stores' | 'accounts' | 'agents' | 'support' | 'uploads'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'resources' | 'support' | 'uploads'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -174,37 +174,15 @@ export default function AdminPage() {
                             Plan Templates
                         </button>
                         <button
-                            onClick={() => setActiveTab('stores')}
+                            onClick={() => setActiveTab('resources')}
                             className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'stores'
-                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                            }`}
-                        >
-                            <Store className="w-4 h-4 inline mr-2" />
-                            Stores
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('accounts')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'accounts'
+                                activeTab === 'resources'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
                             <Building2 className="w-4 h-4 inline mr-2" />
-                            Accounts
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('agents')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'agents'
-                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                            }`}
-                        >
-                            <Bot className="w-4 h-4 inline mr-2" />
-                            Agents
+                            Resources
                         </button>
                         <button
                             onClick={() => setActiveTab('support')}
@@ -287,31 +265,35 @@ export default function AdminPage() {
                                 </div>
                             </div>
 
-                            {/* Recent Orders */}
+                            {/* Recent Plans */}
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                    <ShoppingCart className="w-5 h-5 text-green-600" />
-                                    Recent Orders
+                                    <Package className="w-5 h-5 text-purple-600" />
+                                    Recent Plans
                                 </h3>
                                 <div className="space-y-3">
-                                    {overview.recent.orders.length > 0 ? (
-                                        overview.recent.orders.map((order: any, idx: number) => (
+                                    {overview.recent.plans && overview.recent.plans.length > 0 ? (
+                                        overview.recent.plans.map((plan: any, idx: number) => (
                                             <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                                                 <div>
-                                                    <p className="font-medium text-gray-900 dark:text-white">{order.customerName}</p>
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400">${order.total?.toFixed(2)}</p>
+                                                    <p className="font-medium text-gray-900 dark:text-white">
+                                                        {plan.userId?.username || plan.userId?.email || 'Unknown User'}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        {plan.planKey} - ${plan.price?.toFixed(2)}
+                                                    </p>
                                                 </div>
                                                 <span className={`text-xs px-2 py-1 rounded-full ${
-                                                    order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-gray-100 text-gray-800'
+                                                    plan.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                                    plan.status === 'expired' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                                 }`}>
-                                                    {order.status}
+                                                    {plan.status}
                                                 </span>
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm">No recent orders</p>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm">No recent plans</p>
                                     )}
                                 </div>
                             </div>
@@ -345,30 +327,33 @@ export default function AdminPage() {
                     </motion.div>
                 )}
 
-                {activeTab === 'stores' && (
+                {activeTab === 'resources' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
+                        className="space-y-6"
                     >
-                        <AdminStoresManagement />
-                    </motion.div>
-                )}
-
-                {activeTab === 'accounts' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
-                        <AdminAccountsManagement />
-                    </motion.div>
-                )}
-
-                {activeTab === 'agents' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
-                        <AdminAgentsManagement />
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Store className="w-6 h-6 text-indigo-600" />
+                                Stores
+                            </h2>
+                            <AdminStoresManagement />
+                        </div>
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Building2 className="w-6 h-6 text-indigo-600" />
+                                WhatsApp Accounts
+                            </h2>
+                            <AdminAccountsManagement />
+                        </div>
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Bot className="w-6 h-6 text-indigo-600" />
+                                AI Agents
+                            </h2>
+                            <AdminAgentsManagement />
+                        </div>
                     </motion.div>
                 )}
 

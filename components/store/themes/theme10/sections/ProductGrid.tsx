@@ -6,6 +6,7 @@ import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
+import GeometricDecorations from "../../shared/GeometricDecorations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95, rotate: -2 },
@@ -20,7 +21,7 @@ const ProductGrid: React.FC = () => {
 
     if (!selectedStore) return null;
 
-    const primaryColor = selectedStore.theme?.primaryColor || '#F59E0B';
+    const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -38,11 +39,14 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="py-24 bg-white relative overflow-hidden">
+        <div id="products" className="relative py-24 bg-gradient-to-br from-indigo-50 to-white overflow-hidden">
+            {/* Professional Geometric Pattern */}
+            <GeometricDecorations type="professional" color={primaryColor} className="opacity-5" />
+            
             <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r opacity-5"
                 style={{ background: `linear-gradient(90deg, ${primaryColor}, transparent)` }}
             ></div>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 z-10">
                 <motion.div
                     initial={{ opacity: 0, y: -30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -50,10 +54,26 @@ const ProductGrid: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="mb-16"
                 >
-                    <div className="inline-block px-6 py-2 bg-[var(--color-primary)] text-white font-black uppercase tracking-widest text-sm mb-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
+                        style={{ 
+                            backgroundColor: `${primaryColor}15`,
+                            borderColor: `${primaryColor}30`,
+                        }}
+                    >
+                        <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
+                            💻 Computers & Peripherals
+                        </span>
+                    </motion.div>
+                    <div className="inline-block px-6 py-2 bg-[var(--color-primary)] text-white font-black uppercase tracking-widest text-sm mb-4"
+                        style={{ '--color-primary': primaryColor } as React.CSSProperties}
+                    >
                         Products
                     </div>
-                    <h3 className="text-5xl sm:text-6xl md:text-7xl font-black"
+                    <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black"
                         style={{ color: primaryColor }}
                     >
                         Our Collection
@@ -80,9 +100,21 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                className="group bg-white rounded-none shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden flex flex-col transform hover:-rotate-1 border-4 border-transparent hover:border-[var(--color-primary)]"
-                                style={{ borderColor: index % 2 === 0 ? undefined : primaryColor }}
+                                onClick={() => handleViewProduct({ stopPropagation: () => {} } as React.MouseEvent, product)}
+                                className="group relative cursor-pointer bg-white rounded-none shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden flex flex-col transform hover:-rotate-1 border-4 border-transparent hover:border-[var(--color-primary)]"
+                                style={{ 
+                                    borderColor: index % 2 === 0 ? undefined : primaryColor,
+                                    '--color-primary': primaryColor
+                                } as React.CSSProperties}
                             >
+                                {/* Professional Corner Accent */}
+                                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden z-10">
+                                    <div 
+                                        className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
+                                        style={{ borderTopColor: primaryColor }}
+                                    ></div>
+                                </div>
+                                
                                 <div className="relative overflow-hidden h-80">
                                     <motion.img
                                         src={product.mainImage}
@@ -91,6 +123,15 @@ const ProductGrid: React.FC = () => {
                                         whileHover={{ scale: 1.15 }}
                                         transition={{ duration: 0.6 }}
                                     />
+                                    {/* Professional Overlay */}
+                                    <div 
+                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                                        style={{ backgroundColor: primaryColor }}
+                                    >
+                                        <GeometricDecorations type="professional" color={primaryColor} className="opacity-30" />
+                                    </div>
+                                    
+                                    
                                     <div 
                                         className="absolute top-4 right-4 px-4 py-2 bg-white font-black text-sm uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                         style={{ color: primaryColor }}

@@ -49,11 +49,34 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
 
+        // Check plan limits before creating order
+        try {
+            const { canPerformAction } = await import('@/lib/utils/planLimits');
+            const canCreate = await canPerformAction(userId, 'create_order');
+            if (!canCreate.allowed) {
+                return NextResponse.json({ 
+                    message: canCreate.reason || "Plan limit reached" 
+                }, { status: 403 });
+            }
+        } catch (error) {
+            console.error('Error checking plan limits:', error);
+            // Continue with order creation if limit check fails
+        }
+
         const order = new Order({
         ...body,
         owner: userId, 
         });
         await order.save();
+
+        // Check if limit is reached after creation and send notification if needed
+        try {
+            const { deactivateFeaturesOnLimitReached } = await import('@/lib/utils/planLimits');
+            await deactivateFeaturesOnLimitReached(userId);
+        } catch (error) {
+            console.error('Error checking/deactivating features after order creation:', error);
+            // Don't fail order creation if limit check fails
+        }
 
         // ✅ Added: Auto-send order confirmation for Pro/Visionary plans
         try {

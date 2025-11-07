@@ -186,6 +186,16 @@ export async function POST(req: Request) {
             }
             await user.save({ session: mongoSession });
 
+            // Send thank you notification for plan subscription
+            try {
+                const { createSubscriptionNotification } = await import('@/lib/utils/notifications');
+                const planName = planTemplate.name || planKeyToUse;
+                await createSubscriptionNotification(user._id.toString(), planKeyToUse, planName);
+            } catch (error) {
+                console.error('Error creating subscription notification:', error);
+                // Don't fail subscription if notification fails
+            }
+
             // ✅ RESOURCE MANAGEMENT: Update resources based on plan features
             const features = planTemplate.features;
 

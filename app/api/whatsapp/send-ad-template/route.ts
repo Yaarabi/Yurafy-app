@@ -149,6 +149,18 @@ export async function POST(req: Request) {
                     token
                 );
 
+                // Track ad template sent
+                await WhatsAppConversation.findOneAndUpdate(
+                    { owner: ownerId, "customer.phone": phone },
+                    {
+                        $set: {
+                            "metadata.adTemplateSent": true,
+                            "metadata.adTemplateSentAt": new Date(),
+                        },
+                    },
+                    { upsert: true }
+                );
+
                 results.push({ orderId: order._id, phone: phone, status: "sent" });
 
                 // Delay between messages

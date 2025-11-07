@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
+import GeometricDecorations from '../../shared/GeometricDecorations';
 
 const About: React.FC = () => {
     const { selectedStore } = useStore();
@@ -8,8 +9,7 @@ const About: React.FC = () => {
     if (!selectedStore) return null;
 
     const { about, brandName, whoWeAre } = selectedStore;
-    const primaryColor = selectedStore.theme?.primaryColor || '#3B82F6';
-    const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
+    const primaryColor = selectedStore.theme?.primaryColor || '#f59e0b';
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,
@@ -24,25 +24,37 @@ const About: React.FC = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="py-20 bg-white relative overflow-hidden"
+            transition={{ duration: 0.8 }}
+            className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 overflow-hidden"
         >
-            <div 
-                className="absolute top-0 left-0 w-full h-1"
-                style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }}
-            ></div>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-12 lg:p-16 border border-gray-100">
-                    <h3 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-gray-900">
+            {/* Cultural Geometric Pattern */}
+            <GeometricDecorations type="cultural" color={primaryColor} className="opacity-5" />
+            
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">
+                <div className="text-center">
+                    <motion.h3
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 sm:mb-8"
+                    >
                         {aboutData.title || `About ${brandName}`}
-                    </h3>
-                    <div 
-                        className="w-20 h-1 mx-auto mb-8 rounded-full"
-                        style={{ backgroundColor: primaryColor }}
-                    ></div>
-                    <p className="text-lg text-gray-700 leading-relaxed text-center max-w-3xl mx-auto">
-                        {aboutData.description}
-                    </p>
+                    </motion.h3>
+                    <div className="flex items-center justify-center gap-2 mb-8 sm:mb-10">
+                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
+                            {aboutData.description}
+                        </p>
+                    </motion.div>
                 </div>
             </div>
         </motion.div>

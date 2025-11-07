@@ -44,7 +44,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
             'https://picsum.photos/seed/product1-1/800/800',
             'https://picsum.photos/seed/product1-2/800/800',
         ],
-        imageDescriptions: ['Front view showing the sleek design', 'Side view with band details'],
+        descriptionsImage: ['https://picsum.photos/seed/product1-desc1/800/800', 'https://picsum.photos/seed/product1-desc2/800/800'],
         sizes: ['Small', 'Medium', 'Large'],
         colors: ['Black', 'Silver', 'Rose Gold'],
         salesCount: 1250,
@@ -65,7 +65,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
         images: [
             'https://picsum.photos/seed/product2-1/800/800',
         ],
-        imageDescriptions: ['Earbuds in charging case'],
+        descriptionsImage: ['https://picsum.photos/seed/product2-desc1/800/800'],
         colors: ['Black', 'White'],
         salesCount: 890,
         createdAt: new Date(),
@@ -87,7 +87,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
             'https://picsum.photos/seed/product3-1/800/800',
             'https://picsum.photos/seed/product3-2/800/800',
         ],
-        imageDescriptions: ['Tablet with stylus', 'Back view showing ports'],
+        descriptionsImage: ['https://picsum.photos/seed/product3-desc1/800/800', 'https://picsum.photos/seed/product3-desc2/800/800'],
         sizes: ['64GB', '128GB', '256GB'],
         colors: ['Space Gray', 'Silver'],
         bundles: {
@@ -114,7 +114,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
         images: [
             'https://picsum.photos/seed/product4-1/800/800',
         ],
-        imageDescriptions: ['Phone showing camera array'],
+        descriptionsImage: ['https://picsum.photos/seed/product4-desc1/800/800'],
         sizes: ['128GB', '256GB', '512GB'],
         colors: ['Midnight', 'Starlight', 'Blue'],
         salesCount: 2100,
@@ -137,7 +137,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
             'https://picsum.photos/seed/product5-1/800/800',
             'https://picsum.photos/seed/product5-2/800/800',
         ],
-        imageDescriptions: ['Laptop open view', 'Closed view showing design'],
+        descriptionsImage: ['https://picsum.photos/seed/product5-desc1/800/800', 'https://picsum.photos/seed/product5-desc2/800/800'],
         sizes: ['512GB', '1TB'],
         colors: ['Space Gray', 'Silver'],
         bundles: {
@@ -163,7 +163,7 @@ export const FAKE_PRODUCTS: IProduct[] = [
         images: [
             'https://picsum.photos/seed/product6-1/800/800',
         ],
-        imageDescriptions: ['Headset with RGB lighting'],
+        descriptionsImage: ['https://picsum.photos/seed/product6-desc1/800/800'],
         colors: ['Black', 'White', 'Red'],
         salesCount: 520,
         createdAt: new Date(),
@@ -187,11 +187,11 @@ export const FAKE_PRODUCTS: IProduct[] = [
             'https://picsum.photos/seed/preview-watch-3/800/800',
             'https://picsum.photos/seed/preview-watch-4/800/800',
         ],
-        imageDescriptions: [
-            'Front view showcasing the premium AMOLED display with vibrant colors',
-            'Side profile showing the sleek titanium case and rotating crown',
-            'Back view displaying the advanced health sensors and charging port',
-            'Wrist view demonstrating the comfortable sport band and elegant design',
+        descriptionsImage: [
+            'https://picsum.photos/seed/preview-watch-desc1/800/800',
+            'https://picsum.photos/seed/preview-watch-desc2/800/800',
+            'https://picsum.photos/seed/preview-watch-desc3/800/800',
+            'https://picsum.photos/seed/preview-watch-desc4/800/800',
         ],
         sizes: ['40mm', '44mm'],
         colors: ['Titanium Black', 'Stainless Steel Silver', 'Rose Gold'],

@@ -28,6 +28,7 @@ const intlMiddleware = createMiddleware({
     locales: ['en', 'fr', 'ar'],
     defaultLocale: 'en',
     localePrefix: 'as-needed', // Hide default locale (en) from URLs
+    localeDetection: true, // Allow locale detection from cookies/headers
 });
 
 // --- Main middleware handler ---
@@ -40,7 +41,10 @@ export default function middleware(request: NextRequest) {
     if (pathname.startsWith('/en/') || pathname === '/en') {
         const url = request.nextUrl.clone();
         url.pathname = pathname.replace(/^\/en/, '') || '/';
-        return NextResponse.redirect(url);
+        // Clear locale cookie when redirecting to default locale
+        const response = NextResponse.redirect(url);
+        response.cookies.delete('NEXT_LOCALE');
+        return response;
     }
 
     // Skip protected or internal routes
@@ -63,9 +67,11 @@ export default function middleware(request: NextRequest) {
         // --- Store subdomain handling ---
         const url = request.nextUrl.clone();
 
-        // Detect locale or default to 'en' (exclude 'en' from matching since it's hidden)
+        // Detect locale from path or cookie, default to 'en'
         const localeMatch = pathname.match(/^\/(fr|ar)/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
+        const localeFromPath = localeMatch ? localeMatch[1] : null;
+        const localeFromCookie = request.cookies.get('NEXT_LOCALE')?.value;
+        const locale = localeFromPath || localeFromCookie || 'en';
 
         // Remove locale prefix from path (only fr/ar, not en)
         const pathWithoutLocale = pathname.replace(/^\/(fr|ar)/, '') || '/';
@@ -79,8 +85,16 @@ export default function middleware(request: NextRequest) {
             url.pathname = `/${locale}/${subdomain}${pathWithoutLocale}`;
         }
 
-        // ✅ Keep rewrite (no redirect flash)
-        return NextResponse.rewrite(url);
+        // Set locale cookie for consistency
+        const response = NextResponse.rewrite(url);
+        if (locale !== 'en') {
+            response.cookies.set('NEXT_LOCALE', locale, {
+                path: '/',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 365, // 1 year
+            });
+        }
+        return response;
     }
 
     // Fallback to intl middleware

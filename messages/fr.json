@@ -183,10 +183,71 @@
     },
     "dashboard": {
         "title": "Bienvenue sur votre tableau de bord",
-        "subtitle": "Gérez les commandes, les produits et votre marque au même endroit."
+        "subtitle": "Gérez les commandes, les produits et votre marque au même endroit.",
+        "header": {
+            "title": "Tableau de bord"
+        },
+        "plan": {
+            "expired": "Votre plan a expiré",
+            "planLabel": "Plan",
+            "expires": "Expire",
+            "renewPlan": "Renouveler le plan",
+            "upgradePlan": "Mettre à niveau le plan",
+            "products": "Produits",
+            "orders": "Commandes",
+            "contacts": "Contacts"
+        },
+        "stats": {
+            "totalRevenue": "Revenu total",
+            "products": "Produits",
+            "orders": "Commandes",
+            "templates": "Modèles",
+            "contacts": "Contacts",
+            "recentOrders": "Commandes récentes",
+            "topProducts": "Meilleurs produits",
+            "noOrders": "Aucune commande pour le moment",
+            "noProducts": "Aucun produit pour le moment"
+        }
+    },
+    "themes": {
+        "title": "Choisissez le thème de votre magasin",
+        "subtitle": "Sélectionnez un thème qui correspond à l'identité de votre marque. Prévisualisez chaque thème pour voir à quoi il ressemble avec un contenu d'exemple. Vous pouvez personnaliser la couleur principale après la sélection.",
+        "customizeColors": "Personnaliser les couleurs",
+        "adjustColors": "Ajustez les couleurs en temps réel",
+        "primaryColor": "Couleur principale",
+        "secondaryColor": "Couleur secondaire",
+        "textColor": "Couleur du texte",
+        "store": "Magasin",
+        "product": "Produit",
+        "selectThisTheme": "Sélectionner ce thème",
+        "continue": "Continuer",
+        "continueWith": "Continuer avec",
+        "previewActive": "Aperçu actif",
+        "previewTheme": "Aperçu du thème",
+        "closePreview": "Fermer l'aperçu",
+        "themeNames": {
+            "1": "Vert classique",
+            "2": "Bleu moderne",
+            "3": "Noir et or de luxe",
+            "4": "Violet doux",
+            "5": "Corail couchant",
+            "6": "Gris minimal",
+            "7": "Sarcelle océan",
+            "8": "Rose poudré",
+            "9": "Forêt émeraude",
+            "10": "Blanc arctique"
+        }
     },
     "orders": {
         "title": "Commandes",
+        "loading": "Chargement des commandes...",
+        "empty": "Aucune commande trouvée",
+        "actions": "Actions",
+        "edit": "Modifier la commande",
+        "delete": "Supprimer la commande",
+        "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette commande ?",
+        "whatsappRequired": "Fonctionnalité WhatsApp requise",
+        "moreProducts": "+{count} de plus",
         "columns": {
         "id": "ID de commande",
         "customer": "Client",
@@ -203,12 +264,25 @@
         "status": {
         "pending": "En attente",
         "processing": "En traitement",
+        "new": "Nouveau",
+        "confirmed": "Confirmée",
         "shipped": "Expédiée",
         "delivered": "Livrée",
         "cancelled": "Annulée"
         },
-        "empty": "Aucune commande trouvée",
-        "loading": "Chargement des commandes..."
+        "filters": {
+            "label": "Filtres :",
+            "productPlaceholder": "Filtrer par nom de produit",
+            "addressPlaceholder": "Filtrer par adresse",
+            "allStatus": "Tous les statuts",
+            "status": {
+                "new": "Nouveau",
+                "confirmed": "Confirmée",
+                "shipped": "Expédiée",
+                "delivered": "Livrée",
+                "cancelled": "Annulée"
+            }
+        }
     },
     "settings": {
         "title": "Paramètres",
@@ -226,10 +300,266 @@
         "placeholder": "Tapez votre question...",
         "send": "Envoyer"
     },
+    "dashboard": {
+        "title": "Bienvenue sur votre tableau de bord",
+        "subtitle": "Gérez les commandes, les produits et votre marque au même endroit.",
+        "header": {
+            "title": "Tableau de bord"
+        },
+        "plan": {
+            "expired": "Votre plan a expiré",
+            "planLabel": "Plan",
+            "expires": "Expire",
+            "renewPlan": "Renouveler le plan",
+            "upgradePlan": "Mettre à niveau le plan",
+            "products": "Produits",
+            "orders": "Commandes",
+            "contacts": "Contacts"
+        },
+        "stats": {
+            "totalRevenue": "Revenu total",
+            "products": "Produits",
+            "orders": "Commandes",
+            "templates": "Modèles",
+            "contacts": "Contacts",
+            "recentOrders": "Commandes récentes",
+            "topProducts": "Meilleurs produits",
+            "noOrders": "Aucune commande pour le moment",
+            "noProducts": "Aucun produit pour le moment",
+            "topCustomers": {
+                "title": "Meilleurs Clients",
+                "subtitle": {
+                    "orders": "Par nombre de commandes",
+                    "spent": "Par montant total dépensé"
+                },
+                "orders": "Commandes",
+                "spent": "Dépensé",
+                "byOrders": "Total des commandes",
+                "bySpent": "Total dépensé ($)",
+                "empty": "Aucune donnée client disponible"
+            }
+        },
+        "charts": {
+            "revenue": {
+                "title": "Revenu dans le temps",
+                "subtitle": "30 derniers jours",
+                "total": "Total",
+                "label": "Revenu ($)",
+                "noData": "Aucune donnée de revenu disponible"
+            },
+            "ordersStatus": {
+                "title": "Commandes par statut",
+                "subtitle": "{count} commandes au total",
+                "noData": "Aucune donnée de commande disponible"
+            },
+            "topProducts": {
+                "title": "Meilleurs produits",
+                "subtitle": "Par nombre de ventes",
+                "totalSales": "Ventes totales",
+                "label": "Nombre de ventes",
+                "noData": "Aucune donnée de produit disponible",
+                "unnamedProduct": "Produit sans nom"
+            }
+        }
+    },
+    "agent": {
+        "header": {
+            "title": "Assistant Agent IA",
+            "subtitle": "Votre assistant intelligent pour le magasin",
+            "clearChat": "Effacer la conversation"
+        },
+        "messages": {
+            "startConversation": "Démarrer une conversation",
+            "startDescription": "Posez-moi n'importe quelle question sur votre magasin, produits, commandes ou clients. Je suis là pour vous aider !"
+        },
+        "input": {
+            "placeholder": "Posez-moi n'importe quelle question sur votre magasin...",
+            "send": "Envoyer",
+            "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+        }
+    },
+    "customers": {
+        "table": {
+            "columns": {
+                "name": "Nom",
+                "email": "E-mail",
+                "phone": "Téléphone",
+                "address": "Adresse",
+                "orders": "Commandes",
+                "delivered": "Livrées",
+                "cancelled": "Annulées",
+                "spent": "Dépensé",
+                "lastOrder": "Dernière commande",
+                "status": "Statut"
+            },
+            "loading": "Chargement des clients...",
+            "empty": "Aucun client trouvé",
+            "guest": "Invité",
+            "noAddress": "Aucune adresse",
+            "whatsappRequired": "Fonctionnalité WhatsApp requise"
+        }
+    },
+    "whatsapp": {
+        "conversations": {
+            "status": {
+                "humanNeeded": "Intervention humaine requise",
+                "optedIn": "Abonné",
+                "optedOut": "Désabonné"
+            },
+            "empty": {
+                "title": "Aucune conversation pour le moment",
+                "description": "Démarrez une conversation pour la voir ici",
+                "noMessages": "Aucun message pour le moment"
+            },
+            "tracking": {
+                "autoReply": "Réponse automatique envoyée",
+                "auto": "Auto",
+                "orderConfirm": "Confirmation de commande envoyée",
+                "order": "Commande",
+                "adTemplate": "Modèle publicitaire envoyé",
+                "ad": "Pub",
+                "read": "Message lu",
+                "readLabel": "Lu"
+            }
+        },
+        "chat": {
+            "back": "Retour",
+            "status": {
+                "humanRequired": "Support humain requis",
+                "optedIn": "Abonné",
+                "optedOut": "Désabonné"
+            },
+            "empty": {
+                "noMessages": "Aucun message pour le moment",
+                "noText": "(Aucun texte)"
+            },
+            "you": "Vous"
+        },
+        "tools": {
+            "section": {
+                "tools": {
+                    "title": "Outils de l'agent",
+                    "description": "Activez ou désactivez des outils spécifiques pour votre agent IA. Les outils désactivés ne seront pas disponibles pour l'agent pendant les conversations."
+                },
+                "templates": {
+                    "title": "Configuration des modèles",
+                    "label": "Modèles existants"
+                }
+            },
+            "categories": {
+                "Orders": "Commandes",
+                "Products": "Produits",
+                "Memory": "Mémoire",
+                "Brand Info": "Informations de marque",
+                "Templates": "Modèles"
+            },
+            "tools": {
+                "search_order": {
+                    "name": "Rechercher une commande",
+                    "description": "Rechercher des commandes client par nom, téléphone, ID ou statut"
+                },
+                "update_order_status": {
+                    "name": "Mettre à jour le statut de la commande",
+                    "description": "Mettre à jour le statut d'une commande existante"
+                },
+                "create_order": {
+                    "name": "Créer une commande",
+                    "description": "Créer une nouvelle commande pour un client"
+                },
+                "search_product": {
+                    "name": "Rechercher un produit",
+                    "description": "Rechercher des produits par nom, catégorie, marque ou slug"
+                },
+                "store_agent_action": {
+                    "name": "Stocker l'action de l'agent",
+                    "description": "Stocker ou mettre à jour ce que l'agent IA a fait ou observé à propos d'un client"
+                },
+                "get_agent_memory": {
+                    "name": "Obtenir la mémoire de l'agent",
+                    "description": "Récupérer le résumé stocké des actions précédentes ou situations client"
+                },
+                "brand_info_retrieval": {
+                    "name": "Récupération d'informations de marque",
+                    "description": "Rechercher dans les connaissances téléchargées de la marque (manuels, FAQ, documents)"
+                },
+                "template_guide": {
+                    "name": "Guide des modèles",
+                    "description": "Suggère des modèles pertinents à utiliser lors de la réponse aux clients"
+                },
+                "send_template": {
+                    "name": "Envoyer un modèle",
+                    "description": "Envoyer un message de modèle WhatsApp approuvé à un client"
+                }
+            },
+            "tool": {
+                "enabledLabel": "Activé",
+                "enabled": "Outil \"{tool}\" activé",
+                "disabled": "Outil \"{tool}\" désactivé",
+                "enable": "Activer {tool}",
+                "disable": "Désactiver {tool}",
+                "updateError": "Échec de la mise à jour de l'outil"
+            },
+            "template": {
+                "empty": "Aucun modèle pour le moment.",
+                "addLabel": "Ajouter un autre modèle",
+                "exists": "Le modèle existe déjà",
+                "added": "Modèle \"{template}\" ajouté",
+                "deleted": "Modèle \"{template}\" supprimé",
+                "addError": "Échec de l'ajout du modèle",
+                "deleteError": "Échec de la suppression du modèle"
+            },
+            "file": {
+                "uploadLabel": "Téléchargement de fichier (pour RAG)",
+                "currentFile": "Fichier actuel",
+                "delete": "Supprimer",
+                "saving": "Enregistrement...",
+                "saveAndGenerate": "Enregistrer le fichier et générer les embeddings",
+                "cancel": "Annuler",
+                "saved": "Fichier enregistré dans l'agent",
+                "embeddingsGenerated": "Embeddings générés avec succès",
+                "deleted": "Fichier et embeddings supprimés",
+                "deleteError": "Échec de la suppression"
+            }
+        }
+    },
+    "Support": {
+        "title": "Centre de Support",
+        "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
+        "chat": {
+            "title": "Chat de support",
+            "subtitle": "Nous sommes là pour vous aider à réussir !",
+            "empty": {
+                "title": "Aucun message pour le moment",
+                "description": "Démarrez une conversation avec notre équipe de support. Nous sommes là pour vous aider à réussir !"
+            },
+            "input": {
+                "placeholder": "Tapez votre message...",
+                "send": "Envoyer",
+                "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+            },
+            "messages": {
+                "sent": "Message envoyé ! Notre équipe de support répondra bientôt.",
+                "sendError": "Échec de l'envoi du message",
+                "loadError": "Échec du chargement des messages"
+            },
+            "today": "Aujourd'hui",
+            "quickReply": "Réponse rapide",
+            "writeMessage": "Écrire un message à Copilot",
+            "editInPage": "Modifier dans une page"
+        }
+    },
     "products": {
         "title": "Produits",
         "new": "Nouveau produit",
         "createTitle": "Créer un nouveau produit",
+        "createSuccess": "Produit créé avec succès !",
+        "createError": "Échec de la création du produit",
+        "loading": "Chargement des produits...",
+        "empty": "Aucun produit trouvé",
+        "actions": "Actions",
+        "edit": "Modifier le produit",
+        "delete": "Supprimer le produit",
+        "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce produit ?",
         "columns": {
         "name": "Nom",
         "slug": "Slug",
@@ -241,7 +571,7 @@
         "images": "Images",
         "mainImage": "Image principale",
         "otherImages": "Autres images",
-        "salesCount": "Nombre de ventes",
+        "salesCount": "Vendu",
         "createdAt": "Créé le"
         },
 
@@ -258,7 +588,13 @@
             "otherImages": "Autres images",
             "selectCategory": "Sélectionnez une catégorie",
             "create": "Créer",
-            "creating": "Création en cours..."
+            "creating": "Création en cours...",
+            "update": "Mettre à jour",
+            "updating": "Mise à jour en cours...",
+            "buyQuantity": "Quantité à acheter",
+            "getQuantity": "Quantité gratuite",
+            "specialPrice": "Prix spécial",
+            "percentageOff": "Pourcentage de remise"
         },
         "errors": {
             "nameRequired": "Le nom du produit est requis",
@@ -422,7 +758,11 @@
         "chat": {
             "title": "Chat en Direct",
             "description": "Chattez avec notre équipe de support en temps réel pour une aide instantanée.",
-            "action": "Démarrer le Chat"
+            "action": "Démarrer le Chat",
+            "today": "Aujourd'hui",
+            "quickReply": "Réponse rapide",
+            "writeMessage": "Écrire un message à Copilot",
+            "editInPage": "Modifier dans une page"
         },
         "email": {
             "title": "Support par E-mail",

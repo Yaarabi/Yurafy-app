@@ -186,10 +186,71 @@
     
     "dashboard": {
         "title": "مرحباً بك في لوحتك",
-        "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد."
+        "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد.",
+        "header": {
+            "title": "لوحة التحكم"
+        },
+        "plan": {
+            "expired": "انتهت صلاحية خطتك",
+            "planLabel": "الخطة",
+            "expires": "تنتهي",
+            "renewPlan": "تجديد الخطة",
+            "upgradePlan": "ترقية الخطة",
+            "products": "المنتجات",
+            "orders": "الطلبات",
+            "contacts": "جهات الاتصال"
+        },
+        "stats": {
+            "totalRevenue": "إجمالي الإيرادات",
+            "products": "المنتجات",
+            "orders": "الطلبات",
+            "templates": "القوالب",
+            "contacts": "جهات الاتصال",
+            "recentOrders": "الطلبات الأخيرة",
+            "topProducts": "أفضل المنتجات",
+            "noOrders": "لا توجد طلبات بعد",
+            "noProducts": "لا توجد منتجات بعد"
+        }
+    },
+    "themes": {
+        "title": "اختر سمة متجرك",
+        "subtitle": "اختر سمة تطابق هوية علامتك التجارية. اعرض معاينة لكل سمة لترى كيف تبدو مع محتوى تجريبي. يمكنك تخصيص اللون الأساسي بعد الاختيار.",
+        "customizeColors": "تخصيص الألوان",
+        "adjustColors": "اضبط الألوان في الوقت الفعلي",
+        "primaryColor": "اللون الأساسي",
+        "secondaryColor": "اللون الثانوي",
+        "textColor": "لون النص",
+        "store": "المتجر",
+        "product": "المنتج",
+        "selectThisTheme": "اختر هذه السمة",
+        "continue": "متابعة",
+        "continueWith": "متابعة مع",
+        "previewActive": "معاينة نشطة",
+        "previewTheme": "معاينة السمة",
+        "closePreview": "إغلاق المعاينة",
+        "themeNames": {
+            "1": "أخضر كلاسيكي",
+            "2": "أزرق عصري",
+            "3": "أسود وذهبي فاخر",
+            "4": "بنفسجي ناعم",
+            "5": "مرجاني غروب",
+            "6": "رمادي بسيط",
+            "7": "فيروزي محيطي",
+            "8": "وردي خفيف",
+            "9": "غابة زمردية",
+            "10": "أبيض قطبي"
+        }
     },
     "orders": {
         "title": "الطلبات",
+        "loading": "جاري تحميل الطلبات...",
+        "empty": "لا توجد طلبات",
+        "actions": "الإجراءات",
+        "edit": "تعديل الطلب",
+        "delete": "حذف الطلب",
+        "deleteConfirm": "هل أنت متأكد من حذف هذا الطلب؟",
+        "whatsappRequired": "ميزة واتساب مطلوبة",
+        "moreProducts": "+{count} المزيد",
         "columns": {
         "id": "رقم الطلب",
         "customer": "العميل",
@@ -206,12 +267,25 @@
         "status": {
         "pending": "قيد الانتظار",
         "processing": "قيد المعالجة",
+        "new": "جديد",
+        "confirmed": "مؤكد",
         "shipped": "تم الشحن",
         "delivered": "تم التسليم",
         "cancelled": "ألغيت"
         },
-        "empty": "لا توجد طلبات",
-        "loading": "جاري تحميل الطلبات..."
+        "filters": {
+            "label": "الفلاتر:",
+            "productPlaceholder": "تصفية حسب اسم المنتج",
+            "addressPlaceholder": "تصفية حسب العنوان",
+            "allStatus": "جميع الحالات",
+            "status": {
+                "new": "جديد",
+                "confirmed": "مؤكد",
+                "shipped": "تم الشحن",
+                "delivered": "تم التسليم",
+                "cancelled": "ألغيت"
+            }
+        }
     },
     "settings": {
         "title": "الإعدادات",
@@ -229,10 +303,265 @@
         "placeholder": "اكتب سؤالك...",
         "send": "إرسال"
     },
+    "dashboard": {
+        "title": "مرحباً بك في لوحتك",
+        "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد.",
+        "header": {
+            "title": "لوحة التحكم"
+        },
+        "plan": {
+            "expired": "انتهت صلاحية خطتك",
+            "planLabel": "الخطة",
+            "expires": "تنتهي",
+            "renewPlan": "تجديد الخطة",
+            "upgradePlan": "ترقية الخطة",
+            "products": "المنتجات",
+            "orders": "الطلبات",
+            "contacts": "جهات الاتصال"
+        },
+        "stats": {
+            "totalRevenue": "إجمالي الإيرادات",
+            "products": "المنتجات",
+            "orders": "الطلبات",
+            "templates": "القوالب",
+            "contacts": "جهات الاتصال",
+            "recentOrders": "الطلبات الأخيرة",
+            "topProducts": "أفضل المنتجات",
+            "noOrders": "لا توجد طلبات بعد",
+            "noProducts": "لا توجد منتجات بعد",
+            "topCustomers": {
+                "title": "أفضل العملاء",
+                "subtitle": {
+                    "orders": "حسب عدد الطلبات",
+                    "spent": "حسب إجمالي المبلغ المنفق"
+                },
+                "orders": "الطلبات",
+                "spent": "المنفق",
+                "byOrders": "إجمالي الطلبات",
+                "bySpent": "إجمالي المنفق ($)",
+                "empty": "لا توجد بيانات عملاء متاحة"
+            }
+        },
+        "charts": {
+            "revenue": {
+                "title": "الإيرادات مع مرور الوقت",
+                "subtitle": "آخر 30 يومًا",
+                "total": "الإجمالي",
+                "label": "الإيرادات ($)",
+                "noData": "لا توجد بيانات إيرادات متاحة"
+            },
+            "ordersStatus": {
+                "title": "الطلبات حسب الحالة",
+                "subtitle": "{count} إجمالي الطلبات",
+                "noData": "لا توجد بيانات طلبات متاحة"
+            },
+            "topProducts": {
+                "title": "أفضل المنتجات",
+                "subtitle": "حسب عدد المبيعات",
+                "totalSales": "إجمالي المبيعات",
+                "label": "عدد المبيعات",
+                "noData": "لا توجد بيانات منتجات متاحة",
+                "unnamedProduct": "منتج بدون اسم"
+            }
+        }
+    },
+    "agent": {
+        "header": {
+            "title": "مساعد الوكيل بالذكاء الاصطناعي",
+            "subtitle": "مساعد متجرك الذكي",
+            "clearChat": "مسح المحادثة"
+        },
+        "messages": {
+            "startConversation": "ابدأ محادثة",
+            "startDescription": "اسألني أي شيء عن متجرك، منتجاتك، طلباتك، أو عملائك. أنا هنا لمساعدتك!"
+        },
+        "input": {
+            "placeholder": "اسألني أي شيء عن متجرك...",
+            "send": "إرسال",
+            "hint": "اضغط Enter للإرسال، Shift+Enter لسطر جديد"
+        }
+    },
+    "customers": {
+        "table": {
+            "columns": {
+                "name": "الاسم",
+                "email": "البريد الإلكتروني",
+                "phone": "الهاتف",
+                "address": "العنوان",
+                "orders": "الطلبات",
+                "delivered": "تم التسليم",
+                "cancelled": "ألغيت",
+                "spent": "المنفق",
+                "lastOrder": "آخر طلب",
+                "status": "الحالة"
+            },
+            "loading": "جاري تحميل العملاء...",
+            "empty": "لا يوجد عملاء",
+            "guest": "ضيف",
+            "noAddress": "لا يوجد عنوان",
+            "whatsappRequired": "ميزة واتساب مطلوبة"
+        }
+    },
+    "whatsapp": {
+        "conversations": {
+            "status": {
+                "humanNeeded": "يحتاج تدخل بشري",
+                "optedIn": "مشترك",
+                "optedOut": "غير مشترك"
+            },
+            "empty": {
+                "title": "لا توجد محادثات بعد",
+                "description": "ابدأ محادثة لرؤيتها هنا",
+                "noMessages": "لا توجد رسائل بعد"
+            },
+            "tracking": {
+                "autoReply": "تم إرسال رد تلقائي",
+                "auto": "تلقائي",
+                "orderConfirm": "تم إرسال تأكيد الطلب",
+                "order": "طلب",
+                "adTemplate": "تم إرسال قالب إعلاني",
+                "ad": "إعلان",
+                "read": "تم قراءة الرسالة",
+                "readLabel": "مقروء"
+            }
+        },
+        "chat": {
+            "back": "رجوع",
+            "status": {
+                "humanRequired": "يحتاج دعم بشري",
+                "optedIn": "مشترك",
+                "optedOut": "غير مشترك"
+            },
+            "empty": {
+                "noMessages": "لا توجد رسائل بعد",
+                "noText": "(لا يوجد نص)"
+            },
+            "you": "أنت"
+        },
+        "tools": {
+            "section": {
+                "tools": {
+                    "title": "أدوات الوكيل",
+                    "description": "قم بتمكين أو تعطيل أدوات محددة لوكيل الذكاء الاصطناعي الخاص بك. لن تكون الأدوات المعطلة متاحة للوكيل أثناء المحادثات."
+                },
+                "templates": {
+                    "title": "تكوين القوالب",
+                    "label": "القوالب الموجودة"
+                }
+            },
+            "categories": {
+                "Orders": "الطلبات",
+                "Products": "المنتجات",
+                "Memory": "الذاكرة",
+                "Brand Info": "معلومات العلامة التجارية",
+                "Templates": "القوالب"
+            },
+            "tools": {
+                "search_order": {
+                    "name": "البحث عن طلب",
+                    "description": "البحث عن طلبات العملاء بالاسم، الهاتف، المعرف، أو الحالة"
+                },
+                "update_order_status": {
+                    "name": "تحديث حالة الطلب",
+                    "description": "تحديث حالة طلب موجود"
+                },
+                "create_order": {
+                    "name": "إنشاء طلب",
+                    "description": "إنشاء طلب جديد للعميل"
+                },
+                "search_product": {
+                    "name": "البحث عن منتج",
+                    "description": "البحث عن المنتجات بالاسم، الفئة، العلامة التجارية، أو الرابط"
+                },
+                "store_agent_action": {
+                    "name": "تخزين إجراء الوكيل",
+                    "description": "تخزين أو تحديث ما فعله أو لاحظه وكيل الذكاء الاصطناعي حول العميل"
+                },
+                "get_agent_memory": {
+                    "name": "الحصول على ذاكرة الوكيل",
+                    "description": "استرجاع ملخص مخزن للإجراءات السابقة أو حالات العملاء"
+                },
+                "brand_info_retrieval": {
+                    "name": "استرجاع معلومات العلامة التجارية",
+                    "description": "البحث في المعرفة المرفوعة للعلامة التجارية (دلائل، أسئلة شائعة، مستندات)"
+                },
+                "template_guide": {
+                    "name": "دليل القوالب",
+                    "description": "يقترح قوالب ذات صلة لاستخدامها عند الرد على العملاء"
+                },
+                "send_template": {
+                    "name": "إرسال قالب",
+                    "description": "إرسال رسالة قالب واتساب معتمدة إلى العميل"
+                }
+            },
+            "tool": {
+                "enabledLabel": "مفعل",
+                "enabled": "تم تفعيل الأداة \"{tool}\"",
+                "disabled": "تم تعطيل الأداة \"{tool}\"",
+                "enable": "تفعيل {tool}",
+                "disable": "تعطيل {tool}",
+                "updateError": "فشل تحديث الأداة"
+            },
+            "template": {
+                "empty": "لا توجد قوالب بعد.",
+                "addLabel": "إضافة قالب آخر",
+                "exists": "القالب موجود بالفعل",
+                "added": "تم إضافة القالب \"{template}\"",
+                "deleted": "تم حذف القالب \"{template}\"",
+                "addError": "فشل إضافة القالب",
+                "deleteError": "فشل حذف القالب"
+            },
+            "file": {
+                "uploadLabel": "رفع ملف (لـ RAG)",
+                "currentFile": "الملف الحالي",
+                "delete": "حذف",
+                "saving": "جاري الحفظ...",
+                "saveAndGenerate": "حفظ الملف وإنشاء الـ embeddings",
+                "cancel": "إلغاء",
+                "saved": "تم حفظ الملف في الوكيل",
+                "embeddingsGenerated": "تم إنشاء الـ embeddings بنجاح",
+                "deleted": "تم حذف الملف والـ embeddings",
+                "deleteError": "فشل الحذف"
+            }
+        }
+    },
+    "Support": {
+        "title": "مركز الدعم",
+        "description": "احصل على المساعدة التي تحتاجها للنجاح مع Yurafy. فريق الدعم لدينا متاح عبر قنوات متعددة.",
+        "chat": {
+            "title": "دردشة الدعم",
+            "subtitle": "نحن هنا لمساعدتك على النجاح!",
+            "empty": {
+                "title": "لا توجد رسائل بعد",
+                "description": "ابدأ محادثة مع فريق الدعم لدينا. نحن هنا لمساعدتك على النجاح!"
+            },
+            "input": {
+                "placeholder": "اكتب رسالتك...",
+                "send": "إرسال",
+                "hint": "اضغط Enter للإرسال، Shift+Enter لسطر جديد"
+            },
+            "messages": {
+                "sent": "تم إرسال الرسالة! سيرد فريق الدعم قريباً.",
+                "sendError": "فشل إرسال الرسالة",
+                "loadError": "فشل تحميل الرسائل"
+            },
+            "today": "اليوم",
+            "quickReply": "رد سريع",
+            "writeMessage": "اكتب رسالة إلى Copilot",
+            "editInPage": "تعديل في صفحة"
+        },
     "products": {
         "title": "المنتجات",
         "new": "منتج جديد",
         "createTitle": "إنشاء منتج جديد",
+        "createSuccess": "تم إنشاء المنتج بنجاح!",
+        "createError": "فشل إنشاء المنتج",
+        "loading": "جاري تحميل المنتجات...",
+        "empty": "لا توجد منتجات",
+        "actions": "الإجراءات",
+        "edit": "تعديل المنتج",
+        "delete": "حذف المنتج",
+        "deleteConfirm": "هل أنت متأكد من حذف هذا المنتج؟",
         "columns": {
         "name": "الاسم",
         "slug": "الرابط",
@@ -244,7 +573,7 @@
         "images": "الصور",
         "mainImage": "الصورة الرئيسية",
         "otherImages": "صور أخرى",
-        "salesCount": "عدد المبيعات",
+        "salesCount": "مباع",
         "createdAt": "تاريخ الإنشاء"
         },
         "form": {
@@ -260,7 +589,13 @@
             "otherImages": "صور أخرى",
             "selectCategory": "اختر فئة",
             "create": "إنشاء",
-            "creating": "جارٍ الإنشاء..."
+            "creating": "جارٍ الإنشاء...",
+            "update": "تحديث",
+            "updating": "جارٍ التحديث...",
+            "buyQuantity": "الكمية للشراء",
+            "getQuantity": "الكمية المجانية",
+            "specialPrice": "السعر الخاص",
+            "percentageOff": "نسبة الخصم"
         },
         "errors": {
             "nameRequired": "اسم المنتج مطلوب",
@@ -423,7 +758,11 @@
         "chat": {
             "title": "دردشة مباشرة",
             "description": "تحدث مع فريق الدعم لدينا في الوقت الفعلي للحصول على مساعدة فورية.",
-            "action": "بدء الدردشة"
+            "action": "بدء الدردشة",
+            "today": "اليوم",
+            "quickReply": "رد سريع",
+            "writeMessage": "اكتب رسالة إلى Copilot",
+            "editInPage": "تعديل في صفحة"
         },
         "email": {
             "title": "دعم البريد الإلكتروني",

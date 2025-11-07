@@ -35,7 +35,7 @@ function serializeProductWithStore(product: any, store?: any): {
         mainImage: product.mainImage || '',
         sizes: product.sizes || [],
         colors: product.colors || [],
-        imageDescriptions: product.imageDescriptions || [],
+        descriptionsImage: product.descriptionsImage || [],
         bundles: product.bundles || undefined,
     };
 

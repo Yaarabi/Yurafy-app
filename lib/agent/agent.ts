@@ -7,14 +7,12 @@ import { orderTools } from "./tools/orderTools";
 import { searchProductTool } from "./tools/productTools";
 import { memoryTools } from "./tools/memory";
 import { brandInfoRetrievalTool } from "./tools/ragTool";
-import { templateGuideTool } from "./tools/templateTool";
+import { templateGuideTool, sendTemplateTool } from "./tools/templateTool";
 
 // ------------------------------
 // Global AI model and tools
 // ------------------------------
-const tools = [...orderTools, searchProductTool, ...memoryTools, brandInfoRetrievalTool, templateGuideTool
-    
-];
+const allTools = [...orderTools, searchProductTool, ...memoryTools, brandInfoRetrievalTool, templateGuideTool, sendTemplateTool];
 
 const model = new ChatMistralAI({
     model: "mistral-large-latest",
@@ -31,10 +29,46 @@ const customerCheckpointSaver = new MemorySaver();
 const agentCache: Record<string, Awaited<ReturnType<typeof createReactAgent>>> = {};
 
 // ------------------------------
+// Clear agent cache for a specific owner
+// ------------------------------
+export function clearAgentCache(ownerId: string) {
+    // Clear all cache entries for this owner
+    Object.keys(agentCache).forEach(key => {
+        if (key.startsWith(`${ownerId}-`)) {
+            delete agentCache[key];
+        }
+    });
+}
+
+// ------------------------------
 // Utility: Sanitize prompt
 // ------------------------------
 function sanitizePrompt(prompt: string): string {
     return prompt.replace(/["<>]/g, "").trim();
+}
+
+// ------------------------------
+// Get enabled tools for agent
+// ------------------------------
+function getEnabledTools(agentData: IAIAgent) {
+    // Handle both Map and object formats
+    let enabledTools: Record<string, boolean> = {};
+    
+    if (agentData.enabledTools) {
+        if (agentData.enabledTools instanceof Map) {
+            // Convert Map to object
+            enabledTools = Object.fromEntries(agentData.enabledTools);
+        } else if (typeof agentData.enabledTools === 'object') {
+            // Already an object
+            enabledTools = agentData.enabledTools as Record<string, boolean>;
+        }
+    }
+    
+    return allTools.filter(tool => {
+        const toolName = tool.name;
+        // If tool is not in enabledTools, default to enabled (backward compatibility)
+        return enabledTools[toolName] !== false;
+    });
 }
 
 // ------------------------------
@@ -43,22 +77,41 @@ function sanitizePrompt(prompt: string): string {
 export async function loadAgent(ownerId: string) {
     await connectDB();
 
-    if (agentCache[ownerId]) return { agent: agentCache[ownerId], agentData: await AIAgent.findOne({ owner: ownerId }).lean<IAIAgent>() };
-
     const agentData = await AIAgent.findOne({ owner: ownerId }).lean<IAIAgent>();
     if (!agentData) return null;
 
+    // Normalize enabledTools to object for cache key generation
+    let enabledToolsObj: Record<string, boolean> = {};
+    if (agentData.enabledTools) {
+        if (agentData.enabledTools instanceof Map) {
+            enabledToolsObj = Object.fromEntries(agentData.enabledTools);
+        } else if (typeof agentData.enabledTools === 'object') {
+            enabledToolsObj = agentData.enabledTools as Record<string, boolean>;
+        }
+    }
+
+    // Check cache with enabled tools (sorted keys for consistent cache key)
+    const cacheKey = `${ownerId}-${JSON.stringify(Object.keys(enabledToolsObj).sort().reduce((acc, key) => {
+        acc[key] = enabledToolsObj[key];
+        return acc;
+    }, {} as Record<string, boolean>))}`;
+    
+    if (agentCache[cacheKey]) {
+        return { agent: agentCache[cacheKey], agentData };
+    }
+
     const safePrompt = sanitizePrompt(agentData.prompt);
+    const enabledTools = getEnabledTools(agentData);
 
     const agent = await createReactAgent({
         llm: model,
-        tools,
+        tools: enabledTools,
         checkpointSaver: ownerCheckpoint,
         prompt: `You are talking directly with your OWNER. Base your replies on the owner system prompt: "${safePrompt}".
             Your owner id is ${agentData.owner}. Be helpful, professional, and concise.`,
     });
 
-    agentCache[ownerId] = agent;
+    agentCache[cacheKey] = agent;
     return { agent, agentData };
 }
 
@@ -106,10 +159,11 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
         // Use MemorySaver for customer agents (in-memory checkpoints)
         // Note: Checkpoints will be lost on server restart, but this ensures compatibility
         const safePrompt = sanitizePrompt(agentData.prompt);
+        const enabledTools = getEnabledTools(agentData);
 
         const agent = await createReactAgent({
         llm: model,
-        tools,
+        tools: enabledTools,
         checkpointSaver: customerCheckpointSaver,
         prompt: `You are talking directly with a CUSTOMER of your owner with the phone number ${customerPhone}.
             Base your replies on the owner system prompt: "${safePrompt}". Your owner id is ${agentData.owner}. Be polite, helpful, and concise.`,

@@ -210,11 +210,277 @@
     },
     "dashboard": {
         "title": "Welcome to your dashboard",
-        "subtitle": "Manage orders, products, and your brand in one place."
+        "subtitle": "Manage orders, products, and your brand in one place.",
+        "header": {
+            "title": "Dashboard"
+        },
+        "plan": {
+            "expired": "Your plan has expired",
+            "planLabel": "Plan",
+            "expires": "Expires",
+            "renewPlan": "Renew Plan",
+            "upgradePlan": "Upgrade Plan",
+            "products": "Products",
+            "orders": "Orders",
+            "contacts": "Contacts"
+        },
+        "stats": {
+            "totalRevenue": "Total Revenue",
+            "products": "Products",
+            "orders": "Orders",
+            "templates": "Templates",
+            "contacts": "Contacts",
+            "recentOrders": "Recent Orders",
+            "topProducts": "Top Products",
+            "noOrders": "No orders yet",
+            "noProducts": "No products yet",
+            "topCustomers": {
+                "title": "Top Customers",
+                "subtitle": {
+                    "orders": "By order count",
+                    "spent": "By total spent"
+                },
+                "orders": "Orders",
+                "spent": "Spent",
+                "byOrders": "Total Orders",
+                "bySpent": "Total Spent ($)",
+                "empty": "No customer data available"
+            }
+        },
+        "charts": {
+            "revenue": {
+                "title": "Revenue Over Time",
+                "subtitle": "Last 30 days",
+                "total": "Total",
+                "label": "Revenue ($)",
+                "noData": "No revenue data available"
+            },
+            "ordersStatus": {
+                "title": "Orders by Status",
+                "subtitle": "{count} total orders",
+                "noData": "No orders data available"
+            },
+            "topProducts": {
+                "title": "Top Products",
+                "subtitle": "By sales count",
+                "totalSales": "Total Sales",
+                "label": "Sales Count",
+                "noData": "No products data available",
+                "unnamedProduct": "Unnamed Product"
+            }
+        }
+    },
+    "agent": {
+        "header": {
+            "title": "AI Agent Assistant",
+            "subtitle": "Your intelligent store assistant",
+            "clearChat": "Clear Chat"
+        },
+        "messages": {
+            "startConversation": "Start a conversation",
+            "startDescription": "Ask me anything about your store, products, orders, or customers. I'm here to help!"
+        },
+        "input": {
+            "placeholder": "Ask me anything about your store...",
+            "send": "Send",
+            "hint": "Press Enter to send, Shift+Enter for new line"
+        }
+    },
+    "customers": {
+        "table": {
+            "columns": {
+                "name": "Name",
+                "email": "Email",
+                "phone": "Phone",
+                "address": "Address",
+                "orders": "Orders",
+                "delivered": "Delivered",
+                "cancelled": "Cancelled",
+                "spent": "Spent",
+                "lastOrder": "Last Order",
+                "status": "Status"
+            },
+            "loading": "Loading customers...",
+            "empty": "No customers found",
+            "guest": "Guest",
+            "noAddress": "No address",
+            "whatsappRequired": "WhatsApp feature required"
+        },
+        "filters": {
+            "label": "Filters:",
+            "allStatus": "All Status",
+            "addressPlaceholder": "Filter by address, city, or country",
+            "status": {
+                "new": "New",
+                "confirmed": "Confirmed",
+                "cancelled": "Cancelled",
+                "delivered": "Delivered"
+            }
+        }
+    },
+    "whatsapp": {
+        "conversations": {
+            "status": {
+                "humanNeeded": "Human Needed",
+                "optedIn": "Opted In",
+                "optedOut": "Opted Out"
+            },
+            "empty": {
+                "title": "No conversations yet",
+                "description": "Start a conversation to see it here",
+                "noMessages": "No messages yet"
+            },
+            "tracking": {
+                "autoReply": "Auto Reply Sent",
+                "auto": "Auto",
+                "orderConfirm": "Order Confirmation Sent",
+                "order": "Order",
+                "adTemplate": "Ad Template Sent",
+                "ad": "Ad",
+                "read": "Message Read",
+                "readLabel": "Read"
+            }
+        },
+        "chat": {
+            "back": "Back",
+            "status": {
+                "humanRequired": "Human Support Required",
+                "optedIn": "Opted In",
+                "optedOut": "Opted Out"
+            },
+            "empty": {
+                "noMessages": "No messages yet",
+                "noText": "(No text)"
+            },
+            "you": "You"
+        },
+        "tools": {
+            "section": {
+                "tools": {
+                    "title": "Agent Tools",
+                    "description": "Enable or disable specific tools for your AI agent. Disabled tools will not be available to the agent during conversations."
+                },
+                "templates": {
+                    "title": "Templates Configuration",
+                    "label": "Existing Templates"
+                }
+            },
+            "categories": {
+                "Orders": "Orders",
+                "Products": "Products",
+                "Memory": "Memory",
+                "Brand Info": "Brand Info",
+                "Templates": "Templates"
+            },
+            "tools": {
+                "search_order": {
+                    "name": "Search Order",
+                    "description": "Search for customer orders by name, phone, ID, or status"
+                },
+                "update_order_status": {
+                    "name": "Update Order Status",
+                    "description": "Update the status of an existing order"
+                },
+                "create_order": {
+                    "name": "Create Order",
+                    "description": "Create a new order for a customer"
+                },
+                "search_product": {
+                    "name": "Search Product",
+                    "description": "Search for products by name, category, brand, or slug"
+                },
+                "store_agent_action": {
+                    "name": "Store Agent Action",
+                    "description": "Store or update what the AI agent did or observed about a customer"
+                },
+                "get_agent_memory": {
+                    "name": "Get Agent Memory",
+                    "description": "Retrieve stored summary of previous actions or customer situations"
+                },
+                "brand_info_retrieval": {
+                    "name": "Brand Info Retrieval",
+                    "description": "Search through brand's uploaded knowledge (manuals, FAQs, documents)"
+                },
+                "template_guide": {
+                    "name": "Template Guide",
+                    "description": "Suggests relevant templates to use when responding to customers"
+                },
+                "send_template": {
+                    "name": "Send Template",
+                    "description": "Send an approved WhatsApp template message to a customer"
+                }
+            },
+            "tool": {
+                "enabledLabel": "Enabled",
+                "enabled": "Tool \"{tool}\" enabled",
+                "disabled": "Tool \"{tool}\" disabled",
+                "enable": "Enable {tool}",
+                "disable": "Disable {tool}",
+                "updateError": "Failed to update tool"
+            },
+            "template": {
+                "empty": "No templates yet.",
+                "addLabel": "Add Another Template",
+                "exists": "Template already exists",
+                "added": "Template \"{template}\" added",
+                "deleted": "Template \"{template}\" deleted",
+                "addError": "Failed to add template",
+                "deleteError": "Failed to delete template"
+            },
+            "file": {
+                "uploadLabel": "File Upload (for RAG)",
+                "currentFile": "Current File",
+                "delete": "Delete",
+                "saving": "Saving...",
+                "saveAndGenerate": "Save File & Generate Embeddings",
+                "cancel": "Cancel",
+                "saved": "File saved to agent",
+                "embeddingsGenerated": "Embeddings generated successfully",
+                "deleted": "File and embeddings deleted",
+                "deleteError": "Delete failed"
+            }
+        }
+    },
+    "themes": {
+        "title": "Choose Your Store Theme",
+        "subtitle": "Select a theme that matches your brand identity. Preview each theme to see how it looks with sample content. You can customize the primary color after selection.",
+        "customizeColors": "Customize Colors",
+        "adjustColors": "Adjust colors in real-time",
+        "primaryColor": "Primary Color",
+        "secondaryColor": "Secondary Color",
+        "textColor": "Text Color",
+        "store": "Store",
+        "product": "Product",
+        "selectThisTheme": "Select This Theme",
+        "continue": "Continue",
+        "continueWith": "Continue with",
+        "previewActive": "Preview Active",
+        "previewTheme": "Preview Theme",
+        "closePreview": "Close Preview",
+        "themeNames": {
+            "1": "Classic Green",
+            "2": "Modern Blue",
+            "3": "Luxury Black & Gold",
+            "4": "Soft Purple",
+            "5": "Sunset Coral",
+            "6": "Minimal Gray",
+            "7": "Ocean Teal",
+            "8": "Rose Blush",
+            "9": "Emerald Forest",
+            "10": "Arctic White"
+        }
     },
 
     "orders": {
         "title": "Orders",
+        "loading": "Loading orders...",
+        "empty": "No orders found",
+        "actions": "Actions",
+        "edit": "Edit Order",
+        "delete": "Delete Order",
+        "deleteConfirm": "Are you sure you want to delete this order?",
+        "whatsappRequired": "WhatsApp feature required",
+        "moreProducts": "+{count} more",
         "columns": {
         "id": "Order ID",
         "customer": "Customer",
@@ -231,18 +497,39 @@
         "status": {
         "pending": "Pending",
         "processing": "Processing",
+        "new": "New",
+        "confirmed": "Confirmed",
         "shipped": "Shipped",
         "delivered": "Delivered",
         "cancelled": "Cancelled"
         },
-        "empty": "No orders found",
-        "loading": "Loading orders..."
+        "filters": {
+            "label": "Filters:",
+            "productPlaceholder": "Filter by product name",
+            "addressPlaceholder": "Filter by address",
+            "allStatus": "All Status",
+            "status": {
+                "new": "New",
+                "confirmed": "Confirmed",
+                "shipped": "Shipped",
+                "delivered": "Delivered",
+                "cancelled": "Cancelled"
+            }
+        }
     },
     
     "products": {
         "title": "Products",
         "new": "New Product",
         "createTitle": "Create a New Product",
+        "createSuccess": "Product created successfully!",
+        "createError": "Failed to create product",
+        "loading": "Loading products...",
+        "empty": "No products found",
+        "actions": "Actions",
+        "edit": "Edit product",
+        "delete": "Delete product",
+        "deleteConfirm": "Are you sure you want to delete this product?",
         "columns": {
         "name": "Name",
         "slug": "Slug",
@@ -254,7 +541,7 @@
         "images": "Images",
         "mainImage": "Main Image",
         "otherImages": "Other Images",
-        "salesCount": "Sales Count",
+        "salesCount": "Sold",
         "createdAt": "Created At"
         },
     "form": {
@@ -270,7 +557,13 @@
         "otherImages": "Other Images",
         "selectCategory": "Select a category",
         "create": "Create",
-        "creating": "Creating..."
+        "creating": "Creating...",
+        "update": "Update",
+        "updating": "Updating...",
+        "buyQuantity": "Buy Quantity",
+        "getQuantity": "Get Quantity Free",
+        "specialPrice": "Special Price",
+        "percentageOff": "Discount Percentage"
     },
     "errors": {
         "nameRequired": "Product name is required",
@@ -451,9 +744,26 @@
         "title": "Support Center",
         "description": "Get the help you need to succeed with Yurafy. Our support team is available via multiple channels.",
         "chat": {
-            "title": "Live Chat",
-            "description": "Chat with our support team in real-time for instant help.",
-            "action": "Start Chat"
+            "title": "Support Chat",
+            "subtitle": "We're here to help you succeed!",
+            "empty": {
+                "title": "No messages yet",
+                "description": "Start a conversation with our support team. We're here to help you succeed!"
+            },
+            "input": {
+                "placeholder": "Type your message...",
+                "send": "Send",
+                "hint": "Press Enter to send, Shift+Enter for new line"
+            },
+            "messages": {
+                "sent": "Message sent! Our support team will respond soon.",
+                "sendError": "Failed to send message",
+                "loadError": "Failed to load messages"
+            },
+            "today": "Today",
+            "quickReply": "Quick reply",
+            "writeMessage": "Write a message to Copilot",
+            "editInPage": "Edit in a page"
         },
         "email": {
             "title": "Email Support",

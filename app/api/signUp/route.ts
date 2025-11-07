@@ -85,6 +85,15 @@ export async function POST(req: Request) {
         savedUser.currentPlanId = savedPlan._id;
         await savedUser.save();
 
+        // Send welcome notification
+        try {
+            const { createWelcomeNotification } = await import('@/lib/utils/notifications');
+            await createWelcomeNotification(savedUser._id.toString(), savedUser.username);
+        } catch (error) {
+            console.error('Error creating welcome notification:', error);
+            // Don't fail signup if notification fails
+        }
+
         // Return sanitized user info
         return NextResponse.json(
         {

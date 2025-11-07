@@ -401,17 +401,33 @@ export default function SettingsPage() {
                                             </div>
                                         </div>
 
-                                        {/* Upgrade Button - Mobile Optimized */}
-                                        <div className="flex justify-center">
-                                            <Link
-                                                href={`/${params.locale}/onboarding/plan`}
-                                                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
-                                            >
-                                                <Crown className="w-5 h-5" />
-                                                <span className="text-sm sm:text-base">Upgrade Plan</span>
-                                                <ArrowRight className="w-5 h-5" />
-                                            </Link>
-                                        </div>
+                                        {/* Upgrade/Renew Button - Mobile Optimized */}
+                                        {/* Only show upgrade button if not Visionary plan */}
+                                        {featuresData?.plan?.planKey?.toLowerCase() !== 'visionary' && (
+                                            <div className="flex justify-center">
+                                                <Link
+                                                    href={`/${params.locale}/onboarding/plan`}
+                                                    className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
+                                                >
+                                                    <Crown className="w-5 h-5" />
+                                                    <span className="text-sm sm:text-base">Upgrade Plan</span>
+                                                    <ArrowRight className="w-5 h-5" />
+                                                </Link>
+                                            </div>
+                                        )}
+                                        {/* Show renew button if expired, even for Visionary */}
+                                        {featuresData?.plan?.isExpired && featuresData?.plan?.planKey?.toLowerCase() === 'visionary' && (
+                                            <div className="flex justify-center">
+                                                <Link
+                                                    href={`/${params.locale}/onboarding/plan`}
+                                                    className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
+                                                >
+                                                    <Crown className="w-5 h-5" />
+                                                    <span className="text-sm sm:text-base">Renew Plan</span>
+                                                    <ArrowRight className="w-5 h-5" />
+                                                </Link>
+                                            </div>
+                                        )}
 
                                         {/* Plan Features Info */}
                                         <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
