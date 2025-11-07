@@ -168,7 +168,7 @@ export default function NotificationBell() {
 
     const getNotificationColor = (type: string) => {
         const colors: Record<string, string> = {
-            support_reply: 'bg-blue-100 text-blue-800',
+            support_reply: 'bg-[var(--brand-blue)]/10 text-[var(--brand-blue)]',
             order_update: 'bg-green-100 text-green-800',
             plan_expiry: 'bg-red-100 text-red-800',
             plan_warning: 'bg-yellow-100 text-yellow-800',
@@ -247,7 +247,7 @@ export default function NotificationBell() {
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                                                !notification.read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
+                                                !notification.read ? 'bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20' : ''
                                             }`}
                                         >
                                             <div className="flex items-start gap-3">
@@ -264,7 +264,7 @@ export default function NotificationBell() {
                                                             {notification.title}
                                                         </h4>
                                                         {!notification.read && (
-                                                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5"></div>
+                                                            <div className="w-2 h-2 bg-[var(--brand-blue)] rounded-full flex-shrink-0 mt-1.5"></div>
                                                         )}
                                                     </div>
                                                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">

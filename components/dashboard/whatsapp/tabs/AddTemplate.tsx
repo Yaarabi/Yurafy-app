@@ -236,7 +236,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
             <input
             type="text"
             placeholder="Template Name"
-            className="flex-1 p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
+            className="flex-1 p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
             value={template.name}
             onChange={(e) => setTemplate({ ...template, name: e.target.value })}
             />
@@ -252,7 +252,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                 link: "",
                 })
             }
-            className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-gray-600"
+            className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:ring-2 focus:ring-[var(--brand-blue)] border border-gray-200 dark:border-gray-600"
             >
             <option value="TEXT">Text</option>
             <option value="IMAGE">Image</option>
@@ -278,7 +278,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
         {template.type === "TEXT" ? (
             <textarea
             placeholder="Template Content (use variables like {{fullName}})"
-            className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
             rows={4}
             value={template.content}
             onChange={(e) => setTemplate({ ...template, content: e.target.value })}
@@ -296,7 +296,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
+                                className="flex items-center gap-2 px-4 py-2 bg-[var(--brand-blue)] hover:opacity-90 text-white rounded-lg font-medium transition"
                             >
                                 <Mic className="w-4 h-4" />
                                 Start Recording
@@ -409,7 +409,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
             <input
                 type="text"
                 placeholder="Optional caption"
-                className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition border border-gray-200 dark:border-gray-600"
+                className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
                 value={template.caption}
                 onChange={(e) => setTemplate({ ...template, caption: e.target.value })}
             />

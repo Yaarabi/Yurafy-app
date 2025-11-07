@@ -4,14 +4,20 @@ import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { FaCheck } from "react-icons/fa";
 import { Zap, Store, MessageCircle, Bot, Crown, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 
-export default function PlansSection() {
-    const t = useTranslations("PlansSection");
-    const router = useRouter();
-    const params = useParams();
+// Icon mapping for plan templates
+const iconMap: Record<string, any> = {
+    zap: Zap,
+    store: Store,
+    messagecircle: MessageCircle,
+    bot: Bot,
+    crown: Crown,
+    sparkles: Sparkles,
+};
 
-    // ✅ FIXED: Use same plans as onboarding
-    const plans = [
+// Default plans fallback
+const defaultPlans = [
         {
             key: "free",
             name: "Free",
@@ -55,7 +61,7 @@ export default function PlansSection() {
             description: "Starter + WhatsApp Automation for serious sellers.",
             icon: Crown,
             color: "from-yellow-400 to-orange-600",
-            features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Custom CSS/JS", "Priority Support"],
+            features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Priority Support"],
             popular: true,
         },
         {
@@ -70,6 +76,89 @@ export default function PlansSection() {
         },
     ];
 
+export default function PlansSection() {
+    const t = useTranslations("PlansSection");
+    const router = useRouter();
+    const params = useParams();
+    const [plans, setPlans] = useState(defaultPlans);
+    const [specialPlans, setSpecialPlans] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const res = await fetch('/api/plans?includeSpecial=true');
+                if (res.ok) {
+                    const data = await res.json();
+                    // Convert plan templates to display format
+                    const regularPlans = (data.plans || []).map((template: any) => ({
+                        key: template.planKey,
+                        name: template.name,
+                        price: template.defaultPrice,
+                        description: template.description,
+                        icon: iconMap[template.icon?.toLowerCase() || 'store'] || Store,
+                        color: template.color || 'from-blue-400 to-blue-600',
+                        features: extractFeatures(template.features),
+                        popular: template.planKey === 'proSeller',
+                        highlighted: template.planKey === 'visionary',
+                    }));
+                    
+                    const special = (data.specialPlans || []).map((template: any) => ({
+                        key: template.planKey,
+                        name: template.name,
+                        price: template.defaultPrice,
+                        description: template.description,
+                        icon: iconMap[template.icon?.toLowerCase() || 'store'] || Store,
+                        color: template.color || 'from-blue-400 to-blue-600',
+                        features: extractFeatures(template.features),
+                        isSpecial: true,
+                        basePlanKey: template.basePlanKey,
+                        durationDays: template.defaultDurationDays,
+                    }));
+
+                    if (regularPlans.length > 0) {
+                        setPlans(regularPlans);
+                    }
+                    setSpecialPlans(special);
+                }
+            } catch (err) {
+                console.error('Failed to fetch plans:', err);
+                // Use default plans on error
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPlans();
+    }, []);
+
+    // Helper function to extract features from plan template
+    const extractFeatures = (features: any): string[] => {
+        const featureList: string[] = [];
+        if (features.store?.enabled) {
+            if (features.store.maxProducts) featureList.push(`${features.store.maxProducts} Products`);
+            if (features.store.customDomain) featureList.push('Custom Domain');
+            if (features.store.customTheme) featureList.push('Custom Theme');
+            if (features.store.seo) featureList.push('SEO Tools');
+        }
+        if (features.whatsapp?.enabled) {
+            if (features.whatsapp.maxContacts) featureList.push(`${features.whatsapp.maxContacts} Contacts`);
+            if (features.whatsapp.automation) featureList.push('Auto Replies');
+            if (features.whatsapp.templates) featureList.push('Templates');
+            if (features.whatsapp.broadcasts) featureList.push('Broadcasts');
+        }
+        if (features.ai?.enabled) {
+            if (features.ai.agent) featureList.push('AI Assistant');
+            if (features.ai.contentGeneration) featureList.push('Smart Replies');
+            if (features.ai.languageSupport?.length > 0) featureList.push('Multi-language');
+        }
+        if (features.orders?.enabled) {
+            if (features.orders.maxOrders) featureList.push(`${features.orders.maxOrders} Orders`);
+            if (features.orders.orderTracking) featureList.push('Order Tracking');
+        }
+        if (features.support?.priority) featureList.push('Priority Support');
+        return featureList.length > 0 ? featureList : ['Basic Features'];
+    };
+
     const handlePlanClick = (planKey: string) => {
         const locale = params.locale || 'en';
         // Redirect to signup page with plan parameter
@@ -77,7 +166,7 @@ export default function PlansSection() {
     };
 
     return (
-        <section id="pricing" className="relative py-20 bg-gradient-to-b from-gray-50 to-blue-50 overflow-hidden">
+        <section id="pricing" className="relative py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-blue-50 overflow-hidden">
             {/* Geometric shapes - Smart/tech inspired */}
             {/* Hexagon grid pattern */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-5">
@@ -125,12 +214,12 @@ export default function PlansSection() {
                 </svg>
             </motion.div>
             
-            <div className="relative z-10 max-w-7xl mx-auto px-6">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.h2 
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-4 text-gray-900"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-4 text-gray-900"
                 >
                     {t("title")}
                 </motion.h2>
@@ -139,13 +228,20 @@ export default function PlansSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 }}
-                    className="text-center text-gray-600 mb-12 text-lg"
+                    className="text-center text-gray-600 mb-8 sm:mb-12 text-base sm:text-lg px-2"
                 >
                     Choose the perfect plan for your business needs
                 </motion.p>
-                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {plans.map((plan, i) => {
-                        const { key, name, price, description, icon: Icon, color, features, highlighted, popular } = plan;
+                {loading ? (
+                    <div className="text-center py-12">
+                        <div className="inline-block w-8 h-8 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <>
+                        {/* Regular Plans */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                            {plans.map((plan, i) => {
+                                const { key, name, price, description, icon: Icon, color, features, highlighted, popular } = plan;
                         return (
                             <motion.div
                                 key={key}
@@ -154,7 +250,7 @@ export default function PlansSection() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1, duration: 0.5 }}
                                 whileHover={{ y: -8, scale: 1.02 }}
-                                className={`relative p-8 rounded-2xl shadow-xl transition-all duration-300 cursor-pointer
+                                className={`relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl transition-all duration-300 cursor-pointer
                                     ${highlighted
                                         ? `bg-gradient-to-br ${color} text-white border-2 border-transparent`
                                         : "bg-white border-2 border-gray-200 hover:border-blue-400"
@@ -177,7 +273,7 @@ export default function PlansSection() {
                                     {description}
                                 </p>
                                 <div className="mb-6">
-                                    <span className={`text-4xl font-extrabold ${highlighted ? "text-yellow-300" : "text-blue-600"}`}>
+                                    <span className={`text-4xl font-extrabold ${highlighted ? "text-yellow-300" : ""}`} style={!highlighted ? { color: 'var(--brand-blue)' } : undefined}>
                                         ${price}
                                     </span>
                                     {price > 0 && (
@@ -196,18 +292,91 @@ export default function PlansSection() {
                                 </ul>
                                 <button
                                     onClick={() => handlePlanClick(key)}
-                                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105
-                                        ${highlighted
-                                            ? "bg-white text-blue-600 hover:bg-gray-100 shadow-lg"
+                                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 ${
+                                        highlighted
+                                            ? "bg-white hover:bg-gray-100 shadow-lg"
                                             : `bg-gradient-to-r ${color} text-white hover:shadow-lg`
-                                        }`}
+                                    }`}
+                                    style={highlighted ? { color: 'var(--brand-blue)' } : undefined}
                                 >
                                     {price === 0 ? "Get Started Free" : "Choose Plan"}
                                 </button>
                             </motion.div>
                         );
                     })}
-                </div>
+                        </div>
+
+                        {/* Special Plans Section */}
+                        {specialPlans.length > 0 && (
+                            <div className="mt-12 sm:mt-16">
+                                <motion.h3
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-900"
+                                >
+                                    Special Offers
+                                </motion.h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                    {specialPlans.map((plan, i) => {
+                                        const { key, name, price, description, icon: Icon, color, features, durationDays } = plan;
+                                        return (
+                                            <motion.div
+                                                key={key}
+                                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                                                whileInView={{ scale: 1, opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ delay: i * 0.1, duration: 0.5 }}
+                                                whileHover={{ y: -8, scale: 1.02 }}
+                                                className={`relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl transition-all duration-300 cursor-pointer border-2 border-yellow-400 bg-gradient-to-br ${color} text-white`}
+                                            >
+                                                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
+                                                    ⭐ Special Offer
+                                                </span>
+                                                <div className="flex items-center gap-3 mb-4 text-white">
+                                                    <div className={`p-3 rounded-lg bg-gradient-to-br ${color} bg-opacity-20`}>
+                                                        <Icon className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <h3 className="text-2xl font-bold text-white">
+                                                        {name}
+                                                    </h3>
+                                                </div>
+                                                <p className="text-sm mb-4 text-blue-100">
+                                                    {description}
+                                                </p>
+                                                <div className="mb-6">
+                                                    <span className="text-4xl font-extrabold text-yellow-300">
+                                                        ${price}
+                                                    </span>
+                                                    {price > 0 && (
+                                                        <span className="text-lg ml-2 text-blue-100">
+                                                            /{durationDays} days
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <ul className="space-y-3 mb-8">
+                                                    {features.map((f, idx) => (
+                                                        <li key={idx} className="flex items-center gap-2 text-blue-50">
+                                                            <FaCheck className="flex-shrink-0 text-yellow-300" /> 
+                                                            <span className="text-sm">{f}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <button
+                                                    onClick={() => handlePlanClick(key)}
+                                                    className="w-full py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 bg-white hover:bg-gray-100 shadow-lg"
+                                                    style={{ color: 'var(--brand-blue)' }}
+                                                >
+                                                    Choose Plan
+                                                </button>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </section>
     );

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import ProductForm from '@/components/dashboard/productForm';
 import { IProduct } from '@/models/products';
 import LogoLoader from '@/components/themePreview/loadder';
+import toast from 'react-hot-toast';
 
 export default function EditProductPage() {
     const t = useTranslations('products');
@@ -26,7 +27,7 @@ export default function EditProductPage() {
             setProduct(data.product);
         } catch (err) {
             console.error(err);
-            alert(t('fetchError'));
+            toast.error(t('fetchError'));
         } finally {
             setFetching(false);
         }
@@ -49,10 +50,10 @@ export default function EditProductPage() {
             throw new Error(err.message || 'Something went wrong');
         }
         console.log(values);
-        alert(t('updateSuccess'));
+        toast.success(t('updateSuccess'));
         } catch (error: any) {
         console.error(error);
-        alert(error.message || t('updateError'));
+        toast.error(error.message || t('updateError'));
         } finally {
         setLoading(false);
         }
@@ -63,22 +64,22 @@ export default function EditProductPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
-        <div>
-            <div className="mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('editTitle')}</h2>
-            </div>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+            <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+                <div className="mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">{t('editTitle')}</h2>
+                </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-            {product && (
-                <ProductForm
-                onSubmit={update}
-                loading={loading}
-                initialValues={product}
-                />
-            )}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6">
+                    {product && (
+                        <ProductForm
+                            onSubmit={update}
+                            loading={loading}
+                            initialValues={product}
+                        />
+                    )}
+                </div>
             </div>
-        </div>
         </div>
     );
 }

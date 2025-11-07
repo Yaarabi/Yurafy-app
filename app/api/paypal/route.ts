@@ -120,10 +120,12 @@ export async function POST(req: Request) {
             // Normalize plan key
             const planKeyToUse = normalizePlanKey(planKey || plan);
             
-            // ✅ PAYMENT VALIDATION: Get plan template and validate price
+            // ✅ PAYMENT VALIDATION: Get plan template and validate price (including special plans)
             const planTemplate = await getPlanTemplate(planKeyToUse);
             if (!planTemplate) {
-                throw new Error(`Invalid plan: ${planKeyToUse}`);
+                throw new Error(
+                    `Invalid plan: "${planKeyToUse}". This plan may no longer be available. Please select a different plan.`
+                );
             }
 
             const paidAmount = parseFloat(orderData.purchase_units?.[0]?.amount?.value || "0");
@@ -133,7 +135,7 @@ export async function POST(req: Request) {
             const priceDifference = Math.abs(paidAmount - expectedPrice);
             if (priceDifference > 0.01 && expectedPrice > 0) {
                 throw new Error(
-                    `Payment amount mismatch: Expected $${expectedPrice.toFixed(2)}, got $${paidAmount.toFixed(2)}`
+                    `Payment verification failed: Expected $${expectedPrice.toFixed(2)} for ${planTemplate.name} plan, but received $${paidAmount.toFixed(2)}. Please contact support if you believe this is an error.`
                 );
             }
 

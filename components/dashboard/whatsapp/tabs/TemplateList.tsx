@@ -150,9 +150,9 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
     const renderStatusBadge = (status: Template["status"], reason?: string) => {
         let color = "bg-gray-500";
         if (status === "APPROVED") color = "bg-green-600";
-        if (status === "PENDING") color = "bg-yellow-600";
-        if (status === "REJECTED") color = "bg-red-600";
-        color = "bg-blue-500"; // brand accent
+        else if (status === "PENDING") color = "bg-yellow-600";
+        else if (status === "REJECTED") color = "bg-red-600";
+        else color = "bg-[var(--brand-blue)]"; // brand accent for other statuses
         return (
         <span className={`${color} text-white text-xs px-2 py-1 rounded ml-2`} title={reason || ""}>
             {status}
@@ -203,7 +203,7 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
                                     <button
                                         onClick={() => handleUpdate(tpl._id)}
                                         disabled={loading}
-                                        className="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-white"
+                                        className="bg-[var(--brand-blue)] hover:opacity-90 px-3 py-1 rounded text-white"
                                     >
                                         Save
                                     </button>

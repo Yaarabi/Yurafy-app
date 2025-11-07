@@ -148,6 +148,33 @@
     "loadingSignup": "جارٍ إنشاء الحساب...",
 
     "forgotPassword": "هل نسيت كلمة المرور؟",
+    "forgotPasswordDescription": "أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "sending": "جاري الإرسال...",
+    "passwordResetEmailSent": "تم إرسال بريد إعادة تعيين كلمة المرور!",
+    "passwordResetError": "فشل إرسال بريد إعادة التعيين",
+    "checkYourEmail": "تحقق من بريدك الإلكتروني",
+    "passwordResetEmailSentMessage": "لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى {email}",
+    "verifyEmail": "تحقق من بريدك الإلكتروني",
+    "verifyEmailDescription": "لقد أرسلنا رابط التحقق إلى عنوان بريدك الإلكتروني. يرجى التحقق من صندوق الوارد الخاص بك والنقر على الرابط للتحقق من حسابك.",
+    "emailSentTo": "تم إرسال البريد الإلكتروني إلى:",
+    "verificationEmailResent": "تم إعادة إرسال بريد التحقق!",
+    "resendEmail": "إعادة إرسال بريد التحقق",
+    "verificationEmailSent": "تم إرسال بريد التحقق!",
+    "verificationEmailError": "فشل إرسال بريد التحقق",
+    "verifyingEmail": "جارٍ التحقق من البريد الإلكتروني...",
+    "verifyingEmailDescription": "يرجى الانتظار بينما نتحقق من عنوان بريدك الإلكتروني.",
+    "emailVerified": "تم التحقق من البريد الإلكتروني!",
+    "emailVerifiedDescription": "تم التحقق من بريدك الإلكتروني بنجاح. جارٍ التحويل إلى صفحة تسجيل الدخول...",
+    "emailVerifiedSuccess": "تم التحقق من البريد الإلكتروني بنجاح!",
+    "verificationFailedTitle": "فشل التحقق",
+    "verificationLinkExpired": "رابط التحقق غير صالح أو منتهي الصلاحية.",
+    "invalidVerificationToken": "رمز التحقق غير صالح أو منتهي الصلاحية",
+    "verificationTokenRequired": "رمز التحقق مطلوب",
+    "verificationFailed": "فشل التحقق",
+    "verifyEmailError": "فشل التحقق من البريد الإلكتروني",
+    "emailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول.",
     "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
     "noAccountYet": "ليس لديك حساب بعد؟",
 
@@ -404,11 +431,31 @@
     },
     "whatsapp": {
         "conversations": {
+            "searchPlaceholder": "البحث بالاسم أو رقم الهاتف...",
+            "filters": "الفلاتر:",
+            "clearAll": "مسح الكل",
+            "of": "من",
+            "loading": "جارٍ التحميل...",
             "status": {
+                "all": "جميع الحالات",
                 "humanNeeded": "يحتاج تدخل بشري",
                 "optedIn": "مشترك",
                 "optedOut": "غير مشترك"
             },
+            "filterButtons": {
+                "autoReply": "الرد التلقائي",
+                "orderConfirm": "تأكيد الطلب",
+                "adTemplate": "قالب إعلاني",
+                "agentReply": "رد الوكيل",
+                "unread": "غير مقروء"
+            },
+            "sort": {
+                "newest": "الأحدث",
+                "oldest": "الأقدم",
+                "mostUnread": "الأكثر غير مقروء",
+                "name": "الاسم"
+            },
+            "selectConversation": "اختر محادثة",
             "empty": {
                 "title": "لا توجد محادثات بعد",
                 "description": "ابدأ محادثة لرؤيتها هنا",

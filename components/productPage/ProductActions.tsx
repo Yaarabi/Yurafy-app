@@ -1,14 +1,21 @@
 
 'use client';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useStore } from '@/components/store/hooks/useStore';
 
 interface WhatsAppButtonProps {
     ownerPhone?: string;
 }
 
 export default function WhatsAppButton({ ownerPhone }: WhatsAppButtonProps) {
-    const phone = ownerPhone || '212600000000'; // fallback phone
-    const url = `https://wa.me/${phone}?text=Bonjour,%20je%20veux%20commander%20le%20produit:%20`;
+    const { selectedStore } = useStore();
+    
+    // Get WhatsApp number from store context first, then from prop, then fallback
+    const phone = selectedStore?.whatsappNumber || ownerPhone || selectedStore?.businessInfo?.phone || '212600000000';
+    
+    // Clean phone number (remove spaces, dashes, and other non-numeric characters except +)
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
+    const url = `https://wa.me/${cleanPhone}?text=Bonjour,%20je%20veux%20commander%20le%20produit:%20`;
 
     return (
         <a

@@ -19,7 +19,8 @@ const model = new ChatMistralAI({
  */
 export async function generateStoreContent(
     brandName: string,
-    description: string
+    description: string,
+    language: string = 'en'
 ): Promise<{
     hero: {
         title: string;
@@ -30,16 +31,22 @@ export async function generateStoreContent(
         title: string;
         description: string;
     };
-    footer: {
-        text: string;
-    };
 }> {
     try {
-        const prompt = `You are a professional copywriter specializing in concise, impactful brand descriptions. Generate compelling store content for a business.
+        // Map language codes to language names for the prompt
+        const languageMap: Record<string, string> = {
+            'en': 'English',
+            'fr': 'French',
+            'ar': 'Arabic'
+        };
+        const languageName = languageMap[language] || 'English';
+        
+        const prompt = `You are a professional copywriter specializing in concise, impactful brand descriptions. Generate compelling store content for a business. IMPORTANT: Generate ALL content in ${languageName} language.
 
 Business Information:
 - Brand Name: ${brandName}
 - Description: ${description}
+- Language: ${languageName}
 
 Generate the following content:
 
@@ -58,9 +65,6 @@ Generate the following content:
      * Focuses on core value proposition and brand identity
      The description should be substantial enough to understand the brand but concise enough to maintain reader engagement.
 
-3. Footer:
-   - Text: Copyright notice or brand message for ${brandName} (e.g., "© ${new Date().getFullYear()} ${brandName}. All rights reserved.")
-
 CRITICAL: Keep descriptions concise but meaningful. Quality over quantity - make every word count.
 
 Respond ONLY with a valid JSON object in this exact format:
@@ -73,9 +77,6 @@ Respond ONLY with a valid JSON object in this exact format:
   "about": {
     "title": "About ${brandName}",
     "description": "40-70 word concise but solid description here"
-  },
-  "footer": {
-    "text": "copyright notice or brand message"
   }
 }
 
@@ -204,9 +205,6 @@ Do not include any other text, just the JSON object.`;
             about: {
                 title: `About ${brandName}`,
                 description: description || "We are dedicated to providing the best products and services to our customers.",
-            },
-            footer: {
-                text: `© ${new Date().getFullYear()} ${brandName}. All rights reserved.`,
             },
         };
     }

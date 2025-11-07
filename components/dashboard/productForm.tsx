@@ -6,6 +6,7 @@ import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
 import ProductVariants from './product/ProductVariant';
 import BackButton from './BackButton';
+import toast from 'react-hot-toast';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 
@@ -131,12 +132,12 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
 
         for (const file of Array.from(files)) {
         if (!isValidFileType(file)) {
-            alert('Unsupported file type. Only images, videos, and audio files are allowed.');
+            toast.error('Unsupported file type. Only images, videos, and audio files are allowed.');
             continue;
         }
 
         if (file.size > MAX_FILE_SIZE) {
-            alert('File too large. Maximum size is 10MB.');
+            toast.error('File too large. Maximum size is 10MB.');
             continue;
         }
 
@@ -153,6 +154,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             uploadedUrls.push(data.url);
         } else {
             console.error('Upload failed:', data.message);
+            toast.error(data.message || 'Failed to upload file');
         }
         }
 
@@ -197,19 +199,31 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         if (!values.category) newErrors.category = t('errors.categoryRequired');
         if (!values.mainImage) newErrors.mainImage = t('errors.mainImageRequired');
         setErrors(newErrors);
+        
+        // Show toast notification for validation errors
+        if (Object.keys(newErrors).length > 0) {
+            const firstError = Object.values(newErrors)[0];
+            if (firstError) {
+                toast.error(firstError);
+            }
+        }
+        
         return Object.keys(newErrors).length === 0;
     }
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
-        if (!validate()) return;
+        if (!validate()) {
+            // Validation errors are already shown in validate()
+            return;
+        }
         onSubmit?.(values);
     }
 
     return (
         <form
         onSubmit={handleSubmit}
-        className="w-full relative p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-6 border border-gray-200 dark:border-gray-700"
+        className="w-full relative p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-4 sm:gap-6 border border-gray-200 dark:border-gray-700"
         >
             <BackButton/>
         {/* Name & Slug */}

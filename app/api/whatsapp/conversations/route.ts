@@ -54,31 +54,69 @@ export async function POST(req: NextRequest) {
         // Normalize phone number for consistent database queries
         const normalizedPhone = normalizePhoneNumber(phone);
 
-        // Encrypt message text before saving
-        const { encryptMessage } = await import("@/lib/whatsapp/messageEncryption");
-        const encryptedText = message.text ? encryptMessage(message.text) : "";
+        // ✅ FIXED: Check contact limit before creating new conversation (using transaction)
+        const mongoose = (await import('mongoose')).default;
+        const mongoSession = await mongoose.startSession();
         
-        const newMessage = {
-            ...message,
-            text: encryptedText, // Store encrypted
-            direction: "outgoing",
-            timestamp: Date.now(),
-        };
+        let conversation;
+        try {
+            await mongoSession.withTransaction(async () => {
+                // Check if conversation already exists (creating new contact)
+                const existingConversation = await WhatsAppConversation.findOne({
+                    owner: session.user.id,
+                    "customer.phone": normalizedPhone
+                }).session(mongoSession);
 
-        // Push new message and keep only latest 12 messages
-        // Use normalized phone number to ensure all messages go to the same conversation
-        const conversation = await WhatsAppConversation.findOneAndUpdate(
-            { owner: session.user.id, "customer.phone": normalizedPhone },
-            {
-                $push: { messages: { $each: [newMessage], $slice: -12 } },
-                $set: {
-                    lastMessage: encryptedText, // Store encrypted
-                    lastTimestamp: newMessage.timestamp,
-                    "customer.phone": normalizedPhone, // Ensure phone is normalized
-                },
-            },
-            { upsert: true, new: true }
-        );
+                // Only check limit if this is a NEW contact (conversation doesn't exist)
+                if (!existingConversation) {
+                    const { canPerformAction } = await import('@/lib/utils/planLimits');
+                    const canAddContact = await canPerformAction(session.user.id, 'add_contact', mongoSession);
+                    if (!canAddContact.allowed) {
+                        throw new Error(canAddContact.reason || "Contact limit reached");
+                    }
+                }
+
+                // Encrypt message text before saving
+                const { encryptMessage } = await import("@/lib/whatsapp/messageEncryption");
+                const encryptedText = message.text ? encryptMessage(message.text) : "";
+                
+                const newMessage = {
+                    ...message,
+                    text: encryptedText, // Store encrypted
+                    direction: "outgoing",
+                    timestamp: Date.now(),
+                };
+
+                // Push new message and keep only latest 12 messages
+                // Use normalized phone number to ensure all messages go to the same conversation
+                conversation = await WhatsAppConversation.findOneAndUpdate(
+                    { owner: session.user.id, "customer.phone": normalizedPhone },
+                    {
+                        $push: { messages: { $each: [newMessage], $slice: -12 } },
+                        $set: {
+                            lastMessage: encryptedText, // Store encrypted
+                            lastTimestamp: newMessage.timestamp,
+                            "customer.phone": normalizedPhone, // Ensure phone is normalized
+                        },
+                    },
+                    { upsert: true, new: true, session: mongoSession }
+                );
+            });
+        } catch (error: any) {
+            await mongoSession.endSession();
+            if (error.message?.includes('limit') || error.message?.includes('plan')) {
+                return NextResponse.json({ 
+                    error: error.message || "Contact limit reached" 
+                }, { status: 403 });
+            }
+            throw error;
+        } finally {
+            await mongoSession.endSession();
+        }
+
+        if (!conversation) {
+            return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+        }
 
         // Decrypt before returning
         const decryptedConversation = {
@@ -113,8 +151,11 @@ export async function DELETE(req: NextRequest) {
         if (!phone || !messageId)
             return NextResponse.json({ error: "Missing phone or message ID" }, { status: 400 });
 
+        // Normalize phone number to E.164 format
+        const normalizedPhone = normalizePhoneNumber(phone);
+
         const conversation = await WhatsAppConversation.findOneAndUpdate(
-            { owner: session.user.id, "customer.phone": phone },
+            { owner: session.user.id, "customer.phone": normalizedPhone },
             { $pull: { messages: { waMessageId: messageId } } },
             { new: true }
         );

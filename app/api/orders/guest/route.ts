@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import Order from "@/models/orders";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 // POST Create Order (guest order - no authentication required)
 export async function POST(req: Request) {
@@ -23,6 +24,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Shipping address must include fullName, phone, and address" }, { status: 400 });
         }
 
+        // Normalize phone number to E.164 format
+        const normalizedPhone = normalizePhoneNumber(body.shippingAddress.phone);
+
         // Ensure products have required fields
         const products = body.products.map((p: any) => ({
             product: p.product || undefined,
@@ -40,7 +44,7 @@ export async function POST(req: Request) {
             shippingAddress: {
                 fullName: body.shippingAddress.fullName,
                 email: body.shippingAddress.email || undefined,
-                phone: body.shippingAddress.phone,
+                phone: normalizedPhone, // Use normalized phone number
                 address: body.shippingAddress.address,
                 city: body.shippingAddress.city || undefined,
                 country: body.shippingAddress.country || undefined,

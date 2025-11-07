@@ -188,7 +188,8 @@ export default function ServicesSection() {
                 >
                     <button
                         onClick={handleContact}
-                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-lg"
+                        className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-lg"
+                        style={{ backgroundColor: 'var(--brand-blue)' }}
                     >
                         {t('cta.contact')}
                     </button>

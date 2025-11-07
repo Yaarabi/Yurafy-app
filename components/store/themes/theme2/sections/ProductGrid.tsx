@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
 import GeometricDecorations from "../../shared/GeometricDecorations";
+import { getStoreTranslation } from "../../../utils/translations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -21,6 +22,7 @@ const ProductGrid: React.FC = () => {
 
     if (!selectedStore) return null;
     const primaryColor = selectedStore.theme?.primaryColor || '#ca8a04';
+    const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -50,22 +52,8 @@ const ProductGrid: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
-                        style={{ 
-                            backgroundColor: `${primaryColor}15`,
-                            borderColor: `${primaryColor}30`,
-                        }}
-                    >
-                        <span className="text-sm font-semibold uppercase tracking-wider italic" style={{ color: primaryColor }}>
-                            Collection
-                        </span>
-                    </motion.div>
                     <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold italic mb-6" style={{ color: primaryColor }}>
-                        Our Collection
+                        {getStoreTranslation("ourCollection", storeLanguage)}
                     </h3>
                     <div className="flex items-center justify-center gap-2 mb-4">
                         <div className="w-16 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>

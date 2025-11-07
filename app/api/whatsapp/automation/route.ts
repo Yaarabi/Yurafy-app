@@ -6,6 +6,7 @@ import WhatsAppConversation from "@/models/whatsappMessage";
 import { decryptToken, getTemplate } from "../webhook/route";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import { generateCustomerAIResponse } from "@/lib/agent/agent";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 /**
  * Handles incoming WhatsApp messages from customers
@@ -20,6 +21,9 @@ export async function POST(req: NextRequest) {
         if (!accountId || !from || !messageText)
             return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
 
+        // Normalize phone number to E.164 format for consistent database queries
+        const normalizedFrom = normalizePhoneNumber(from);
+
         const account = await WhatsAppAccount.findById(accountId);
         if (!account)
             return NextResponse.json({ error: "Account not found" }, { status: 404 });
@@ -32,12 +36,12 @@ export async function POST(req: NextRequest) {
             try {
                 const customerReply = await generateCustomerAIResponse(
                     account.owner,
-                    from,
+                    normalizedFrom,
                     messageText
                 );
 
                 if (customerReply) {
-                    await sendWhatsAppMessage(account, from, customerReply, decryptedToken, { isAIResponse: true });
+                    await sendWhatsAppMessage(account, normalizedFrom, customerReply, decryptedToken, { isAIResponse: true });
                     return NextResponse.json({ type: "aiResponse", success: true });
                 }
             } catch (err) {
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest) {
             if (matched) {
             const templateContent = await getTemplate(account.owner, rule.template);
             if (templateContent) {
-                await sendWhatsAppMessage(account, from, templateContent, decryptedToken);
+                await sendWhatsAppMessage(account, normalizedFrom, templateContent, decryptedToken);
                 return NextResponse.json({ type: "adDetection", success: true });
             }
             }
@@ -75,11 +79,11 @@ export async function POST(req: NextRequest) {
                 account.preferredTemplates.greeting
             );
             if (greetingTemplate) {
-                await sendWhatsAppMessage(account, from, greetingTemplate, decryptedToken);
+                await sendWhatsAppMessage(account, normalizedFrom, greetingTemplate, decryptedToken);
                 
                 // Track auto reply sent
                 await WhatsAppConversation.findOneAndUpdate(
-                    { owner: account.owner, "customer.phone": from },
+                    { owner: account.owner, "customer.phone": normalizedFrom },
                     {
                         $set: {
                             "metadata.autoReplySent": true,

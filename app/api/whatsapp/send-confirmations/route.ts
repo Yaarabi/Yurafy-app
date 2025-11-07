@@ -9,6 +9,8 @@ import { decryptToken } from "../webhook/route";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { fillTemplate, VARIABLES } from "@/lib/whatsapp/templateVar";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
+import WhatsAppConversation from "@/models/whatsappMessage";
 
 export async function POST(req: Request) {
     try {
@@ -64,11 +66,14 @@ export async function POST(req: Request) {
         // Send messages sequentially using template API
         const results = [];
         for (const order of orderDocs) {
-            const customerPhone = order.shippingAddress.phone;
-            if (!customerPhone) {
+            const rawPhone = order.shippingAddress.phone;
+            if (!rawPhone) {
                 results.push({ orderId: order._id, phone: null, status: "skipped", reason: "No phone number" });
                 continue;
             }
+
+            // Normalize phone number to E.164 format
+            const customerPhone = normalizePhoneNumber(rawPhone);
 
             try {
                 // Extract variable values from order

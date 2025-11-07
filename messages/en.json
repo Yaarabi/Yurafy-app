@@ -171,6 +171,33 @@
     "loadingSignup": "Creating your account...",
 
     "forgotPassword": "Forgot your password?",
+    "forgotPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to login",
+    "sending": "Sending...",
+    "passwordResetEmailSent": "Password reset email sent!",
+    "passwordResetError": "Failed to send reset email",
+    "checkYourEmail": "Check your email",
+    "passwordResetEmailSentMessage": "We've sent a password reset link to {email}",
+    "verifyEmail": "Verify Your Email",
+    "verifyEmailDescription": "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.",
+    "emailSentTo": "Email sent to:",
+    "verificationEmailResent": "Verification email has been resent!",
+    "resendEmail": "Resend Verification Email",
+    "verificationEmailSent": "Verification email sent!",
+    "verificationEmailError": "Failed to send verification email",
+    "verifyingEmail": "Verifying Email...",
+    "verifyingEmailDescription": "Please wait while we verify your email address.",
+    "emailVerified": "Email Verified!",
+    "emailVerifiedDescription": "Your email has been verified successfully. Redirecting to login...",
+    "emailVerifiedSuccess": "Email verified successfully!",
+    "verificationFailedTitle": "Verification Failed",
+    "verificationLinkExpired": "The verification link is invalid or has expired.",
+    "invalidVerificationToken": "Invalid or expired verification token",
+    "verificationTokenRequired": "Verification token is required",
+    "verificationFailed": "Verification failed",
+    "verifyEmailError": "Failed to verify email",
+    "emailNotVerified": "Please verify your email address before logging in.",
     "alreadyHaveAccount": "Already have an account?",
     "noAccountYet": "Don't have an account yet?",
 
@@ -320,11 +347,31 @@
     },
     "whatsapp": {
         "conversations": {
+            "searchPlaceholder": "Search by name or phone number...",
+            "filters": "Filters:",
+            "clearAll": "Clear All",
+            "of": "of",
+            "loading": "Loading...",
             "status": {
+                "all": "All Status",
                 "humanNeeded": "Human Needed",
                 "optedIn": "Opted In",
                 "optedOut": "Opted Out"
             },
+            "filterButtons": {
+                "autoReply": "Auto Reply",
+                "orderConfirm": "Order Confirm",
+                "adTemplate": "Ad Template",
+                "agentReply": "Agent Reply",
+                "unread": "Unread"
+            },
+            "sort": {
+                "newest": "Newest",
+                "oldest": "Oldest",
+                "mostUnread": "Most Unread",
+                "name": "Name"
+            },
+            "selectConversation": "Select a conversation",
             "empty": {
                 "title": "No conversations yet",
                 "description": "Start a conversation to see it here",
@@ -726,7 +773,7 @@
         },
         "faq4": {
             "question": "Can I customize my store design?",
-            "answer": "Yes! Yurafy offers multiple pre-designed themes and allows you to customize colors, fonts, and layouts. For Pro Seller and Visionary plans, you can also add custom CSS and JavaScript for complete design control."
+            "answer": "Yes! Yurafy offers multiple pre-designed themes and allows you to customize colors, fonts, and layouts."
         },
         "faq5": {
             "question": "How does WhatsApp automation work?",

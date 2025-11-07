@@ -29,8 +29,8 @@ const StoreComponent = ({
             <StoreProvider stores={[store]} initialStore={store} products={products}>
                 <ThemeRenderer themeId={themeId} currentPage="STORE_PAGE" />
                 <Cart />
+                <WhatsAppButton ownerPhone={store.whatsappNumber || store.businessInfo?.phone} />
             </StoreProvider>
-            <WhatsAppButton ownerPhone={store.businessInfo?.phone} />
         </div>
     );
 };

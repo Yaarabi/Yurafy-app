@@ -270,7 +270,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                 href={agent.file}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 underline"
+                className="text-[var(--brand-blue)] dark:text-[var(--brand-blue)]/80 underline"
                 >
                 {t('file.currentFile')}
                 </a>
@@ -295,7 +295,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
                     <button
                     onClick={handleSaveFile}
                     disabled={savingFile}
-                    className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    className="flex items-center gap-1 px-4 py-2 bg-[var(--brand-blue)] text-white rounded hover:opacity-90 transition"
                     >
                     <Save size={16} />
                     {savingFile ? t('file.saving') : t('file.saveAndGenerate')}

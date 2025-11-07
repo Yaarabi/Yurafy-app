@@ -7,6 +7,9 @@ import { connectDB } from "@/lib/db/mongoDB";
 import Notification from "@/models/notification";
 import mongoose from "mongoose";
 
+// Import Notification model for deduplication checks
+const NotificationModel = Notification;
+
 export type NotificationType = 
     | 'support_reply' 
     | 'order_update' 
@@ -90,29 +93,59 @@ export async function createSubscriptionNotification(
 }
 
 /**
- * Create plan expiration reminder notification
+ * Create plan expiration reminder notification with deduplication
+ * ✅ FIXED: Prevents duplicate notifications (only one per day per warning level)
  */
 export async function createPlanExpiryNotification(
     userId: string,
     planKey: string,
     daysRemaining: number
 ): Promise<void> {
-    const message = daysRemaining <= 0
-        ? `Your ${planKey} plan has expired. Please renew your subscription to continue using premium features.`
-        : `Your ${planKey} plan will expire in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}. Please renew your subscription to avoid service interruption.`;
+    try {
+        await connectDB();
+        
+        // ✅ FIXED: Check for duplicate notification in last 24 hours for same warning level
+        const oneDayAgo = new Date();
+        oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+        
+        const notificationType = daysRemaining <= 0 ? 'plan_expiry' : 'plan_warning';
+        const warningLevel = daysRemaining <= 0 ? 'expired' : 
+                           daysRemaining <= 7 ? 'critical' :
+                           daysRemaining <= 14 ? 'warning' : 'info';
+        
+        const existingNotification = await NotificationModel.findOne({
+            owner: new mongoose.Types.ObjectId(userId),
+            type: notificationType,
+            'metadata.warningLevel': warningLevel,
+            createdAt: { $gte: oneDayAgo }
+        });
+        
+        if (existingNotification) {
+            // Notification already sent recently - skip
+            return;
+        }
+        
+        const message = daysRemaining <= 0
+            ? `Your ${planKey} plan has expired. Please renew your subscription to continue using premium features.`
+            : `Your ${planKey} plan will expire in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}. Please renew your subscription to avoid service interruption.`;
 
-    await createNotification(
-        userId,
-        daysRemaining <= 0 ? 'plan_expiry' : 'plan_warning',
-        daysRemaining <= 0 ? 'Plan Expired ⚠️' : `Plan Expiring Soon (${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left)`,
-        message,
-        '/dashboard/settings',
-        { planKey, daysRemaining }
-    );
+        await createNotification(
+            userId,
+            notificationType,
+            daysRemaining <= 0 ? 'Plan Expired ⚠️' : `Plan Expiring Soon (${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left)`,
+            message,
+            '/dashboard/settings',
+            { planKey, daysRemaining, warningLevel }
+        );
+    } catch (error) {
+        console.error(`Error creating plan expiry notification for user ${userId}:`, error);
+        // Don't throw - notifications are non-critical
+    }
 }
 
 /**
- * Create plan limit reached notification
+ * Create plan limit reached notification with deduplication
+ * ✅ FIXED: Prevents duplicate notifications (only one per day per limit type)
  */
 export async function createPlanLimitNotification(
     userId: string,
@@ -120,21 +153,44 @@ export async function createPlanLimitNotification(
     currentUsage: number,
     limit: number
 ): Promise<void> {
-    const limitTypeNames = {
-        products: 'Products',
-        orders: 'Orders',
-        contacts: 'Contacts',
-    };
+    try {
+        await connectDB();
+        
+        // ✅ FIXED: Check for duplicate notification in last 24 hours
+        const oneDayAgo = new Date();
+        oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+        
+        const existingNotification = await NotificationModel.findOne({
+            owner: new mongoose.Types.ObjectId(userId),
+            type: 'plan_limit_reached',
+            'metadata.limitType': limitType,
+            createdAt: { $gte: oneDayAgo }
+        });
+        
+        if (existingNotification) {
+            // Notification already sent recently - skip
+            return;
+        }
+        
+        const limitTypeNames = {
+            products: 'Products',
+            orders: 'Orders',
+            contacts: 'Contacts',
+        };
 
-    const limitName = limitTypeNames[limitType];
+        const limitName = limitTypeNames[limitType];
 
-    await createNotification(
-        userId,
-        'plan_limit_reached',
-        `${limitName} Limit Reached ⚠️`,
-        `You've reached your plan limit of ${limit} ${limitName.toLowerCase()}. You're currently using ${currentUsage} ${limitName.toLowerCase()}. Please upgrade your plan to continue adding more ${limitName.toLowerCase()}.`,
-        '/dashboard/settings',
-        { limitType, currentUsage, limit }
-    );
+        await createNotification(
+            userId,
+            'plan_limit_reached',
+            `${limitName} Limit Reached ⚠️`,
+            `You've reached your plan limit of ${limit} ${limitName.toLowerCase()}. You're currently using ${currentUsage} ${limitName.toLowerCase()}. Please upgrade your plan to continue adding more ${limitName.toLowerCase()}.`,
+            '/dashboard/settings',
+            { limitType, currentUsage, limit }
+        );
+    } catch (error) {
+        console.error(`Error creating plan limit notification for user ${userId}:`, error);
+        // Don't throw - notifications are non-critical
+    }
 }
 

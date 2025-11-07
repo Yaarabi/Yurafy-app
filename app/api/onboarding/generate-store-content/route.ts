@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { brandName, description } = await request.json();
+        const { brandName, description, language } = await request.json();
 
         if (!brandName || !description) {
             return NextResponse.json({ 
@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
             }, { status: 400 });
         }
 
-        // ✅ Use Gemini agent to generate content
-        const generatedContent = await generateStoreContent(brandName, description);
+        // ✅ Use Mistral agent to generate content in user's language
+        const storeLanguage = language || 'en';
+        const generatedContent = await generateStoreContent(brandName, description, storeLanguage);
 
         // Format brand name for social links
         const formatBrandName = (name: string): string => {

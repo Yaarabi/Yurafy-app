@@ -118,7 +118,7 @@ export default function WhatsAppIntegrationPage() {
     }, []);
 
 
-    const updateAgent = async (payload: any) => {
+    const updateAgent = async (payload: Record<string, unknown>) => {
         if (!agent) return;
         try {
         // Don't set loading to true here to avoid showing full page loader

@@ -94,7 +94,7 @@ export default function ConversationList({
                                     {/* Contact Tracking Icons */}
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                         {conv.metadata?.autoReplySent && (
-                                            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" title={t('tracking.autoReply')}>
+                                            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] dark:text-[var(--brand-blue)]/80" title={t('tracking.autoReply')}>
                                                 <MessageSquare className="w-3 h-3" />
                                                 <span className="hidden sm:inline">{t('tracking.auto')}</span>
                                             </span>

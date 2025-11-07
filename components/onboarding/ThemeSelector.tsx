@@ -186,6 +186,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
     const [previewTextColor, setPreviewTextColor] = useState<string>('');
     const [scale, setScale] = useState<number>(0.4);
     const [showColorPanel, setShowColorPanel] = useState<boolean>(false);
+    const continueButtonRef = useRef<HTMLDivElement>(null);
     
     // Debounce refs for smooth color updates
     const colorUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -270,6 +271,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                 description: 'We provide quality products and excellent service.',
             },
             footer: { text: 'All rights reserved.' },
+            socialLinks: { facebook: '#', instagram: '#', tiktok: '#' },
             headerLinks: [],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -330,6 +332,10 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
         // Use color values in key to ensure updates, but optimize with RAF
         const storeKey = `preview-${previewThemeId}-${previewPage}-${previewStore.theme.primaryColor}-${previewStore.theme.secondaryColor || ''}-${previewStore.theme.textColor}`;
         
+        // Disable scale on mobile for full width
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+        const finalScale = isMobile ? 1 : scale;
+        
         return (
             <StoreProvider 
                 key={storeKey}
@@ -339,13 +345,14 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
             >
                 <ProductPageAutoSelect product={demoProduct} currentPage={previewPage} />
                 <div 
-                    className="w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200"
+                    className="w-full bg-white rounded-lg shadow-2xl border border-gray-200"
                     style={{
-                        transform: `scale(${scale})`,
+                        transform: `scale(${finalScale})`,
                         transformOrigin: 'top center',
                         width: '100%',
                         maxWidth: '100%',
                         margin: '0 auto',
+                        overflow: 'visible',
                     }}
                 >
                     <ThemeRenderer themeId={previewThemeId} currentPage={previewPage} />
@@ -410,10 +417,14 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
             setCustomSecondaryColor('');
             setCustomTextColor('');
         }
+        
+        // On mobile, the button is sticky, so no need to scroll
+        // But we can optionally scroll to show the selected card better
+        // The sticky button will be visible at the bottom automatically
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-4 md:p-6 lg:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-2 pb-24 sm:p-4 sm:pb-4 md:p-6 md:pb-6 lg:p-8 lg:pb-8">
             <div className="max-w-7xl mx-auto w-full">
                 {/* Header */}
                 <motion.div
@@ -480,7 +491,7 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
 
                                 {/* Theme UI Preview - Shows simplified store UI preview */}
                                 <div
-                                    className="h-36 sm:h-40 md:h-44 rounded-lg sm:rounded-xl mb-3 sm:mb-4 relative overflow-hidden cursor-pointer shadow-md border border-gray-100 bg-white touch-manipulation active:scale-[0.98] transition-transform w-full"
+                                    className="h-48 sm:h-40 md:h-44 rounded-lg sm:rounded-xl mb-3 sm:mb-4 relative overflow-hidden cursor-pointer shadow-md border border-gray-100 bg-white touch-manipulation active:scale-[0.98] transition-transform w-full"
                                     onClick={() => handleThemeSelect(index)}
                                 >
                                     {/* Theme ID Badge */}
@@ -722,37 +733,68 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                     })}
                 </motion.div>
 
-                {/* Continue Button */}
+                {/* Continue Button - Sticky on Mobile */}
                 <AnimatePresence>
                     {selectedThemeIndex !== null && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="mt-6 sm:mt-8 md:mt-12 max-w-4xl mx-auto px-2 sm:px-0"
-                        >
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={handleContinue}
-                                className="w-full px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base sm:text-lg text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation"
-                                style={{
-                                    background: `linear-gradient(135deg, ${customPrimaryColor || storeThemes[selectedThemeIndex].theme.primaryColor}, ${customSecondaryColor || storeThemes[selectedThemeIndex].theme.secondaryColor || storeThemes[selectedThemeIndex].theme.primaryColor})`
-                                }}
+                        <>
+                            {/* Desktop Button */}
+                            <motion.div
+                                ref={continueButtonRef}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="hidden sm:block mt-6 sm:mt-8 md:mt-12 max-w-4xl mx-auto px-2 sm:px-0"
                             >
-                                <Sparkles className="w-5 h-5" />
-                                <span className="hidden sm:inline">
-                                    {t('continueWith')} {t(`themeNames.${selectedThemeIndex + 1}`) || storeThemes[selectedThemeIndex].name}
-                                </span>
-                                <span className="sm:hidden">{t('continue')}</span>
-                                <motion.span
-                                    animate={{ x: [0, 5, 0] }}
-                                    transition={{ repeat: Infinity, duration: 1.5 }}
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={handleContinue}
+                                    className="w-full px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base sm:text-lg text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation"
+                                    style={{
+                                        background: `linear-gradient(135deg, ${customPrimaryColor || storeThemes[selectedThemeIndex].theme.primaryColor}, ${customSecondaryColor || storeThemes[selectedThemeIndex].theme.secondaryColor || storeThemes[selectedThemeIndex].theme.primaryColor})`
+                                    }}
                                 >
-                                    <ArrowRight className="w-5 h-5" />
-                                </motion.span>
-                            </motion.button>
-                        </motion.div>
+                                    <Sparkles className="w-5 h-5" />
+                                    <span>
+                                        {t('continueWith')} {t(`themeNames.${selectedThemeIndex + 1}`) || storeThemes[selectedThemeIndex].name}
+                                    </span>
+                                    <motion.span
+                                        animate={{ x: [0, 5, 0] }}
+                                        transition={{ repeat: Infinity, duration: 1.5 }}
+                                    >
+                                        <ArrowRight className="w-5 h-5" />
+                                    </motion.span>
+                                </motion.button>
+                            </motion.div>
+                            
+                            {/* Mobile Sticky Button */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl safe-area-inset-bottom"
+                            >
+                                <div className="max-w-7xl mx-auto px-4 py-3">
+                                    <motion.button
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={handleContinue}
+                                        className="w-full px-6 py-3.5 rounded-xl font-semibold text-base text-white shadow-lg transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation"
+                                        style={{
+                                            background: `linear-gradient(135deg, ${customPrimaryColor || storeThemes[selectedThemeIndex].theme.primaryColor}, ${customSecondaryColor || storeThemes[selectedThemeIndex].theme.secondaryColor || storeThemes[selectedThemeIndex].theme.primaryColor})`
+                                        }}
+                                    >
+                                        <Sparkles className="w-5 h-5" />
+                                        <span>{t('continue')}</span>
+                                        <motion.span
+                                            animate={{ x: [0, 5, 0] }}
+                                            transition={{ repeat: Infinity, duration: 1.5 }}
+                                        >
+                                            <ArrowRight className="w-5 h-5" />
+                                        </motion.span>
+                                    </motion.button>
+                                </div>
+                            </motion.div>
+                        </>
                     )}
                 </AnimatePresence>
 
@@ -890,9 +932,9 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                                         })()}
 
                                         {/* Preview Content - Store Page or Product Page - Full Width */}
-                                        <div className="flex-1 overflow-auto bg-gray-50 min-h-0 w-full">
-                                            <div className="min-h-full flex items-start justify-center p-0 sm:p-2 md:p-4 lg:p-6 w-full">
-                                                <div className="w-full max-w-full h-full">
+                                        <div className="flex-1 overflow-y-auto bg-gray-50 min-h-0 w-full">
+                                            <div className="flex items-start justify-center p-0 w-full">
+                                                <div className="w-full max-w-full sm:max-w-[calc(100%-1rem)] md:max-w-[calc(100%-2rem)] lg:max-w-[calc(100%-3rem)]">
                                                     {previewStoreElement}
                                                 </div>
                                             </div>

@@ -10,6 +10,7 @@ export interface SerializedStore {
     brandName: string;
     domain: string;
     description: string;
+    language?: string;
     themeId: number;
     theme: {
         primaryColor: string;
@@ -41,6 +42,7 @@ export interface SerializedStore {
         instagram?: string;
         tiktok?: string;
     };
+    whatsappNumber?: string;
     headerLinks: Array<{
         label: string;
         href: string;
@@ -68,6 +70,7 @@ export function serializeStore(store: any): SerializedStore {
         brandName: store.brandName || '',
         domain: store.domain || '',
         description: store.description || '',
+        language: store.language || 'en',
         themeId: typeof store.themeId === 'number' ? store.themeId : parseInt(store.themeId || '1', 10),
         theme: {
             primaryColor: store.theme?.primaryColor || '#3B82F6',
@@ -99,6 +102,7 @@ export function serializeStore(store: any): SerializedStore {
             instagram: store.socialLinks.instagram,
             tiktok: store.socialLinks.tiktok,
         } : undefined,
+        whatsappNumber: store.whatsappNumber || undefined,
         headerLinks: store.headerLinks ? store.headerLinks.map((link: any) => ({
             label: link.label,
             href: link.href,

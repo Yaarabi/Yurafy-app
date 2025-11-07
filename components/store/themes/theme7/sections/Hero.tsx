@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
 import GeometricDecorations from '../../shared/GeometricDecorations';
+import { getStoreTranslation } from '../../../utils/translations';
 
 const Hero: React.FC = () => {
     const { selectedStore } = useStore();
@@ -11,6 +12,7 @@ const Hero: React.FC = () => {
     const { hero } = selectedStore;
     const primaryColor = selectedStore.theme?.primaryColor || '#f97316';
     const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
+    const storeLanguage = selectedStore.language || 'en';
 
     return (
         <div className="relative text-white min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-900 via-red-900 to-orange-800">
@@ -59,14 +61,7 @@ const Hero: React.FC = () => {
                         className="group relative inline-flex items-center gap-2 bg-white text-[var(--color-primary)] font-bold py-4 px-10 rounded-full text-lg sm:text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110 border-4 border-white/50 overflow-hidden"
                         style={{ color: primaryColor }}
                     >
-                        <span className="relative z-10">Shop Now</span>
-                        <motion.span
-                            className="relative z-10"
-                            animate={{ rotate: [0, 20, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                            🍊
-                        </motion.span>
+                        <span className="relative z-10">{getStoreTranslation("shopNow", storeLanguage)}</span>
                     </a>
                 </motion.div>
             </div>

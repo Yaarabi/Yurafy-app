@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
             brandName,
             domain,
             description,
+            language,
             themeId,
             theme,
             themeStructure,
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
             footer,
             socialLinks,
             headerLinks,
+            whatsappNumber,
         } = body;
 
         // Prefer authenticated owner when available
@@ -78,6 +80,7 @@ export async function POST(req: NextRequest) {
             brandName,
             domain: normalizedDomain,
             description,
+            language: language || 'en',
             themeId: typeof themeId === 'number' ? themeId : parseInt(themeId || '1', 10),
             theme: {
                 primaryColor: theme.primaryColor,
@@ -106,6 +109,7 @@ export async function POST(req: NextRequest) {
             },
             socialLinks: socialLinks || {},
             headerLinks: headerLinks || [],
+            whatsappNumber: whatsappNumber || undefined,
         });
 
         // Mark onboarding as completed when store is created

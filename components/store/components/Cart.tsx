@@ -7,6 +7,7 @@ import { useStore } from '../hooks/useStore';
 import toast from 'react-hot-toast';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
+import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
 
 const Cart: React.FC = () => {
     const { 
@@ -100,7 +101,7 @@ const Cart: React.FC = () => {
                 totalAmount: getTotal(),
                 shippingAddress: {
                     fullName: checkoutForm.fullName,
-                    phone: checkoutForm.phone,
+                    phone: normalizePhoneNumber(checkoutForm.phone), // Normalize to E.164 format
                     address: checkoutForm.address,
                     city: checkoutForm.city || undefined,
                 },

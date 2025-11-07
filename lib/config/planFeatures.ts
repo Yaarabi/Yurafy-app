@@ -11,8 +11,6 @@ export interface PlanFeatures {
         maxProducts?: number;
         customDomain: boolean;
         customTheme: boolean;
-        customCSS: boolean;
-        customJS: boolean;
         seo: boolean;
         analytics: boolean;
     };
@@ -56,8 +54,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             maxProducts: 5,
             customDomain: false,
             customTheme: false,
-            customCSS: false,
-            customJS: false,
             seo: false,
             analytics: false,
         },
@@ -97,8 +93,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             enabled: true,
             customDomain: true,
             customTheme: true,
-            customCSS: false,
-            customJS: false,
             seo: true,
             analytics: true,
         },
@@ -139,8 +133,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             maxProducts: 0,
             customDomain: false,
             customTheme: false,
-            customCSS: false,
-            customJS: false,
             seo: false,
             analytics: false,
         },
@@ -182,8 +174,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             maxProducts: 0,
             customDomain: false,
             customTheme: false,
-            customCSS: false,
-            customJS: false,
             seo: false,
             analytics: false,
         },
@@ -224,8 +214,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             enabled: true,
             customDomain: true,
             customTheme: true,
-            customCSS: true,
-            customJS: true,
             seo: true,
             analytics: true,
         },
@@ -266,8 +254,6 @@ export const planFeatures: Record<PlanKey, PlanFeatures> = {
             enabled: true,
             customDomain: true,
             customTheme: true,
-            customCSS: false,
-            customJS: false,
             seo: true,
             analytics: true,
         },

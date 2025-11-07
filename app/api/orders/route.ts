@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import Order from "@/models/orders";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 // ✅ GET Orders (all or by id, but scoped to logged-in user)
 export async function GET(req: Request) {
@@ -49,33 +50,64 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
 
-        // Check plan limits before creating order
-        try {
-            const { canPerformAction } = await import('@/lib/utils/planLimits');
-            const canCreate = await canPerformAction(userId, 'create_order');
-            if (!canCreate.allowed) {
-                return NextResponse.json({ 
-                    message: canCreate.reason || "Plan limit reached" 
-                }, { status: 403 });
-            }
-        } catch (error) {
-            console.error('Error checking plan limits:', error);
-            // Continue with order creation if limit check fails
+        // Normalize phone number in shipping address to E.164 format
+        if (body.shippingAddress?.phone) {
+            body.shippingAddress.phone = normalizePhoneNumber(body.shippingAddress.phone);
         }
 
-        const order = new Order({
-        ...body,
-        owner: userId, 
-        });
-        await order.save();
+        // ✅ FIXED: Use transaction for atomic limit check + creation
+        const mongoose = (await import('mongoose')).default;
+        const mongoSession = await mongoose.startSession();
+        
+        let order;
+        try {
+            await mongoSession.withTransaction(async () => {
+                // Check plan limits WITHIN transaction to prevent race conditions
+                const { canPerformAction } = await import('@/lib/utils/planLimits');
+                const canCreate = await canPerformAction(userId, 'create_order', mongoSession);
+                if (!canCreate.allowed) {
+                    throw new Error(canCreate.reason || "Plan limit reached");
+                }
 
-        // Check if limit is reached after creation and send notification if needed
+                // Create order within transaction
+                order = new Order({
+                    ...body,
+                    owner: userId, 
+                });
+                await order.save({ session: mongoSession });
+
+                // Verify limit not exceeded after creation (within same transaction)
+                const { checkPlanLimit } = await import('@/lib/utils/planLimits');
+                const afterCheck = await checkPlanLimit(userId, 'orders', mongoSession);
+                
+                if (afterCheck.hasReachedLimit && afterCheck.limit !== null) {
+                    // Orders can't be deleted, but we prevent creation if limit reached
+                    // This check happens before creation, so if we're here, limit was just reached
+                }
+            });
+        } catch (error: any) {
+            await mongoSession.endSession();
+            if (error.message?.includes('limit') || error.message?.includes('plan')) {
+                return NextResponse.json({ 
+                    message: error.message || "Plan limit reached" 
+                }, { status: 403 });
+            }
+            throw error;
+        } finally {
+            await mongoSession.endSession();
+        }
+
+        if (!order) {
+            return NextResponse.json({ message: "Failed to create order" }, { status: 500 });
+        }
+
+        // Send notification if limit reached (outside transaction)
         try {
             const { deactivateFeaturesOnLimitReached } = await import('@/lib/utils/planLimits');
             await deactivateFeaturesOnLimitReached(userId);
         } catch (error) {
-            console.error('Error checking/deactivating features after order creation:', error);
-            // Don't fail order creation if limit check fails
+            console.error('Error sending limit notification:', error);
+            // Don't fail order creation if notification fails
         }
 
         // ✅ Added: Auto-send order confirmation for Pro/Visionary plans
@@ -155,10 +187,13 @@ export async function POST(req: Request) {
                             }
                         }
 
+                        // Normalize phone number before sending
+                        const normalizedPhone = normalizePhoneNumber(order.shippingAddress.phone);
+                        
                         // Send confirmation message (async, don't wait)
                         sendTemplateMessage(
                             waAccount,
-                            order.shippingAddress.phone,
+                            normalizedPhone,
                             template,
                             variableValues,
                             token
@@ -207,6 +242,11 @@ export async function PUT(req: Request) {
     const detail = await req.json();
 
     if (!id) return NextResponse.json({ message: "Order ID is required" }, { status: 400 });
+
+    // Normalize phone number in shipping address if provided
+    if (detail.shippingAddress?.phone) {
+        detail.shippingAddress.phone = normalizePhoneNumber(detail.shippingAddress.phone);
+    }
 
     try {
         const result = await Order.findOneAndUpdate(

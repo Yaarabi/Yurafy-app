@@ -3,6 +3,7 @@ import { useStore } from '@/components/store/hooks/useStore';
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 import { Smartphone } from 'lucide-react';
 import GeometricDecorations from '../../shared/GeometricDecorations';
+import { getStoreTranslation } from '../../../utils/translations';
 
 const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
@@ -20,11 +21,9 @@ const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 rounded-none flex items-center justify-center transition-all duration-300 hover:scale-125 border-4"
+            className="w-12 h-12 rounded-none flex items-center justify-center transition-all duration-300 hover:scale-125 border-4 border-white/30 bg-white/10 hover:bg-white/20"
             style={{ 
-                backgroundColor: color,
-                borderColor: color,
-                color: 'white' 
+                color: '#ffffff'
             }}
         >
             <span className="sr-only">{platform}</span>
@@ -46,12 +45,13 @@ const Footer: React.FC = () => {
 
     const socialLinks = selectedStore.socialLinks || {};
     const primaryColor = selectedStore.theme?.primaryColor || '#06b6d4';
+    const storeLanguage = selectedStore.language || 'en';
     
-    // Header links (same as in Header component)
+    // Header links (same as in Header component) with translations
     const headerLinks = [
-        { label: "About", href: "#about" },
-        { label: "Products", href: "#products" },
-        { label: "Contact", href: "#contact" },
+        { label: getStoreTranslation("about", storeLanguage), href: "#about" },
+        { label: getStoreTranslation("products", storeLanguage), href: "#products" },
+        { label: getStoreTranslation("contact", storeLanguage), href: "#contact" },
     ];
 
     return (
@@ -79,14 +79,8 @@ const Footer: React.FC = () => {
                                 <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white animate-pulse"></div>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 mb-4">
-                                <Smartphone className="w-6 h-6 text-white" />
-                                <h3 className="text-xl sm:text-2xl font-bold text-white">{brandName}</h3>
-                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">{brandName}</h3>
                         )}
-                        <span className="text-xs text-white/80 uppercase tracking-wider">
-                            Mobile & Wearables
-                        </span>
                     </div>
 
                     {/* Navigation Links */}
@@ -110,7 +104,7 @@ const Footer: React.FC = () => {
                         {socialLinks.instagram && (
                             <SocialIcon platform="instagram" href={socialLinks.instagram} color={primaryColor} />
                         )}
-                        {socialLinks.twitter && (
+                        {socialLinks.tiktok && (
                             <SocialIcon platform="tiktok" href={socialLinks.tiktok} color={primaryColor} />
                         )}
                     </div>
@@ -119,7 +113,7 @@ const Footer: React.FC = () => {
                 {/* Copyright */}
                 <div className="border-t border-white/20 pt-6 mt-6">
                     <p className="text-center text-sm text-white/90 font-bold uppercase tracking-wider">
-                        &copy; {new Date().getFullYear()} {brandName}. {footerText}
+                        &copy; {new Date().getFullYear()} {brandName}. {getStoreTranslation("allRightsReserved", storeLanguage)}
                     </p>
                     <p className="text-center text-xs text-white/70 mt-2 font-bold uppercase tracking-wider">
                         Powered by Yurafy

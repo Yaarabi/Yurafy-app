@@ -44,7 +44,7 @@ const ProductCompo: React.FC<ProductPageProps> = ({ product, store }) => {
 
             <ThemeRenderer themeId={themeId} currentPage="PRODUCT_PAGE" />
 
-        <WhatsAppButton/>
+        <WhatsAppButton ownerPhone={store.whatsappNumber || store.businessInfo?.phone} />
 
         <button
             onClick={() => {

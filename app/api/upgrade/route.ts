@@ -53,10 +53,31 @@ export async function POST(req: NextRequest) {
         // Normalize plan key
         const normalizedPlanKey = normalizePlanKey(planKey);
         
-        // Get plan template to determine features
+        // ✅ FIXED: Validate plan from database (including special plans)
         const planTemplate = await getPlanTemplate(normalizedPlanKey);
         if (!planTemplate) {
-            return NextResponse.json({ error: `Invalid plan: ${planKey}` }, { status: 400 });
+            return NextResponse.json({ 
+                error: `The plan "${planKey}" is not available or has been removed. Please select a different plan from the plan selection page.`,
+                code: 'PLAN_NOT_FOUND'
+            }, { status: 400 });
+        }
+
+        // ✅ FIXED: Prevent downgrades with user-friendly error message
+        const User = (await import('@/models/users')).default;
+        const Plan = (await import('@/models/plan')).default;
+        const user = await User.findById(userId);
+        if (user?.currentPlanId) {
+            const currentPlan = await Plan.findById(user.currentPlanId);
+            if (currentPlan) {
+                const { canUpgrade } = await import('@/lib/utils/planTiers');
+                const upgradeCheck = canUpgrade(currentPlan.planKey, normalizedPlanKey);
+                if (!upgradeCheck.allowed) {
+                    return NextResponse.json({ 
+                        error: upgradeCheck.reason || `You cannot switch from your current plan to "${planTemplate.name}". ${upgradeCheck.reason || 'Please contact support if you need to change your plan.'}`,
+                        code: 'DOWNGRADE_NOT_ALLOWED'
+                    }, { status: 400 });
+                }
+            }
         }
 
         const features = planTemplate.features;

@@ -114,7 +114,7 @@ export default function AddDetectionRuleModal({ templates, autoReplyActive, onAd
                                     />
                                     <button
                                         onClick={handleAddKeyword}
-                                        className="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-md text-sm font-medium text-white transition-all"
+                                        className="bg-[var(--brand-blue)] hover:opacity-90 px-3 py-2 rounded-md text-sm font-medium text-white transition-all"
                                     >
                                         <Plus size={14} />
                                     </button>

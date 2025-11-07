@@ -102,7 +102,7 @@ export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTable
             case 'delivered':
                 return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200';
             case 'shipped':
-                return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200';
+                return 'bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] dark:text-[var(--brand-blue)]/80';
             case 'cancelled':
                 return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200';
             case 'confirmed':

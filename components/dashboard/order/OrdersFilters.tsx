@@ -1,6 +1,7 @@
 'use client';
 import { IOrder } from '@/models/orders';
 import { Filter } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export type OrdersFiltersType = {
     product: string;
@@ -19,7 +20,7 @@ export default function OrdersFilters({ filters, setFilters }: OrdersFiltersProp
     const t = useTranslations('orders.filters');
     
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     <Filter className="w-4 h-4 text-[var(--brand-blue)]" />

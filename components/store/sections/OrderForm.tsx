@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../hooks/useStore';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
+import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
 
 const OrderForm: React.FC = () => {
     const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
@@ -51,6 +52,9 @@ const OrderForm: React.FC = () => {
         
         setSubmissionState({ status: 'submitting', message: '' });
 
+        // Normalize phone number to E.164 format before sending
+        const normalizedPhone = normalizePhoneNumber(formData.phone);
+
         const orderData = {
             owner: selectedProduct.owner,
             products: [
@@ -66,7 +70,7 @@ const OrderForm: React.FC = () => {
             totalAmount: selectedProduct.price * (productOptions.quantity || 1),
             shippingAddress: {
                 fullName: formData.fullName,
-                phone: formData.phone,
+                phone: normalizedPhone,
                 address: formData.address,
             },
         };

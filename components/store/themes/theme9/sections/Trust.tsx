@@ -3,6 +3,7 @@ import { useStore } from '../../../hooks/useStore';
 import { motion, Variants } from 'framer-motion';
 import { DollarSign, Truck, CheckCircle } from 'lucide-react';
 import GeometricDecorations from '../../shared/GeometricDecorations';
+import { getStoreTranslation } from '../../../utils/translations';
 
 const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
@@ -15,22 +16,23 @@ const Trust: React.FC = () => {
     if (!selectedStore) return null;
     
     const primaryColor = selectedStore.theme?.primaryColor || '#14b8a6';
+    const storeLanguage = selectedStore.language || 'en';
 
     const features = [
         {
             Icon: DollarSign,
-            title: 'Cash on Delivery',
-            description: 'Pay when you receive your order. Convenient and secure payment option.',
+            title: getStoreTranslation("cashOnDelivery", storeLanguage),
+            description: getStoreTranslation("cashOnDeliveryDesc", storeLanguage),
         },
         {
             Icon: Truck,
-            title: 'Fast Shipping',
-            description: 'Quick and reliable delivery to your doorstep. Fast shipping available.',
+            title: getStoreTranslation("fastShipping", storeLanguage),
+            description: getStoreTranslation("fastShippingDesc", storeLanguage),
         },
         {
             Icon: CheckCircle,
-            title: 'High Quality',
-            description: 'Premium quality products guaranteed. We ensure the best for our customers.',
+            title: getStoreTranslation("highQuality", storeLanguage),
+            description: getStoreTranslation("highQualityDesc", storeLanguage),
         },
     ];
 
@@ -65,11 +67,11 @@ const Trust: React.FC = () => {
                         }}
                     >
                         <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            Why Choose Us
+                            {getStoreTranslation("whyChooseUs", storeLanguage)}
                         </span>
                     </motion.div>
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        Why Choose Us
+                        {getStoreTranslation("whyChooseUs", storeLanguage)}
                     </h3>
                     <div className="flex items-center justify-center gap-2 mb-6">
                         <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>

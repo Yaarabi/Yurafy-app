@@ -7,11 +7,12 @@ import { NextIntlClientProvider } from "next-intl";
 import Providers from "@/components/login/Providers";
 import Sidebar from "./sidebar/Sidebar";
 import LogoLoader from "../themePreview/loadder";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 interface Props {
     children: ReactNode;
     locale: string;
-    messages: any;
+    messages: Record<string, unknown>;
 }
 
 export default function ProtectedDashboardClient({
@@ -67,18 +68,20 @@ export default function ProtectedDashboardClient({
     // This component only handles dashboard routes
     if (status === "authenticated" && onboardingCompleted === true) {
         return (
-            <Providers session={session}>
-                <NextIntlClientProvider locale={locale} messages={messages}>
-                    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] dark:bg-[var(--color-bg)] dark:text-[var(--color-text)] flex flex-col md:flex-row">
-                        <div className="md:w-64 md:fixed md:inset-y-0 md:left-0 z-40">
-                            <Sidebar />
+            <ErrorBoundary>
+                <Providers session={session}>
+                    <NextIntlClientProvider locale={locale} messages={messages}>
+                        <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] dark:bg-[var(--color-bg)] dark:text-[var(--color-text)] flex flex-col md:flex-row">
+                            <div className="md:w-64 md:fixed md:inset-y-0 md:left-0 z-40">
+                                <Sidebar />
+                            </div>
+                            <div className="flex-1 md:ml-64 overflow-y-auto min-h-screen p-3 sm:p-4 md:p-6">
+                                <main className="flex-1">{children}</main>
+                            </div>
                         </div>
-                        <div className="flex-1 md:ml-64 overflow-y-auto min-h-screen p-4">
-                            <main className="flex-1">{children}</main>
-                        </div>
-                    </div>
-                </NextIntlClientProvider>
-            </Providers>
+                    </NextIntlClientProvider>
+                </Providers>
+            </ErrorBoundary>
         );
     }
 

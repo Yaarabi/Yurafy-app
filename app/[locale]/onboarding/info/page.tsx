@@ -24,6 +24,7 @@ export default function InfoPage() {
         domain: string;
         description: string;
         logo?: string;
+        language?: string;
     } | null>(null);
     const [showGenerator, setShowGenerator] = useState(false);
     const [checking, setChecking] = useState(true);
@@ -101,7 +102,7 @@ export default function InfoPage() {
         }, 300);
     };
 
-    const handleBasicInfoSubmit = async (info: { brandName: string; domain: string; description: string; logo?: string }) => {
+    const handleBasicInfoSubmit = async (info: { brandName: string; domain: string; description: string; logo?: string; language?: string }) => {
         // Save logo to both user and store if provided
         if (info.logo && session?.user?.id) {
             try {

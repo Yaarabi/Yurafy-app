@@ -6,6 +6,7 @@ export interface IStore extends Document {
     brandName: string;
     domain: string;
     description: string;
+    language?: string; // Store language: 'en', 'fr', or 'ar'
     themeId: number;
     theme: {
         primaryColor: string;
@@ -29,6 +30,7 @@ export interface IStore extends Document {
         instagram?: string;
         tiktok?: string;
     };
+    whatsappNumber?: string;
     headerLinks: Array<{
         label: string;
         href: string;
@@ -59,6 +61,12 @@ const storeSchema = new Schema<IStore>(
             index: true, // Unique index already exists
         },
         description: { type: String, required: true, trim: true },
+        language: { 
+            type: String, 
+            enum: ['en', 'fr', 'ar'],
+            default: 'en',
+            index: true, // Index for language filtering
+        },
         themeId: { 
             type: Number, 
             required: true,
@@ -92,7 +100,7 @@ const storeSchema = new Schema<IStore>(
         instagram: { type: String, trim: true, default: 'www.instagram.com' },
         tiktok: { type: String, trim: true, default: 'www.tiktok.com' },
         },
-
+        whatsappNumber: { type: String, trim: true },
         headerLinks: [
         {
             label: { type: String, required: true, trim: true },

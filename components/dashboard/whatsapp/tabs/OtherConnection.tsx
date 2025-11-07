@@ -96,7 +96,7 @@ export default function ConnectionTab() {
             ))}
         </ul>
 
-        <button className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white">
+        <button className="bg-[var(--brand-blue)] hover:opacity-90 px-4 py-2 rounded text-white">
             + Add New Number
         </button>
         </div>

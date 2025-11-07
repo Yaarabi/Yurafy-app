@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FaTimes, FaPlus, FaTrash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { IOrder } from '@/models/orders';
+import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
 
 interface ProductItem {
     product?: string; // Product ID (optional)
@@ -65,8 +66,11 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
             return;
         }
 
+        // Normalize phone number to E.164 format before sending
+        const normalizedPhone = normalizePhoneNumber(phone);
+
         const newOrder: Partial<IOrder> = {
-            shippingAddress: { fullName, phone, address },
+            shippingAddress: { fullName, phone: normalizedPhone, address },
             products,
             totalAmount,
             status,
@@ -100,13 +104,13 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-start pt-20 z-50 overflow-auto">
-            <div className="bg-gray-800 text-gray-200 rounded-lg p-6 w-full max-w-3xl relative shadow-lg">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"><FaTimes /></button>
-                <h2 className="text-xl font-semibold mb-4">Add New Order</h2>
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-start pt-4 sm:pt-10 md:pt-20 z-50 overflow-auto p-2 sm:p-4">
+            <div className="bg-gray-800 text-gray-200 rounded-lg p-4 sm:p-6 w-full max-w-3xl relative shadow-lg mb-4">
+                <button onClick={onClose} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-200 p-1"><FaTimes className="w-5 h-5" /></button>
+                <h2 className="text-lg sm:text-xl font-semibold mb-4 pr-8">Add New Order</h2>
 
                 {/* Customer Info */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
                     <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Full Name *" value={fullName} onChange={e => setFullName(e.target.value)} required />
                     <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Phone *" value={phone} onChange={e => setPhone(e.target.value)} required />
                     <input className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Address *" value={address} onChange={e => setAddress(e.target.value)} required />
@@ -116,26 +120,26 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
                 <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                         <span className="font-semibold">Products</span>
-                        <button onClick={addProduct} className="flex items-center gap-1 px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 transition"><FaPlus /> Add Product</button>
+                        <button onClick={addProduct} className="flex items-center gap-1 px-3 py-1 rounded bg-[var(--brand-blue)] hover:opacity-90 transition text-white"><FaPlus /> Add Product</button>
                     </div>
 
                     {products.map((p, i) => (
-                        <div key={i} className="flex gap-2 mb-2 items-center flex-wrap">
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 w-32" placeholder="Product ID" value={p.product || ''} onChange={e => updateProduct(i, 'product', e.target.value)} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 flex-1" placeholder="Product Name" value={p.name} onChange={e => updateProduct(i, 'name', e.target.value)} />
-                            <input type="number" className="p-2 rounded bg-gray-700 border border-gray-600 w-20" placeholder="Qty" value={p.quantity} min={1} onChange={e => updateProduct(i, 'quantity', Number(e.target.value))} />
-                            <input type="number" className="p-2 rounded bg-gray-700 border border-gray-600 w-24" placeholder="Price" value={p.price} min={0} onChange={e => updateProduct(i, 'price', Number(e.target.value))} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 w-24" placeholder="Color" value={p.color || ''} onChange={e => updateProduct(i, 'color', e.target.value)} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 w-24" placeholder="Size" value={p.size || ''} onChange={e => updateProduct(i, 'size', e.target.value)} />
-                            <button onClick={() => removeProduct(i)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
+                        <div key={i} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 mb-2 items-start">
+                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Product ID" value={p.product || ''} onChange={e => updateProduct(i, 'product', e.target.value)} />
+                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm sm:col-span-2" placeholder="Product Name *" value={p.name} onChange={e => updateProduct(i, 'name', e.target.value)} />
+                            <input type="text" className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Quantity (e.g., 1, 2, 5)" value={p.quantity} onChange={e => updateProduct(i, 'quantity', Number(e.target.value) || 0)} />
+                            <input type="text" className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Price (e.g., 99.99)" value={p.price} onChange={e => updateProduct(i, 'price', Number(e.target.value) || 0)} />
+                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Color" value={p.color || ''} onChange={e => updateProduct(i, 'color', e.target.value)} />
+                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Size" value={p.size || ''} onChange={e => updateProduct(i, 'size', e.target.value)} />
+                            <button onClick={() => removeProduct(i)} className="text-red-500 hover:text-red-400 p-2 flex items-center justify-center"><FaTrash className="w-4 h-4" /></button>
                         </div>
                     ))}
                 </div>
 
                 {/* Total & Status */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <input type="number" className="p-2 rounded bg-gray-700 border border-gray-600" placeholder="Total Amount" value={totalAmount} onChange={e => setTotalAmount(Number(e.target.value))} />
-                    <select className="p-2 rounded bg-gray-700 border border-gray-600" value={status} onChange={e => setStatus(e.target.value as IOrder['status'])}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+                    <input type="text" className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Total Amount (e.g., 199.99)" value={totalAmount} onChange={e => setTotalAmount(Number(e.target.value) || 0)} />
+                    <select className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" value={status} onChange={e => setStatus(e.target.value as IOrder['status'])}>
                         <option value="new">New</option>
                         <option value="confirmed">Confirmed</option>
                         <option value="shipped">Shipped</option>
@@ -145,9 +149,9 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-3">
-                    <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500 transition">Cancel</button>
-                    <button onClick={handleSubmit} className="px-4 py-2 rounded bg-green-600 hover:bg-green-500 text-white transition">Add Order</button>
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                    <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500 transition text-sm sm:text-base">Cancel</button>
+                    <button onClick={handleSubmit} className="px-4 py-2 rounded bg-green-600 hover:bg-green-500 text-white transition text-sm sm:text-base">Add Order</button>
                 </div>
             </div>
         </div>

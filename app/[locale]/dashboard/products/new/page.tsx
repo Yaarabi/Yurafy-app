@@ -2,6 +2,7 @@
 import ProductForm from '@/components/dashboard/productForm';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function NewProductPage() {
     const t = useTranslations('products');
@@ -29,25 +30,25 @@ export default function NewProductPage() {
         }
         
         // Show success message
-        alert(t('createSuccess')); 
+        toast.success(t('createSuccess')); 
         } catch (error: any) {
         console.error(error);
-        alert(error.message || t('createError'));
+        toast.error(error.message || t('createError'));
         } finally {
         setLoading(false);
         }
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 p-6 rounded-lg">
-        <div>
-            <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">{t('createTitle')}</h2>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+            <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">{t('createTitle')}</h2>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6">
+                    <ProductForm onSubmit={create} loading={loading} onReset={() => {}} />
+                </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-            <ProductForm onSubmit={create} loading={loading} onReset={() => {}} />
-            </div>
-        </div>
         </div>
     );
 }

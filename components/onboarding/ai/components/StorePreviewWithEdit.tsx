@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Store, Palette, Globe, FileText, Image as ImageIcon, Info, 
-    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield, Eye
+    Edit2, Check, X, Save, ShoppingBag, Navigation, Grid, Shield, Eye, Phone
 } from 'lucide-react';
 import StoreThemePreview from './StoreThemePreview';
 import { SerializedStore } from '@/lib/data/store';
@@ -46,6 +46,7 @@ function normalizeStoreDataForPreview(data: StorePreviewData | null): Serialized
         socialLinks: data.socialLinks,
         headerLinks: data.headerLinks || [],
         logoUrl: data.logoUrl,
+        whatsappNumber: data.whatsappNumber,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     };
@@ -91,6 +92,7 @@ interface StorePreviewData {
         href: string;
     }>;
     logoUrl?: string;
+    whatsappNumber?: string;
     _id?: string;
     owner?: string;
 }
@@ -284,6 +286,13 @@ export default function StorePreviewWithEdit({
                             icon={FileText}
                             multiline
                         />
+                        <EditableField
+                            field="whatsappNumber"
+                            label="WhatsApp Number"
+                            value={data.whatsappNumber || ''}
+                            icon={Phone}
+                            type="tel"
+                        />
                     </div>
 
                     {/* Hero Section */}
@@ -331,18 +340,6 @@ export default function StorePreviewWithEdit({
                         </div>
                     )}
 
-                    {/* Footer */}
-                    {data.footer && (
-                        <div className="space-y-4 mb-6">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-3">Footer</h4>
-                            <EditableField
-                                field="footer.text"
-                                label="Footer Text"
-                                value={data.footer.text}
-                                icon={FileText}
-                            />
-                        </div>
-                    )}
 
                     {/* Social Links */}
                     <div className="space-y-4 mb-6">

@@ -17,7 +17,7 @@ const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition-colors duration-200"
+            className="text-white hover:opacity-80 transition-opacity duration-200"
         >
             <span className="sr-only">{platform}</span>
             <Icon className="h-6 w-6" />

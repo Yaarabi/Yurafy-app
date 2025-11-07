@@ -7,12 +7,20 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { Package } from "lucide-react";
 import { useTranslations } from 'next-intl';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import toast from 'react-hot-toast';
+
+interface ProductsResponse {
+    products: IProduct[];
+}
 
 export default function ProductsTable() {
     const t = useTranslations('products');
     const { data: session } = useSession();
     const [products, setProducts] = useState<IProduct[]>([]);
     const [loading, setLoading] = useState(true);
+    const { handleError } = useErrorHandler();
 
     const router = useRouter();
     const { locale } = useParams();
@@ -36,10 +44,10 @@ export default function ProductsTable() {
                 const ownerId = (session) ? session.user.id as string : "";
                 const res = await fetch(`/api/products?owner=${ownerId}`);
                 if (!res.ok) throw new Error("Failed to fetch products");
-                const data = await res.json();
+                const data: ProductsResponse = await res.json();
                 setProducts(data.products || []);
             } catch (err) {
-                console.error(err);
+                handleError(err, t('fetchError'));
             } finally {
                 setLoading(false);
             }
@@ -62,10 +70,14 @@ export default function ProductsTable() {
 
         try {
             const res = await fetch(`/api/products?id=${id}`, { method: "DELETE" });
-            if (res.ok) setProducts((prev) => prev.filter((p) => p._id !== id));
-            else console.error("Failed to delete product");
+            if (res.ok) {
+                setProducts((prev) => prev.filter((p) => p._id !== id));
+                toast.success(t('deleteSuccess'));
+            } else {
+                throw new Error("Failed to delete product");
+            }
         } catch (err) {
-            console.error(err);
+            handleError(err, t('deleteError'));
         }
     }
 
@@ -86,10 +98,7 @@ export default function ProductsTable() {
                     {loading ? (
                         <tr>
                             <td colSpan={columns.length + 1} className="px-4 py-12 text-center">
-                                <div className="flex flex-col items-center gap-2">
-                                    <div className="w-8 h-8 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('loading')}</p>
-                                </div>
+                                <LoadingSpinner size="md" text={t('loading')} />
                             </td>
                         </tr>
                     ) : products.length === 0 ? (
@@ -114,14 +123,16 @@ export default function ProductsTable() {
                                         <button 
                                             onClick={() => router.push(`/${locale}/dashboard/products/${row._id}`)}
                                             className="p-1.5 sm:p-2 text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10 dark:hover:bg-[var(--brand-blue)]/20 rounded-lg transition-all hover:scale-110" 
-                                            title="Edit product"
+                                            title={t('edit')}
+                                            aria-label={t('edit')}
                                         >
                                             <FaEdit className="w-4 h-4" />
                                         </button>
                                         <button 
                                             onClick={() => handleDelete(row._id ?? "")}
                                             className="p-1.5 sm:p-2 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all hover:scale-110" 
-                                            title="Delete product"
+                                            title={t('delete')}
+                                            aria-label={t('delete')}
                                         >
                                             <FaTrash className="w-4 h-4" />
                                         </button>

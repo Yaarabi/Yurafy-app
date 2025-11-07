@@ -3,6 +3,7 @@ import React from "react";
 import { CustomerStat } from "@/app/[locale]/dashboard/customers/page";
 import { Users } from "lucide-react";
 import { useTranslations } from 'next-intl';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 interface Props {
     data: CustomerStat[];
@@ -26,7 +27,7 @@ export default function CustomerTable({ data, loading, selected, onSelect, onSel
         case "delivered":
             return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
         case "new":
-            return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200";
+            return "bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 text-[var(--brand-blue)] dark:text-[var(--brand-blue)]/80";
         default:
             return "bg-gray-100 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200";
         }
@@ -63,10 +64,7 @@ export default function CustomerTable({ data, loading, selected, onSelect, onSel
                     {loading ? (
                         <tr>
                             <td colSpan={11} className="px-4 py-12 text-center">
-                                <div className="flex flex-col items-center gap-2">
-                                    <div className="w-8 h-8 border-4 border-[var(--brand-blue)] border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('table.loading')}</p>
-                                </div>
+                                <LoadingSpinner size="md" text={t('table.loading')} />
                             </td>
                         </tr>
                     ) : data.length === 0 ? (

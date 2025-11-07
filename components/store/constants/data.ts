@@ -21,7 +21,7 @@ export const STORES: SerializedStore = {
             description: 'Founded in 2020, our mission is to make futuristic technology accessible to everyone. We meticulously curate and test every gadget to ensure it meets our high standards of quality and performance.',
         },
         footer: { text: 'All Rights Reserved.' },
-        socialLinks: { facebook: '#', instagram: '#' },
+        socialLinks: { facebook: '#', instagram: '#', tiktok: '#' },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     };

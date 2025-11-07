@@ -83,10 +83,12 @@ export default function ChatWithAgentPage() {
           className="bg-gray-900 dark:bg-gray-950 overflow-hidden flex flex-col flex-1 min-h-0"
         >
           <ChatHeader onClear={clearChat} />
-          <div className="flex-1 overflow-hidden min-h-0">
+          <div className="flex-1 overflow-hidden min-h-0 p-2 sm:p-4">
             <ChatMessages messages={messages} typing={typing} />
           </div>
-          <ChatInput input={input} setInput={setInput} loading={loading} onSend={sendMessage} />
+          <div className="p-2 sm:p-4">
+            <ChatInput input={input} setInput={setInput} loading={loading} onSend={sendMessage} />
+          </div>
         </motion.div>
       </div>
     </div>

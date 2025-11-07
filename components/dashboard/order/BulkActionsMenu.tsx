@@ -79,7 +79,7 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
             <button
                 onClick={() => sendInBatches(selectedOrders, '/api/whatsapp/send-ad-template')}
                 disabled={isSending}
-                className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
+                className="bg-[var(--brand-blue)] hover:opacity-90 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
             >
                 <FaBullhorn /> Send Ad Template
             </button>

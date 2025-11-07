@@ -60,6 +60,7 @@ interface StoreGeneratorProps {
         domain: string;
         description: string;
         logo?: string;
+        language?: string;
     };
     plan?: string;
     onBack?: () => void;
@@ -102,6 +103,7 @@ export default function StoreGenerator({
                 body: JSON.stringify({
                     brandName: basicInfo.brandName,
                     description: basicInfo.description,
+                    language: basicInfo.language || 'en',
                 }),
             });
 
@@ -122,6 +124,7 @@ export default function StoreGenerator({
                 storeDataFromResponse = {
                     ...data.storeData,
                     domain: basicInfo.domain,
+                    language: basicInfo.language || 'en',
                     themeId: selectedTheme?.themeId || 1,
                     theme: selectedTheme?.theme || { primaryColor: '#3B82F6' },
                     themeStructure: selectedThemeStructure || {
@@ -173,6 +176,7 @@ export default function StoreGenerator({
                     brandName: basicInfo.brandName,
                     domain: basicInfo.domain,
                     description: basicInfo.description,
+                    language: basicInfo.language || 'en',
                     themeId: selectedTheme?.themeId || 1,
                     theme: selectedTheme?.theme || { primaryColor: '#3B82F6' },
                     themeStructure: selectedThemeStructure || {
@@ -191,9 +195,6 @@ export default function StoreGenerator({
                     about: {
                         title: `About ${basicInfo.brandName}`,
                         description: basicInfo.description || '',
-                    },
-                    footer: {
-                        text: `© ${new Date().getFullYear()} ${basicInfo.brandName}. All rights reserved.`,
                     },
                     socialLinks: {},
                     headerLinks: [],
@@ -272,6 +273,7 @@ export default function StoreGenerator({
             // Transform data to match store API format
             const storePayload = {
                 brandName: dataToSave.brandName,
+                language: basicInfo.language || 'en',
                 domain: dataToSave.domain,
                 description: dataToSave.description,
                 themeId: selectedTheme?.themeId || dataToSave.themeId || 1,
@@ -297,11 +299,9 @@ export default function StoreGenerator({
                     title: dataToSave.about?.title || '',
                     description: dataToSave.about?.description || '',
                 },
-                footer: {
-                    text: dataToSave.footer?.text || '',
-                },
                 socialLinks: dataToSave.socialLinks || {},
                 headerLinks: dataToSave.headerLinks || [],
+                whatsappNumber: dataToSave.whatsappNumber || undefined,
             };
 
             // Send to store API

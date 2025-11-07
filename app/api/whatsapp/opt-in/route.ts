@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppConversation from "@/models/whatsappMessage";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 /**
  * POST /api/whatsapp/opt-in
@@ -34,11 +35,8 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Normalize phone number
-        let normalizedPhone = phone.replace(/\D/g, "");
-        if (!normalizedPhone.startsWith("+")) {
-            normalizedPhone = "+" + normalizedPhone;
-        }
+        // Normalize phone number to E.164 format
+        const normalizedPhone = normalizePhoneNumber(phone);
 
         // Update or create conversation with opt-in status
         const updateData: any = {
@@ -106,11 +104,8 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // Normalize phone number
-        let normalizedPhone = phone.replace(/\D/g, "");
-        if (!normalizedPhone.startsWith("+")) {
-            normalizedPhone = "+" + normalizedPhone;
-        }
+        // Normalize phone number to E.164 format
+        const normalizedPhone = normalizePhoneNumber(phone);
 
         const conversation = await WhatsAppConversation.findOne({
             owner: session.user.id,

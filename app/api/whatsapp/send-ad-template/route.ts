@@ -9,6 +9,7 @@ import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "../webhook/route";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 export async function POST(req: Request) {
     try {
@@ -71,11 +72,14 @@ export async function POST(req: Request) {
         // Send ad message for each order
         const results = [];
         for (const order of orderDocs) {
-            const phone = order.shippingAddress.phone;
-            if (!phone) {
+            const rawPhone = order.shippingAddress.phone;
+            if (!rawPhone) {
                 results.push({ orderId: order._id, phone: null, status: "skipped", reason: "No phone number" });
                 continue;
             }
+
+            // Normalize phone number to E.164 format
+            const phone = normalizePhoneNumber(rawPhone);
 
             try {
                 // Check opt-in status before sending promotional messages

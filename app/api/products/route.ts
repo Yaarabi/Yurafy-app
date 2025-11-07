@@ -114,35 +114,70 @@ export const POST = withRateLimit(async (req: NextRequest) => {
             return createErrorResponse("Product with this slug already exists", 409, "DUPLICATE_SLUG");
         }
 
-        // Check plan limits before creating product
+        // ✅ FIXED: Use transaction for atomic limit check + creation
+        const mongoose = (await import('mongoose')).default;
+        const mongoSession = await mongoose.startSession();
+        
         try {
-            const { canPerformAction } = await import('@/lib/utils/planLimits');
-            const canCreate = await canPerformAction(userId, 'create_product');
-            if (!canCreate.allowed) {
-                return createErrorResponse(canCreate.reason || "Plan limit reached", 403, "PLAN_LIMIT_REACHED");
+            await mongoSession.withTransaction(async () => {
+                // Check plan limits WITHIN transaction to prevent race conditions
+                const { canPerformAction } = await import('@/lib/utils/planLimits');
+                const canCreate = await canPerformAction(userId, 'create_product', mongoSession);
+                if (!canCreate.allowed) {
+                    throw new Error(canCreate.reason || "Plan limit reached");
+                }
+
+                // Create product within transaction
+                const product = new Product({
+                    ...body,
+                    owner: userId,
+                    slug,
+                    salesCount: 0,
+                });
+
+                await product.save({ session: mongoSession });
+
+                // Re-check limit after creation within same transaction
+                const limitCheck = await import('@/lib/utils/planLimits');
+                const { checkPlanLimit } = limitCheck;
+                const afterCheck = await checkPlanLimit(userId, 'products', mongoSession);
+                
+                if (afterCheck.hasReachedLimit && afterCheck.limit !== null) {
+                    // Deactivate products beyond limit immediately
+                    const products = await Product.find({ owner: userId, enabled: true })
+                        .sort({ createdAt: -1 })
+                        .skip(afterCheck.limit)
+                        .session(mongoSession);
+                    
+                    for (const p of products) {
+                        p.enabled = false;
+                        await p.save({ session: mongoSession });
+                    }
+                }
+            });
+        } catch (error: any) {
+            await mongoSession.endSession();
+            if (error.message?.includes('limit') || error.message?.includes('plan')) {
+                return createErrorResponse(error.message, 403, "PLAN_LIMIT_REACHED");
             }
-        } catch (error) {
-            console.error('Error checking plan limits:', error);
-            // Continue with product creation if limit check fails
+            throw error;
+        } finally {
+            await mongoSession.endSession();
         }
 
-        // Create product with authenticated user as owner
-        const product = new Product({
-            ...body,
-            owner: userId,
-            slug,
-            salesCount: 0,
-        });
+        // Get the created product (outside transaction)
+        const product = await Product.findOne({ slug, owner: userId });
+        if (!product) {
+            return createErrorResponse("Failed to create product", 500, "CREATION_FAILED");
+        }
 
-        await product.save();
-
-        // Check if limit is reached after creation and deactivate if needed
+        // Send notification if limit reached (outside transaction to avoid blocking)
         try {
             const { deactivateFeaturesOnLimitReached } = await import('@/lib/utils/planLimits');
             await deactivateFeaturesOnLimitReached(userId);
         } catch (error) {
-            console.error('Error checking/deactivating features after product creation:', error);
-            // Don't fail product creation if limit check fails
+            console.error('Error sending limit notification:', error);
+            // Don't fail product creation if notification fails
         }
 
         logger.info("Product created", { productId: product._id, ownerId: userId });

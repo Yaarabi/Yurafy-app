@@ -129,7 +129,8 @@ export default function HowItWorks() {
                 >
                     <button
                         onClick={handleGetStarted}
-                        className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-lg"
+                        className="text-white px-8 py-3 rounded-lg hover:opacity-90 transition font-semibold shadow-lg"
+                        style={{ backgroundColor: 'var(--brand-blue)' }}
                     >
                         Get Started Now
                     </button>

@@ -9,6 +9,7 @@ import Template from "@/models/templates";
 import { decryptToken } from "../webhook/route";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 export async function POST(req: NextRequest) {
     await connectDB();
@@ -45,11 +46,8 @@ export async function POST(req: NextRequest) {
                 }, { status: 400 });
             }
 
-            // Normalize phone number
-            let recipientPhone = contactPhone.replace(/\D/g, "");
-            if (!recipientPhone.startsWith("+")) {
-                recipientPhone = "+" + recipientPhone;
-            }
+            // Normalize phone number to E.164 format
+            const recipientPhone = normalizePhoneNumber(contactPhone);
 
             // Ensure variableValues is an array
             const vars = Array.isArray(variableValues) ? variableValues : [];
@@ -79,11 +77,8 @@ export async function POST(req: NextRequest) {
     // Legacy support: plain text message (only within 24h window)
     if (message && contactPhone) {
         try {
-            // Normalize phone number
-            let recipientPhone = contactPhone.replace(/\D/g, "");
-            if (!recipientPhone.startsWith("+")) {
-                recipientPhone = "+" + recipientPhone;
-            }
+            // Normalize phone number to E.164 format
+            const recipientPhone = normalizePhoneNumber(contactPhone);
 
             // This will check 24h window internally and throw if expired
             await sendWhatsAppMessage(account, recipientPhone, message, decryptedToken);

@@ -3,6 +3,7 @@ import { IWhatsAppAccount } from "@/models/whatsappAccount";
 import Template, { ITemplate } from "@/models/templates";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppConversation from "@/models/whatsappMessage";
+import { normalizePhoneNumber } from "./phoneNormalize";
 
 /**
  * Send a WhatsApp template message via the official API
@@ -24,9 +25,8 @@ export async function sendTemplateMessage(
 ) {
     await connectDB();
     
-    // Normalize phone number
-    let phone = customerPhone.replace(/\D/g, "");
-    if (!phone.startsWith("+")) phone = "+" + phone;
+    // Normalize phone number to E.164 format
+    const phone = normalizePhoneNumber(customerPhone);
     
     // Build template name (must be lowercase with underscores)
     const templateName = template.name.toLowerCase().replace(/\s+/g, "_");

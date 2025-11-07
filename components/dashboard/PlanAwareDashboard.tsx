@@ -28,10 +28,10 @@ interface UserPlan {
 }
 
 interface PlanAwareDashboardProps {
-    orders: any[];
-    products: any[];
+    orders: IOrder[];
+    products: IProduct[];
     templatesCount?: number;
-    featuresData?: any; // UserFeaturesData from hook
+    featuresData?: UserFeaturesData;
 }
 
 export default function PlanAwareDashboard({ orders, products, templatesCount = 0, featuresData }: PlanAwareDashboardProps) {
@@ -66,7 +66,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             ? "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200"
                             : daysRemaining <= 3
                             ? "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200"
-                            : "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200"
+                            : "bg-[var(--brand-blue)]/10 border-[var(--brand-blue)]/30 text-[var(--brand-blue)] dark:bg-[var(--brand-blue)]/20 dark:border-[var(--brand-blue)]/40 dark:text-[var(--brand-blue)]/80"
                     }`}
                 >
                     <div className="flex items-center justify-between">

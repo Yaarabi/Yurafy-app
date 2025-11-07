@@ -178,7 +178,8 @@ export default function HeroSection() {
 
                     <button
                         onClick={handleSignup}
-                        className="flex items-center gap-2 bg-white text-blue-700 px-5 py-2 rounded-md hover:bg-gray-100 transition shadow text-sm sm:text-base"
+                        className="flex items-center gap-2 bg-white px-5 py-2 rounded-md hover:bg-gray-100 transition shadow text-sm sm:text-base"
+                        style={{ color: 'var(--brand-blue)' }}
                     >
                         <UserPlus className="w-5 h-5" />
                         {t('signup')}
@@ -214,7 +215,8 @@ export default function HeroSection() {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button
                                 onClick={handleGetStarted}
-                                className="bg-white text-blue-700 px-6 py-3 rounded-lg hover:bg-gray-100 transition font-medium shadow-lg"
+                                className="bg-white px-6 py-3 rounded-lg hover:bg-gray-100 transition font-medium shadow-lg"
+                                style={{ color: 'var(--brand-blue)' }}
                             >
                                 {t('cta.getStarted')}
                             </button>

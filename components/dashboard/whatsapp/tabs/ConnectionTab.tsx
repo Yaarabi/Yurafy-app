@@ -101,7 +101,7 @@ transition-transform ${
 
         <div className="text-xs text-gray-400 mt-2">
             Need help? Follow our{" "}
-            <a href="#" className="underline text-blue-400">
+            <a href="#" className="underline text-[var(--brand-blue)]/80">
             integration guide
             </a>
             .

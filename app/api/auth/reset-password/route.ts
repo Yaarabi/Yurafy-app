@@ -5,6 +5,7 @@ import { createErrorResponse, handleApiError } from "@/lib/utils/errors";
 import { logger } from "@/lib/utils/logging";
 import { withRateLimit, getStrictRateLimit } from "@/lib/utils/rateLimit";
 import { validatePassword } from "@/lib/utils/validation";
+import { emailService } from "@/lib/services/emailService";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -35,15 +36,13 @@ export async function POST(req: NextRequest) {
             user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour
             await user.save();
 
-            // Send reset email (in production, use proper email service)
-            const resetUrl = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`;
-            
-            logger.info("Password reset requested", { email: user.email });
-
-            // TODO: Implement actual email sending
-            // For now, log the token in development
-            if (process.env.NODE_ENV === "development") {
-                logger.info("Reset token (dev only)", { token: resetToken, url: resetUrl });
+            // Send reset email
+            try {
+                await emailService.sendPasswordResetEmail(user.email, resetToken, 'en');
+                logger.info("Password reset requested", { email: user.email });
+            } catch (error) {
+                logger.error("Error sending password reset email", error);
+                // Don't fail the request, but log the error
             }
 
             return NextResponse.json({ 

@@ -52,6 +52,7 @@ function serializeStoreDoc(store: any) {
             text: store.footer.text,
         } : undefined,
         socialLinks: store.socialLinks ? { ...store.socialLinks } : undefined,
+        whatsappNumber: store.whatsappNumber || undefined,
         headerLinks: store.headerLinks ? store.headerLinks.map((link: any) => ({
             label: link.label,
             href: link.href,

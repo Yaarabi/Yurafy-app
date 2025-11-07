@@ -4,6 +4,7 @@ import User from "@/models/users";
 import { createErrorResponse, handleApiError } from "@/lib/utils/errors";
 import { logger } from "@/lib/utils/logging";
 import { withRateLimit, getStrictRateLimit } from "@/lib/utils/rateLimit";
+import { emailService } from "@/lib/services/emailService";
 import crypto from "crypto";
 
 /**
@@ -36,15 +37,13 @@ export const POST = withRateLimit(async (req: NextRequest) => {
         user.emailVerificationToken = token;
         await user.save();
 
-        // Send verification email (in production, use proper email service)
-        const verificationUrl = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/auth/verify-email/${token}`;
-        
-        logger.info("Email verification requested", { email: user.email });
-
-        // TODO: Implement actual email sending with nodemailer or service like SendGrid
-        // For now, log the token in development
-        if (process.env.NODE_ENV === "development") {
-            logger.info("Verification token (dev only)", { token, url: verificationUrl });
+        // Send verification email
+        try {
+            await emailService.sendVerificationEmail(user.email, token, 'en');
+            logger.info("Email verification requested", { email: user.email });
+        } catch (error) {
+            logger.error("Error sending verification email", error);
+            // Don't fail the request, but log the error
         }
 
         return NextResponse.json({ 
@@ -58,41 +57,4 @@ export const POST = withRateLimit(async (req: NextRequest) => {
     }
 }, getStrictRateLimit());
 
-/**
- * GET /api/auth/verify-email/[token]
- * Verify email with token
- */
-export async function GET(req: NextRequest) {
-    await connectDB();
-
-    try {
-        const url = new URL(req.url);
-        const token = url.pathname.split("/").pop();
-
-        if (!token) {
-            return createErrorResponse("Verification token is required", 400, "MISSING_TOKEN");
-        }
-
-        const user = await User.findOne({ emailVerificationToken: token });
-        if (!user) {
-            return createErrorResponse("Invalid or expired verification token", 400, "INVALID_TOKEN");
-        }
-
-        // Verify email
-        user.emailVerified = true;
-        user.emailVerificationToken = null;
-        user.active = true; // Activate user after email verification
-        await user.save();
-
-        logger.info("Email verified", { email: user.email });
-
-        // Redirect to success page
-        const redirectUrl = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/login?verified=true`;
-        
-        return NextResponse.redirect(redirectUrl);
-    } catch (error) {
-        logger.error("GET /api/auth/verify-email error", error);
-        return handleApiError(error);
-    }
-}
 

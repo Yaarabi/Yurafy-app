@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
 import GeometricDecorations from "../../shared/GeometricDecorations";
+import { getStoreTranslation } from "../../../utils/translations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0 },
@@ -22,6 +23,7 @@ const ProductGrid: React.FC = () => {
     if (!selectedStore) return null;
 
     const primaryColor = selectedStore.theme?.primaryColor || '#14b8a6';
+    const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -51,22 +53,8 @@ const ProductGrid: React.FC = () => {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-20"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
-                        style={{ 
-                            backgroundColor: `${primaryColor}15`,
-                            borderColor: `${primaryColor}30`,
-                        }}
-                    >
-                        <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            💚 Health & Wellness
-                        </span>
-                    </motion.div>
                     <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-center mb-4 tracking-tight" style={{ color: primaryColor }}>
-                        Products
+                        {getStoreTranslation("products", storeLanguage)}
                     </h3>
                     <div className="w-32 h-0.5 mx-auto mt-4" style={{ backgroundColor: primaryColor }}></div>
                 </motion.div>

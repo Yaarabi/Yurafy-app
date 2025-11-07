@@ -7,6 +7,16 @@ import { useSession } from "next-auth/react"
 import toast from "react-hot-toast"
 import { FaCheck } from "react-icons/fa"
 
+// Icon mapping for plan templates
+const iconMap: Record<string, any> = {
+    zap: Zap,
+    store: Store,
+    messagecircle: MessageCircle,
+    bot: Bot,
+    crown: Crown,
+    sparkles: Sparkles,
+};
+
 export const PLANS = {
     free: { 
         name: "Free", 
@@ -46,7 +56,7 @@ export const PLANS = {
         description: "Starter + WhatsApp Automation for serious sellers.",
         icon: Crown,
         color: "from-yellow-400 to-orange-600",
-        features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Custom CSS/JS", "Priority Support"]
+        features: ["1500 Orders", "Store + WhatsApp", "2000 Contacts", "Priority Support"]
     },
     visionary: { 
         name: "Visionary", 
@@ -71,6 +81,85 @@ export default function PlanPage() {
     const { data: session, status } = useSession()
     const [loading, setLoading] = useState<string | null>(null)
     const [isUpgrade, setIsUpgrade] = useState(false)
+    const [plans, setPlans] = useState(PLANS)
+    const [specialPlans, setSpecialPlans] = useState<any[]>([])
+    const [plansLoading, setPlansLoading] = useState(true)
+
+    // Fetch plans from API
+    useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const res = await fetch('/api/plans?includeSpecial=true');
+                if (res.ok) {
+                    const data = await res.json();
+                    // Convert plan templates to display format
+                    const regularPlans: any = {};
+                    (data.plans || []).forEach((template: any) => {
+                        regularPlans[template.planKey] = {
+                            name: template.name,
+                            price: template.defaultPrice,
+                            description: template.description,
+                            icon: iconMap[template.icon?.toLowerCase() || 'store'] || Store,
+                            color: template.color || 'from-blue-400 to-blue-600',
+                            features: extractFeatures(template.features),
+                        };
+                    });
+                    
+                    const special = (data.specialPlans || []).map((template: any) => ({
+                        key: template.planKey,
+                        name: template.name,
+                        price: template.defaultPrice,
+                        description: template.description,
+                        icon: iconMap[template.icon?.toLowerCase() || 'store'] || Store,
+                        color: template.color || 'from-blue-400 to-blue-600',
+                        features: extractFeatures(template.features),
+                        isSpecial: true,
+                        basePlanKey: template.basePlanKey,
+                        durationDays: template.defaultDurationDays,
+                    }));
+
+                    if (Object.keys(regularPlans).length > 0) {
+                        setPlans({ ...PLANS, ...regularPlans });
+                    }
+                    setSpecialPlans(special);
+                }
+            } catch (err) {
+                console.error('Failed to fetch plans:', err);
+                // Use default plans on error
+            } finally {
+                setPlansLoading(false);
+            }
+        };
+        fetchPlans();
+    }, []);
+
+    // Helper function to extract features from plan template
+    const extractFeatures = (features: any): string[] => {
+        const featureList: string[] = [];
+        if (features.store?.enabled) {
+            if (features.store.maxProducts) featureList.push(`${features.store.maxProducts} Products`);
+            if (features.store.customDomain) featureList.push('Custom Domain');
+            if (features.store.customTheme) featureList.push('Custom Theme');
+            if (features.store.seo) featureList.push('SEO Tools');
+        }
+        if (features.whatsapp?.enabled) {
+            if (features.whatsapp.maxContacts) featureList.push(`${features.whatsapp.maxContacts} Contacts`);
+            if (features.whatsapp.automation) featureList.push('Auto Replies');
+            if (features.whatsapp.templates) featureList.push('Templates');
+            if (features.whatsapp.broadcasts) featureList.push('Broadcasts');
+        }
+        if (features.ai?.enabled) {
+            if (features.ai.agent) featureList.push('AI Assistant');
+            if (features.ai.contentGeneration) featureList.push('Smart Replies');
+            if (features.ai.languageSupport?.length > 0) featureList.push('Multi-language');
+        }
+        if (features.orders?.enabled) {
+            if (features.orders.maxOrders) featureList.push(`${features.orders.maxOrders} Orders`);
+            if (features.orders.orderTracking) featureList.push('Order Tracking');
+        }
+        if (features.support?.priority) featureList.push('Priority Support');
+        return featureList.length > 0 ? featureList : ['Basic Features'];
+    };
 
     // Check if user has completed onboarding (upgrade scenario)
     useEffect(() => {
@@ -288,7 +377,89 @@ export default function PlanPage() {
                             </motion.div>
                         )
                     })}
-                </div>
+                        </div>
+
+                        {/* Special Plans Section */}
+                        {specialPlans.length > 0 && (
+                            <div className="mt-12">
+                                <motion.h3
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-900"
+                                >
+                                    Special Offers
+                                </motion.h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                    {specialPlans.map((plan, index) => {
+                                        const Icon = plan.icon;
+                                        const isLoading = loading === plan.key;
+                                        return (
+                                            <motion.div
+                                                key={plan.key}
+                                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                                whileHover={{ y: -8, scale: 1.02 }}
+                                                className={`relative p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 cursor-pointer border-2 border-yellow-400 bg-gradient-to-br ${plan.color} text-white`}
+                                            >
+                                                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
+                                                    ⭐ Special Offer
+                                                </span>
+                                                <div className="flex items-center gap-3 mb-4 text-white">
+                                                    <div className={`p-3 rounded-lg bg-gradient-to-br ${plan.color} bg-opacity-20`}>
+                                                        <Icon className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <h3 className="text-2xl font-bold text-white">
+                                                        {plan.name}
+                                                    </h3>
+                                                </div>
+                                                <p className="text-sm mb-4 text-blue-100">
+                                                    {plan.description}
+                                                </p>
+                                                <div className="mb-6">
+                                                    <span className="text-4xl font-extrabold text-yellow-300">
+                                                        ${plan.price}
+                                                    </span>
+                                                    {plan.price > 0 && (
+                                                        <span className="text-lg ml-2 text-blue-100">
+                                                            /{plan.durationDays} days
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <ul className="space-y-3 mb-8">
+                                                    {plan.features.map((f: string, idx: number) => (
+                                                        <li key={idx} className="flex items-center gap-2 text-blue-50">
+                                                            <FaCheck className="flex-shrink-0 text-yellow-300" /> 
+                                                            <span className="text-sm">{f}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <button
+                                                    onClick={() => handlePlanSelect(plan.key)}
+                                                    disabled={isLoading}
+                                                    className="w-full py-3 sm:py-3.5 rounded-lg font-semibold text-base transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 bg-white text-indigo-600 hover:bg-gray-100 shadow-lg"
+                                                >
+                                                    {isLoading ? (
+                                                        <>
+                                                            <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                                            <span>Processing...</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span>
+                                                                {plan.price === 0 ? "Get Started Free" : isUpgrade ? 'Upgrade to' : 'Choose Plan'}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </motion.div>
         </div>
     )

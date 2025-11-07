@@ -328,12 +328,13 @@ export async function POST(req: NextRequest) {
         }
 
         // 🔄 Trigger automation (no session window restrictions)
+        // Use normalized phone number for consistency
         await fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/automation`, {    
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 accountId: account._id,
-                from,
+                from: normalizedPhone, // Send normalized phone number
                 messageText,
             }),
         });

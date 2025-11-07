@@ -147,8 +147,35 @@
     "loadingSignup": "Création du compte...",
 
     "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordDescription": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "backToLogin": "Retour à la connexion",
+    "sending": "Envoi en cours...",
+    "passwordResetEmailSent": "E-mail de réinitialisation de mot de passe envoyé !",
+    "passwordResetError": "Échec de l'envoi de l'e-mail de réinitialisation",
+    "checkYourEmail": "Vérifiez votre e-mail",
+    "passwordResetEmailSentMessage": "Nous avons envoyé un lien de réinitialisation de mot de passe à {email}",
+    "verifyEmail": "Vérifiez votre e-mail",
+    "verifyEmailDescription": "Nous avons envoyé un lien de vérification à votre adresse e-mail. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour vérifier votre compte.",
+    "emailSentTo": "E-mail envoyé à :",
+    "verificationEmailResent": "L'e-mail de vérification a été renvoyé !",
+    "resendEmail": "Renvoyer l'e-mail de vérification",
+    "verificationEmailSent": "E-mail de vérification envoyé !",
+    "verificationEmailError": "Échec de l'envoi de l'e-mail de vérification",
+    "verifyingEmail": "Vérification de l'e-mail...",
+    "verifyingEmailDescription": "Veuillez patienter pendant que nous vérifions votre adresse e-mail.",
+    "emailVerified": "E-mail vérifié !",
+    "emailVerifiedDescription": "Votre e-mail a été vérifié avec succès. Redirection vers la connexion...",
+    "emailVerifiedSuccess": "E-mail vérifié avec succès !",
+    "verificationFailedTitle": "Échec de la vérification",
+    "verificationLinkExpired": "Le lien de vérification est invalide ou a expiré.",
+    "invalidVerificationToken": "Jeton de vérification invalide ou expiré",
+    "verificationTokenRequired": "Le jeton de vérification est requis",
+    "verificationFailed": "Échec de la vérification",
+    "verifyEmailError": "Échec de la vérification de l'e-mail",
+    "emailNotVerified": "Veuillez vérifier votre adresse e-mail avant de vous connecter.",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "noAccountYet": "Vous n’avez pas encore de compte ?",
+    "noAccountYet": "Vous n'avez pas encore de compte ?",
 
     "errorRequired": "Ce champ est obligatoire",
     "errorInvalidEmail": "Veuillez entrer une adresse e-mail valide",
@@ -401,11 +428,31 @@
     },
     "whatsapp": {
         "conversations": {
+            "searchPlaceholder": "Rechercher par nom ou numéro de téléphone...",
+            "filters": "Filtres :",
+            "clearAll": "Tout effacer",
+            "of": "sur",
+            "loading": "Chargement...",
             "status": {
+                "all": "Tous les statuts",
                 "humanNeeded": "Intervention humaine requise",
                 "optedIn": "Abonné",
                 "optedOut": "Désabonné"
             },
+            "filterButtons": {
+                "autoReply": "Réponse auto",
+                "orderConfirm": "Confirmation commande",
+                "adTemplate": "Modèle pub",
+                "agentReply": "Réponse agent",
+                "unread": "Non lus"
+            },
+            "sort": {
+                "newest": "Plus récent",
+                "oldest": "Plus ancien",
+                "mostUnread": "Plus de non lus",
+                "name": "Nom"
+            },
+            "selectConversation": "Sélectionner une conversation",
             "empty": {
                 "title": "Aucune conversation pour le moment",
                 "description": "Démarrez une conversation pour la voir ici",

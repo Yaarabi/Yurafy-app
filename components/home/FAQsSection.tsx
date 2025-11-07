@@ -80,7 +80,7 @@ export default function FAQsSection() {
                     className="text-center mb-12"
                 >
                     <div className="flex items-center justify-center gap-3 mb-6">
-                        <HelpCircle className="w-10 h-10 text-blue-600" />
+                        <HelpCircle className="w-10 h-10" style={{ color: 'var(--brand-blue)' }} />
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900">
                             {t("title")}
                         </h2>
@@ -98,7 +98,7 @@ export default function FAQsSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1 }}
-                            className="bg-white rounded-xl p-6 shadow-lg border-2 border-gray-100 hover:border-blue-400 transition-all duration-300"
+                            className="bg-white rounded-xl p-6 shadow-lg border-2 border-gray-100 hover:border-[var(--brand-blue)] transition-all duration-300"
                         >
                             <button
                                 onClick={() => toggleFAQ(i)}
@@ -108,9 +108,10 @@ export default function FAQsSection() {
                                     {faq.question}
                                 </h3>
                                 <ChevronDown
-                                    className={`w-5 h-5 text-blue-600 flex-shrink-0 transition-transform duration-300 ${
+                                    className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
                                         openIndex === i ? 'rotate-180' : ''
                                     }`}
+                                    style={{ color: 'var(--brand-blue)' }}
                                 />
                             </button>
                             {openIndex === i && (

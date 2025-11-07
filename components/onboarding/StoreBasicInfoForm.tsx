@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Upload, X, Loader2 } from 'lucide-react';
 
@@ -9,7 +10,7 @@ interface StoreBasicInfoFormProps {
         themeId: number;
         theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
     };
-    onSubmit: (data: { brandName: string; domain: string; description: string; logo?: string }) => void;
+    onSubmit: (data: { brandName: string; domain: string; description: string; logo?: string; language?: string }) => void;
     onBack?: () => void;
 }
 
@@ -17,6 +18,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
     const [brandName, setBrandName] = useState('');
     const [domain, setDomain] = useState('');
     const [description, setDescription] = useState('');
+    const [language, setLanguage] = useState<string>('en');
     const [validatingDomain, setValidatingDomain] = useState(false);
     const [domainError, setDomainError] = useState<string | null>(null);
     const [isValidDomain, setIsValidDomain] = useState(false);
@@ -26,6 +28,16 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
     const [uploadingLogo, setUploadingLogo] = useState(false);
     const [logoError, setLogoError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const params = useParams();
+    
+    // Get locale from params to set default language
+    useEffect(() => {
+        const localeRaw = String(params?.locale || 'en');
+        const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+        if (['en', 'fr', 'ar'].includes(locale)) {
+            setLanguage(locale);
+        }
+    }, [params]);
 
     const normalizeDomain = (value: string): string => {
         return value
@@ -203,6 +215,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
             domain: normalizeDomain(domain.trim()),
             description: description.trim(),
             logo: logo || undefined,
+            language: language,
         });
     };
 
@@ -213,7 +226,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                         description.trim().length >= 20;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 flex items-center justify-center pb-24 sm:pb-6">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -332,6 +345,28 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             </p>
                         </div>
 
+                        {/* Language Selection */}
+                        <div>
+                            <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
+                                Store Language <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                id="language"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
+                                style={{ focusRingColor: primaryColor }}
+                                required
+                            >
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="ar">العربية</option>
+                            </select>
+                            <p className="mt-1 text-xs text-gray-500">
+                                Select the language for your store content
+                            </p>
+                        </div>
+
                         {/* Logo Upload */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -395,8 +430,8 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             </div>
                         </div>
 
-                        {/* Actions */}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                        {/* Actions - Hidden on mobile, shown on desktop */}
+                        <div className="hidden sm:flex flex-col sm:flex-row gap-3 pt-4">
                             {onBack && (
                                 <button
                                     type="button"
@@ -418,6 +453,33 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                             >
                                 Generate Store
                             </button>
+                        </div>
+                        
+                        {/* Fixed Submit Button for Mobile */}
+                        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 p-4 safe-area-inset-bottom">
+                            <div className="max-w-2xl mx-auto flex gap-3">
+                                {onBack && (
+                                    <button
+                                        type="button"
+                                        onClick={onBack}
+                                        className="flex-1 px-6 py-3.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all touch-manipulation"
+                                    >
+                                        Back
+                                    </button>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={!isFormValid}
+                                    className={`flex-1 px-6 py-3.5 rounded-lg font-medium text-white text-base transition-all touch-manipulation ${
+                                        isFormValid 
+                                            ? 'hover:opacity-90 hover:shadow-lg active:scale-95' 
+                                            : 'opacity-50 cursor-not-allowed'
+                                    }`}
+                                    style={{ backgroundColor: isFormValid ? primaryColor : '#9CA3AF' }}
+                                >
+                                    Generate Store
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

@@ -3,6 +3,7 @@
 import { IOrder } from '@/models/orders';
 import React, { ReactNode } from 'react';
 import { FaFileDownload } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 interface CSVExportProps {
     orders: IOrder[]; 
@@ -20,7 +21,10 @@ export default function CSVExport({
     className = '',
 }: CSVExportProps) {
     const exportCSV = () => {
-        if (!orders.length) return alert('No orders selected for export');
+        if (!orders.length) {
+            toast.error('No orders selected for export');
+            return;
+        }
 
         // CSV header
         const header = [

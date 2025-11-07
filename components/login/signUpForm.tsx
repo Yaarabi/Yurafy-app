@@ -9,6 +9,7 @@ import { useSignUp } from '@/hooks/auth/login';
 import toast from 'react-hot-toast';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
+import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
 
 export default function SignupForm() {
     const t = useTranslations('Auth');
@@ -83,7 +84,9 @@ export default function SignupForm() {
         formData.append('email', form.email.trim().toLowerCase());
         formData.append('password', form.password.trim());
         if (form.phone && form.phone.trim()) {
-            formData.append('phone', form.phone.trim());
+            // Normalize phone number to E.164 format before sending
+            const normalizedPhone = normalizePhoneNumber(form.phone.trim());
+            formData.append('phone', normalizedPhone);
         }
         formData.append('acceptTerms', form.acceptTerms.toString());
 
@@ -93,7 +96,11 @@ export default function SignupForm() {
             if (typeof result === 'string') {
                 toast.error(result);
             } else {
-                toast.success(t('successSignup') || 'Account created successfully! Redirecting...');
+                toast.success(t('successSignup') || 'Account created successfully! Please check your email to verify your account.');
+                // Redirect to verification info page
+                setTimeout(() => {
+                    window.location.href = `/${params.locale}/verify-email?email=${encodeURIComponent(form.email)}`;
+                }, 1500);
             }
         } catch (err) {
             console.error('Signup error:', err);

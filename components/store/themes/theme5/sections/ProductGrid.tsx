@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
 import GeometricDecorations from "../../shared/GeometricDecorations";
+import { getStoreTranslation } from "../../../utils/translations";
 
 const cardVariants: Variants = {
     hidden: { opacity: 0, scale: 0.9, rotate: -2 },
@@ -22,6 +23,7 @@ const ProductGrid: React.FC = () => {
     if (!selectedStore) return null;
 
     const primaryColor = selectedStore.theme?.primaryColor || '#06b6d4';
+    const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -51,23 +53,8 @@ const ProductGrid: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="mb-16 text-center"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
-                        style={{ 
-                            backgroundColor: `${primaryColor}15`,
-                            borderColor: `${primaryColor}30`,
-                        }}
-                    >
-                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            Products
-                        </span>
-                    </motion.div>
                     <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4" style={{ color: primaryColor }}>
-                        Our Collection
+                        {getStoreTranslation("ourCollection", storeLanguage)}
                     </h3>
                     <div className="flex items-center justify-center gap-2 mb-4">
                         <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>

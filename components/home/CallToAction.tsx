@@ -14,7 +14,7 @@ export default function CallToAction() {
     };
 
     return (
-        <section id="contact" className="relative overflow-hidden py-24 px-6 bg-blue-600 text-white text-center">
+        <section id="contact" className="relative overflow-hidden py-24 px-6 text-white text-center" style={{ backgroundColor: 'var(--brand-blue)' }}>
             {/* Background decorations */}
             <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -70,7 +70,7 @@ export default function CallToAction() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 }}
-                    className="text-xl md:text-2xl mb-8 text-blue-100"
+                    className="text-xl md:text-2xl mb-8 opacity-90"
                 >
                     Join thousands of businesses growing with Yurafy
                 </motion.p>
@@ -81,7 +81,8 @@ export default function CallToAction() {
                     viewport={{ once: true }}
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-10 py-5 bg-white text-blue-600 font-bold rounded-lg shadow-2xl hover:shadow-blue-300/50 transition-all duration-200 text-lg"
+                    className="px-10 py-5 bg-white font-bold rounded-lg shadow-2xl hover:shadow-xl transition-all duration-200 text-lg"
+                    style={{ color: 'var(--brand-blue)' }}
                 >
                     {t("cta")}
                 </motion.button>

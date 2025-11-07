@@ -95,7 +95,8 @@ export default function Header() {
                         </button>
                         <button
                             onClick={handleSignup}
-                            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-medium shadow-md hover:shadow-lg"
+                            className="flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:opacity-90 transition text-sm font-medium shadow-md hover:shadow-lg"
+                            style={{ backgroundColor: 'var(--brand-blue)' }}
                         >
                             <UserPlus className="w-4 h-4" />
                             <span className="hidden lg:inline">{t('signup')}</span>
@@ -140,7 +141,8 @@ export default function Header() {
                                 </button>
                                 <button
                                     onClick={handleSignup}
-                                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition text-sm font-medium w-full justify-center shadow-md"
+                                    className="flex items-center gap-2 text-white px-4 py-2.5 rounded-lg hover:opacity-90 transition text-sm font-medium w-full justify-center shadow-md"
+                                    style={{ backgroundColor: 'var(--brand-blue)' }}
                                 >
                                     <UserPlus className="w-4 h-4" />
                                     {t('signup')}

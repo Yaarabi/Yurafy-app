@@ -16,22 +16,27 @@ interface PlanTemplate {
     description: string;
     defaultPrice: number;
     defaultDurationDays: number;
-    features: any;
+    features?: any; // Optional - only for frontend display, not stored in DB
     icon?: string;
     color?: string;
     isDefault: boolean;
     isActive: boolean;
+    isSpecial?: boolean;
+    basePlanKey?: string;
     displayOrder: number;
 }
 
-const defaultFeatures = {
-    store: { enabled: false, maxProducts: null, customDomain: false, customTheme: false, customCSS: false, customJS: false, seo: false, analytics: false },
-    whatsapp: { enabled: false, automation: false, templates: false, broadcasts: false, maxContacts: null },
-    ai: { enabled: false, agent: false, contentGeneration: false, autoResponses: false, languageSupport: [] },
-    orders: { enabled: false, maxOrders: null, orderTracking: false, notifications: false },
-    analytics: { enabled: false, advancedReports: false, exportData: false },
-    support: { enabled: false, priority: false, email: false, chat: false },
-};
+// Features are NOT stored in database - they are fetched dynamically based on planKey/basePlanKey
+
+// Standard base plans that can be used for special plans
+const BASE_PLANS = [
+    { key: 'free', name: 'Free', defaultPrice: 0, defaultDurationDays: 365 },
+    { key: 'starter', name: 'Starter', defaultPrice: 11, defaultDurationDays: 30 },
+    { key: 'whatsapp automation', name: 'WhatsApp Automation', defaultPrice: 11, defaultDurationDays: 30 },
+    { key: 'ai whatsapp agent', name: 'AI WhatsApp Agent', defaultPrice: 21, defaultDurationDays: 30 },
+    { key: 'pro seller', name: 'Pro Seller', defaultPrice: 25, defaultDurationDays: 30 },
+    { key: 'visionary', name: 'Visionary', defaultPrice: 50, defaultDurationDays: 30 },
+];
 
 export default function AdminPlanManagement() {
     const [plans, setPlans] = useState<PlanTemplate[]>([]);
@@ -42,9 +47,11 @@ export default function AdminPlanManagement() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         planKey: "", name: "", description: "", defaultPrice: 0,
-        defaultDurationDays: 30, features: JSON.parse(JSON.stringify(defaultFeatures)),
+        defaultDurationDays: 30,
         icon: "store", color: "from-blue-400 to-blue-600", isActive: true, displayOrder: 0,
+        isSpecial: false, basePlanKey: "",
     });
+    const [displayFeatures, setDisplayFeatures] = useState<any>(null); // For display only
 
     useEffect(() => {
         fetchPlans();
@@ -68,21 +75,36 @@ export default function AdminPlanManagement() {
         setEditingPlan(null);
         setFormData({
             planKey: "", name: "", description: "", defaultPrice: 0,
-            defaultDurationDays: 30, features: JSON.parse(JSON.stringify(defaultFeatures)),
+            defaultDurationDays: 30,
             icon: "store", color: "from-blue-400 to-blue-600", isActive: true, displayOrder: plans.length,
+            isSpecial: false, basePlanKey: "",
         });
+        setDisplayFeatures(null);
         setShowModal(true);
     };
 
-    const handleEdit = (plan: PlanTemplate) => {
+    const handleEdit = async (plan: PlanTemplate) => {
         setEditingPlan(plan);
         setFormData({
             planKey: plan.planKey, name: plan.name, description: plan.description,
             defaultPrice: plan.defaultPrice, defaultDurationDays: plan.defaultDurationDays,
-            features: JSON.parse(JSON.stringify(plan.features)),
             icon: plan.icon || "store", color: plan.color || "from-blue-400 to-blue-600",
             isActive: plan.isActive, displayOrder: plan.displayOrder,
+            isSpecial: plan.isSpecial || false, basePlanKey: plan.basePlanKey || "",
         });
+        
+        // Fetch features dynamically for display
+        try {
+            const featuresKey = plan.isSpecial && plan.basePlanKey ? plan.basePlanKey : plan.planKey;
+            const res = await fetch(`/api/admin/plan-templates?basePlanKey=${featuresKey}`);
+            if (res.ok) {
+                const data = await res.json();
+                setDisplayFeatures(data.template?.features || null);
+            }
+        } catch (error) {
+            console.error('Error fetching features:', error);
+        }
+        
         setShowModal(true);
     };
 
@@ -106,13 +128,18 @@ export default function AdminPlanManagement() {
         if (!formData.planKey || !formData.name || !formData.description) {
             return toast.error("Fill in all required fields");
         }
+        if (formData.isSpecial && !formData.basePlanKey) {
+            return toast.error("Base plan is required for special plans");
+        }
         try {
             setSaving(true);
             const url = editingPlan ? `/api/admin/plan-templates?id=${editingPlan._id}` : "/api/admin/plan-templates";
             const method = editingPlan ? "PUT" : "POST";
+            // Don't send features - they are fetched dynamically
+            const { features, ...formDataWithoutFeatures } = formData as any;
             const res = await fetch(url, {
                 method, headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formDataWithoutFeatures),
             });
             if (!res.ok) {
                 const error = await res.json();
@@ -126,16 +153,6 @@ export default function AdminPlanManagement() {
         } finally {
             setSaving(false);
         }
-    };
-
-    const updateFeature = (category: string, field: string, value: any) => {
-        setFormData(prev => ({
-            ...prev,
-            features: {
-                ...prev.features,
-                [category]: { ...prev.features[category], [field]: value },
-            },
-        }));
     };
 
     if (loading) {
@@ -336,6 +353,94 @@ export default function AdminPlanManagement() {
                                     </div>
                                 </div>
 
+                                {/* Special Plan Section */}
+                                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label className="flex items-center gap-2 cursor-pointer mb-4">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isSpecial}
+                                            onChange={(e) => {
+                                                const isSpecial = e.target.checked;
+                                                setFormData({ 
+                                                    ...formData, 
+                                                    isSpecial,
+                                                    // If unchecking special, clear basePlanKey
+                                                    basePlanKey: isSpecial ? formData.basePlanKey : "",
+                                                });
+                                                if (!isSpecial) {
+                                                    setDisplayFeatures(null);
+                                                }
+                                            }}
+                                            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            This is a Special Plan (same features as base plan, different pricing/duration)
+                                        </span>
+                                    </label>
+                                    
+                                    {formData.isSpecial && (
+                                        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Base Plan <span className="text-red-500">*</span>
+                                                <span className="text-xs text-gray-500 ml-2">(Select the base plan - features will be automatically copied)</span>
+                                            </label>
+                                            <select
+                                                value={formData.basePlanKey}
+                                                onChange={async (e) => {
+                                                    const basePlanKey = e.target.value;
+                                                    if (!basePlanKey) {
+                                                        setFormData({ ...formData, basePlanKey: "" });
+                                                        setDisplayFeatures(null);
+                                                        return;
+                                                    }
+                                                    
+                                                    // Fetch base plan info from API for display
+                                                    try {
+                                                        const res = await fetch(`/api/admin/plan-templates?basePlanKey=${basePlanKey}`);
+                                                        if (res.ok) {
+                                                            const data = await res.json();
+                                                            const basePlan = data.template;
+                                                            
+                                                            if (basePlan) {
+                                                                // Auto-fill icon, color, and description from base plan
+                                                                setFormData({ 
+                                                                    ...formData, 
+                                                                    basePlanKey: basePlan.planKey || basePlanKey,
+                                                                    icon: basePlan.icon || formData.icon,
+                                                                    color: basePlan.color || formData.color,
+                                                                    description: basePlan.description || formData.description,
+                                                                });
+                                                                setDisplayFeatures(basePlan.features); // For display only
+                                                            }
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error fetching base plan:', error);
+                                                        toast.error('Failed to load base plan');
+                                                    }
+                                                }}
+                                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                            >
+                                                <option value="">Select a base plan...</option>
+                                                {BASE_PLANS.map((plan) => (
+                                                    <option key={plan.key} value={plan.key}>
+                                                        {plan.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {displayFeatures && (
+                                                <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-blue-700">
+                                                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                        ✓ Features will be automatically fetched from base plan
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        You only need to set the price and duration for this special offer. Features are not stored in the database - they are fetched dynamically based on the base plan.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div>
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
@@ -348,65 +453,20 @@ export default function AdminPlanManagement() {
                                     </label>
                                 </div>
 
-                                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                        <Settings className="w-5 h-5" />
-                                        Features Configuration
-                                    </h4>
-
-                                    {["store", "whatsapp", "ai", "orders", "analytics", "support"].map((category) => (
-                                        <div key={category} className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                {category === "store" && <Store className="w-5 h-5 text-blue-600" />}
-                                                {category === "whatsapp" && <MessageCircle className="w-5 h-5 text-green-600" />}
-                                                {category === "ai" && <Bot className="w-5 h-5 text-purple-600" />}
-                                                {category === "orders" && <ShoppingCart className="w-5 h-5 text-orange-600" />}
-                                                {category === "analytics" && <BarChart3 className="w-5 h-5 text-indigo-600" />}
-                                                {category === "support" && <Headphones className="w-5 h-5 text-pink-600" />}
-                                                <h5 className="font-semibold text-gray-900 dark:text-white capitalize">{category} Features</h5>
-                                            </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <label className="flex items-center gap-2 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={formData.features[category].enabled}
-                                                        onChange={(e) => updateFeature(category, "enabled", e.target.checked)}
-                                                        className="w-4 h-4 text-indigo-600 rounded"
-                                                    />
-                                                    <span className="text-sm">Enable {category}</span>
-                                                </label>
-                                                {formData.features[category].enabled && Object.keys(formData.features[category]).filter(k => k !== "enabled" && k !== "languageSupport").map((field) => (
-                                                    <label key={field} className="flex items-center gap-2 cursor-pointer">
-                                                        {field === "maxProducts" || field === "maxContacts" || field === "maxOrders" ? (
-                                                            <div className="w-full">
-                                                                <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                                                                    Max {field.replace("max", "").replace(/([A-Z])/g, " $1").trim()}
-                                                                </label>
-                                                                <input
-                                                                    type="number"
-                                                                    value={formData.features[category][field] || ""}
-                                                                    onChange={(e) => updateFeature(category, field, e.target.value ? parseInt(e.target.value) : null)}
-                                                                    placeholder="Unlimited if empty"
-                                                                    className="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                                                                />
-                                                            </div>
-                                                        ) : (
-                                                            <>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={formData.features[category][field]}
-                                                                    onChange={(e) => updateFeature(category, field, e.target.checked)}
-                                                                    className="w-4 h-4 text-indigo-600 rounded"
-                                                                />
-                                                                <span className="text-sm">{field.replace(/([A-Z])/g, " $1").trim()}</span>
-                                                            </>
-                                                        )}
-                                                    </label>
-                                                ))}
-                                            </div>
+                                {/* Note: Features are NOT stored in database - they are fetched dynamically based on planKey/basePlanKey */}
+                                {formData.isSpecial && displayFeatures && (
+                                    <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                            <Settings className="w-5 h-5" />
+                                            Base Plan Features (Read-only)
+                                        </h4>
+                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                                                This special plan will inherit all features from the selected base plan. Features are fetched dynamically from the plan configuration and cannot be customized.
+                                            </p>
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-3">

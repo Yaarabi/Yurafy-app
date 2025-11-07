@@ -3,6 +3,9 @@ import User from "@/models/users";
 import Plan from "@/models/plan";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { emailService } from "@/lib/services/emailService";
+import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
+import crypto from "crypto";
 
 export async function POST(req: Request) {
     try {
@@ -52,14 +55,22 @@ export async function POST(req: Request) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user (without plan yet)
+        // Generate email verification token
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+
+        // Normalize phone number if provided
+        const normalizedPhone = phone ? normalizePhoneNumber(phone) : undefined;
+
+        // Create new user (without plan yet, inactive until email verified)
         const newUser = new User({
         username,
         email,
         password: hashedPassword,
-        phone: phone || undefined,
+        phone: normalizedPhone,
         role: "user",
         active: false,
+        emailVerified: false,
+        emailVerificationToken: verificationToken,
         });
 
         const savedUser = await newUser.save();
@@ -84,6 +95,14 @@ export async function POST(req: Request) {
         // Link plan to user
         savedUser.currentPlanId = savedPlan._id;
         await savedUser.save();
+
+        // Send email verification email
+        try {
+            await emailService.sendVerificationEmail(email, verificationToken, 'en');
+        } catch (error) {
+            console.error('Error sending verification email:', error);
+            // Don't fail signup if email fails, but log it
+        }
 
         // Send welcome notification
         try {

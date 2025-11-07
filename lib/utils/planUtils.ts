@@ -23,20 +23,31 @@ export async function getPlanTemplate(planKey: string): Promise<{
         }).lean();
 
         if (template) {
+            // For special plans, get features from basePlanKey; otherwise use planKey
+            const featuresKey = template.isSpecial && template.basePlanKey 
+                ? template.basePlanKey 
+                : template.planKey;
+            
+            const features = getPlanFeaturesByKey(featuresKey);
+            if (!features) {
+                console.error(`Features not found for plan key: ${featuresKey}`);
+                return null;
+            }
+
             return {
                 planKey: template.planKey,
                 name: template.name,
                 description: template.description,
                 defaultPrice: template.defaultPrice,
                 defaultDurationDays: template.defaultDurationDays,
-                features: template.features as PlanFeatures,
+                features,
                 icon: template.icon,
                 color: template.color,
             };
         }
 
         // Fallback to default config
-        const defaultFeatures = planFeatures[planKey as keyof typeof planFeatures];
+        const defaultFeatures = getPlanFeaturesByKey(planKey);
         if (defaultFeatures) {
             // Get default plan data from config
             const defaultPlans: Record<string, { name: string; price: number; description: string; icon?: string; color?: string }> = {
@@ -48,7 +59,14 @@ export async function getPlanTemplate(planKey: string): Promise<{
                 'Visionary': { name: 'Visionary', price: 50, description: 'Pro Seller + AI Agent for full power scaling.', icon: 'sparkles', color: 'from-indigo-400 via-purple-500 to-pink-600' },
             };
 
-            const defaultData = defaultPlans[planKey] || { name: planKey, price: 0, description: 'Custom plan' };
+            const normalizedKey = planKey.toLowerCase() === 'free' ? 'free' :
+                planKey.toLowerCase() === 'starter' ? 'Starter' :
+                planKey.toLowerCase() === 'whatsapp automation' || planKey.toLowerCase() === 'whatsapp' ? 'WhatsApp Automation' :
+                planKey.toLowerCase() === 'ai whatsapp agent' || planKey.toLowerCase() === 'aiagent' ? 'AI WhatsApp Agent' :
+                planKey.toLowerCase() === 'pro seller' || planKey.toLowerCase() === 'proseller' ? 'Pro Seller' :
+                planKey.toLowerCase() === 'visionary' ? 'Visionary' : planKey;
+
+            const defaultData = defaultPlans[normalizedKey] || { name: planKey, price: 0, description: 'Custom plan' };
             return {
                 planKey: planKey.toLowerCase(),
                 name: defaultData.name,
@@ -70,23 +88,51 @@ export async function getPlanTemplate(planKey: string): Promise<{
 
 /**
  * Normalize plan key (handle various input formats)
+ * ✅ FIXED: Consistent normalization across all codebase
  */
 export function normalizePlanKey(planKey: string): string {
+    if (!planKey) return 'free';
+    
+    const normalized = planKey.toLowerCase().trim();
+    
     const planKeyMap: Record<string, string> = {
-        'starter': 'Starter',
-        'whatsapp': 'WhatsApp Automation',
-        'whatsapp automation': 'WhatsApp Automation',
-        'aiagent': 'AI WhatsApp Agent',
-        'ai whatsapp agent': 'AI WhatsApp Agent',
-        'ai agent': 'AI WhatsApp Agent',
-        'proseller': 'Pro Seller',
-        'pro seller': 'Pro Seller',
-        'visionary': 'Visionary',
+        'starter': 'starter',
+        'whatsapp': 'whatsapp automation',
+        'whatsapp automation': 'whatsapp automation',
+        'wa automation': 'whatsapp automation',
+        'aiagent': 'ai whatsapp agent',
+        'ai whatsapp agent': 'ai whatsapp agent',
+        'ai agent': 'ai whatsapp agent',
+        'aiwa': 'ai whatsapp agent',
+        'proseller': 'pro seller',
+        'pro seller': 'pro seller',
+        'pro': 'pro seller',
+        'visionary': 'visionary',
         'free': 'free',
     };
 
-    const normalized = planKeyMap[planKey.toLowerCase()] || planKey;
-    return normalized;
+    // Return normalized key in lowercase for consistency
+    // Special plans will be handled separately via basePlanKey
+    return planKeyMap[normalized] || normalized;
+}
+
+/**
+ * Get standardized plan key name (for display/API)
+ */
+export function getStandardPlanKey(planKey: string): string {
+    const normalized = normalizePlanKey(planKey);
+    
+    // Map to standard display names
+    const displayMap: Record<string, string> = {
+        'free': 'free',
+        'starter': 'starter',
+        'whatsapp automation': 'whatsapp automation',
+        'ai whatsapp agent': 'ai whatsapp agent',
+        'pro seller': 'pro seller',
+        'visionary': 'visionary',
+    };
+    
+    return displayMap[normalized] || normalized;
 }
 
 /**

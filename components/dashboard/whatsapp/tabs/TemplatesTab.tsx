@@ -37,7 +37,7 @@ export default function TemplatesTab() {
                 </button>
                 <button
                 onClick={() => setShowAdd(true)}
-                className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded shadow transition"
+                className="bg-[var(--brand-blue)] hover:opacity-90 text-white px-4 py-2 rounded shadow transition"
                 >
                 + Add Template
                 </button>

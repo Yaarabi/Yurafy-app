@@ -50,11 +50,18 @@ export default function LoginForm() {
         const res = await signInUser(formData);
 
         if (typeof res === 'string') {
-            toast.error(
-                res === 'CredentialsSignin'
-                    ? tAuth('errorInvalidCredentials')
-                    : res
-            );
+            if (res === 'EMAIL_NOT_VERIFIED') {
+                toast.error(tAuth('emailNotVerified') || 'Please verify your email address before logging in.');
+                setTimeout(() => {
+                    window.location.href = `/${params.locale}/verify-email?email=${encodeURIComponent(email)}`;
+                }, 2000);
+            } else {
+                toast.error(
+                    res === 'CredentialsSignin'
+                        ? tAuth('errorInvalidCredentials')
+                        : res
+                );
+            }
         } else {
             toast.success(tAuth('successLogin'));
         }
@@ -88,19 +95,29 @@ export default function LoginForm() {
                     error={errors.email}
                 />
 
-                <InputField
-                    label={tAuth('passwordLabel')}
-                    placeholder={tAuth('passwordPlaceholder')}
-                    type="password"
-                    name="password"
-                    required
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                        setErrors({ ...errors, password: '' });
-                    }}
-                    error={errors.password}
-                />
+                <div className="space-y-1">
+                    <InputField
+                        label={tAuth('passwordLabel')}
+                        placeholder={tAuth('passwordPlaceholder')}
+                        type="password"
+                        name="password"
+                        required
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setErrors({ ...errors, password: '' });
+                        }}
+                        error={errors.password}
+                    />
+                    <div className="flex justify-end">
+                        <a
+                            href={`/${params.locale}/forgot-password`}
+                            className="text-sm text-[var(--brand-blue)] hover:opacity-80 transition"
+                        >
+                            {tAuth('forgotPassword') || 'Forgot Password?'}
+                        </a>
+                    </div>
+                </div>
 
                 <Button
                     text={loading ? tAuth('loadingLogin') : tAuth('submitLogin')}

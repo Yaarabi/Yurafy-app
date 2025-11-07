@@ -9,6 +9,7 @@ import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import GeometricDecorations from "../../shared/GeometricDecorations";
+import { getStoreTranslation } from "../../../utils/translations";
 
 const Header: React.FC = () => {
     const { selectedStore, selectProduct } = useStore();
@@ -19,11 +20,13 @@ const Header: React.FC = () => {
 
     if (!selectedStore) return null;
 
-    // Constant header links
+    const storeLanguage = selectedStore.language || 'en';
+    
+    // Header links with translations based on store language
     const headerLinks = [
-        { label: "About", href: "#about" },
-        { label: "Products", href: "#products" },
-        { label: "Contact", href: "#contact" },
+        { label: getStoreTranslation("about", storeLanguage), href: "#about" },
+        { label: getStoreTranslation("products", storeLanguage), href: "#products" },
+        { label: getStoreTranslation("contact", storeLanguage), href: "#contact" },
     ];
     const primaryColor = selectedStore.theme?.primaryColor || '#f43f5e';
     const cartItemsCount = getTotalItems();
