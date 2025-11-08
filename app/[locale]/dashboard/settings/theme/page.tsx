@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { THEMES } from '@/lib/store/themes';
-import type { Theme } from '@/models/store';
+import { THEMES, storeThemes } from '../../../../../lib/store/themes';
+import type { ThemeDef } from '../../../../../lib/store/themes';
 
 // ----------------------
 // Dummy Store (replace later with real store data)
@@ -18,7 +18,7 @@ const dummyStore = {
 };
 
 export default function ThemePreviewPage() {
-  const [theme, setTheme] = useState<Theme>(dummyStore.theme);
+  const [theme, setTheme] = useState<any>(dummyStore.theme);
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -26,7 +26,7 @@ export default function ThemePreviewPage() {
   // Handle Theme Select
   // -------------------
   const handleSelectTheme = (themeId: string) => {
-    const def = THEMES.find(t => t.id === themeId);
+    const def = THEMES.find((t: ThemeDef) => t.id === themeId);
     if (!def) return;
     setTheme({
       primaryColor: def.colorTokens.primaryColor,
@@ -85,8 +85,8 @@ export default function ThemePreviewPage() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {THEMES.map((def) => {
-            const t = def.colorTokens;
+  {THEMES.map((def: ThemeDef) => {
+    const t = def.colorTokens;
             const isSelected = selectedThemeId === def.id;
             const borderColor = t.primaryColor || t.secondaryColor || '#4f46e5';
 
@@ -139,7 +139,7 @@ export default function ThemePreviewPage() {
         {/* Save Button */}
         <button
           onClick={handleSave}
-          disabled={!selectedTheme || saving}
+          disabled={!selectedThemeId || saving}
           className="mt-6 px-6 py-3 rounded-lg font-semibold text-white transition-all duration-150 hover:opacity-90 disabled:opacity-50"
           style={{
             backgroundColor: theme.primaryColor || '#4f46e5',

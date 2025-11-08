@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import Order from "@/models/orders";
+import Order, { IOrder } from "@/models/orders";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
+import mongoose from "mongoose";
 
 // ✅ GET Orders (all or by id, but scoped to logged-in user)
 export async function GET(req: Request) {
@@ -43,6 +44,9 @@ export async function POST(req: Request) {
     }
 
     const userId = session.user.id;
+    if (!userId) {
+        return NextResponse.json({ message: "User ID not found" }, { status: 401 });
+    }
     try {
         const body = await req.json();
 
@@ -59,7 +63,7 @@ export async function POST(req: Request) {
         const mongoose = (await import('mongoose')).default;
         const mongoSession = await mongoose.startSession();
         
-        let order;
+        let order: IOrder | undefined;
         try {
             await mongoSession.withTransaction(async () => {
                 // Check plan limits WITHIN transaction to prevent race conditions
@@ -70,11 +74,12 @@ export async function POST(req: Request) {
                 }
 
                 // Create order within transaction
-                order = new Order({
+                const orderDoc = new Order({
                     ...body,
                     owner: userId, 
                 });
-                await order.save({ session: mongoSession });
+                const savedOrder = await orderDoc.save({ session: mongoSession });
+                order = savedOrder.toObject();
 
                 // Verify limit not exceeded after creation (within same transaction)
                 const { checkPlanLimit } = await import('@/lib/utils/planLimits');
@@ -110,103 +115,105 @@ export async function POST(req: Request) {
             // Don't fail order creation if notification fails
         }
 
-        // ✅ Added: Auto-send order confirmation for Pro/Visionary plans
-        try {
-            // Check if owner has Pro or Visionary plan
-            const Plan = (await import('@/models/plan')).default;
-            const activePlan = await Plan.findOne({
-                userId: userId,
-                status: 'active',
-                planKey: { $in: ['pro', 'visionary'] }
-            });
-
-            if (activePlan) {
-                // Check if WhatsApp account exists and order confirmation is enabled
-                const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
-                const waAccount = await WhatsAppAccount.findOne({
-                    owner: userId,
-                    status: 'connected',
-                    'settings.orderConfirmation': true
+        if (order) {
+            // ✅ Added: Auto-send order confirmation for Pro/Visionary plans
+            try {
+                // Check if owner has Pro or Visionary plan
+                const Plan = (await import('@/models/plan')).default;
+                const activePlan = await Plan.findOne({
+                    userId: userId,
+                    status: 'active',
+                    planKey: { $in: ['pro', 'visionary'] }
                 });
 
-                if (waAccount && waAccount.preferredTemplates?.orderConfirmation) {
-                    // Import template and send confirmation
-                    const Template = (await import('@/models/templates')).default;
-                    const template = await Template.findOne({
+                if (activePlan) {
+                    // Check if WhatsApp account exists and order confirmation is enabled
+                    const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
+                    const waAccount = await WhatsAppAccount.findOne({
                         owner: userId,
-                        name: waAccount.preferredTemplates.orderConfirmation,
-                        status: 'APPROVED'
+                        status: 'connected',
+                        'settings.orderConfirmation': true
                     });
 
-                    if (template) {
-                        // Send confirmation asynchronously (don't block order creation)
-                        const { decryptToken } = await import('@/app/api/whatsapp/webhook/route');
-                        const { sendTemplateMessage } = await import('@/lib/whatsapp/sendTemplate');
-                        const token = decryptToken(waAccount.waTokenEncrypted);
-
-                        // Extract variable values from order
-                        const variableValues: string[] = [];
-                        if (template.variables && template.variables.length > 0) {
-                            for (const varName of template.variables) {
-                                let value = "";
-                                switch (varName.toLowerCase()) {
-                                    case "fullname":
-                                        value = order.shippingAddress.fullName || "";
-                                        break;
-                                    case "email":
-                                        value = order.shippingAddress.email || "";
-                                        break;
-                                    case "phone":
-                                        value = order.shippingAddress.phone || "";
-                                        break;
-                                    case "address":
-                                        value = order.shippingAddress.address || "";
-                                        break;
-                                    case "city":
-                                        value = order.shippingAddress.city || "";
-                                        break;
-                                    case "country":
-                                        value = order.shippingAddress.country || "";
-                                        break;
-                                    case "totalamount":
-                                        value = String(order.totalAmount || "");
-                                        break;
-                                    case "product.name":
-                                        value = order.products[0]?.name || "";
-                                        break;
-                                    case "product.quantity":
-                                        value = String(order.products[0]?.quantity || "");
-                                        break;
-                                    case "product.price":
-                                        value = String(order.products[0]?.price || "");
-                                        break;
-                                    default:
-                                        value = "";
-                                }
-                                variableValues.push(value);
-                            }
-                        }
-
-                        // Normalize phone number before sending
-                        const normalizedPhone = normalizePhoneNumber(order.shippingAddress.phone);
-                        
-                        // Send confirmation message (async, don't wait)
-                        sendTemplateMessage(
-                            waAccount,
-                            normalizedPhone,
-                            template,
-                            variableValues,
-                            token
-                        ).catch((err) => {
-                            console.error(`[Order Confirmation] Failed to send confirmation for order ${order._id}:`, err);
-                            // Don't fail the order creation if confirmation fails
+                    if (waAccount && waAccount.preferredTemplates?.orderConfirmation) {
+                        // Import template and send confirmation
+                        const Template = (await import('@/models/templates')).default;
+                        const template = await Template.findOne({
+                            owner: userId,
+                            name: waAccount.preferredTemplates.orderConfirmation,
+                            status: 'APPROVED'
                         });
+
+                        if (template) {
+                            // Send confirmation asynchronously (don't block order creation)
+                            const { decryptToken } = await import('@/app/api/whatsapp/webhook/route');
+                            const { sendTemplateMessage } = await import('@/lib/whatsapp/sendTemplate');
+                            const token = decryptToken(waAccount.waTokenEncrypted);
+
+                            // Extract variable values from order
+                            const variableValues: string[] = [];
+                            if (template.variables && template.variables.length > 0) {
+                                for (const varName of template.variables) {
+                                    let value = "";
+                                    switch (varName.toLowerCase()) {
+                                        case "fullname":
+                                            value = order.shippingAddress.fullName || "";
+                                            break;
+                                        case "email":
+                                            value = order.shippingAddress.email || "";
+                                            break;
+                                        case "phone":
+                                            value = order.shippingAddress.phone || "";
+                                            break;
+                                        case "address":
+                                            value = order.shippingAddress.address || "";
+                                            break;
+                                        case "city":
+                                            value = order.shippingAddress.city || "";
+                                            break;
+                                        case "country":
+                                            value = order.shippingAddress.country || "";
+                                            break;
+                                        case "totalamount":
+                                            value = String(order.totalAmount || "");
+                                            break;
+                                        case "product.name":
+                                            value = order.products[0]?.name || "";
+                                            break;
+                                        case "product.quantity":
+                                            value = String(order.products[0]?.quantity || "");
+                                            break;
+                                        case "product.price":
+                                            value = String(order.products[0]?.price || "");
+                                            break;
+                                        default:
+                                            value = "";
+                                    }
+                                    variableValues.push(value);
+                                }
+                            }
+
+                            // Normalize phone number before sending
+                            const normalizedPhone = normalizePhoneNumber(order.shippingAddress.phone);
+                            
+                            // Send confirmation message (async, don't wait)
+                            sendTemplateMessage(
+                                waAccount,
+                                normalizedPhone,
+                                template,
+                                variableValues,
+                                token
+                            ).catch((err) => {
+                                console.error(`[Order Confirmation] Failed to send confirmation:`, err);
+                                // Don't fail the order creation if confirmation fails
+                            });
+                        }
                     }
                 }
+            } catch (confirmationError: any) {
+                // Log but don't fail order creation if confirmation fails
+                console.error("[Order Confirmation] Error during auto-confirmation:", confirmationError);
             }
-        } catch (confirmationError: any) {
-            // Log but don't fail order creation if confirmation fails
-            console.error("[Order Confirmation] Error during auto-confirmation:", confirmationError);
         }
 
         return NextResponse.json({ message: "Order created successfully", order }, { status: 201 });

@@ -1,7 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/i18n/navigation';
+import { usePathname } from '@/i18n/navigation';
 import { useParams } from 'next/navigation';
 
 const locales = [
@@ -11,43 +10,35 @@ const locales = [
 ];
 
 export default function LocaleSwitcher() {
-    const locale = useLocale();
-    const router = useRouter();
+
     const pathname = usePathname();
     const params = useParams();
+    const locale = params.locale || 'en';
 
     const switchLocale = (newLocale: string) => {
-        if (newLocale === locale) return; // Already on this locale
-        
-        // Get current pathname (without locale prefix)
+        if (newLocale === locale) return;
+
         const currentPath = pathname || '/';
-        
-        // Set locale cookie immediately
+
+        // Set locale cookie
         if (newLocale !== 'en') {
-            document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+        document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
         } else {
-            // Remove cookie for default locale
-            document.cookie = 'NEXT_LOCALE=; path=/; max-age=0';
+        document.cookie = 'NEXT_LOCALE=; path=/; max-age=0';
         }
-        
-        // Handle subdomain routes (e.g., /[locale]/[domain])
+
+        // Handle domain-prefixed routes
         if (params.domain) {
-            // For store subdomain routes, navigate to new locale with same domain
-            const newPath = `/${newLocale}/${params.domain}${currentPath === '/' ? '' : currentPath}`;
-            window.location.href = newPath;
+        const newPath = `/${newLocale}/${params.domain}${currentPath === '/' ? '' : currentPath}`;
+        window.location.href = newPath;
         } else {
-            // For regular routes, construct the path with locale
-            let newPath: string;
-            if (newLocale === 'en') {
-                // English: no prefix (as-needed locale prefix)
-                newPath = currentPath === '/' ? '/' : currentPath;
-            } else {
-                // Other locales: add prefix
-                newPath = currentPath === '/' ? `/${newLocale}` : `/${newLocale}${currentPath}`;
-            }
-            
-            // Use window.location for full page reload to ensure locale cookie is set
-            window.location.href = newPath;
+        let newPath: string;
+        if (newLocale === 'en') {
+            newPath = currentPath === '/' ? '/' : currentPath;
+        } else {
+            newPath = currentPath === '/' ? `/${newLocale}` : `/${newLocale}${currentPath}`;
+        }
+        window.location.href = newPath;
         }
     };
 

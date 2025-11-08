@@ -283,7 +283,7 @@ export default function PlansSection() {
                                     )}
                                 </div>
                                 <ul className="space-y-3 mb-8">
-                                    {features.map((f, idx) => (
+                                    {features.map((f: string, idx: number) => (
                                         <li key={idx} className={`flex items-center gap-2 ${highlighted ? "text-blue-50" : "text-gray-700"}`}>
                                             <FaCheck className={`flex-shrink-0 ${highlighted ? "text-yellow-300" : "text-green-500"}`} /> 
                                             <span className="text-sm">{f}</span>
@@ -355,7 +355,7 @@ export default function PlansSection() {
                                                     )}
                                                 </div>
                                                 <ul className="space-y-3 mb-8">
-                                                    {features.map((f, idx) => (
+                                                    {features.map((f: string, idx: number) => (
                                                         <li key={idx} className="flex items-center gap-2 text-blue-50">
                                                             <FaCheck className="flex-shrink-0 text-yellow-300" /> 
                                                             <span className="text-sm">{f}</span>

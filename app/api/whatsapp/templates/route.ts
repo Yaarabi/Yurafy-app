@@ -47,8 +47,9 @@ export async function GET(req: NextRequest) {
                         // Also check review_status field
                         const metaStatus = metaTemplate.status || metaTemplate.review_status;
                         if (metaStatus) {
-                            const normalizedStatus = metaStatus.toUpperCase();
-                            if (normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING") {
+                                const normalizedStatus: string = metaStatus.toUpperCase();
+                                const validStatus = normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING";
+                                if (validStatus) {
                                 template.status = normalizedStatus;
                                 
                                 // Update rejection reason if rejected
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
             // Add variables if provided
             if (variables && variables.length > 0) {
                 bodyComponent.example = {
-                    body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                    body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
                 };
             }
             components.push(bodyComponent);
@@ -177,7 +178,7 @@ export async function POST(req: NextRequest) {
                 // Add variables if provided
                 if (variables && variables.length > 0) {
                     bodyComponent.example = {
-                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                        body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
                     };
                 }
                 components.push(bodyComponent);
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
                     text: " ", // Empty body with variables (Meta allows this)
                 };
                 bodyComponent.example = {
-                    body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                    body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
                 };
                 components.push(bodyComponent);
             }
@@ -308,7 +309,7 @@ export async function PUT(req: NextRequest) {
                 // Add variables if provided
                 if (variables && variables.length > 0) {
                     bodyComponent.example = {
-                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                        body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
                     };
                 }
                 components.push(bodyComponent);
@@ -360,7 +361,7 @@ export async function PUT(req: NextRequest) {
                     };
                     if (variables && variables.length > 0) {
                         bodyComponent.example = {
-                            body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
+                            body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
                         };
                     }
                     components.push(bodyComponent);
@@ -369,9 +370,9 @@ export async function PUT(req: NextRequest) {
                         type: "BODY",
                         text: " ",
                     };
-                    bodyComponent.example = {
-                        body_text: [variables.map((v, i) => `{{${i + 1}}}`).join(" ")],
-                    };
+                        bodyComponent.example = {
+                            body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
+                        };
                     components.push(bodyComponent);
                 }
             }

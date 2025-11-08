@@ -18,7 +18,7 @@ const GeometricDecorations: React.FC<GeometricDecorationsProps> = ({ type, color
                     <defs>
                         <pattern id="circuit" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
                             <path d="M0,50 L100,50 M50,0 L50,100 M20,20 L80,80 M80,20 L20,80" 
-                                  stroke={color} strokeWidth="2" fill="none" opacity={strokeOpacity} />
+                                    stroke={color} strokeWidth="2" fill="none" opacity={strokeOpacity} />
                             <circle cx="50" cy="50" r="3" fill={color} opacity={opacity * 2} />
                         </pattern>
                     </defs>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import User from "@/models/users";
+import User, { IUser } from "@/models/users";
 import Plan from "@/models/plan";
 import Product from "@/models/products";
 import Order from "@/models/orders";
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
         await connectDB();
 
-        const user = await User.findById(session.user.id).lean();
+        const user = await User.findById(session.user.id).lean<IUser>();
         if (!user) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }

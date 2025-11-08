@@ -127,7 +127,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProdu
                     className="w-full px-4 py-2 pl-10 pr-10 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all duration-200"
                     style={{
                         borderColor: searchQuery ? primaryColor : undefined,
-                        focusRingColor: primaryColor,
+                        outlineColor: primaryColor,
                     }}
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

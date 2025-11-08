@@ -312,7 +312,7 @@ const Cart: React.FC = () => {
                                         value={checkoutForm.fullName}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, fullName: e.target.value })}
                                         className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
-                                        style={{ focusRingColor: primaryColor }}
+                                        style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your full name"
                                     />
                                 </div>
@@ -341,7 +341,7 @@ const Cart: React.FC = () => {
                                         value={checkoutForm.address}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
                                         className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
-                                        style={{ focusRingColor: primaryColor }}
+                                        style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your delivery address"
                                     />
                                 </div>
@@ -355,7 +355,7 @@ const Cart: React.FC = () => {
                                         value={checkoutForm.city}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, city: e.target.value })}
                                         className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
-                                        style={{ focusRingColor: primaryColor }}
+                                        style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your city (optional)"
                                     />
                                 </div>
@@ -386,7 +386,7 @@ const Cart: React.FC = () => {
                                                                         [itemKey]: { ...variant, color: e.target.value || undefined }
                                                                     })}
                                                                     className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
-                                                                    style={{ focusRingColor: primaryColor }}
+                                                                    style={{ outlineColor: primaryColor }}
                                                                 >
                                                                     <option value="">Select a color</option>
                                                                     {item.product.colors.map((color: string) => (
@@ -409,7 +409,7 @@ const Cart: React.FC = () => {
                                                                         [itemKey]: { ...variant, size: e.target.value || undefined }
                                                                     })}
                                                                     className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
-                                                                    style={{ focusRingColor: primaryColor }}
+                                                                    style={{ outlineColor: primaryColor }}
                                                                 >
                                                                     <option value="">Select a size</option>
                                                                     {item.product.sizes.map((size: string) => (

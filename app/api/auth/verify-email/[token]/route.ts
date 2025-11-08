@@ -7,13 +7,11 @@ import { logger } from "@/lib/utils/logging";
  * GET /api/auth/verify-email/[token]
  * Verify email with token
  */
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { token: string } }
-) {
+export async function GET(req: NextRequest, context: { params: any }) {
     await connectDB();
 
     try {
+        const params = await context.params;
         const token = params?.token;
 
         if (!token) {

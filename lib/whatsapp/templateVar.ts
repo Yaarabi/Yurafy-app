@@ -1,6 +1,6 @@
 import { IOrder } from "@/models/orders";
 
-const VARIABLES = [
+export const VARIABLES = [
     { label: "Name", value: "{{1}}" },
     { label: "Email", value: "{{2}}" },
     { label: "Phone", value: "{{3}}" },

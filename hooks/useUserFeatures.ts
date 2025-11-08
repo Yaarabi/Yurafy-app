@@ -26,6 +26,7 @@ export interface UserFeaturesData {
             endDate: Date;
             status: string;
         } | null;
+        isExpired: boolean;
         limits: {
             maxProducts?: number;
             maxOrders?: number;
@@ -58,6 +59,9 @@ export interface UserFeaturesData {
         isStorePlan: boolean;
         isWhatsAppPlan: boolean;
         hasOrders: boolean;
+        ai?: {
+            enabled: boolean;
+        };
     };
 }
 

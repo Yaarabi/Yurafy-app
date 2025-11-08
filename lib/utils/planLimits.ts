@@ -23,19 +23,19 @@ import mongoose from "mongoose";
 async function getUserActivePlan(userId: string, session?: mongoose.ClientSession): Promise<{ plan: any; planKey: string; features: any } | null> {
     await connectDB();
     
-    const user = await User.findById(userId).session(session || undefined);
+    const user = await User.findById(userId).session(session || null);
     if (!user) return null;
 
     // Check currentPlanId first
-    let plan = user.currentPlanId ? await Plan.findById(user.currentPlanId).session(session || undefined) : null;
-    
+    let plan = user.currentPlanId ? await Plan.findById(user.currentPlanId).session(session || null) : null;
+
     // ✅ FIXED: Real-time expiration check
     const now = new Date();
     if (plan && (plan.status === 'expired' || plan.endDate < now)) {
         // Plan is expired - update status and check for other active plans
         if (plan.status !== 'expired') {
             plan.status = 'expired';
-            await plan.save({ session: session || undefined });
+            await plan.save({ session: session || null });
         }
         plan = null;
     }
@@ -48,7 +48,7 @@ async function getUserActivePlan(userId: string, session?: mongoose.ClientSessio
             endDate: { $gte: now }
         })
         .sort({ createdAt: -1 })
-        .session(session || undefined);
+        .session(session || null);
     }
 
     if (!plan) {
@@ -90,7 +90,7 @@ async function countWhatsAppContacts(userId: string, session?: mongoose.ClientSe
     const conversations = await WhatsAppConversation.find({ owner: userId })
         .select('customer.phone')
         .lean()
-        .session(session || undefined);
+        .session(session || null);
     
     // Count unique phone numbers
     const uniqueContacts = new Set<string>();
@@ -125,11 +125,11 @@ export async function checkPlanLimit(
 
     switch (limitType) {
         case 'products':
-            currentUsage = await Product.countDocuments({ owner: userId }).session(session || undefined);
+            currentUsage = await Product.countDocuments({ owner: userId }).session(session || null);
             limit = features.store?.maxProducts || null;
             break;
         case 'orders':
-            currentUsage = await Order.countDocuments({ owner: userId }).session(session || undefined);
+            currentUsage = await Order.countDocuments({ owner: userId }).session(session || null);
             limit = features.orders?.maxOrders || null;
             break;
         case 'contacts':
@@ -179,7 +179,7 @@ export async function canPerformAction(
             if (!features.store?.enabled) {
                 return { allowed: false, reason: 'Store feature is not enabled in your plan', planKey };
             }
-            if (features.store.maxProducts !== undefined) {
+            if (features.store.maxProducts !== null) {
                 const limitCheck = await checkPlanLimit(userId, 'products', session);
                 if (limitCheck.hasReachedLimit) {
                     return { 
@@ -195,7 +195,7 @@ export async function canPerformAction(
             if (!features.orders?.enabled) {
                 return { allowed: false, reason: 'Orders feature is not enabled in your plan', planKey };
             }
-            if (features.orders.maxOrders !== undefined) {
+            if (features.orders.maxOrders !== null) {
                 const limitCheck = await checkPlanLimit(userId, 'orders', session);
                 if (limitCheck.hasReachedLimit) {
                     return { 
@@ -211,7 +211,7 @@ export async function canPerformAction(
             if (!features.whatsapp?.enabled) {
                 return { allowed: false, reason: 'WhatsApp feature is not enabled in your plan', planKey };
             }
-            if (features.whatsapp.maxContacts !== undefined) {
+            if (features.whatsapp.maxContacts !== null) {
                 // ✅ FIXED: Implement actual contact count check
                 const limitCheck = await checkPlanLimit(userId, 'contacts', session);
                 if (limitCheck.hasReachedLimit) {
@@ -256,7 +256,7 @@ export async function deactivateFeaturesOnLimitReached(userId: string): Promise<
     }
 
     // Check products limit
-    if (features.store?.maxProducts !== undefined) {
+    if (features.store?.maxProducts !== null) {
         const limitCheck = await checkPlanLimit(userId, 'products');
         if (limitCheck.hasReachedLimit && limitCheck.limit !== null) {
             // Deactivate all products beyond the limit
@@ -275,7 +275,7 @@ export async function deactivateFeaturesOnLimitReached(userId: string): Promise<
     }
 
     // Check orders limit
-    if (features.orders?.maxOrders !== undefined) {
+    if (features.orders?.maxOrders !== null) {
         const limitCheck = await checkPlanLimit(userId, 'orders');
         if (limitCheck.hasReachedLimit && limitCheck.limit !== null) {
             // Send notification (orders can't be deactivated, with deduplication)
@@ -284,7 +284,7 @@ export async function deactivateFeaturesOnLimitReached(userId: string): Promise<
     }
 
     // Check WhatsApp contacts limit
-    if (features.whatsapp?.maxContacts !== undefined) {
+    if (features.whatsapp?.maxContacts !== null) {
         const limitCheck = await checkPlanLimit(userId, 'contacts');
         if (limitCheck.hasReachedLimit && limitCheck.limit !== null) {
             // Send notification (with deduplication)

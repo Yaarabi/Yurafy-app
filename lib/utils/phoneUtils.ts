@@ -6,6 +6,8 @@
  * to be used in client-side components
  */
 
+import { normalizePhoneNumber } from './phoneUtils';
+
 // Re-export the normalize function from the backend
 export { normalizePhoneNumber } from '@/lib/whatsapp/phoneNormalize';
 

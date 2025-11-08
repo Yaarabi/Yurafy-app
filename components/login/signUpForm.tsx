@@ -166,10 +166,6 @@ export default function SignupForm() {
                                 borderRadius: '0.5rem',
                                 outline: 'none',
                             }}
-                            buttonStyle={{
-                                border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
-                                borderRadius: '0.5rem 0 0 0.5rem',
-                            }}
                         />
                     </div>
                     {errors.phone && (

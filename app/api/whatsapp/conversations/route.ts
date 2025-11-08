@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import WhatsAppConversation, { IWhatsAppMessage, IWhatsAppConversation } from "@/models/whatsappMessage";
 import { decryptMessage } from "@/lib/whatsapp/messageEncryption";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
+import mongoose, { Document, Model } from "mongoose";
+
+type ConversationType = Document<unknown, {}, IWhatsAppConversation> & 
+    Omit<IWhatsAppConversation, '_id'> & 
+    { _id: mongoose.Types.ObjectId; toObject(): IWhatsAppConversation };
 
 // ✅ Get all conversations for the logged-in owner
 export async function GET(req: NextRequest) {
@@ -58,9 +63,13 @@ export async function POST(req: NextRequest) {
         const mongoose = (await import('mongoose')).default;
         const mongoSession = await mongoose.startSession();
         
-        let conversation;
+        let conversation: ConversationType | null = null;
         try {
             await mongoSession.withTransaction(async () => {
+                if (!session.user.id) {
+                    throw new Error("Unauthorized");
+                }
+
                 // Check if conversation already exists (creating new contact)
                 const existingConversation = await WhatsAppConversation.findOne({
                     owner: session.user.id,
@@ -80,16 +89,20 @@ export async function POST(req: NextRequest) {
                 const { encryptMessage } = await import("@/lib/whatsapp/messageEncryption");
                 const encryptedText = message.text ? encryptMessage(message.text) : "";
                 
-                const newMessage = {
+                const newMessage: IWhatsAppMessage = {
                     ...message,
                     text: encryptedText, // Store encrypted
                     direction: "outgoing",
                     timestamp: Date.now(),
+                    status: "sent",
+                    from: session.user.id,
+                    to: normalizedPhone,
+                    type: "text"
                 };
 
                 // Push new message and keep only latest 12 messages
                 // Use normalized phone number to ensure all messages go to the same conversation
-                conversation = await WhatsAppConversation.findOneAndUpdate(
+                const updatedConversation = await WhatsAppConversation.findOneAndUpdate(
                     { owner: session.user.id, "customer.phone": normalizedPhone },
                     {
                         $push: { messages: { $each: [newMessage], $slice: -12 } },
@@ -101,6 +114,12 @@ export async function POST(req: NextRequest) {
                     },
                     { upsert: true, new: true, session: mongoSession }
                 );
+                
+                if (!updatedConversation) {
+                    throw new Error("Failed to update conversation");
+                }
+                
+                conversation = updatedConversation;
             });
         } catch (error: any) {
             await mongoSession.endSession();
@@ -119,13 +138,20 @@ export async function POST(req: NextRequest) {
         }
 
         // Decrypt before returning
+        if (!conversation) {
+            throw new Error("Conversation not found");
+        }
+
+        // Explicitly type-cast conversation to include toObject method
+        const conversationDoc = conversation as ConversationType & { toObject: () => IWhatsAppConversation };
+        const convObj = conversationDoc.toObject();
         const decryptedConversation = {
-            ...conversation.toObject(),
-            messages: conversation.messages.map((msg: any) => ({
-                ...msg.toObject(),
+            ...convObj,
+            messages: convObj.messages.map((msg: IWhatsAppMessage) => ({
+                ...msg,
                 text: msg.text ? decryptMessage(msg.text) : msg.text,
             })),
-            lastMessage: conversation.lastMessage ? decryptMessage(conversation.lastMessage) : conversation.lastMessage,
+            lastMessage: convObj.lastMessage ? decryptMessage(convObj.lastMessage) : convObj.lastMessage,
         };
 
         return NextResponse.json({ success: true, conversation: decryptedConversation });

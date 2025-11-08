@@ -6,7 +6,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { connectDB } from "@/lib/db/mongoDB";
 import AIAgent, { IAIAgent } from "@/models/ai-agent";
-import Template from "@/models/templates";
+import Template, { ITemplate } from "@/models/templates";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "@/app/api/whatsapp/webhook/route";
@@ -111,7 +111,7 @@ export const sendTemplateTool = tool(
                 owner: new mongoose.Types.ObjectId(agentOwnerId),
                 name: templateName,
                 status: "APPROVED"
-            }).lean();
+            }).lean<ITemplate>();
 
             if (!template) {
                 return `Error: Template "${templateName}" not found or not approved.`;

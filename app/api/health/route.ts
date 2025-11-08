@@ -22,7 +22,8 @@ export async function GET() {
 
     try {
         // Check database connection
-        if (mongoose.connection.readyState === 1) {
+        const isConnected = mongoose.connection.readyState === 1;
+        if (isConnected && mongoose.connection.db) {
             health.services.database = "connected";
             
             // Test database query
@@ -38,7 +39,8 @@ export async function GET() {
             // Try to connect if not connected
             try {
                 await connectDB();
-                if (mongoose.connection.readyState === 1) {
+                const isNowConnected = mongoose.connection.readyState === 1;
+                if (isNowConnected && mongoose.connection.db) {
                     health.services.database = "connected";
                 } else {
                     health.services.database = "disconnected";

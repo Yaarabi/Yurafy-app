@@ -31,6 +31,9 @@ export async function generateStoreContent(
         title: string;
         description: string;
     };
+    footer: {
+        text: string;
+    };
 }> {
     try {
         // Map language codes to language names for the prompt
@@ -205,6 +208,9 @@ Do not include any other text, just the JSON object.`;
             about: {
                 title: `About ${brandName}`,
                 description: description || "We are dedicated to providing the best products and services to our customers.",
+            },
+            footer: {
+                text: `© ${new Date().getFullYear()} ${brandName}. All rights reserved.`,
             },
         };
     }

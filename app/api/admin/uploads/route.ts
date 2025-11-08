@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import User from '@/models/users';
+import User, { IUser } from '@/models/users';
 import path from 'path';
 import { stat, readdir, unlink, access } from 'fs/promises';
 
@@ -73,9 +73,9 @@ export async function GET(req: NextRequest) {
             const userDirPath = path.join(uploadsDir, userId);
 
             // Get user info from database
-            let user;
+            let user: Pick<IUser, 'username' | 'email'> | null;
             try {
-                user = await User.findById(userId).select('username email').lean();
+                user = await User.findById(userId).select('username email').lean() as Pick<IUser, 'username' | 'email'> | null;
             } catch (err) {
                 console.error(`Error fetching user ${userId}:`, err);
                 continue;

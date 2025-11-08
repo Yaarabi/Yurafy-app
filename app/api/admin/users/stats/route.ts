@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import User from '@/models/users';
+import User, { IUser } from '@/models/users';
 import WhatsAppAccount from '@/models/whatsappAccount';
 import WhatsAppConversation from '@/models/whatsappMessage';
 import mongoose from 'mongoose';
@@ -78,7 +78,7 @@ async function getUserStats(userId: string) {
     }, 0);
 
     // Get tokens consumed from user model (default to 0)
-    const user = await User.findById(userId).select('tokensConsumed').lean();
+    const user = await User.findById(userId).select('tokensConsumed').lean() as unknown as Pick<IUser, 'tokensConsumed'> | null;
     const tokensConsumed = user?.tokensConsumed || 0;
 
     return {

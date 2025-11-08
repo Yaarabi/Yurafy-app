@@ -4,11 +4,11 @@ import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import mongoose from "mongoose";
 import User from "@/models/users";
-import Plan from "@/models/plan";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import AIAgent from "@/models/ai-agent";
 import Store from "@/models/store";
 import crypto from "crypto";
+import Plan, { IPlan } from "@/models/plan";
 import { getPlanTemplate, normalizePlanKey, validatePlanFeatures } from "@/lib/utils/planUtils";
 
 // Encrypt WhatsApp token helper
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
             // ✅ IDEMPOTENCY CHECK: Check if this order was already processed
             const existingPlan = await Plan.findOne({ paymentOrderId: orderId })
                 .session(mongoSession)
-                .lean();
+                .lean() as IPlan | null;
             
             if (existingPlan) {
                 // Already processed - return success without re-processing

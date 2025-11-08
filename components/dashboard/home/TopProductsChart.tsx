@@ -2,12 +2,17 @@
 
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { IProduct } from "@/models/products";
 import { ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+interface DashboardProduct {
+    name: string;
+    price: number;
+    salesCount: number;
+}
+
 interface Props {
-    products: IProduct[];
+    products: DashboardProduct[];
 }
 
 export default function TopProductsChart({ products }: Props) {

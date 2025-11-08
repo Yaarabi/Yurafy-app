@@ -91,7 +91,7 @@ export default function RevenueChart({ orders }: Props) {
                             data: values,
                             label: t('label'),
                             color: brandBlue,
-                            curve: "monotone",
+                            curve: "monotoneX",
                             area: true,
                         }]}
                         width={isMobile ? Math.max(300, labels.length * 40) : undefined}

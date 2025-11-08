@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import PlanTemplate from "@/models/planTemplate";
+import PlanTemplate, { IPlanTemplate } from "@/models/planTemplate";
 import { planFeatures } from "@/lib/config/planFeatures";
 
 /**
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         // If basePlanKey is provided, return that specific plan's features
         if (basePlanKey) {
             // First try database
-            let template = await PlanTemplate.findOne({ planKey: basePlanKey.toLowerCase() }).lean();
+            let template = await PlanTemplate.findOne({ planKey: basePlanKey.toLowerCase() }).lean() as unknown as IPlanTemplate | null;
             
             // If not in database, try planFeatures config
             if (!template) {
@@ -95,11 +95,11 @@ export async function GET(req: NextRequest) {
         const query = activeOnly ? { isActive: true } : {};
         const templates = await PlanTemplate.find(query)
             .sort({ displayOrder: 1, createdAt: 1 })
-            .lean();
+            .lean() as unknown as IPlanTemplate[];
 
         // Add features dynamically to each template for frontend display
         const { planFeatures: planFeaturesConfig } = await import('@/lib/config/planFeatures');
-        const templatesWithFeatures = templates.map((template: any) => {
+        const templatesWithFeatures = templates.map((template) => {
             // For special plans, get features from basePlanKey; otherwise use planKey
             const featuresKey = template.isSpecial && template.basePlanKey 
                 ? template.basePlanKey 

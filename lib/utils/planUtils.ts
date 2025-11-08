@@ -1,10 +1,18 @@
-import PlanTemplate from "@/models/planTemplate";
+import PlanTemplate, { IPlanTemplate } from "@/models/planTemplate";
 import { planFeatures } from "@/lib/config/planFeatures";
-import type { PlanFeatures } from "@/lib/config/planFeatures";
+import type { PlanFeatures, PlanKey } from "@/lib/config/planFeatures";
+
+
 
 /**
- * Get plan template from database or fallback to default config
+ * Get plan features safely
  */
+export function getPlanFeaturesByKey(planKey: string): PlanFeatures | null {
+    const normalizedKey: PlanKey = normalizePlanKey(planKey); // TS now knows this is a valid PlanKey
+    return planFeatures[normalizedKey] || null;
+}
+
+
 export async function getPlanTemplate(planKey: string): Promise<{
     planKey: string;
     name: string;
@@ -20,14 +28,14 @@ export async function getPlanTemplate(planKey: string): Promise<{
         const template = await PlanTemplate.findOne({ 
             planKey: planKey.toLowerCase(),
             isActive: true 
-        }).lean();
+        }).lean<IPlanTemplate>();
 
         if (template) {
             // For special plans, get features from basePlanKey; otherwise use planKey
             const featuresKey = template.isSpecial && template.basePlanKey 
                 ? template.basePlanKey 
                 : template.planKey;
-            
+
             const features = getPlanFeaturesByKey(featuresKey);
             if (!features) {
                 console.error(`Features not found for plan key: ${featuresKey}`);
@@ -90,30 +98,26 @@ export async function getPlanTemplate(planKey: string): Promise<{
  * Normalize plan key (handle various input formats)
  * ✅ FIXED: Consistent normalization across all codebase
  */
-export function normalizePlanKey(planKey: string): string {
-    if (!planKey) return 'free';
-    
-    const normalized = planKey.toLowerCase().trim();
-    
-    const planKeyMap: Record<string, string> = {
-        'starter': 'starter',
-        'whatsapp': 'whatsapp automation',
-        'whatsapp automation': 'whatsapp automation',
-        'wa automation': 'whatsapp automation',
-        'aiagent': 'ai whatsapp agent',
-        'ai whatsapp agent': 'ai whatsapp agent',
-        'ai agent': 'ai whatsapp agent',
-        'aiwa': 'ai whatsapp agent',
-        'proseller': 'pro seller',
-        'pro seller': 'pro seller',
-        'pro': 'pro seller',
-        'visionary': 'visionary',
+export function normalizePlanKey(planKey: string): PlanKey {
+    const key = planKey.toLowerCase().trim();
+
+    const map: Record<string, PlanKey> = {
         'free': 'free',
+        'starter': 'Starter',
+        'whatsapp': 'WhatsApp Automation',
+        'whatsapp automation': 'WhatsApp Automation',
+        'wa automation': 'WhatsApp Automation',
+        'aiagent': 'AI WhatsApp Agent',
+        'ai whatsapp agent': 'AI WhatsApp Agent',
+        'ai agent': 'AI WhatsApp Agent',
+        'aiwa': 'AI WhatsApp Agent',
+        'proseller': 'Pro Seller',
+        'pro seller': 'Pro Seller',
+        'pro': 'Pro Seller',
+        'visionary': 'Visionary',
     };
 
-    // Return normalized key in lowercase for consistency
-    // Special plans will be handled separately via basePlanKey
-    return planKeyMap[normalized] || normalized;
+    return map[key] ?? 'free'; // fallback to 'free' if unknown
 }
 
 /**

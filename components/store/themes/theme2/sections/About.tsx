@@ -13,7 +13,7 @@ const About: React.FC = () => {
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,
-        description: whoWeAre?.description || about?.description || '',
+        description: whoWeAre?.description || '',
     };
 
     if (!aboutData.description && !aboutData.title) return null;

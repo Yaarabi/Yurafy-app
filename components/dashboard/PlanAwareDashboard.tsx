@@ -10,6 +10,9 @@ import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
 import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
 import CustomersChart from "@/components/dashboard/home/customers";
 import Link from "next/link";
+import { IOrder } from "@/models/orders";
+import { IProduct } from "@/models/products";
+import type { UserFeaturesData } from "@/hooks/useUserFeatures";
 
 interface UserPlan {
     planKey: string;
@@ -27,9 +30,15 @@ interface UserPlan {
     };
 }
 
+interface DashboardProduct {
+    name: string;
+    price: number;
+    salesCount: number;
+}
+
 interface PlanAwareDashboardProps {
     orders: IOrder[];
-    products: IProduct[];
+    products: DashboardProduct[];
     templatesCount?: number;
     featuresData?: UserFeaturesData;
 }
@@ -240,7 +249,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Products Chart - Only for store plans */}
                 {isStorePlan ? (
-                    <TopProductsChart products={products} />
+                    <TopProductsChart products={products as DashboardProduct[]} />
                 ) : (
                     <PlanLockedCard
                         title="Top Products"

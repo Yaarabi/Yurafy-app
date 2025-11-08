@@ -22,26 +22,30 @@ function normalizeStoreDataForPreview(data: StorePreviewData | null): Serialized
         domain: data.domain || '',
         description: data.description || '',
         themeId: typeof data.themeId === 'number' ? data.themeId : parseInt(String(data.themeId || '1'), 10),
-        theme: data.theme || { primaryColor: '#3B82F6' },
-        themeStructure: data.themeStructure || {
-            header: true,
-            hero: true,
-            about: true,
-            trust: true,
-            productGrid: true,
-            footer: true,
+        theme: {
+            primaryColor: data.theme?.primaryColor || '#3B82F6',
+            secondaryColor: data.theme?.secondaryColor,
+            textColor: data.theme?.textColor,
         },
-        hero: data.hero || {
-            title: '',
-            subtitle: '',
-            imageUrl: '',
+        themeStructure: {
+            header: data.themeStructure?.header ?? true,
+            hero: data.themeStructure?.hero ?? true,
+            about: data.themeStructure?.about ?? true,
+            trust: data.themeStructure?.trust ?? true,
+            productGrid: data.themeStructure?.productGrid ?? true,
+            footer: data.themeStructure?.footer ?? true,
         },
-        about: data.about || {
-            title: '',
-            description: '',
+        hero: {
+            title: data.hero?.title ?? '',
+            subtitle: data.hero?.subtitle ?? '',
+            imageUrl: data.hero?.imageUrl ?? '',
         },
-        footer: data.footer || {
-            text: '',
+        about: {
+            title: data.about?.title ?? '',
+            description: data.about?.description ?? '',
+        },
+        footer: {
+            text: data.footer?.text ?? '',
         },
         socialLinks: data.socialLinks,
         headerLinks: data.headerLinks || [],

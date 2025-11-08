@@ -458,8 +458,6 @@ export default function PlanPage() {
                                 </div>
                             </div>
                         )}
-                    </>
-                )}
             </motion.div>
         </div>
     )

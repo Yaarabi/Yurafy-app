@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useStore } from "../../hooks/useStore";
+import { useStore } from "../hooks/useStore";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "./SearchBar";
 import { motion } from "framer-motion";

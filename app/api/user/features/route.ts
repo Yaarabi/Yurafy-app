@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import User from "@/models/users";
-import Store from "@/models/store";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import AIAgent from "@/models/ai-agent";
+import User, { IUser } from "@/models/users";
+import Store, { IStore } from "@/models/store";
+import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";
+import AIAgent, { IAIAgent } from "@/models/ai-agent";
 import Product from "@/models/products";
 import Order from "@/models/orders";
-import Plan from "@/models/plan";
+import Plan, { IPlan } from "@/models/plan";
 import Template from "@/models/templates";
 
 /**
@@ -39,16 +39,16 @@ export async function GET(req: NextRequest) {
             whatsappAccount,
             aiAgent,
         ] = await Promise.all([
-            User.findById(userId).select("-password").lean(),
-            Store.findOne({ owner: userId }).lean(),
-            WhatsAppAccount.findOne({ owner: userId }).lean(),
-            AIAgent.findOne({ owner: userId }).lean(),
+            User.findById(userId).select("-password").lean<IUser>(),
+            Store.findOne({ owner: userId }).lean<IStore>(),
+            WhatsAppAccount.findOne({ owner: userId }).lean<IWhatsAppAccount>(),
+            AIAgent.findOne({ owner: userId }).lean<IAIAgent>(),
         ]);
 
         // Get current active plan (check user.currentPlanId first, then find active plans)
-        let currentPlan: any = null;
+        let currentPlan: IPlan | null = null;
         if (user && user.currentPlanId) {
-            currentPlan = await Plan.findById(user.currentPlanId).lean();
+            currentPlan = await Plan.findById(user.currentPlanId).lean<IPlan>();
             // If plan exists but is not active or expired, check for other active plans
             if (currentPlan && (currentPlan.status !== 'active' || new Date(currentPlan.endDate) < new Date())) {
                 // Look for the most recent active plan
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
                     userId: userId,
                     status: 'active',
                     endDate: { $gte: new Date() }
-                }).sort({ createdAt: -1 }).lean();
+                }).sort({ createdAt: -1 }).lean() as IPlan | null;
                 if (activePlan) {
                     currentPlan = activePlan;
                 }
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
                 userId: userId,
                 status: 'active',
                 endDate: { $gte: new Date() }
-            }).sort({ createdAt: -1 }).lean();
+            }).sort({ createdAt: -1 }).lean() as IPlan | null;
         }
 
         if (!user) {
@@ -130,7 +130,13 @@ export async function GET(req: NextRequest) {
         const hasOrders = planKey.toLowerCase() !== 'free';
 
         // Get plan limits from plan features config
-        let planLimits = {
+        type PlanLimits = {
+            maxProducts: number | undefined;
+            maxOrders: number | undefined;
+            maxContacts: number | undefined;
+        };
+        
+        let planLimits: PlanLimits = {
             maxProducts: undefined,
             maxOrders: undefined,
             maxContacts: undefined,

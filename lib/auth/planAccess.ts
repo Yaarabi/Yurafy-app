@@ -75,7 +75,7 @@ export async function getUserPlanStatus(userId: string): Promise<PlanStatus | nu
 export async function checkFeatureAccess(
     userId: string,
     featurePath: string
-): Promise<{ hasAccess: boolean; reason?: string; limit?: number }> {
+): Promise<{ hasAccess: boolean; reason?: string; limit?: number | null }> {
     const planStatus = await getUserPlanStatus(userId);
     
     if (!planStatus) {

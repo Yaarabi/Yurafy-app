@@ -264,7 +264,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 onChange={(e) => handleBrandNameChange(e.target.value)}
                                 placeholder="e.g., My Awesome Store"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                                style={{ focusRingColor: primaryColor }}
+                                style={{ outlineColor: primaryColor }}
                                 required
                             />
                         </div>
@@ -287,7 +287,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition-all text-base ${
                                                 domainError ? 'border-red-500' : isValidDomain ? 'border-green-500' : 'border-gray-300'
                                             }`}
-                                            style={{ focusRingColor: primaryColor }}
+                                            style={{ outlineColor: primaryColor }}
                                             required
                                         />
                                     </div>
@@ -336,7 +336,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 placeholder="Briefly describe your store, products, or services... (at least 20 characters)"
                                 rows={4}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all resize-none text-base"
-                                style={{ focusRingColor: primaryColor }}
+                                style={{ outlineColor: primaryColor }}
                                 required
                                 minLength={20}
                             />
@@ -355,7 +355,7 @@ export default function StoreBasicInfoForm({ selectedTheme, onSubmit, onBack }: 
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value)}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all text-base"
-                                style={{ focusRingColor: primaryColor }}
+                                style={{ outlineColor: primaryColor }}
                                 required
                             >
                                 <option value="en">English</option>
