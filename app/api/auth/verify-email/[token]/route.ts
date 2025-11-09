@@ -35,8 +35,9 @@ export async function GET(req: NextRequest, context: { params: any }) {
         logger.info("Email verified", { email: user.email });
 
         // Redirect to success page
-    return NextResponse.json({ success: true, verified: true });
-
+        const successUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/verify-email?verified=true&token=${token}`;
+        return NextResponse.redirect(successUrl);
+        
     } catch (error) {
         logger.error("GET /api/auth/verify-email/[token] error", error);
         const errorUrl = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/verify-email?error=server_error`;

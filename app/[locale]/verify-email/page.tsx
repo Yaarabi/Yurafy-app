@@ -55,7 +55,7 @@ export default function VerifyEmailPage() {
         try {
             const res = await fetch(`/api/auth/verify-email/${verificationToken}`, {
                 method: 'GET',
-                redirect: 'manual', // Don't follow redirects
+                redirect: 'manual', 
             });
             
             // If it's a redirect (3xx), the verification was successful

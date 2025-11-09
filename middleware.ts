@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // --- Subdomain extraction ---
 function getSubdomain(hostname: string): string | null {
-    const host = hostname.split(':')[0]; // remove port
+    const host = hostname.split(':')[0]; 
     if (host.includes('localhost')) {
         const parts = host.split('.');
         return parts.length > 1 && parts[0] !== 'localhost' ? parts[0] : null;

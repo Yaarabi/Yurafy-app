@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         // Validate required fields according to Store schema
         if (!ownerId || !brandName || !domain || !description || !themeId || !theme?.primaryColor ||
             !hero?.title || !hero?.subtitle || !hero?.imageUrl ||
-            !about?.title || !about?.description || !footer?.text) {
+            !about?.title || !about?.description) {
             return NextResponse.json({ 
                 error: "Missing required fields. Required: brandName, domain, description, themeId, theme.primaryColor, hero (title, subtitle, imageUrl), about (title, description), footer.text" 
             }, { status: 400 });
