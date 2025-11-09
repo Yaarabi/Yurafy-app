@@ -1,45 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import { useStoreGeneration } from '@/hooks/onboarding/useStoreGeneration';
+import { useStoreCreation } from '@/hooks/onboarding/useStoreCreation';
 import StorePreviewWithEdit from './ai/components/StorePreviewWithEdit';
-
-// Normalize store data to ensure all required fields are present
-function normalizeStoreData(data: any, selectedTheme?: any, selectedThemeStructure?: any): any {
-    return {
-        ...data,
-        brandName: data.brandName || '',
-        domain: data.domain || '',
-        description: data.description || '',
-        themeId: typeof data.themeId === 'number' ? data.themeId : (selectedTheme?.themeId || parseInt(String(data.themeId || '1'), 10)),
-        theme: data.theme || selectedTheme?.theme || { primaryColor: '#3B82F6' },
-        themeStructure: data.themeStructure || selectedThemeStructure || {
-            header: true,
-            hero: true,
-            about: true,
-            trust: true,
-            productGrid: true,
-            footer: true,
-        },
-        hero: data.hero || {
-            title: '',
-            subtitle: '',
-            imageUrl: '',
-        },
-        about: data.about || {
-            title: '',
-            description: '',
-        },
-        footer: data.footer || {
-            text: '',
-        },
-        socialLinks: data.socialLinks || {},
-        headerLinks: data.headerLinks || [],
-        logoUrl: data.logoUrl || undefined,
-    };
-}
 
 interface StoreGeneratorProps {
     selectedTheme: {
@@ -73,277 +38,77 @@ export default function StoreGenerator({
     plan,
     onBack,
 }: StoreGeneratorProps) {
-    const router = useRouter();
-    const searchParams = useSearchParams();
     const params = useParams();
-    // ✅ FIX: Get locale from params (URL path) instead of searchParams, normalize it
-    const localeRaw = String((params?.locale as string) || searchParams.get('locale') || 'en');
+    const localeRaw = String((params?.locale as string) || 'en');
     const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
 
-    const [generating, setGenerating] = useState(true);
-    const [storeData, setStoreData] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
+    // Use store generation hook
+    const {
+        storeData,
+        generating,
+        error,
+        generateStore,
+        updateField,
+    } = useStoreGeneration({
+        basicInfo,
+        selectedTheme,
+        selectedThemeStructure,
+        autoGenerate: true,
+    });
 
-    // Auto-generate store on mount
-    useEffect(() => {
-        generateStore();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const generateStore = async () => {
-        setGenerating(true);
-        setError(null);
-
-        try {
-            // ✅ FIXED: Use Gemini agent to generate hero, about, and footer content
-            const response = await fetch('/api/onboarding/generate-store-content', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    brandName: basicInfo.brandName,
-                    description: basicInfo.description,
-                    language: basicInfo.language || 'en',
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!data.success) {
-                setError(data.error || 'Failed to generate store');
-                toast.error(data.error || 'Failed to generate store');
-                return;
-            }
-
-            // ✅ FIXED: Use generated content from Gemini agent and merge with basic info
-            let storeDataFromResponse = null;
-            
-            // Priority 1: Direct storeData from API response (Gemini-generated content)
-            if (data.storeData) {
-                // Merge with basic info and theme
-                storeDataFromResponse = {
-                    ...data.storeData,
-                    domain: basicInfo.domain,
-                    language: basicInfo.language || 'en',
-                    themeId: selectedTheme?.themeId || 1,
-                    theme: selectedTheme?.theme || { primaryColor: '#3B82F6' },
-                    themeStructure: selectedThemeStructure || {
-                        header: true,
-                        hero: true,
-                        about: true,
-                        trust: true,
-                        productGrid: true,
-                        footer: true,
-                    },
-                    logoUrl: basicInfo.logo || undefined,
-                };
-            }
-            // Priority 2: Try to parse JSON from agent's message response
-            else if (data.success && data.message) {
-                try {
-                    // Try to find JSON object in the message
-                    const message = data.message.trim();
-                    
-                    // Look for JSON object (could be wrapped in markdown code blocks or plain JSON)
-                    let jsonString = message;
-                    
-                    // Remove markdown code blocks if present
-                    if (message.includes('```json')) {
-                        jsonString = message.split('```json')[1].split('```')[0].trim();
-                    } else if (message.includes('```')) {
-                        jsonString = message.split('```')[1].split('```')[0].trim();
-                    } else {
-                        // Try to find JSON object boundaries
-                        const jsonMatch = message.match(/\{[\s\S]*\}/);
-                        if (jsonMatch) {
-                            jsonString = jsonMatch[0];
-                        }
-                    }
-                    
-                    // Parse the JSON
-                    const parsed = JSON.parse(jsonString);
-                    if (parsed && (parsed.brandName || parsed.hero || parsed.about)) {
-                        storeDataFromResponse = parsed;
-                    }
-                } catch (e) {
-                    // Silent failure - will use fallback
-                }
-            }
-            
-            // Fallback: If no data found, construct minimal data from basicInfo
-            if (!storeDataFromResponse && data.success) {
-                storeDataFromResponse = {
-                    brandName: basicInfo.brandName,
-                    domain: basicInfo.domain,
-                    description: basicInfo.description,
-                    language: basicInfo.language || 'en',
-                    themeId: selectedTheme?.themeId || 1,
-                    theme: selectedTheme?.theme || { primaryColor: '#3B82F6' },
-                    themeStructure: selectedThemeStructure || {
-                        header: true,
-                        hero: true,
-                        about: true,
-                        trust: true,
-                        productGrid: true,
-                        footer: true,
-                    },
-                    hero: {
-                        title: `Welcome to ${basicInfo.brandName}`,
-                        subtitle: basicInfo.description.substring(0, 100) || 'Discover our amazing products',
-                        imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80',
-                    },
-                    about: {
-                        title: `About ${basicInfo.brandName}`,
-                        description: basicInfo.description || '',
-                    },
-                    socialLinks: {},
-                    headerLinks: [],
-                    logoUrl: basicInfo.logo || undefined,
-                };
-            }
-            
-            // Normalize storeData to ensure all required fields are present
-            if (storeDataFromResponse) {
-                storeDataFromResponse = normalizeStoreData(storeDataFromResponse, selectedTheme, selectedThemeStructure);
-            }
-            
-            if (storeDataFromResponse) {
-                setStoreData(storeDataFromResponse);
-                setGenerating(false); // Ensure generating is false so preview shows
-                toast.success('Store content generated successfully!');
-                return;
-            }
-            
-            // If API response was successful but no data found even after fallback, show error
-            if (data.success && !storeDataFromResponse) {
-                setError('Store content was generated but data format is unexpected. Please try again.');
-                toast.error('Generation incomplete. Please try again.');
-                setGenerating(false);
-                return;
-            }
-            
-            // Only set error if API call actually failed
-            if (!data.success) {
-                setError(data.error || 'Failed to generate store content');
-                toast.error(data.error || 'Failed to generate store content');
-            } else if (!basicInfo) {
-                // This shouldn't happen, but if basicInfo is missing, show error
-                setError('Missing store information. Please go back and fill in all required fields.');
-                toast.error('Missing store information.');
-            }
-        } catch (error) {
-            setError('Something went wrong. Please try again.');
-            toast.error('Something went wrong. Please try again.');
-        } finally {
-            setGenerating(false);
-        }
-    };
+    // Use store creation hook
+    const {
+        createStore,
+        creating: saving,
+    } = useStoreCreation({
+        plan,
+        locale,
+    });
 
     const handleEditField = (field: string, value: any) => {
-        if (!storeData) return;
-        
-        const fieldParts = field.split('.');
-        if (fieldParts.length === 2) {
-            const [parent, child] = fieldParts;
-            setStoreData((prev: any) => ({
-                ...prev,
-                [parent]: {
-                    ...prev[parent],
-                    [child]: value,
-                },
-            }));
-        } else {
-            setStoreData((prev: any) => ({
-                ...prev,
-                [field]: value,
-            }));
-        }
+        updateField(field, value);
     };
 
     const handleSaveAndRedirect = async (data: any) => {
-        setSaving(true);
-        try {
-            // Always use the current storeData state (which includes any user edits)
-            // The data parameter might be stale if user made edits
-            const currentData = storeData || data;
-            
-            // Ensure we pass the normalized store data (with all agent-generated content)
-            const dataToSave = normalizeStoreData(currentData, selectedTheme, selectedThemeStructure);
-            
-            // Transform data to match store API format
-            const storePayload = {
-                brandName: dataToSave.brandName,
-                language: basicInfo.language || 'en',
-                domain: dataToSave.domain,
-                description: dataToSave.description,
-                themeId: selectedTheme?.themeId || dataToSave.themeId || 1,
-                theme: {
-                    primaryColor: selectedTheme?.theme?.primaryColor || dataToSave.theme?.primaryColor || '#3B82F6',
-                    secondaryColor: selectedTheme?.theme?.secondaryColor || dataToSave.theme?.secondaryColor,
-                    textColor: selectedTheme?.theme?.textColor || dataToSave.theme?.textColor,
-                },
-                themeStructure: selectedThemeStructure || dataToSave.themeStructure || {
-                    header: true,
-                    hero: true,
-                    about: true,
-                    trust: true,
-                    productGrid: true,
-                    footer: true,
-                },
-                hero: {
-                    title: dataToSave.hero?.title || '',
-                    subtitle: dataToSave.hero?.subtitle || '',
-                    imageUrl: dataToSave.hero?.imageUrl || '',
-                },
-                about: {
-                    title: dataToSave.about?.title || '',
-                    description: dataToSave.about?.description || '',
-                },
-                socialLinks: dataToSave.socialLinks || {},
-                headerLinks: dataToSave.headerLinks || [],
-                whatsappNumber: dataToSave.whatsappNumber || undefined,
-            };
-
-            // Send to store API
-            const response = await fetch('/api/store', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(storePayload),
-            });
-
-            const responseData = await response.json();
-
-            if (response.ok && responseData.store) {
-                toast.success('Store created successfully!');
-                // Check if plan is free - redirect to dashboard
-                if (plan === 'free') {
-                    setTimeout(() => {
-                        router.push(`/${locale}/dashboard`);
-                    }, 500);
-                } else {
-                    // Redirect to checkout for paid plans
-                    toast.success('Redirecting to checkout...');
-                    setTimeout(() => {
-                        router.push(`/${locale}/onboarding/checkout?plan=${plan || 'Starter'}`);
-                    }, 500);
-                }
-            } else {
-                // Handle domain already exists error
-                if (response.status === 400 && responseData.error?.includes('Domain already exists')) {
-                    toast.error('A store with this domain already exists. Please choose a different domain.');
-                } else {
-                    toast.error(responseData.error || 'Failed to save store');
-                }
-                if (plan !== 'free') {
-                    return;
-                }
-            }
-        } catch (error) {
-            console.error('Error saving store:', error);
-            toast.error('Something went wrong while saving. Please try again.');
-        } finally {
-            setSaving(false);
+        if (!storeData) {
+            return;
         }
+
+        // Use current storeData state (which includes any user edits)
+        const dataToSave = storeData || data;
+        
+        await createStore({
+            brandName: dataToSave.brandName,
+            domain: dataToSave.domain,
+            description: dataToSave.description,
+            language: basicInfo.language || 'en',
+            themeId: selectedTheme.themeId,
+            theme: selectedTheme.theme,
+            themeStructure: selectedThemeStructure || {
+                header: true,
+                hero: true,
+                about: true,
+                trust: true,
+                productGrid: true,
+                footer: true,
+            },
+            hero: dataToSave.hero || {
+                title: '',
+                subtitle: '',
+                imageUrl: '',
+            },
+            about: dataToSave.about || {
+                title: '',
+                description: '',
+            },
+            footer: dataToSave.footer || {
+                text: `© ${new Date().getFullYear()} ${dataToSave.brandName}. All rights reserved.`,
+            },
+            socialLinks: dataToSave.socialLinks || {},
+            headerLinks: dataToSave.headerLinks || [],
+            whatsappNumber: dataToSave.whatsappNumber,
+            logoUrl: basicInfo.logo || dataToSave.logoUrl,
+        });
     };
 
     // Show loading state while generating

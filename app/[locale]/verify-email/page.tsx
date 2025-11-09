@@ -55,11 +55,18 @@ export default function VerifyEmailPage() {
         try {
             const res = await fetch(`/api/auth/verify-email/${verificationToken}`, {
                 method: 'GET',
-                redirect: 'manual', 
+                headers: {
+                    'Accept': 'application/json',
+                },
             });
             
-            // If it's a redirect (3xx), the verification was successful
-            if (res.status >= 300 && res.status < 400) {
+            const data = await res.json().catch(() => {
+                // If response is not JSON (e.g., redirect happened), treat as error
+                return { error: 'Unexpected response format' };
+            });
+            
+            if (res.ok && data.verified) {
+                // Verification successful
                 setStatus('success');
                 setMessage(t('emailVerifiedSuccess') || 'Email verified successfully!');
                 toast.success(t('emailVerifiedSuccess') || 'Email verified successfully!');
@@ -67,15 +74,17 @@ export default function VerifyEmailPage() {
                     router.push(`/${params.locale}/login?verified=true`);
                 }, 2000);
             } else {
-                const data = await res.json().catch(() => ({}));
+                // Verification failed
                 setStatus('error');
-                setMessage(data.error || data.message || t('verificationFailed') || 'Verification failed');
-                handleError(new Error(data.error || data.message));
+                const errorMessage = data.error || data.message || t('verificationFailed') || 'Verification failed';
+                setMessage(errorMessage);
+                handleError(new Error(errorMessage));
             }
         } catch (err) {
             setStatus('error');
-            setMessage(t('verifyEmailError') || 'Failed to verify email');
-            handleError(err, t('verifyEmailError') || 'Failed to verify email');
+            const errorMessage = err instanceof Error ? err.message : (t('verifyEmailError') || 'Failed to verify email');
+            setMessage(errorMessage);
+            handleError(err, errorMessage);
         }
     };
 

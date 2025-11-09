@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
             plan: planKey,
             onboardingCompleted: user.onboardingCompleted || false,
             active: user.active || false,
+            emailVerified: user.emailVerified || false,
         });
     } catch (error) {
         console.error("GET /api/user/me error:", error);
@@ -106,6 +107,7 @@ export async function PUT(req: NextRequest) {
             plan: planKey,
             onboardingCompleted: updatedUser.onboardingCompleted || false,
             active: updatedUser.active || false,
+            emailVerified: updatedUser.emailVerified || false,
         });
     } catch (error) {
         console.error("PUT /api/user/me error:", error);

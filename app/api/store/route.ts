@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
             socialLinks,
             headerLinks,
             whatsappNumber,
+            logoUrl,
         } = body;
 
         // Prefer authenticated owner when available
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
             !hero?.title || !hero?.subtitle || !hero?.imageUrl ||
             !about?.title || !about?.description) {
             return NextResponse.json({ 
-                error: "Missing required fields. Required: brandName, domain, description, themeId, theme.primaryColor, hero (title, subtitle, imageUrl), about (title, description), footer.text" 
+                error: "Missing required fields. Required: ownerId, brandName, domain, description, themeId, theme.primaryColor, hero (title, subtitle, imageUrl), about (title, description)" 
             }, { status: 400 });
         }
 
@@ -105,11 +106,12 @@ export async function POST(req: NextRequest) {
                 description: about.description,
             },
             footer: {
-                text: footer.text,
+                text: footer?.text || `© ${new Date().getFullYear()} ${brandName}. All rights reserved.`,
             },
             socialLinks: socialLinks || {},
             headerLinks: headerLinks || [],
             whatsappNumber: whatsappNumber || undefined,
+            logoUrl: logoUrl || undefined,
         });
 
         // Mark onboarding as completed when store is created

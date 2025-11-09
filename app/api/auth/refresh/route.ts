@@ -36,5 +36,6 @@ export async function POST(req: NextRequest) {
         plan: activePlan,
         onboardingCompleted: user.onboardingCompleted || false,
         active: user.active || false,
+        emailVerified: user.emailVerified || false,
     });
 }

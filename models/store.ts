@@ -35,6 +35,7 @@ export interface IStore extends Document {
         label: string;
         href: string;
     }>;
+    logoUrl?: string;
     active?: boolean;
 }
 
@@ -107,6 +108,10 @@ const storeSchema = new Schema<IStore>(
             href: { type: String, required: true, trim: true },
         },
         ],
+        logoUrl: { 
+            type: String, 
+            trim: true,
+        },
         active: { 
             type: Boolean, 
             default: false,

@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useStoreStatus } from "@/hooks/onboarding/useStoreStatus";
 import ThemeSelector from "@/components/onboarding/ThemeSelector";
 import StoreBasicInfoForm from "@/components/onboarding/StoreBasicInfoForm";
 import StoreGenerator from "@/components/onboarding/StoreGenerator";
@@ -11,13 +12,14 @@ export default function InfoPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = useParams();
-    const { data: session, status } = useSession();
+    const { data: session, status: sessionStatus } = useSession();
     const plan = useMemo(() => searchParams.get("plan"), [searchParams]);
+    const storeStatus = useStoreStatus();
+    
     const [selectedTheme, setSelectedTheme] = useState<{
         themeId: number;
         theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
     } | null>(null);
-    // ✅ Removed: ProductPageStructure state - using default values instead
     const [showBasicInfoForm, setShowBasicInfoForm] = useState(false);
     const [basicInfo, setBasicInfo] = useState<{
         brandName: string;
@@ -27,72 +29,37 @@ export default function InfoPage() {
         language?: string;
     } | null>(null);
     const [showGenerator, setShowGenerator] = useState(false);
-    const [checking, setChecking] = useState(true);
 
-    // Check if store exists and user onboarding status
+    // Handle redirects based on store status
     useEffect(() => {
-        const checkStoreAndRedirect = async () => {
-            if (status === "loading") return;
-            
-            if (status === "unauthenticated") {
-                // ✅ FIX: Normalize locale - extract first segment only
-                const localeRaw = String(params.locale || 'en');
-                const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
-                router.push(`/${locale}/login`);
+        if (sessionStatus === 'loading' || storeStatus.isLoading) {
+            return;
+        }
+
+        if (sessionStatus === 'unauthenticated') {
+            const localeRaw = String(params.locale || 'en');
+            const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+            router.push(`/${locale}/login`);
+            return;
+        }
+
+        // If store exists and onboarding is not completed (first-time flow)
+        if (storeStatus.hasStore && !storeStatus.onboardingCompleted) {
+            const localeRaw = String(params.locale || 'en');
+            const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+            // If free plan, redirect to dashboard
+            if (plan === 'free') {
+                router.push(`/${locale}/dashboard`);
                 return;
             }
+            // For paid plans, redirect to checkout
+            router.push(`/${locale}/onboarding/checkout?plan=${plan || 'starter'}`);
+            return;
+        }
 
-            if (status === "authenticated" && session?.user?.id) {
-                try {
-                    // Check store existence
-                    const storeResponse = await fetch('/api/store/owner', {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
-                    });
-
-                    // Check user onboarding status
-                    const userResponse = await fetch('/api/auth/refresh', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: session.user.id }),
-                    });
-
-                    const storeData = await storeResponse.json();
-                    const userData = await userResponse.json();
-
-                    // If store exists and onboarding is not completed (first-time flow)
-                    if (storeResponse.ok && storeData._id && userData.onboardingCompleted === false) {
-                        // ✅ FIX: Normalize locale - extract first segment only
-                        const localeRaw = String(params.locale || 'en');
-                        const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
-                        // If free plan, redirect to dashboard (onboarding should be completed)
-                        if (plan === 'free') {
-                            router.push(`/${locale}/dashboard`);
-                            return;
-                        }
-                        // For paid plans, redirect to checkout
-                        router.push(`/${locale}/onboarding/checkout?plan=${plan || 'starter'}`);
-                        return;
-                    }
-                    
-                    // If store exists and onboarding IS completed, this is an upgrade
-                    // Allow user to continue with info page flow for upgrade
-                    if (storeResponse.ok && storeData._id && userData.onboardingCompleted === true) {
-                        // User is upgrading/changing plan, allow them to continue
-                        setChecking(false);
-                        return;
-                    }
-                } catch (error) {
-                    console.error('Error checking store and user status:', error);
-                    // Continue with normal flow if check fails
-                }
-            }
-            
-            setChecking(false);
-        };
-
-        checkStoreAndRedirect();
-    }, [status, session, router, params.locale, plan]);
+        // If store exists and onboarding IS completed, this is an upgrade
+        // Allow user to continue with info page flow for upgrade
+    }, [sessionStatus, storeStatus, router, params.locale, plan]);
 
     const handleThemeSelect = (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string }) => {
         setSelectedTheme({ themeId, theme });
@@ -103,10 +70,9 @@ export default function InfoPage() {
     };
 
     const handleBasicInfoSubmit = async (info: { brandName: string; domain: string; description: string; logo?: string; language?: string }) => {
-        // Save logo to both user and store if provided
+        // Save logo to user if provided (store will get it during creation)
         if (info.logo && session?.user?.id) {
             try {
-                // Save to user model
                 const userResponse = await fetch('/api/user/me', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -114,33 +80,6 @@ export default function InfoPage() {
                 });
                 if (!userResponse.ok) {
                     console.error('Failed to save logo to user info');
-                }
-
-                // Save to store model if store exists
-                try {
-                    const storeResponse = await fetch('/api/store/owner', {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
-                    });
-                    
-                    if (storeResponse.ok) {
-                        const storeData = await storeResponse.json();
-                        if (storeData._id) {
-                            // Store exists, update it with logoUrl
-                            const updateResponse = await fetch('/api/store/owner', {
-                                method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ updates: { logoUrl: info.logo } }),
-                            });
-                            if (!updateResponse.ok) {
-                                console.error('Failed to save logo to store');
-                            }
-                        }
-                    }
-                } catch (storeError) {
-                    // Store might not exist yet (will be created during store generation)
-                    // This is okay, logo will be saved when store is created
-                    console.log('Store does not exist yet, will be saved during store creation');
                 }
             } catch (error) {
                 console.error('Error saving logo:', error);
@@ -166,7 +105,7 @@ export default function InfoPage() {
     };
 
     // Show loading state while checking
-    if (checking || status === "loading") {
+    if (sessionStatus === "loading" || storeStatus.isLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center">

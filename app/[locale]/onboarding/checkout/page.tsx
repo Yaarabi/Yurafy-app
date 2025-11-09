@@ -5,15 +5,22 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { PLANS } from "../plan/page";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 export default function CheckoutPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = useParams();
+    const { data: session, status: sessionStatus } = useSession();
     const planKey = searchParams.get("plan");
     // ✅ FIX: Normalize locale - extract first segment only, prevent duplication
     const localeRaw = String((params?.locale as string) || searchParams.get("locale") || "en");
     const locale = localeRaw.split('/').filter(Boolean)[0] || 'en';
+    
+    // ✅ ADDED: Check authentication and email verification
+    const [authChecking, setAuthChecking] = useState(true);
+    const [emailVerified, setEmailVerified] = useState(false);
+    const [userEmail, setUserEmail] = useState<string | null>(null);
     
     // ✅ FIX: Validate plan key exists in PLANS object
     if (!planKey) {
@@ -33,6 +40,52 @@ export default function CheckoutPage() {
             </div>
         );
     }
+    
+    // ✅ ADDED: Check authentication and email verification status
+    useEffect(() => {
+        const checkAuthAndVerification = async () => {
+            if (sessionStatus === "loading") return;
+            
+            if (sessionStatus === "unauthenticated" || !session?.user?.id) {
+                toast.error("Please log in to proceed with checkout");
+                router.push(`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/onboarding/checkout?plan=${planKey}`)}`);
+                return;
+            }
+            
+            try {
+                // Check user's email verification status
+                const res = await fetch("/api/auth/refresh", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: session.user.id }),
+                });
+                
+                if (!res.ok) {
+                    throw new Error("Failed to verify user status");
+                }
+                
+                const userData = await res.json();
+                setUserEmail(userData.email);
+                
+                if (!userData.emailVerified) {
+                    setEmailVerified(false);
+                    toast.error("Please verify your email before proceeding with checkout");
+                    router.push(`/${locale}/verify-email?email=${encodeURIComponent(userData.email)}`);
+                    return;
+                }
+                
+                setEmailVerified(true);
+            } catch (error) {
+                console.error("Error checking user status:", error);
+                toast.error("Failed to verify user status. Please try again.");
+                router.push(`/${locale}/login`);
+            } finally {
+                setAuthChecking(false);
+            }
+        };
+        
+        checkAuthAndVerification();
+    }, [sessionStatus, session, router, locale, planKey]);
     
     // ✅ FIXED: Fetch plan from database API instead of hardcoded PLANS
     const [plan, setPlan] = useState<any>(null);
@@ -88,16 +141,23 @@ export default function CheckoutPage() {
         }
     }, [planKey]);
 
-    // Show loading state
-    if (planLoading) {
+    // Show loading state (authentication or plan loading)
+    if (authChecking || planLoading || sessionStatus === "loading") {
         return (
             <div className="min-h-screen flex items-center justify-center py-4 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6 bg-gradient-to-br from-gray-50 to-gray-100">
                 <div className="w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 text-center">
                     <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading plan information...</p>
+                    <p className="text-gray-600">
+                        {authChecking ? "Verifying your account..." : "Loading plan information..."}
+                    </p>
                 </div>
             </div>
         );
+    }
+    
+    // Don't render checkout if email is not verified (redirect should happen, but just in case)
+    if (!emailVerified) {
+        return null;
     }
 
     // Show error state

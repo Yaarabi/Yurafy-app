@@ -50,6 +50,25 @@ export async function POST(req: Request) {
 
     await connectDB();
     const mongoSession = await mongoose.startSession();
+    
+    // ✅ ADDED: Check if user's email is verified before processing payment
+    // Do this check before starting the transaction to fail fast if email is not verified
+    const userCheck = await User.findOne({ email: authSession.user.email }).session(mongoSession);
+    if (!userCheck) {
+        await mongoSession.endSession();
+        return NextResponse.json(
+            { verified: false, error: "User not found" },
+            { status: 404 }
+        );
+    }
+    
+    if (!userCheck.emailVerified) {
+        await mongoSession.endSession();
+        return NextResponse.json(
+            { verified: false, error: "Please verify your email before completing payment. Please check your email for the verification link." },
+            { status: 403 }
+        );
+    }
 
     try {
         await mongoSession.withTransaction(async () => {
