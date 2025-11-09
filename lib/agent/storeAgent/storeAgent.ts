@@ -68,22 +68,32 @@ Generate the following content:
      * Focuses on core value proposition and brand identity
      The description should be substantial enough to understand the brand but concise enough to maintain reader engagement.
 
+3. Footer Section:
+   - Text: Create a professional footer text that includes copyright information and brand name. Should be concise (10-20 words) and professional. Format: "© ${new Date().getFullYear()} ${brandName}. All rights reserved." or a similar professional footer message in ${languageName} language. The footer should be localized to ${languageName} if the language is not English.
+
 CRITICAL: Keep descriptions concise but meaningful. Quality over quantity - make every word count.
 
-Respond ONLY with a valid JSON object in this exact format:
+Respond ONLY with a valid JSON object in this exact format (replace placeholder values with actual generated content):
 {
   "hero": {
-    "title": "compelling headline here",
-    "subtitle": "catchy tagline here",
-    "imageUrl": "https://images.unsplash.com/photo-..."
+    "title": "compelling headline here (5-10 words)",
+    "subtitle": "catchy tagline here (10-20 words)",
+    "imageUrl": "https://images.unsplash.com/photo-... (valid Unsplash URL)"
   },
   "about": {
-    "title": "About ${brandName}",
+    "title": "About ${brandName} (or similar professional title)",
     "description": "40-70 word concise but solid description here"
+  },
+  "footer": {
+    "text": "Professional footer text with copyright and brand name (10-20 words, in ${languageName} language)"
   }
 }
 
-Do not include any other text, just the JSON object.`;
+IMPORTANT: 
+- All text must be in ${languageName} language
+- Footer text should include copyright year (${new Date().getFullYear()}) and brand name (${brandName})
+- Do not include any other text outside the JSON object
+- Ensure all JSON is valid and properly formatted`;
 
         const response = await model.invoke(prompt);
         

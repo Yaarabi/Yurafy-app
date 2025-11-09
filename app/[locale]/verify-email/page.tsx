@@ -53,6 +53,8 @@ export default function VerifyEmailPage() {
 
     const verifyEmail = async (verificationToken: string) => {
         try {
+            console.log('[VerifyEmail] Calling API with token:', verificationToken.substring(0, 10) + '...');
+            
             const res = await fetch(`/api/auth/verify-email/${verificationToken}`, {
                 method: 'GET',
                 headers: {
@@ -60,13 +62,23 @@ export default function VerifyEmailPage() {
                 },
             });
             
-            const data = await res.json().catch(() => {
+            console.log('[VerifyEmail] API response status:', res.status, res.statusText);
+            
+            const data = await res.json().catch((parseError) => {
+                console.error('[VerifyEmail] Failed to parse JSON response:', parseError);
                 // If response is not JSON (e.g., redirect happened), treat as error
-                return { error: 'Unexpected response format' };
+                return { error: 'Unexpected response format', verified: false };
+            });
+            
+            console.log('[VerifyEmail] API response data:', { 
+                verified: data.verified, 
+                hasError: !!data.error,
+                message: data.message 
             });
             
             if (res.ok && data.verified) {
                 // Verification successful
+                console.log('[VerifyEmail] Verification successful');
                 setStatus('success');
                 setMessage(t('emailVerifiedSuccess') || 'Email verified successfully!');
                 toast.success(t('emailVerifiedSuccess') || 'Email verified successfully!');
@@ -75,12 +87,14 @@ export default function VerifyEmailPage() {
                 }, 2000);
             } else {
                 // Verification failed
+                console.error('[VerifyEmail] Verification failed:', data);
                 setStatus('error');
                 const errorMessage = data.error || data.message || t('verificationFailed') || 'Verification failed';
                 setMessage(errorMessage);
                 handleError(new Error(errorMessage));
             }
         } catch (err) {
+            console.error('[VerifyEmail] Exception during verification:', err);
             setStatus('error');
             const errorMessage = err instanceof Error ? err.message : (t('verifyEmailError') || 'Failed to verify email');
             setMessage(errorMessage);

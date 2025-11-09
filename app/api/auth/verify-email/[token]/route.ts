@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
@@ -32,8 +33,11 @@ export async function GET(req: NextRequest, context: { params: any }) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
     
     // Check if this is an API request (from frontend fetch) or a browser navigation
+    // When called from frontend fetch, it will have Accept: application/json header
+    // When user clicks email link, they go to frontend page which then calls this API via fetch
     const acceptHeader = req.headers.get('accept') || '';
-    const isApiRequest = acceptHeader.includes('application/json') || req.headers.get('x-requested-with') === 'XMLHttpRequest';
+    const isApiRequest = acceptHeader.includes('application/json') || 
+                        req.headers.get('x-requested-with') === 'XMLHttpRequest';
     
     // Extract locale from referer or use default
     const referer = req.headers.get('referer');
@@ -44,9 +48,10 @@ export async function GET(req: NextRequest, context: { params: any }) {
         const token = params?.token;
 
         if (!token) {
+            logger.warn("Email verification failed: missing token");
             if (isApiRequest) {
                 return NextResponse.json(
-                    { error: 'Missing verification token', code: 'MISSING_TOKEN' },
+                    { error: 'Missing verification token', code: 'MISSING_TOKEN', verified: false },
                     { status: 400 }
                 );
             }
@@ -56,9 +61,10 @@ export async function GET(req: NextRequest, context: { params: any }) {
 
         const user = await User.findOne({ emailVerificationToken: token });
         if (!user) {
+            logger.warn("Email verification failed: token not found", { token: token.substring(0, 10) + '...' });
             if (isApiRequest) {
                 return NextResponse.json(
-                    { error: 'Invalid or expired verification token', code: 'INVALID_TOKEN' },
+                    { error: 'Invalid or expired verification token', code: 'INVALID_TOKEN', verified: false },
                     { status: 400 }
                 );
             }

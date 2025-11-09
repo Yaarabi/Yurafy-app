@@ -5,7 +5,7 @@ import { generateStoreContent } from "@/lib/agent/storeAgent/storeAgent";
 
 /**
  * POST /api/onboarding/generate-store-content
- * - Uses Gemini AI to generate hero, about, and footer content for stores
+ * - Uses Mistral AI (storeAgent) to generate hero, about, and footer content for stores
  */
 export async function POST(request: NextRequest) {
     try {
@@ -38,13 +38,28 @@ export async function POST(request: NextRequest) {
 
         const formattedBrand = formatBrandName(brandName);
 
-        // Generate header links
-        const headerLinks = [
-            { label: "Home", href: "/" },
-            { label: "Products", href: "#products" },
-            { label: "About", href: "#about" },
-            { label: "Contact", href: "#contact" },
-        ];
+        // Generate header links (localized based on language)
+        const headerLinksMap: Record<string, Array<{ label: string; href: string }>> = {
+            'en': [
+                { label: "Home", href: "/" },
+                { label: "Products", href: "#products" },
+                { label: "About", href: "#about" },
+                { label: "Contact", href: "#contact" },
+            ],
+            'fr': [
+                { label: "Accueil", href: "/" },
+                { label: "Produits", href: "#products" },
+                { label: "À propos", href: "#about" },
+                { label: "Contact", href: "#contact" },
+            ],
+            'ar': [
+                { label: "الرئيسية", href: "/" },
+                { label: "المنتجات", href: "#products" },
+                { label: "من نحن", href: "#about" },
+                { label: "اتصل بنا", href: "#contact" },
+            ],
+        };
+        const headerLinks = headerLinksMap[storeLanguage] || headerLinksMap['en'];
 
         // Generate social links (using TikTok as per store model)
         const socialLinks = {

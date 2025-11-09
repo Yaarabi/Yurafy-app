@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 
 interface BasicInfo {
@@ -37,15 +37,29 @@ interface UseStoreGenerationOptions {
 export function useStoreGeneration(options: UseStoreGenerationOptions) {
     const { basicInfo, selectedTheme, selectedThemeStructure, autoGenerate = true } = options;
     
-    const [generating, setGenerating] = useState(autoGenerate);
+    const [generating, setGenerating] = useState(false);
     const [storeData, setStoreData] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const hasGeneratedRef = useRef(false);
 
-    const generateStore = async () => {
+    const generateStore = useCallback(async () => {
+        // Validate basicInfo before generating
+        if (!basicInfo?.brandName || !basicInfo?.description) {
+            console.error('[useStoreGeneration] Cannot generate store: missing brandName or description', basicInfo);
+            setError('Missing required information: brand name and description are required');
+            return;
+        }
+
         setGenerating(true);
         setError(null);
 
         try {
+            console.log('[useStoreGeneration] Calling API to generate store content', {
+                brandName: basicInfo.brandName,
+                description: basicInfo.description.substring(0, 50) + '...',
+                language: basicInfo.language || 'en',
+            });
+
             const response = await fetch('/api/onboarding/generate-store-content', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -58,8 +72,11 @@ export function useStoreGeneration(options: UseStoreGenerationOptions) {
 
             const data = await response.json();
 
+            console.log('[useStoreGeneration] API response', { success: data.success, hasStoreData: !!data.storeData });
+
             if (!data.success) {
                 const errorMessage = data.error || 'Failed to generate store content';
+                console.error('[useStoreGeneration] API error', errorMessage);
                 setError(errorMessage);
                 toast.error(errorMessage);
                 return;
@@ -184,15 +201,40 @@ export function useStoreGeneration(options: UseStoreGenerationOptions) {
         } finally {
             setGenerating(false);
         }
-    };
+    }, [basicInfo, selectedTheme, selectedThemeStructure]);
 
-    // Auto-generate on mount if enabled
+    // Auto-generate on mount if enabled and basicInfo is available
     useEffect(() => {
-        if (autoGenerate && !storeData && !generating) {
+        // Only generate once when:
+        // 1. Auto-generate is enabled
+        // 2. We haven't generated yet (tracked by ref)
+        // 3. We don't have storeData yet
+        // 4. We're not already generating
+        // 5. basicInfo has the required fields
+        if (
+            autoGenerate && 
+            !hasGeneratedRef.current && 
+            !storeData && 
+            !generating && 
+            basicInfo?.brandName && 
+            basicInfo?.description
+        ) {
+            console.log('[useStoreGeneration] Triggering store generation', {
+                brandName: basicInfo.brandName,
+                hasDescription: !!basicInfo.description,
+            });
+            hasGeneratedRef.current = true;
             generateStore();
+        } else if (autoGenerate && !hasGeneratedRef.current) {
+            console.log('[useStoreGeneration] Waiting for basicInfo', {
+                hasBasicInfo: !!basicInfo,
+                hasBrandName: !!basicInfo?.brandName,
+                hasDescription: !!basicInfo?.description,
+                generating,
+                hasStoreData: !!storeData,
+            });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [autoGenerate, basicInfo, storeData, generating, generateStore]);
 
     const updateStoreData = (updates: any) => {
         setStoreData((prev: any) => {

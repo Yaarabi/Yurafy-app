@@ -107,9 +107,13 @@ class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string, locale: string = 'en'): Promise<boolean> {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
-    const verificationUrl = `${baseUrl}/${locale}/verify-email?token=${token}`;
+    // Normalize baseUrl to remove trailing slash
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    baseUrl = baseUrl.replace(/\/+$/, ''); // Remove trailing slashes
+    
+    // Build verification URL - handle locale properly
+    const localePath = locale === 'en' ? '' : `/${locale}`;
+    const verificationUrl = `${baseUrl}${localePath}/verify-email?token=${token}`;
 
     const html = `
       <!DOCTYPE html>
