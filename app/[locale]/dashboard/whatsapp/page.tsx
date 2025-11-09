@@ -1,42 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from "react";
 import WhatsAppIntegrationPage from "@/components/dashboard/whatsapp/tabs/TabsPages";
 import { useTranslations } from "next-intl";
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import LogoLoader from "@/components/themePreview/loadder";
 
 export default function WhatsAppSettingsPage() {
     const t = useTranslations("WhatsAppPage");
+    const [isLoading, setIsLoading] = useState(true);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
             <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-                {/* Header Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-3"
-                >
-                    <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg">
-                        <MessageCircle className="w-6 h-6 text-[var(--brand-blue)]" />
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">WhatsApp Integration</h2>
-                </motion.div>
+                {/* Header Section - Only show when not loading */}
+                {!isLoading && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-3"
+                    >
+                        <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg">
+                            <MessageCircle className="w-6 h-6 text-[var(--brand-blue)]" />
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">WhatsApp Integration</h2>
+                    </motion.div>
+                )}
 
-                {/* Content Section - TabsPages handles its own loading */}
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
-                >
-                    <div className="p-4 sm:p-6">
-                        <WhatsAppIntegrationPage />
-                    </div>
-                </motion.div>
+                {/* Content Section - Conditionally wrap based on loading state */}
+                {isLoading ? (
+                    <WhatsAppIntegrationPage onLoadingChange={setIsLoading} />
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+                    >
+                        <div className="p-4 sm:p-6">
+                            <WhatsAppIntegrationPage onLoadingChange={setIsLoading} />
+                        </div>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

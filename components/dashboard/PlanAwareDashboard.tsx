@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Lock, BarChart3, TrendingUp, ShoppingCart, Package, Users } from "lucide-react";
+import { Lock, BarChart3, TrendingUp, ShoppingCart, Package, Users, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import RevenueChart from "@/components/dashboard/home/RevenueChart";
 import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
@@ -45,6 +45,8 @@ interface PlanAwareDashboardProps {
 
 export default function PlanAwareDashboard({ orders, products, templatesCount = 0, featuresData }: PlanAwareDashboardProps) {
     const t = useTranslations('dashboard');
+    const [storeDomain, setStoreDomain] = useState<string | null>(null);
+    const [storeLoading, setStoreLoading] = useState(true);
     
     // Use featuresData if provided, otherwise fall back to plan API (for backward compatibility)
     const planKey = featuresData?.plan?.planKey || "free";
@@ -63,6 +65,60 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
         : 0;
     const isExpired = daysRemaining < 0;
 
+    // Fetch store domain if user has store plan
+    useEffect(() => {
+        if (isStorePlan) {
+            const fetchStore = async () => {
+                try {
+                    const res = await fetch('/api/store/owner');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.domain) {
+                            setStoreDomain(data.domain);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching store:', error);
+                } finally {
+                    setStoreLoading(false);
+                }
+            };
+            fetchStore();
+        } else {
+            setStoreLoading(false);
+        }
+    }, [isStorePlan]);
+
+    // Build store URL
+    const getStoreUrl = (domain: string | null): string | null => {
+        if (!domain) return null;
+        
+        // Extract base domain from current hostname or use environment variable
+        let domainPart = "yurait.vercel.app"; // Default fallback
+        
+        if (typeof window !== 'undefined') {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            
+            // Extract base domain
+            // Examples:
+            // - "yurait.vercel.app" -> "yurait.vercel.app"
+            // - "app.yurait.vercel.app" -> "yurait.vercel.app"
+            // - "store.yurait.vercel.app" -> "yurait.vercel.app"
+            if (parts.length >= 3) {
+                // Remove first part (subdomain) to get base domain
+                domainPart = parts.slice(1).join('.');
+            } else if (parts.length === 2) {
+                // Already on base domain
+                domainPart = hostname;
+            }
+        }
+        
+        return `https://${domain}.${domainPart}`;
+    };
+    
+    const storeUrl = getStoreUrl(storeDomain);
+
     return (
         <div className="space-y-6">
             {/* Plan Status Banner */}
@@ -78,8 +134,8 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             : "bg-[var(--brand-blue)]/10 border-[var(--brand-blue)]/30 text-[var(--brand-blue)] dark:bg-[var(--brand-blue)]/20 dark:border-[var(--brand-blue)]/40 dark:text-[var(--brand-blue)]/80"
                     }`}
                 >
-                    <div className="flex items-center justify-between">
-                        <div>
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex-1 min-w-0">
                             <p className="font-semibold">
                                 {isExpired
                                     ? t('plan.expired')
@@ -114,24 +170,38 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                                 </div>
                             )}
                         </div>
-                        {/* Only show upgrade/renew button if not Visionary plan */}
-                        {planKey.toLowerCase() !== 'visionary' && (
-                            <Link
-                                href="/dashboard/settings?tab=plan"
-                                className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
-                            >
-                                {isExpired ? t('plan.renewPlan') : t('plan.upgradePlan')}
-                            </Link>
-                        )}
-                        {/* Show renew button if expired, even for Visionary */}
-                        {isExpired && planKey.toLowerCase() === 'visionary' && (
-                            <Link
-                                href="/dashboard/settings?tab=plan"
-                                className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
-                            >
-                                {t('plan.renewPlan')}
-                            </Link>
-                        )}
+                        <div className="flex items-center gap-2 flex-wrap">
+                            {/* Visit Store Button - Only show if store plan and store exists */}
+                            {isStorePlan && !storeLoading && storeUrl && (
+                                <a
+                                    href={storeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm hover:shadow-md flex items-center gap-2"
+                                >
+                                    <ExternalLink className="w-4 h-4" />
+                                    Visit Store
+                                </a>
+                            )}
+                            {/* Only show upgrade/renew button if not Visionary plan */}
+                            {planKey.toLowerCase() !== 'visionary' && (
+                                <Link
+                                    href="/dashboard/settings?tab=plan"
+                                    className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
+                                >
+                                    {isExpired ? t('plan.renewPlan') : t('plan.upgradePlan')}
+                                </Link>
+                            )}
+                            {/* Show renew button if expired, even for Visionary */}
+                            {isExpired && planKey.toLowerCase() === 'visionary' && (
+                                <Link
+                                    href="/dashboard/settings?tab=plan"
+                                    className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
+                                >
+                                    {t('plan.renewPlan')}
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </motion.div>
             )}

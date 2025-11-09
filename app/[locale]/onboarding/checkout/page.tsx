@@ -22,6 +22,14 @@ export default function CheckoutPage() {
     const [emailVerified, setEmailVerified] = useState(false);
     const [userEmail, setUserEmail] = useState<string | null>(null);
     
+    // ✅ FIXED: Fetch plan from database API instead of hardcoded PLANS
+    const [plan, setPlan] = useState<any>(null);
+    const [planLoading, setPlanLoading] = useState(true);
+    const [planError, setPlanError] = useState<string | null>(null);
+    
+    // ✅ FIXED: Move all hooks before any conditional returns
+    const [loading, setLoading] = useState(false);
+    
     // ✅ FIX: Validate plan key exists in PLANS object
     if (!planKey) {
         return (
@@ -86,11 +94,6 @@ export default function CheckoutPage() {
         
         checkAuthAndVerification();
     }, [sessionStatus, session, router, locale, planKey]);
-    
-    // ✅ FIXED: Fetch plan from database API instead of hardcoded PLANS
-    const [plan, setPlan] = useState<any>(null);
-    const [planLoading, setPlanLoading] = useState(true);
-    const [planError, setPlanError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPlan = async () => {
@@ -183,8 +186,6 @@ export default function CheckoutPage() {
         );
     }
 
-    const [loading, setLoading] = useState(false);
-
     const initialOptions = {
         clientId: process.env.NEXT_PUBLIC_PAYPAL_ID || "",
         "buyer-country": "MA",
@@ -192,30 +193,6 @@ export default function CheckoutPage() {
         components: "buttons",
         "enable-funding": "card",
     };
-
-
-    if (!plan) {
-        // ✅ FIX: Better error message showing what plan was requested
-        const availablePlans = Object.keys(PLANS).join(", ");
-        return (
-            <div className="min-h-screen flex items-center justify-center py-4 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6 bg-gradient-to-br from-gray-50 to-gray-100">
-                <div className="w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 text-center">
-                    <p className="text-base sm:text-lg md:text-xl text-red-600 font-medium mb-2">
-                        Invalid plan selected: "{planKey}"
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                        Available plans: {availablePlans}
-                    </p>
-                    <button
-                        onClick={() => router.push(`/${locale}/onboarding/plan`)}
-                        className="px-4 py-2 sm:px-6 sm:py-2.5 bg-indigo-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-indigo-700 transition-colors"
-                    >
-                        Choose a Plan
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen flex items-center justify-center py-4 sm:py-8 md:py-12 px-3 sm:px-4 md:px-6 bg-gradient-to-br from-gray-50 to-gray-100">

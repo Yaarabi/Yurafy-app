@@ -29,7 +29,11 @@ import { ITemplate } from "@/models/templates";
 import { IAIAgent } from "@/models/ai-agent";
 import ToolsTab from "@/components/dashboard/whatsapp/tabs/ToolsTab";
 
-export default function WhatsAppIntegrationPage() {
+interface WhatsAppIntegrationPageProps {
+    onLoadingChange?: (loading: boolean) => void;
+}
+
+export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppIntegrationPageProps = {}) {
     const [activeTab, setActiveTab] = useState("Connection");
     const [agent, setAgent] = useState<IAIAgent | undefined>(undefined);
     const [loading, setLoading] = useState(true); // Start with true to show loader
@@ -103,6 +107,7 @@ export default function WhatsAppIntegrationPage() {
 
         const loadData = async () => {
             setLoading(true);
+            onLoadingChange?.(true);
             try {
                 await Promise.all([
                     fetchUserPlan(),
@@ -111,11 +116,12 @@ export default function WhatsAppIntegrationPage() {
                 ]);
             } finally {
                 setLoading(false);
+                onLoadingChange?.(false);
             }
         };
         
         loadData();
-    }, []);
+    }, [onLoadingChange]);
 
 
     const updateAgent = async (payload: Record<string, unknown>) => {

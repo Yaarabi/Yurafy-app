@@ -26,15 +26,6 @@ export default function middleware(request: NextRequest) {
     const subdomain = getSubdomain(hostname);
     const pathname = request.nextUrl.pathname;
 
-    // Redirect /en/* to /* (hide default locale)
-    if (pathname.startsWith('/en/') || pathname === '/en') {
-        const url = request.nextUrl.clone();
-        url.pathname = pathname.replace(/^\/en/, '') || '/';
-        const response = NextResponse.redirect(url);
-        response.cookies.delete('NEXT_LOCALE');
-        return response;
-    }
-
     // Skip internal/protected routes
     if (
         pathname.startsWith('/api') ||
@@ -48,33 +39,40 @@ export default function middleware(request: NextRequest) {
         return intlMiddleware(request);
     }
 
-    // Optional: main domains do normal intl behavior
-    const mainDomains = ['www', 'app', 'admin', 'localhost'];
+    // Main domains (www, app, admin) - use normal intl behavior
+    const mainDomains = ['www', 'app', 'admin'];
     if (subdomain && mainDomains.includes(subdomain)) {
+        // Redirect /en/* to /* (hide default locale) for main domains
+        if (pathname.startsWith('/en/') || pathname === '/en') {
+            const url = request.nextUrl.clone();
+            url.pathname = pathname.replace(/^\/en/, '') || '/';
+            const response = NextResponse.redirect(url);
+            response.cookies.delete('NEXT_LOCALE');
+            return response;
+        }
         return intlMiddleware(request);
     }
 
-    // --- Custom subdomain handling ---
-    // Only adjust locale, do NOT add subdomain to path (prevents 404s)
-    const localeMatch = pathname.match(/^\/(fr|ar)/);
-    const localeFromPath = localeMatch ? localeMatch[1] : null;
-    const localeFromCookie = request.cookies.get('NEXT_LOCALE')?.value;
-    const locale = localeFromPath || localeFromCookie || 'en';
-
-    const pathWithoutLocale = pathname.replace(/^\/(fr|ar)/, '') || '/';
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}${pathWithoutLocale}`;
-
-    const response = NextResponse.rewrite(url);
-    if (locale !== 'en') {
-        response.cookies.set('NEXT_LOCALE', locale, {
-            path: '/',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 365,
-        });
+    // If we have a subdomain (store subdomain), let the root page handle it
+    // Don't rewrite - just pass through to app/page.tsx
+    if (subdomain && !mainDomains.includes(subdomain)) {
+        // For store subdomains, don't interfere with routing
+        // The root page (app/page.tsx) will handle subdomain detection
+        return NextResponse.next();
     }
 
-    return response;
+    // For root domain (no subdomain), handle locale routing
+    // Redirect /en/* to /* (hide default locale)
+    if (pathname.startsWith('/en/') || pathname === '/en') {
+        const url = request.nextUrl.clone();
+        url.pathname = pathname.replace(/^\/en/, '') || '/';
+        const response = NextResponse.redirect(url);
+        response.cookies.delete('NEXT_LOCALE');
+        return response;
+    }
+
+    // Apply intl middleware for root domain
+    return intlMiddleware(request);
 }
 
 // --- Config: run for all non-api/static files ---
