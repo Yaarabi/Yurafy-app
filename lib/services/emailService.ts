@@ -107,7 +107,8 @@ class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string, locale: string = 'en'): Promise<boolean> {
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
     const verificationUrl = `${baseUrl}/${locale}/verify-email?token=${token}`;
 
     const html = `
