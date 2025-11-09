@@ -42,21 +42,14 @@ export default function LogoUpload({
         setError(null);
 
         try {
-            const formData = new FormData();
-            formData.append('file', file);
+            const { uploadFile } = await import('@/lib/utils/upload');
+            const result = await uploadFile(file);
 
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.url) {
-                throw new Error(data.error || 'Failed to upload logo');
+            if (!result.success) {
+                throw new Error(result.error.message);
             }
 
-            onChange(data.url);
+            onChange(result.data.url);
             setError(null);
         } catch (error: any) {
             console.error('Error uploading logo:', error);

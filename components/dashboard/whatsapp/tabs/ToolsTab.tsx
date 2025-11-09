@@ -38,15 +38,12 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
         if (!selectedFile) return;
         setSavingFile(true);
 
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-
         try {
         // 1. Upload file
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-        if (!uploadRes.ok) throw new Error("Upload failed");
-        const data = await uploadRes.json();
-        const fileUrl = data.url;
+        const { uploadFile } = await import('@/lib/utils/upload');
+        const result = await uploadFile(selectedFile);
+        if (!result.success) throw new Error(result.error.message || "Upload failed");
+        const fileUrl = result.data.url;
 
         // 2. Update agent
         await updateAgent({ file: fileUrl });

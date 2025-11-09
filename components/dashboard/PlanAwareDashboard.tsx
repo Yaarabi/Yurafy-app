@@ -55,7 +55,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
     const statistics = featuresData?.statistics;
 
     const isFreePlan = planKey === "free";
-    const isStorePlan = planFeatures?.isStorePlan || planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
+    const isStorePlan = planFeatures?.isStorePlan || planKey === "free" || planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
     const isWhatsAppPlan = planFeatures?.isWhatsAppPlan || planKey === "WhatsApp Automation" || planKey === "AI WhatsApp Agent" || planKey === "Pro Seller" || planKey === "Visionary";
     const hasOrders = planFeatures?.hasOrders !== false;
     

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 interface Notification {
     _id: string;
@@ -21,6 +22,7 @@ export default function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const t = useTranslations('dashboard.notifications');
 
     useEffect(() => {
         fetchNotifications();
@@ -103,11 +105,11 @@ export default function NotificationBell() {
             if (response.ok) {
                 setNotifications(prev => prev.map(n => ({ ...n, read: true })));
                 setUnreadCount(0);
-                toast.success('All notifications marked as read');
+                toast.success(t('markAllSuccess'));
             }
         } catch (error) {
             console.error('Error marking all as read:', error);
-            toast.error('Failed to mark all as read');
+            toast.error(t('markAllError'));
         } finally {
             setLoading(false);
         }
@@ -129,7 +131,7 @@ export default function NotificationBell() {
             }
         } catch (error) {
             console.error('Error deleting notification:', error);
-            toast.error('Failed to delete notification');
+            toast.error(t('deleteError'));
         } finally {
             setLoading(false);
         }
@@ -144,11 +146,11 @@ export default function NotificationBell() {
 
             if (response.ok) {
                 setNotifications(prev => prev.filter(n => !n.read));
-                toast.success('All read notifications deleted');
+                toast.success(t('deleteReadSuccess'));
             }
         } catch (error) {
             console.error('Error deleting read notifications:', error);
-            toast.error('Failed to delete read notifications');
+            toast.error(t('deleteReadError'));
         } finally {
             setLoading(false);
         }
@@ -184,7 +186,7 @@ export default function NotificationBell() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Notifications"
+                aria-label={t('title')}
             >
                 <Bell className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                 {unreadCount > 0 && (
@@ -210,22 +212,22 @@ export default function NotificationBell() {
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                            <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">{t('title')}</h3>
                             <div className="flex items-center gap-2">
                                 {unreadCount > 0 && (
                                     <button
                                         onClick={markAllAsRead}
                                         disabled={loading}
                                         className="text-xs text-indigo-600 hover:text-indigo-700 font-medium disabled:opacity-50"
-                                        title="Mark all as read"
+                                        title={t('markAllRead')}
                                     >
-                                        Mark all read
+                                        {t('markAllRead')}
                                     </button>
                                 )}
                                 <button
                                     onClick={() => setIsOpen(false)}
                                     className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                    aria-label="Close"
+                                    aria-label={t('close')}
                                 >
                                     <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                 </button>
@@ -237,7 +239,7 @@ export default function NotificationBell() {
                             {notifications.length === 0 ? (
                                 <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                                     <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                                    <p className="text-sm">No notifications</p>
+                                    <p className="text-sm">{t('empty')}</p>
                                 </div>
                             ) : (
                                 <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -280,7 +282,7 @@ export default function NotificationBell() {
                                                                     onClick={() => markAsRead(notification._id)}
                                                                     disabled={loading}
                                                                     className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
-                                                                    title="Mark as read"
+                                                                    title={t('markRead')}
                                                                 >
                                                                     <Check className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
                                                                 </button>
@@ -289,7 +291,7 @@ export default function NotificationBell() {
                                                                 onClick={() => deleteNotification(notification._id)}
                                                                 disabled={loading}
                                                                 className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
-                                                                title="Delete"
+                                                                title={t('delete')}
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                                                             </button>
@@ -311,7 +313,7 @@ export default function NotificationBell() {
                                     disabled={loading}
                                     className="w-full text-xs text-red-600 hover:text-red-700 font-medium disabled:opacity-50"
                                 >
-                                    Clear all read notifications
+                                    {t('clearAllRead')}
                                 </button>
                             </div>
                         )}

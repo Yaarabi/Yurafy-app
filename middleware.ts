@@ -1,18 +1,11 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
+import { extractSubdomain, isStoreSubdomain } from '@/lib/utils/storeRouting';
 
-// --- Subdomain extraction ---
-function getSubdomain(hostname: string): string | null {
-    const host = hostname.split(':')[0]; 
-    if (host.includes('localhost')) {
-        const parts = host.split('.');
-        return parts.length > 1 && parts[0] !== 'localhost' ? parts[0] : null;
-    }
-    const parts = host.split('.');
-    return parts.length >= 3 ? parts[0] : null;
-}
+const MAIN_DOMAINS = ['www', 'app', 'admin', 'localhost'];
+const PROTECTED_ROUTES = ['/api', '/_next', '/admin', '/dashboard', '/login', '/signup', '/onboarding', '/verify-email', '/forgot-password', '/reset-password'];
 
-// --- Internationalization middleware ---
+// Internationalization middleware for main app
 const intlMiddleware = createMiddleware({
     locales: ['en', 'fr', 'ar'],
     defaultLocale: 'en',
@@ -20,62 +13,55 @@ const intlMiddleware = createMiddleware({
     localeDetection: true,
 });
 
-// --- Main middleware ---
-export default function middleware(request: NextRequest) {
-    const hostname = request.headers.get('host') || '';
-    const subdomain = getSubdomain(hostname);
-    const pathname = request.nextUrl.pathname;
-
-    // Skip internal/protected routes
-    if (
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/admin') ||
-        pathname.startsWith('/dashboard') ||
-        pathname.startsWith('/login') ||
-        pathname.startsWith('/signup') ||
-        pathname.startsWith('/onboarding')
-    ) {
-        return intlMiddleware(request);
-    }
-
-    // Main domains (www, app, admin) - use normal intl behavior
-    const mainDomains = ['www', 'app', 'admin'];
-    if (subdomain && mainDomains.includes(subdomain)) {
-        // Redirect /en/* to /* (hide default locale) for main domains
-        if (pathname.startsWith('/en/') || pathname === '/en') {
-            const url = request.nextUrl.clone();
-            url.pathname = pathname.replace(/^\/en/, '') || '/';
-            const response = NextResponse.redirect(url);
-            response.cookies.delete('NEXT_LOCALE');
-            return response;
-        }
-        return intlMiddleware(request);
-    }
-
-    // If we have a subdomain (store subdomain), let the root page handle it
-    // Don't rewrite - just pass through to app/page.tsx
-    if (subdomain && !mainDomains.includes(subdomain)) {
-        // For store subdomains, don't interfere with routing
-        // The root page (app/page.tsx) will handle subdomain detection
-        return NextResponse.next();
-    }
-
-    // For root domain (no subdomain), handle locale routing
-    // Redirect /en/* to /* (hide default locale)
-    if (pathname.startsWith('/en/') || pathname === '/en') {
-        const url = request.nextUrl.clone();
-        url.pathname = pathname.replace(/^\/en/, '') || '/';
-        const response = NextResponse.redirect(url);
-        response.cookies.delete('NEXT_LOCALE');
-        return response;
-    }
-
-    // Apply intl middleware for root domain
-    return intlMiddleware(request);
+/**
+ * Check if path is a protected route
+ */
+function isProtectedRoute(pathname: string): boolean {
+    return PROTECTED_ROUTES.some(route => pathname.startsWith(route));
 }
 
-// --- Config: run for all non-api/static files ---
+// We no longer strip /en for default locale on store routes to preserve nested /{locale}/{domain}
+function shouldSkipIntl(pathname: string) {
+    // Store paths have shape /{locale}/{domain}[...]
+    // We always run intl middleware except when handling a subdomain rewrite.
+    return false;
+}
+
+/**
+ * Main middleware function
+ */
+export default function middleware(request: NextRequest) {
+    const hostname = request.headers.get('host') || '';
+    const pathname = request.nextUrl.pathname;
+
+    // Protected routes: still run intl
+    if (isProtectedRoute(pathname)) {
+        return intlMiddleware(request);
+    }
+
+    // Subdomain detection for store: rewrite to /en/{domain}[pathname]
+    const subdomain = extractSubdomain(hostname, MAIN_DOMAINS);
+    const isStoreDomain = isStoreSubdomain(hostname, MAIN_DOMAINS);
+    if (isStoreDomain && subdomain) {
+        // If already rewritten (starts with /en/{subdomain}) just continue
+        if (pathname.startsWith(`/en/${subdomain}`)) {
+            return intlMiddleware(request);
+        }
+        const rewrite = request.nextUrl.clone();
+        // Preserve trailing path (except root)
+        const trailing = pathname === '/' ? '' : pathname;
+        rewrite.pathname = `/en/${subdomain}${trailing}`;
+        return NextResponse.rewrite(rewrite);
+    }
+
+    // Main domain: run intl unless explicitly skipped (we currently never skip)
+    if (!shouldSkipIntl(pathname)) {
+        return intlMiddleware(request);
+    }
+    return NextResponse.next();
+}
+
+// Config: Run for all non-api/static files
 export const config = {
     matcher: ['/((?!api|_next|.*\\..*).*)'],
 };

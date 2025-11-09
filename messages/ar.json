@@ -200,14 +200,20 @@
     
     "common": {
         "appTitle": "لوحة تحكم البائع",
-        "logout": "تسجيل الخروج"
+        "logout": "تسجيل الخروج",
+        "buttons": {
+            "back": "رجوع"
+        }
     },
     "nav": {
         "dashboard": "الرئيسية",
         "orders": "الطلبات",
         "products": "المنتجات",
+        "customers": "العملاء",
         "settings": "الإعدادات",
         "whatsapp": "واتساب",
+        "agent": "وكيل الذكاء الاصطناعي",
+        "conversations": "المحادثات",
         "support": "الدعم"
     },
     
@@ -216,6 +222,23 @@
         "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد.",
         "header": {
             "title": "لوحة التحكم"
+        },
+        "themeToggle": {
+            "ariaLabel": "تبديل السمة"
+        },
+        "notifications": {
+            "title": "الإشعارات",
+            "markAllRead": "تمييز الكل كمقروء",
+            "markAllSuccess": "تم تمييز كل الإشعارات كمقروءة",
+            "markAllError": "فشل تمييز كل الإشعارات كمقروءة",
+            "deleteError": "فشل حذف الإشعار",
+            "deleteReadSuccess": "تم حذف كل الإشعارات المقروءة",
+            "deleteReadError": "فشل حذف الإشعارات المقروءة",
+            "markRead": "تمييز كمقروء",
+            "delete": "حذف",
+            "close": "إغلاق",
+            "empty": "لا توجد إشعارات",
+            "clearAllRead": "مسح كل الإشعارات المقروءة"
         },
         "plan": {
             "expired": "انتهت صلاحية خطتك",
@@ -329,68 +352,6 @@
         "stubReply": "شكراً! سيقوم وكيل بمراجعة طلبك قريباً.",
         "placeholder": "اكتب سؤالك...",
         "send": "إرسال"
-    },
-    "dashboard": {
-        "title": "مرحباً بك في لوحتك",
-        "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد.",
-        "header": {
-            "title": "لوحة التحكم"
-        },
-        "plan": {
-            "expired": "انتهت صلاحية خطتك",
-            "planLabel": "الخطة",
-            "expires": "تنتهي",
-            "renewPlan": "تجديد الخطة",
-            "upgradePlan": "ترقية الخطة",
-            "products": "المنتجات",
-            "orders": "الطلبات",
-            "contacts": "جهات الاتصال"
-        },
-        "stats": {
-            "totalRevenue": "إجمالي الإيرادات",
-            "products": "المنتجات",
-            "orders": "الطلبات",
-            "templates": "القوالب",
-            "contacts": "جهات الاتصال",
-            "recentOrders": "الطلبات الأخيرة",
-            "topProducts": "أفضل المنتجات",
-            "noOrders": "لا توجد طلبات بعد",
-            "noProducts": "لا توجد منتجات بعد",
-            "topCustomers": {
-                "title": "أفضل العملاء",
-                "subtitle": {
-                    "orders": "حسب عدد الطلبات",
-                    "spent": "حسب إجمالي المبلغ المنفق"
-                },
-                "orders": "الطلبات",
-                "spent": "المنفق",
-                "byOrders": "إجمالي الطلبات",
-                "bySpent": "إجمالي المنفق ($)",
-                "empty": "لا توجد بيانات عملاء متاحة"
-            }
-        },
-        "charts": {
-            "revenue": {
-                "title": "الإيرادات مع مرور الوقت",
-                "subtitle": "آخر 30 يومًا",
-                "total": "الإجمالي",
-                "label": "الإيرادات ($)",
-                "noData": "لا توجد بيانات إيرادات متاحة"
-            },
-            "ordersStatus": {
-                "title": "الطلبات حسب الحالة",
-                "subtitle": "{count} إجمالي الطلبات",
-                "noData": "لا توجد بيانات طلبات متاحة"
-            },
-            "topProducts": {
-                "title": "أفضل المنتجات",
-                "subtitle": "حسب عدد المبيعات",
-                "totalSales": "إجمالي المبيعات",
-                "label": "عدد المبيعات",
-                "noData": "لا توجد بيانات منتجات متاحة",
-                "unnamedProduct": "منتج بدون اسم"
-            }
-        }
     },
     "agent": {
         "header": {

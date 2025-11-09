@@ -40,18 +40,15 @@ const Header: React.FC = () => {
         const isProductionSubdomain = parts.length >= 3 && !hostname.includes('localhost') && !hostname.startsWith('127.0.0.1');
         const isSubdomain = isLocalhostSubdomain || isProductionSubdomain;
 
-        const locale = (params as any)?.locale || "en";
-        let href: string;
         if (isSubdomain) {
-            // With subdomain: navigate to root (middleware will rewrite to /en/subdomain)
-            // Use window.location for full page reload to ensure URL updates
+            // With subdomain: navigate to root
             window.location.href = '/';
             return;
         } else {
-            // Without subdomain: navigate to /locale/domain
-            const locale = (params as any)?.locale || "en";
+            // Without subdomain: navigate to /{locale}/{domain}
             const domain = (params as any)?.domain || selectedStore.domain;
-            href = `/${locale}/${domain}`;
+            const locale = (params as any)?.locale || 'en';
+            const href = `/${locale}/${domain}`;
             router.push(href);
         }
     };

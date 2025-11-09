@@ -249,20 +249,19 @@ export default function SettingsPage() {
         if (file.size > MAX_LOGO_SIZE) { toast.error('Logo too large (max 2MB).'); return; }
 
         try {
-        const formData = new FormData();
-        formData.append('file', file);
+            const { uploadFile } = await import('@/lib/utils/upload');
+            const result = await uploadFile(file);
 
-        const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        const data = await res.json();
-
-        if (res.ok && data.url) {
-            if (activeTab === 'Profile') await updateField('logo', data.url);
-            else if (activeTab === 'Store') await updateStoreField('logoUrl', data.url);
-            toast.success('Logo updated successfully!');
-        } else toast.error('Failed to upload logo.');
+            if (result.success) {
+                if (activeTab === 'Profile') await updateField('logo', result.data.url);
+                else if (activeTab === 'Store') await updateStoreField('logoUrl', result.data.url);
+                toast.success('Logo updated successfully!');
+            } else {
+                toast.error(result.error.message || 'Failed to upload logo.');
+            }
         } catch (err) {
-        console.error('Error uploading logo:', err);
-        toast.error('Error uploading logo.');
+            console.error('Error uploading logo:', err);
+            toast.error('Error uploading logo.');
         }
     };
 

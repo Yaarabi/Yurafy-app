@@ -2,7 +2,9 @@
 
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
-import { PLANS } from "../plan/page";
+import { DEFAULT_PLANS as PLANS } from "@/hooks/onboarding/usePlansData";
+
+type DefaultPlan = typeof PLANS[keyof typeof PLANS];
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
@@ -114,9 +116,9 @@ export default function CheckoutPage() {
                     setPlan(foundPlan);
                 } else {
                     // Fallback to hardcoded PLANS for backward compatibility
-                    const fallbackPlan = PLANS[planKey as keyof typeof PLANS] || 
-                        Object.entries(PLANS).find(([key]) => key.toLowerCase() === planKey.toLowerCase())?.[1] ||
-                        Object.values(PLANS).find(p => p.name.toLowerCase().replace(/\s+/g, '') === planKey.toLowerCase().replace(/\s+/g, ''));
+                    const fallbackPlan = (PLANS as any)[planKey as keyof typeof PLANS] || 
+                        (Object.entries(PLANS) as [string, DefaultPlan][]).find(([key]) => key.toLowerCase() === planKey.toLowerCase())?.[1] ||
+                        (Object.values(PLANS) as DefaultPlan[]).find((p) => p.name.toLowerCase().replace(/\s+/g, '') === planKey.toLowerCase().replace(/\s+/g, ''));
                     if (fallbackPlan) {
                         setPlan(fallbackPlan);
                     } else {
@@ -126,9 +128,9 @@ export default function CheckoutPage() {
             } catch (err) {
                 console.error('Error fetching plan:', err);
                 // Fallback to hardcoded PLANS
-                const fallbackPlan = PLANS[planKey as keyof typeof PLANS] || 
-                    Object.entries(PLANS).find(([key]) => key.toLowerCase() === planKey.toLowerCase())?.[1] ||
-                    Object.values(PLANS).find(p => p.name.toLowerCase().replace(/\s+/g, '') === planKey.toLowerCase().replace(/\s+/g, ''));
+                const fallbackPlan = (PLANS as any)[planKey as keyof typeof PLANS] || 
+                    (Object.entries(PLANS) as [string, DefaultPlan][]).find(([key]) => key.toLowerCase() === planKey.toLowerCase())?.[1] ||
+                    (Object.values(PLANS) as DefaultPlan[]).find((p) => p.name.toLowerCase().replace(/\s+/g, '') === planKey.toLowerCase().replace(/\s+/g, ''));
                 if (fallbackPlan) {
                     setPlan(fallbackPlan);
                 } else {

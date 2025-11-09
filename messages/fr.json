@@ -198,14 +198,20 @@
     },
     "common": {
         "appTitle": "Tableau de bord vendeur",
-        "logout": "Se déconnecter"
+        "logout": "Se déconnecter",
+        "buttons": {
+            "back": "Retour"
+        }
     },
     "nav": {
         "dashboard": "Accueil",
         "orders": "Commandes",
         "products": "Produits",
+        "customers": "Clients",
         "settings": "Paramètres",
         "whatsapp": "WhatsApp",
+        "agent": "Agent IA",
+        "conversations": "Conversations",
         "support": "Support"
     },
     "dashboard": {
@@ -213,6 +219,23 @@
         "subtitle": "Gérez les commandes, les produits et votre marque au même endroit.",
         "header": {
             "title": "Tableau de bord"
+        },
+        "themeToggle": {
+            "ariaLabel": "Basculer le thème"
+        },
+        "notifications": {
+            "title": "Notifications",
+            "markAllRead": "Tout marquer comme lu",
+            "markAllSuccess": "Toutes les notifications marquées comme lues",
+            "markAllError": "Échec du marquage de toutes comme lues",
+            "deleteError": "Échec de la suppression de la notification",
+            "deleteReadSuccess": "Toutes les notifications lues supprimées",
+            "deleteReadError": "Échec de la suppression des notifications lues",
+            "markRead": "Marquer comme lue",
+            "delete": "Supprimer",
+            "close": "Fermer",
+            "empty": "Aucune notification",
+            "clearAllRead": "Effacer toutes les notifications lues"
         },
         "plan": {
             "expired": "Votre plan a expiré",
@@ -233,7 +256,41 @@
             "recentOrders": "Commandes récentes",
             "topProducts": "Meilleurs produits",
             "noOrders": "Aucune commande pour le moment",
-            "noProducts": "Aucun produit pour le moment"
+            "noProducts": "Aucun produit pour le moment",
+            "topCustomers": {
+                "title": "Meilleurs Clients",
+                "subtitle": {
+                    "orders": "Par nombre de commandes",
+                    "spent": "Par montant total dépensé"
+                },
+                "orders": "Commandes",
+                "spent": "Dépensé",
+                "byOrders": "Total des commandes",
+                "bySpent": "Total dépensé ($)",
+                "empty": "Aucune donnée client disponible"
+            }
+        },
+        "charts": {
+            "revenue": {
+                "title": "Revenu dans le temps",
+                "subtitle": "30 derniers jours",
+                "total": "Total",
+                "label": "Revenu ($)",
+                "noData": "Aucune donnée de revenu disponible"
+            },
+            "ordersStatus": {
+                "title": "Commandes par statut",
+                "subtitle": "{count} commandes au total",
+                "noData": "Aucune donnée de commande disponible"
+            },
+            "topProducts": {
+                "title": "Meilleurs produits",
+                "subtitle": "Par nombre de ventes",
+                "totalSales": "Ventes totales",
+                "label": "Nombre de ventes",
+                "noData": "Aucune donnée de produit disponible",
+                "unnamedProduct": "Produit sans nom"
+            }
         }
     },
     "themes": {
@@ -326,68 +383,6 @@
         "stubReply": "Merci ! Un agent examinera votre demande prochainement.",
         "placeholder": "Tapez votre question...",
         "send": "Envoyer"
-    },
-    "dashboard": {
-        "title": "Bienvenue sur votre tableau de bord",
-        "subtitle": "Gérez les commandes, les produits et votre marque au même endroit.",
-        "header": {
-            "title": "Tableau de bord"
-        },
-        "plan": {
-            "expired": "Votre plan a expiré",
-            "planLabel": "Plan",
-            "expires": "Expire",
-            "renewPlan": "Renouveler le plan",
-            "upgradePlan": "Mettre à niveau le plan",
-            "products": "Produits",
-            "orders": "Commandes",
-            "contacts": "Contacts"
-        },
-        "stats": {
-            "totalRevenue": "Revenu total",
-            "products": "Produits",
-            "orders": "Commandes",
-            "templates": "Modèles",
-            "contacts": "Contacts",
-            "recentOrders": "Commandes récentes",
-            "topProducts": "Meilleurs produits",
-            "noOrders": "Aucune commande pour le moment",
-            "noProducts": "Aucun produit pour le moment",
-            "topCustomers": {
-                "title": "Meilleurs Clients",
-                "subtitle": {
-                    "orders": "Par nombre de commandes",
-                    "spent": "Par montant total dépensé"
-                },
-                "orders": "Commandes",
-                "spent": "Dépensé",
-                "byOrders": "Total des commandes",
-                "bySpent": "Total dépensé ($)",
-                "empty": "Aucune donnée client disponible"
-            }
-        },
-        "charts": {
-            "revenue": {
-                "title": "Revenu dans le temps",
-                "subtitle": "30 derniers jours",
-                "total": "Total",
-                "label": "Revenu ($)",
-                "noData": "Aucune donnée de revenu disponible"
-            },
-            "ordersStatus": {
-                "title": "Commandes par statut",
-                "subtitle": "{count} commandes au total",
-                "noData": "Aucune donnée de commande disponible"
-            },
-            "topProducts": {
-                "title": "Meilleurs produits",
-                "subtitle": "Par nombre de ventes",
-                "totalSales": "Ventes totales",
-                "label": "Nombre de ventes",
-                "noData": "Aucune donnée de produit disponible",
-                "unnamedProduct": "Produit sans nom"
-            }
-        }
     },
     "agent": {
         "header": {
@@ -567,32 +562,6 @@
                 "deleted": "Fichier et embeddings supprimés",
                 "deleteError": "Échec de la suppression"
             }
-        }
-    },
-    "Support": {
-        "title": "Centre de Support",
-        "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
-        "chat": {
-            "title": "Chat de support",
-            "subtitle": "Nous sommes là pour vous aider à réussir !",
-            "empty": {
-                "title": "Aucun message pour le moment",
-                "description": "Démarrez une conversation avec notre équipe de support. Nous sommes là pour vous aider à réussir !"
-            },
-            "input": {
-                "placeholder": "Tapez votre message...",
-                "send": "Envoyer",
-                "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
-            },
-            "messages": {
-                "sent": "Message envoyé ! Notre équipe de support répondra bientôt.",
-                "sendError": "Échec de l'envoi du message",
-                "loadError": "Échec du chargement des messages"
-            },
-            "today": "Aujourd'hui",
-            "quickReply": "Réponse rapide",
-            "writeMessage": "Écrire un message à Copilot",
-            "editInPage": "Modifier dans une page"
         }
     },
     "products": {

@@ -5,34 +5,7 @@ import ThemeInjector from "@/components/productPage/ThemeInjector";
 import StoreClientWrapper from "@/components/pages/storeWrapper";
 import NotFound from "./not-found";
 import { headers } from "next/headers";
-
-// Extract subdomain from hostname header
-async function getSubdomainFromHeaders(): Promise<string | null> {
-    const headersList = await headers();
-    const host = headersList.get('host') || '';
-    
-    // Remove port if present
-    const hostname = host.split(':')[0];
-    
-    // For localhost, check if it's in subdomain format (subdomain.localhost)
-    if (hostname.includes('localhost')) {
-        const parts = hostname.split('.');
-        if (parts.length > 1 && parts[0] !== 'localhost') {
-            return parts[0];
-        }
-        return null;
-    }
-    
-    // For production domains (e.g., store.example.com)
-    const parts = hostname.split('.');
-    // If we have more than 2 parts, the first is the subdomain
-    // Example: store.yura-saas.com -> ['store', 'yura-saas', 'com']
-    if (parts.length >= 3) {
-        return parts[0];
-    }
-    
-    return null;
-}
+import { getSubdomainFromHeaders } from "@/lib/utils/subdomain";
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
     const { domain } = await params;
@@ -43,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
     // Check if domain param looks like a locale (edge case handling)
     if (domain && !domain.includes('/') && domain.length <= 5) {
         // Might be locale, check for subdomain
-        const subdomain = await getSubdomainFromHeaders();
+        const subdomain = await getSubdomainFromHeaders(headers);
         if (subdomain) {
             storeDomain = subdomain;
         }
@@ -57,7 +30,7 @@ export async function generateViewport({ params }: { params: Promise<{ domain: s
     
     // Extract actual store domain (handle subdomain case)
     let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders();
+    const subdomain = await getSubdomainFromHeaders(headers);
     if (subdomain) {
         storeDomain = subdomain;
     }
@@ -73,7 +46,7 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders();
+    const subdomain = await getSubdomainFromHeaders(headers);
     
     // If we have a subdomain from headers, use it (subdomain takes precedence)
     // Otherwise, use the domain from params (path-based routing)

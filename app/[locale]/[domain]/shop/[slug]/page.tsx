@@ -1,45 +1,18 @@
-
 import ProductPageClientWrapper from '@/components/pages/productWraper';
 import { getProductWithStoreBySlug } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
-
 import { getStoreByDomain } from '@/lib/data/store';
 import NotFound from '../not-found';
 import { headers } from "next/headers";
-
-// Extract subdomain from hostname header
-async function getSubdomainFromHeaders(): Promise<string | null> {
-    const headersList = await headers();
-    const host = headersList.get('host') || '';
-    const hostname = host.split(':')[0]; // Remove port if present
-    
-    // Handle localhost/development
-    if (hostname === 'localhost' || hostname.startsWith('127.0.0.1') || hostname.startsWith('192.168.')) {
-        const parts = hostname.split('.');
-        if (parts.length > 1 && parts[0] !== 'localhost') {
-            return parts[0];
-        }
-        return null;
-    }
-    
-    // For production domains (e.g., store.example.com)
-    const parts = hostname.split('.');
-    // If we have more than 2 parts, the first is the subdomain
-    // Example: store.yura-saas.com -> ['store', 'yura-saas', 'com']
-    if (parts.length >= 3) {
-        return parts[0];
-    }
-    
-    return null;
-}
+import { getSubdomainFromHeaders } from '@/lib/utils/subdomain';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string; domain?: string; locale?: string }> }) {
     const { slug, domain } = await params;
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders();
+    const subdomain = await getSubdomainFromHeaders(headers);
     
     // If we have a subdomain from headers, use it (subdomain takes precedence)
     // Otherwise, use the domain from params (path-based routing)
@@ -85,7 +58,7 @@ export async function generateViewport({ params }: { params: Promise<{ domain?: 
     
     // Extract actual store domain (handle subdomain case)
     let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders();
+    const subdomain = await getSubdomainFromHeaders(headers);
     if (subdomain) {
         storeDomain = subdomain;
     }

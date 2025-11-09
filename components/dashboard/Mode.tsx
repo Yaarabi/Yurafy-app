@@ -4,10 +4,12 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
+import { useTranslations } from 'next-intl';
 
 export default function ThemeToggle() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const t = useTranslations('dashboard.themeToggle');
 
     // Avoid hydration mismatch
     useEffect(() => setMounted(true), []);
@@ -21,6 +23,7 @@ export default function ThemeToggle() {
                     dark:bg-gray-700 dark:text-gray-100 
                     hover:bg-[var(--brand-blue)] hover:text-white 
                     transition"
+        aria-label={t('ariaLabel')}
         >
         {theme === 'dark' ? <MdLightMode size={20} /> : <MdDarkMode size={20} />}
         </button>

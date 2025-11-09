@@ -274,24 +274,20 @@ export async function POST(req: NextRequest) {
         // ✅ FIXED: Determine redirect path based on what user needs to configure
         let redirectTo = '';
 
-        if (planKey.toLowerCase() === 'free') {
+        // Check if user needs to configure store first
+        if (planNeeds.needsStore && !finalStoreConfigured) {
+            // User needs store features but doesn't have a properly configured store
             redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
-        } else {
-            // ✅ FIXED: Check if user needs to configure store first
-            if (planNeeds.needsStore && !finalStoreConfigured) {
-                // User needs store features but doesn't have a properly configured store
-                redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
-            } 
-            // ✅ FIXED: Check if user needs to configure WhatsApp first
-            else if (planNeeds.needsWhatsApp && !finalWhatsAppConnected) {
-                // User needs WhatsApp features but doesn't have a connected WhatsApp account
-                // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
-                redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
-            } 
-            // ✅ FIXED: Both store and WhatsApp are ready, go to checkout
-            else {
-                redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
-            }
+        } 
+        // ✅ FIXED: Check if user needs to configure WhatsApp first
+        else if (planNeeds.needsWhatsApp && !finalWhatsAppConnected) {
+            // User needs WhatsApp features but doesn't have a connected WhatsApp account
+            // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
+            redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
+        } 
+        // ✅ FIXED: All required resources are configured, always go to checkout for paid plans
+        else {
+            redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
         }
 
         return NextResponse.json({

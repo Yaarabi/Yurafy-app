@@ -12,14 +12,20 @@
     },
     "common": {
         "appTitle": "Seller Dashboard",
-        "logout": "Logout"
+        "logout": "Logout",
+        "buttons": {
+            "back": "Back"
+        }
     },
     "nav": {
         "dashboard": "Dashboard",
         "orders": "Orders",
         "products": "Products",
+        "customers": "Customers",
         "settings": "Settings",
         "whatsapp": "WhatsApp",
+        "agent": "AI Agent",
+        "conversations": "Conversations",
         "support": "Support"
     },
     "Footer": {
@@ -104,6 +110,21 @@
         "title": "Flexible Plans to Fit Your Business",
         "mostPopular": "⭐ Most Popular",
         "choosePlan": "Choose Plan"
+    },
+    "TestimonialsSection": {
+        "title": "What Our Customers Say",
+        "testimonial1": {
+            "quote": "Yurafy transformed my business. AI automation saves me hours every day and my sales are up 40% since using the platform.",
+            "name": "Fatima, E-commerce Owner"
+        },
+        "testimonial2": {
+            "quote": "The WhatsApp automation is incredible. My customers get instant replies and I can focus on growing instead of answering messages all day.",
+            "name": "Youssef, Retailer"
+        },
+        "testimonial3": {
+            "quote": "The custom web development service exceeded my expectations. My new site looks professional and converts far better than before.",
+            "name": "Sarah, Business Owner"
+        }
     },
     "CallToAction": {
         "headline": "Ready to Transform Your Business with Yurafy?",
@@ -192,6 +213,23 @@
         "subtitle": "Manage orders, products, and your brand in one place.",
         "header": {
             "title": "Dashboard"
+        },
+        "themeToggle": {
+            "ariaLabel": "Toggle theme"
+        },
+        "notifications": {
+            "title": "Notifications",
+            "markAllRead": "Mark all read",
+            "markAllSuccess": "All notifications marked as read",
+            "markAllError": "Failed to mark all as read",
+            "deleteError": "Failed to delete notification",
+            "deleteReadSuccess": "All read notifications deleted",
+            "deleteReadError": "Failed to delete read notifications",
+            "markRead": "Mark as read",
+            "delete": "Delete",
+            "close": "Close",
+            "empty": "No notifications",
+            "clearAllRead": "Clear all read notifications"
         },
         "plan": {
             "expired": "Your plan has expired",

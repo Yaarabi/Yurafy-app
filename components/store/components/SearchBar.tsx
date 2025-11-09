@@ -84,9 +84,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProdu
             onProductSelect(product);
         }
 
-        // Navigate to product page
-        const locale = (params as any)?.locale || "en";
+        // Navigate to product page - nested routing: /{locale}/{domain}/shop/{slug}
         const domain = (params as any)?.domain || selectedStore?.domain || "";
+        const locale = (params as any)?.locale || 'en';
         if (domain && product.slug) {
             const href = `/${locale}/${domain}/shop/${product.slug}`;
             try {

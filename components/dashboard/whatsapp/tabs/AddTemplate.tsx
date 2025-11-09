@@ -42,19 +42,15 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
             });
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
+        const { uploadFile } = await import('@/lib/utils/upload');
+        const result = await uploadFile(file);
 
-        const res = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-        });
+        if (!result.success) {
+            throw new Error(result.error.message || "Upload failed");
+        }
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Upload failed");
-
-        setUploadedUrl(data.url);
-        setTemplate((prev) => ({ ...prev, link: data.url }));
+        setUploadedUrl(result.data.url);
+        setTemplate((prev) => ({ ...prev, link: result.data.url }));
         setMediaFile(file);
         } catch (err: any) {
         console.error(err);

@@ -175,20 +175,14 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                 continue;
             }
 
-            const formData = new FormData();
-            formData.append('file', file);
+            const { uploadFile } = await import('@/lib/utils/upload');
+            const result = await uploadFile(file);
 
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await res.json();
-            if (res.ok && data.url) {
-                uploadedUrls.push(data.url);
+            if (result.success) {
+                uploadedUrls.push(result.data.url);
             } else {
-                console.error('Upload failed:', data.message);
-                toast.error(data.message || 'Failed to upload file');
+                console.error('Upload failed:', result.error.message);
+                toast.error(result.error.message || 'Failed to upload file');
             }
         }
 

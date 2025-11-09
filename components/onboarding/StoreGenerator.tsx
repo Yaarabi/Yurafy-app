@@ -71,8 +71,8 @@ export default function StoreGenerator({
 
     const handleSaveAndRedirect = async (data: any) => {
         if (!storeData) {
-            return;
-        }
+                return;
+            }
 
         // Use current storeData state (which includes any user edits)
         const dataToSave = storeData || data;
@@ -81,17 +81,17 @@ export default function StoreGenerator({
             brandName: dataToSave.brandName,
             domain: dataToSave.domain,
             description: dataToSave.description,
-            language: basicInfo.language || 'en',
+                    language: basicInfo.language || 'en',
             themeId: selectedTheme.themeId,
             theme: selectedTheme.theme,
-            themeStructure: selectedThemeStructure || {
-                header: true,
-                hero: true,
-                about: true,
-                trust: true,
-                productGrid: true,
-                footer: true,
-            },
+                    themeStructure: selectedThemeStructure || {
+                        header: true,
+                        hero: true,
+                        about: true,
+                        trust: true,
+                        productGrid: true,
+                        footer: true,
+                    },
             hero: dataToSave.hero || {
                 title: '',
                 subtitle: '',
@@ -103,9 +103,9 @@ export default function StoreGenerator({
             },
             footer: dataToSave.footer || {
                 text: `© ${new Date().getFullYear()} ${dataToSave.brandName}. All rights reserved.`,
-            },
-            socialLinks: dataToSave.socialLinks || {},
-            headerLinks: dataToSave.headerLinks || [],
+                },
+                socialLinks: dataToSave.socialLinks || {},
+                headerLinks: dataToSave.headerLinks || [],
             whatsappNumber: dataToSave.whatsappNumber,
             logoUrl: basicInfo.logo || dataToSave.logoUrl,
         });

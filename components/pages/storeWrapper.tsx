@@ -16,22 +16,10 @@ const StoreClientWrapper: React.FC<StoreClientWrapperProps> = ({ store, products
     const params = useParams();
 
     const onProductSelect = useCallback((product: IProduct) => {
-        // Check if we're using subdomain (e.g., store.yura-saas.com)
-        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-        const parts = hostname ? hostname.split('.') : [];
-        // Subdomain detection: if hostname has 3+ parts and not localhost (e.g., store.yura-saas.com)
-        const isSubdomain = parts.length >= 3 && !hostname.includes('localhost') && !hostname.startsWith('127.0.0.1');
-        
-        let href: string;
-        if (isSubdomain) {
-            // With subdomain: /shop/product-slug (no locale/domain in path)
-            href = `/shop/${product.slug}`;
-        } else {
-            // Without subdomain: /locale/domain/shop/product-slug
-            const locale = (params as any)?.locale || "en";
-            const domain = (params as any)?.domain || store.domain;
-            href = `/${locale}/${domain}/shop/${product.slug}`;
-        }
+        // Nested routing: always use /{locale}/{domain}/shop/{slug}
+        const domain = (params as any)?.domain || store.domain;
+        const locale = (params as any)?.locale || 'en';
+        const href = `/${locale}/${domain}/shop/${product.slug}`;
         
         try {
             router.push(href);
