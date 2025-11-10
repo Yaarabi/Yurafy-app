@@ -94,25 +94,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
         if (!domain) return null;
         
         // Extract base domain from current hostname or use environment variable
-        let domainPart = "yurait.vercel.app"; // Default fallback
-        
-        if (typeof window !== 'undefined') {
-            const hostname = window.location.hostname;
-            const parts = hostname.split('.');
-            
-            // Extract base domain
-            // Examples:
-            // - "yurait.vercel.app" -> "yurait.vercel.app"
-            // - "app.yurait.vercel.app" -> "yurait.vercel.app"
-            // - "store.yurait.vercel.app" -> "yurait.vercel.app"
-            if (parts.length >= 3) {
-                // Remove first part (subdomain) to get base domain
-                domainPart = parts.slice(1).join('.');
-            } else if (parts.length === 2) {
-                // Already on base domain
-                domainPart = hostname;
-            }
-        }
+        const domainPart = "yurait.vercel.app"; // Default fallback
         
         return `https://${domain}.${domainPart}`;
     };

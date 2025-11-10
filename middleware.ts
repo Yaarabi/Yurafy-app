@@ -35,6 +35,12 @@ export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     const pathname = request.nextUrl.pathname;
 
+    // Detect if first segment is a supported locale
+    const LOCALES = ['en', 'fr', 'ar'];
+    const pathSegments = pathname.split('/').filter(Boolean);
+    const hasExplicitLocale = pathSegments.length > 0 && LOCALES.includes(pathSegments[0]);
+    const explicitLocale = hasExplicitLocale ? pathSegments[0] : null;
+
     // Resolve primary domain (custom domain or primary vercel domain for the app)
     // Example: NEXT_PUBLIC_DOMAIN=yurafy.com or yurait.vercel.app
     const PRIMARY_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || '';
@@ -54,18 +60,25 @@ export default function middleware(request: NextRequest) {
     const isLocalhost = hostNoPort.includes('localhost');
     const isUnderPrimary = PRIMARY_DOMAIN ? hostNoPort.endsWith(PRIMARY_DOMAIN) : isLocalhost;
 
-    // Subdomain detection for store (only on our primary domain or localhost): rewrite to /en/{domain}[pathname]
+    // Pick target locale for subdomain rewrite: respect explicit locale in path if present, else cookie, else default
+    const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+    const targetLocale = explicitLocale || cookieLocale || 'en';
+
+    // Subdomain detection for store (only on our primary domain or localhost): rewrite to /{locale}/{domain}[trailing]
     const subdomain = extractSubdomain(hostname, MAIN_DOMAINS);
     const isStoreDomain = isUnderPrimary && isStoreSubdomain(hostname, MAIN_DOMAINS);
     if (isStoreDomain && subdomain) {
-        // If already rewritten (starts with /en/{subdomain}) just continue
-        if (pathname.startsWith(`/en/${subdomain}`)) {
+        // Already correctly rewritten?
+        if (pathname.startsWith(`/${targetLocale}/${subdomain}`)) {
             return intlMiddleware(request);
         }
         const rewrite = request.nextUrl.clone();
         // Preserve trailing path (except root)
         const trailing = pathname === '/' ? '' : pathname;
-        rewrite.pathname = `/en/${subdomain}${trailing}`;
+        // If explicit locale was in path (e.g. /fr) and user visited fr.domain.tld/fr, we should not duplicate locale.
+        // For subdomain host we ignore any leading locale segment in original path when building rewrite.
+        const cleanedTrailing = hasExplicitLocale ? trailing.replace(/^\/(en|fr|ar)/, '') : trailing;
+        rewrite.pathname = `/${targetLocale}/${subdomain}${cleanedTrailing}`;
         return NextResponse.rewrite(rewrite);
     }
 
