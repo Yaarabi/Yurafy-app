@@ -20,12 +20,9 @@ export default function LocaleSwitcher() {
 
         const currentPath = pathname || '/';
 
-        // Set locale cookie
-        if (newLocale !== 'en') {
+        // Always set locale cookie explicitly (including 'en')
+        // This ensures the middleware respects the user's choice
         document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
-        } else {
-        document.cookie = 'NEXT_LOCALE=; path=/; max-age=0';
-        }
 
         // Handle domain-prefixed routes
         if (params.domain) {

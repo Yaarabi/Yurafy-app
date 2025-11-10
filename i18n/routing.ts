@@ -3,5 +3,7 @@ import { defineRouting } from 'next-intl/routing';
 export const routing = defineRouting({
   locales: ['en', 'fr', 'ar'],
   defaultLocale: 'en',
-  localePrefix: 'as-needed', // Hide default locale (en) from URLs
+  // 'as-needed' means default locale (en) is at "/" without prefix
+  // Other locales (fr, ar) get prefixes: "/fr", "/ar"
+  localePrefix: 'as-needed',
 });

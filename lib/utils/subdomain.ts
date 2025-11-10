@@ -40,8 +40,32 @@ export function getSubdomain(
     // For production domains
     const parts = host.split('.');
     
-    // Handle Vercel domains: subdomain.app.vercel.app (4 parts)
-    // Handle regular domains: subdomain.example.com (3 parts)
+    // Handle Vercel preview URLs with hyphens: store1-yurait.vercel.app
+    // Vercel creates preview URLs in format: subdomain-appname.vercel.app
+    if (host.endsWith('.vercel.app')) {
+        // Extract the first part before .vercel.app
+        const firstPart = parts[0];
+        
+        // If it contains a hyphen, split and take the leftmost part as subdomain
+        if (firstPart.includes('-')) {
+            const hyphenParts = firstPart.split('-');
+            const potentialSubdomain = hyphenParts[0];
+            // Don't treat main domains as store subdomains
+            if (mainDomains.includes(potentialSubdomain)) {
+                return null;
+            }
+            return potentialSubdomain;
+        }
+        
+        // Otherwise, use the first part as-is (e.g., store1.vercel.app)
+        const potentialSubdomain = firstPart;
+        if (mainDomains.includes(potentialSubdomain)) {
+            return null;
+        }
+        return potentialSubdomain;
+    }
+    
+    // Handle standard domains: subdomain.app.vercel.app (4 parts) or subdomain.example.com (3 parts)
     // If we have 3+ parts, the first is potentially a subdomain
     if (parts.length >= 3) {
         const potentialSubdomain = parts[0];

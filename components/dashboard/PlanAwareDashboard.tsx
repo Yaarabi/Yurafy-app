@@ -55,7 +55,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
     const statistics = featuresData?.statistics;
 
     const isFreePlan = planKey === "free";
-    const isStorePlan = planFeatures?.isStorePlan || planKey === "free" || planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
+    const isStorePlan = planFeatures?.isStorePlan || planKey === "Starter" || planKey === "Pro Seller" || planKey === "Visionary";
     const isWhatsAppPlan = planFeatures?.isWhatsAppPlan || planKey === "WhatsApp Automation" || planKey === "AI WhatsApp Agent" || planKey === "Pro Seller" || planKey === "Visionary";
     const hasOrders = planFeatures?.hasOrders !== false;
     
@@ -94,7 +94,25 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
         if (!domain) return null;
         
         // Extract base domain from current hostname or use environment variable
-        const domainPart = "yurait.vercel.app"; // Default fallback
+        let domainPart = "yurait.vercel.app"; // Default fallback
+        
+        if (typeof window !== 'undefined') {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            
+            // Extract base domain
+            // Examples:
+            // - "yurait.vercel.app" -> "yurait.vercel.app"
+            // - "app.yurait.vercel.app" -> "yurait.vercel.app"
+            // - "store.yurait.vercel.app" -> "yurait.vercel.app"
+            if (parts.length >= 3) {
+                // Remove first part (subdomain) to get base domain
+                domainPart = parts.slice(1).join('.');
+            } else if (parts.length === 2) {
+                // Already on base domain
+                domainPart = hostname;
+            }
+        }
         
         return `https://${domain}.${domainPart}`;
     };
