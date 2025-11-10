@@ -1,18 +1,14 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { extractSubdomain, isStoreSubdomain } from '@/lib/utils/storeRouting';
+import { routing } from './i18n/routing';
 
 // Base subdomains considered part of the main app (not store subdomains)
 const BASE_MAIN_DOMAINS = ['www', 'app', 'admin', 'localhost'];
 const PROTECTED_ROUTES = ['/api', '/_next', '/admin', '/dashboard', '/login', '/signup', '/onboarding', '/verify-email', '/forgot-password', '/reset-password'];
 
 // Internationalization middleware for main app
-const intlMiddleware = createMiddleware({
-    locales: ['en', 'fr', 'ar'],
-    defaultLocale: 'en',
-    localePrefix: 'as-needed',
-    localeDetection: true,
-});
+const intlMiddleware = createMiddleware(routing);
 
 /**
  * Check if path is a protected route
@@ -21,31 +17,17 @@ function isProtectedRoute(pathname: string): boolean {
     return PROTECTED_ROUTES.some(route => pathname.startsWith(route));
 }
 
-// We no longer strip /en for default locale on store routes to preserve nested /{locale}/{domain}
-function shouldSkipIntl(pathname: string) {
-    // Store paths have shape /{locale}/{domain}[...]
-    // We always run intl middleware except when handling a subdomain rewrite.
-    return false;
-}
-
 /**
  * Main middleware function
  */
 export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     const pathname = request.nextUrl.pathname;
+    const url = request.nextUrl;
 
-    // Detect if first segment is a supported locale
-    const LOCALES = ['en', 'fr', 'ar'];
-    const pathSegments = pathname.split('/').filter(Boolean);
-    const hasExplicitLocale = pathSegments.length > 0 && LOCALES.includes(pathSegments[0]);
-    const explicitLocale = hasExplicitLocale ? pathSegments[0] : null;
-
-    // Resolve primary domain (custom domain or primary vercel domain for the app)
-    // Example: NEXT_PUBLIC_DOMAIN=yurafy.com or yurait.vercel.app
-    const PRIMARY_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || '';
-    const primarySub = PRIMARY_DOMAIN ? PRIMARY_DOMAIN.split('.')[0] : '';
-    // Include the primary domain's top-level subdomain (e.g., 'yurait' from 'yurait.vercel.app')
+    // Define the main domain (without www or https://)
+    const rootDomain = process.env.NEXT_PUBLIC_DOMAIN || "yurait.vercel.app";
+    const primarySub = rootDomain ? rootDomain.split('.')[0] : '';
     const MAIN_DOMAINS = primarySub
         ? Array.from(new Set([...BASE_MAIN_DOMAINS, primarySub]))
         : BASE_MAIN_DOMAINS;
@@ -58,35 +40,55 @@ export default function middleware(request: NextRequest) {
     // Determine if current host is under our primary domain (or localhost)
     const hostNoPort = hostname.split(':')[0];
     const isLocalhost = hostNoPort.includes('localhost');
-    const isUnderPrimary = PRIMARY_DOMAIN ? hostNoPort.endsWith(PRIMARY_DOMAIN) : isLocalhost;
+    const isUnderPrimary = rootDomain ? hostNoPort.endsWith(rootDomain) : isLocalhost;
 
-    // Pick target locale for subdomain rewrite: respect explicit locale in path if present, else cookie, else default
-    const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-    const targetLocale = explicitLocale || cookieLocale || 'en';
+    // Extract subdomain for store detection
+    let subdomain = "";
+    if (isLocalhost && hostNoPort.includes('.localhost')) {
+        // For localhost: subdomain.localhost
+        subdomain = hostNoPort.replace('.localhost', '').split('.')[0];
+    } else if (isLocalhost) {
+        subdomain = "";
+    } else {
+        // Production: extract subdomain
+        subdomain = extractSubdomain(hostname, MAIN_DOMAINS) || "";
+    }
 
-    // Subdomain detection for store (only on our primary domain or localhost): rewrite to /{locale}/{domain}[trailing]
-    const subdomain = extractSubdomain(hostname, MAIN_DOMAINS);
-    const isStoreDomain = isUnderPrimary && isStoreSubdomain(hostname, MAIN_DOMAINS);
+    const isStoreDomain = isUnderPrimary && isStoreSubdomain(hostname, MAIN_DOMAINS) && subdomain;
+
+    // Handle subdomain routing for stores
     if (isStoreDomain && subdomain) {
-        // Already correctly rewritten?
+        // Check if the subdomain is not in main domains list
+        if (MAIN_DOMAINS.includes(subdomain)) {
+            // This is the main app, not a store
+            return intlMiddleware(request);
+        }
+
+        // Determine target locale from path
+        const pathSegments = pathname.split('/').filter(Boolean);
+        let targetLocale: 'en' | 'fr' | 'ar' = routing.defaultLocale;
+        let remainingPath = pathname;
+        
+        // Check if first segment is a valid locale
+        if (pathSegments.length > 0 && routing.locales.includes(pathSegments[0] as any)) {
+            targetLocale = pathSegments[0] as 'en' | 'fr' | 'ar';
+            // Remove the locale from the path since we'll add it back in the rewrite
+            remainingPath = '/' + pathSegments.slice(1).join('/');
+        }
+
+        // Avoid infinite rewrites - check if already rewritten
         if (pathname.startsWith(`/${targetLocale}/${subdomain}`)) {
             return intlMiddleware(request);
         }
-        const rewrite = request.nextUrl.clone();
-        // Preserve trailing path (except root)
-        const trailing = pathname === '/' ? '' : pathname;
-        // If explicit locale was in path (e.g. /fr) and user visited fr.domain.tld/fr, we should not duplicate locale.
-        // For subdomain host we ignore any leading locale segment in original path when building rewrite.
-        const cleanedTrailing = hasExplicitLocale ? trailing.replace(/^\/(en|fr|ar)/, '') : trailing;
-        rewrite.pathname = `/${targetLocale}/${subdomain}${cleanedTrailing}`;
+
+        // Build the rewrite path: /{locale}/{subdomain}{remaining}
+        const rewritePath = `/${targetLocale}/${subdomain}${remainingPath === '/' ? '' : remainingPath}`;
+        const rewrite = new URL(rewritePath, request.url);
         return NextResponse.rewrite(rewrite);
     }
 
-    // Main domain: run intl unless explicitly skipped (we currently never skip)
-    if (!shouldSkipIntl(pathname)) {
-        return intlMiddleware(request);
-    }
-    return NextResponse.next();
+    // Main domain: run intl
+    return intlMiddleware(request);
 }
 
 // Config: Run for all non-api/static files
