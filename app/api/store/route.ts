@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
                 primaryColor: theme.primaryColor,
                 secondaryColor: theme.secondaryColor,
                 textColor: theme.textColor,
+                surfaceColor: theme.surfaceColor,
             },
             themeStructure: themeStructure || {
                 header: true,

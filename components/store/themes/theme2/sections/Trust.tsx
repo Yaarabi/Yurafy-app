@@ -15,6 +15,8 @@ const Trust: React.FC = () => {
     if (!selectedStore) return null;
     
     const primaryColor = selectedStore.theme?.primaryColor || '#f43f5e';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#fff1f5';
+    const surfaceGradient = `linear-gradient(170deg, ${surfaceColor} 0%, #ffffff 70%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const features = [
@@ -39,7 +41,7 @@ const Trust: React.FC = () => {
     ];
 
     return (
-        <div className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-gray-50 overflow-hidden">
+        <div className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ background: surfaceGradient }}>
             {/* Decorative circles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div 

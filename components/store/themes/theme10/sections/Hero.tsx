@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
 import GeometricDecorations from '../../shared/GeometricDecorations';
@@ -14,8 +14,12 @@ const Hero: React.FC = () => {
     const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
     const storeLanguage = selectedStore.language || 'en';
 
+    const heroBackgroundStyle: CSSProperties = {
+        background: `linear-gradient(140deg, ${primaryColor} 0%, ${secondaryColor || primaryColor} 55%, ${primaryColor} 100%)`,
+    };
+
     return (
-        <section className="relative overflow-hidden bg-slate-950 text-white">
+        <section className="relative overflow-hidden text-white" style={heroBackgroundStyle}>
             <GeometricDecorations type="professional" color={primaryColor} className="opacity-10" />
 
             <div

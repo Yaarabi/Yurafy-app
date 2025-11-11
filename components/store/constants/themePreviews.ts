@@ -213,6 +213,7 @@ export interface ThemePreviewDemo {
         primaryColor: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
     demoStore: {
         brandName: string;

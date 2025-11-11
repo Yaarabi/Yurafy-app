@@ -301,6 +301,7 @@
         "primaryColor": "Couleur principale",
         "secondaryColor": "Couleur secondaire",
         "textColor": "Couleur du texte",
+    "surfaceColor": "Fond des sections",
         "store": "Magasin",
         "product": "Produit",
         "selectThisTheme": "Sélectionner ce thème",

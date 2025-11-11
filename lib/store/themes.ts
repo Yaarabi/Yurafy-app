@@ -1,6 +1,18 @@
 // Inlined themes data (was previously in public/themes.ts). Keeping a local copy
 // avoids importing from the `public/` folder which is not a module resolution target.
-const publicStoreThemes = [
+interface StoreThemeDefinition {
+    name: string;
+    category?: string;
+    theme: {
+        primaryColor: string;
+        secondaryColor?: string;
+        textColor?: string;
+        surfaceColor?: string;
+        gradient?: { from?: string; via?: string; to?: string };
+    };
+}
+
+const publicStoreThemes: StoreThemeDefinition[] = [
     // 1. Electronics & Consumer Tech - Tech Blue with Circuit Patterns
     {
         name: "Tech Circuit",
@@ -9,6 +21,7 @@ const publicStoreThemes = [
         primaryColor: "#0ea5e9",
         secondaryColor: "#0369a1",
         textColor: "#f3f4f6",
+        surfaceColor: "#c3e9fa",
         gradient: { from: "#0ea5e9", via: "#3b82f6", to: "#0369a1" },
         },
     },
@@ -20,6 +33,7 @@ const publicStoreThemes = [
         primaryColor: "#f43f5e",
         secondaryColor: "#be123c",
         textColor: "#f3f4f6",
+        surfaceColor: "#fccfd7",
         gradient: { from: "#fb7185", via: "#f472b6", to: "#be123c" },
         },
     },
@@ -31,6 +45,7 @@ const publicStoreThemes = [
         primaryColor: "#a78bfa",
         secondaryColor: "#7c3aed",
         textColor: "#f3f4f6",
+        surfaceColor: "#e9e2fe",
         gradient: { from: "#c4b5fd", via: "#a78bfa", to: "#7c3aed" },
         },
     },
@@ -42,6 +57,7 @@ const publicStoreThemes = [
         primaryColor: "#22c55e",
         secondaryColor: "#16a34a",
         textColor: "#f3f4f6",
+        surfaceColor: "#c8f1d7",
         gradient: { from: "#22c55e", via: "#4ade80", to: "#16a34a" },
         },
     },
@@ -53,6 +69,7 @@ const publicStoreThemes = [
         primaryColor: "#06b6d4",
         secondaryColor: "#0891b2",
         textColor: "#f3f4f6",
+        surfaceColor: "#c1edf4",
         gradient: { from: "#22d3ee", via: "#06b6d4", to: "#0891b2" },
         },
     },
@@ -64,6 +81,7 @@ const publicStoreThemes = [
         primaryColor: "#f59e0b",
         secondaryColor: "#b45309",
         textColor: "#f3f4f6",
+        surfaceColor: "#fde7c2",
         gradient: { from: "#fbbf24", via: "#fcd34d", to: "#b45309" },
         },
     },
@@ -75,6 +93,7 @@ const publicStoreThemes = [
         primaryColor: "#f97316",
         secondaryColor: "#ea580c",
         textColor: "#f3f4f6",
+        surfaceColor: "#fedcc5",
         gradient: { from: "#fdba74", via: "#fb923c", to: "#ea580c" },
         },
     },
@@ -86,6 +105,7 @@ const publicStoreThemes = [
         primaryColor: "#ec4899",
         secondaryColor: "#be185d",
         textColor: "#f3f4f6",
+        surfaceColor: "#fad1e6",
         gradient: { from: "#f9a8d4", via: "#f472b6", to: "#be185d" },
         },
     },
@@ -97,6 +117,7 @@ const publicStoreThemes = [
         primaryColor: "#14b8a6",
         secondaryColor: "#0d9488",
         textColor: "#f3f4f6",
+        surfaceColor: "#c4ede9",
         gradient: { from: "#5eead4", via: "#2dd4bf", to: "#0d9488" },
         },
     },
@@ -108,6 +129,7 @@ const publicStoreThemes = [
         primaryColor: "#6366f1",
         secondaryColor: "#4338ca",
         textColor: "#f3f4f6",
+        surfaceColor: "#d8d9fc",
         gradient: { from: "#818cf8", via: "#6366f1", to: "#4338ca" },
         },
     },
@@ -118,6 +140,7 @@ const publicStoreThemes = [
         primaryColor: "#4338ca",
         secondaryColor: "#312e81",
         textColor: "#f3f4f6",
+        surfaceColor: "#d0cdf2",
         gradient: { from: "#6366f1", via: "#818cf8", to: "#312e81" },
         
         },
@@ -129,6 +152,7 @@ const publicStoreThemes = [
         primaryColor: "#06b6d4",
         secondaryColor: "#0ea5e9",
         textColor: "#f8fafc",
+        surfaceColor: "#c1edf4",
         gradient: { from: "#22d3ee", via: "#06b6d4", to: "#0ea5e9" },
         },
     },
@@ -139,6 +163,7 @@ const publicStoreThemes = [
         primaryColor: "#f59e0b",
         secondaryColor: "#b45309",
         textColor: "#f3f4f6",
+        surfaceColor: "#fde7c2",
         gradient: { from: "#fbbf24", via: "#fcd34d", to: "#b45309" },
         },
     },
@@ -149,6 +174,7 @@ const publicStoreThemes = [
         primaryColor: "#34d399",
         secondaryColor: "#059669",
         textColor: "#065f46",
+        surfaceColor: "#ccf4e6",
         gradient: { from: "#6ee7b7", via: "#34d399", to: "#059669" },
         },
     },
@@ -159,6 +185,7 @@ const publicStoreThemes = [
         primaryColor: "#a78bfa",
         secondaryColor: "#7c3aed",
         textColor: "#312e81",
+        surfaceColor: "#e9e2fe",
         gradient: { from: "#c4b5fd", via: "#a78bfa", to: "#7c3aed" },
         },
     },
@@ -169,6 +196,7 @@ const publicStoreThemes = [
         primaryColor: "#6b7280",
         secondaryColor: "#374151",
         textColor: "#f3f4f6",
+        surfaceColor: "#dadcdf",
         gradient: { from: "#9ca3af", via: "#6b7280", to: "#374151" },
         },
     },
@@ -178,14 +206,15 @@ export const storeThemes = publicStoreThemes;
 
 // ThemeDef is the normalized shape used by the app
 export interface ThemeDef {
-  id: string;
-  name: string;
-  colorTokens: {
-    primaryColor: string;
-    secondaryColor?: string;
-    textColor?: string;
-    gradient?: { from?: string; via?: string; to?: string } | undefined;
-  };
+    id: string;
+    name: string;
+    colorTokens: {
+        primaryColor: string;
+        secondaryColor?: string;
+        textColor?: string;
+                surfaceColor?: string;
+        gradient?: { from?: string; via?: string; to?: string } | undefined;
+    };
 }
 
 export const THEMES: ThemeDef[] = publicStoreThemes.map((t, idx) => ({
@@ -196,6 +225,7 @@ export const THEMES: ThemeDef[] = publicStoreThemes.map((t, idx) => ({
     primaryColor: t.theme?.primaryColor || '',
     secondaryColor: t.theme?.secondaryColor || '',
     textColor: t.theme?.textColor || '',
+        surfaceColor: t.theme?.surfaceColor || '',
     gradient: t.theme?.gradient || undefined,
   },
 }));

@@ -10,7 +10,7 @@ import LogoUpload from './forms/LogoUpload';
 interface StoreBasicInfoFormProps {
     selectedTheme: {
         themeId: number;
-        theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
+        theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string };
     };
     onSubmit: (data: { brandName: string; domain: string; description: string; logo?: string; language?: string }) => void;
     onBack?: () => void;

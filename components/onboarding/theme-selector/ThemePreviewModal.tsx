@@ -11,7 +11,7 @@ type ThemeConfig = (typeof storeThemes)[number];
 
 type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE';
 
-type ColorKey = 'primary' | 'secondary' | 'text';
+type ColorKey = 'primary' | 'secondary' | 'text' | 'surface';
 
 interface ThemePreviewModalProps {
     previewThemeId: number | null;
@@ -24,15 +24,19 @@ interface ThemePreviewModalProps {
     previewPrimaryColor: string;
     previewSecondaryColor: string;
     previewTextColor: string;
+    previewSurfaceColor: string;
     setPreviewPrimaryColor: (value: string) => void;
     setPreviewSecondaryColor: (value: string) => void;
     setPreviewTextColor: (value: string) => void;
+    setPreviewSurfaceColor: (value: string) => void;
     customPrimaryColor: string;
     customSecondaryColor: string;
     customTextColor: string;
+    customSurfaceColor: string;
     setCustomPrimaryColor: (value: string) => void;
     setCustomSecondaryColor: (value: string) => void;
     setCustomTextColor: (value: string) => void;
+    setCustomSurfaceColor: (value: string) => void;
     selectedThemeIndex: number | null;
     updatePreviewColor: (type: ColorKey, value: string, isSelected: boolean) => void;
     previewStoreElement: React.ReactNode | null;
@@ -50,15 +54,19 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
     previewPrimaryColor,
     previewSecondaryColor,
     previewTextColor,
+    previewSurfaceColor,
     setPreviewPrimaryColor,
     setPreviewSecondaryColor,
     setPreviewTextColor,
+    setPreviewSurfaceColor,
     customPrimaryColor,
     customSecondaryColor,
     customTextColor,
+    customSurfaceColor,
     setCustomPrimaryColor,
     setCustomSecondaryColor,
     setCustomTextColor,
+    setCustomSurfaceColor,
     selectedThemeIndex,
     updatePreviewColor,
     previewStoreElement,
@@ -81,11 +89,14 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
         previewSecondaryColor || (isSelectedTheme && customSecondaryColor) || currentTheme?.theme.secondaryColor || '';
     const resolvedText =
         previewTextColor || (isSelectedTheme && customTextColor) || currentTheme?.theme.textColor || '';
+    const resolvedSurface =
+        previewSurfaceColor || (isSelectedTheme && customSurfaceColor) || currentTheme?.theme.surfaceColor || '';
 
     const handleSelectTheme = () => {
         if (previewPrimaryColor) setCustomPrimaryColor(previewPrimaryColor);
         if (previewSecondaryColor) setCustomSecondaryColor(previewSecondaryColor);
         if (previewTextColor) setCustomTextColor(previewTextColor);
+        if (previewSurfaceColor) setCustomSurfaceColor(previewSurfaceColor);
 
         if (previewThemeIndex !== null) {
             onSelectTheme(previewThemeIndex);
@@ -94,6 +105,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
         setPreviewPrimaryColor('');
         setPreviewSecondaryColor('');
         setPreviewTextColor('');
+        setPreviewSurfaceColor('');
         setShowColorPanel(false);
         onClose();
     };
@@ -102,6 +114,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
         setPreviewPrimaryColor('');
         setPreviewSecondaryColor('');
         setPreviewTextColor('');
+        setPreviewSurfaceColor('');
         setShowColorPanel(false);
         onClose();
     };
@@ -121,7 +134,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         onClick={(event) => event.stopPropagation()}
-                        className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:w-auto sm:h-auto sm:max-w-[100vw] sm:max-h-[100vh] max-w-full max-h-full overflow-hidden flex flex-col m-0"
+                        className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-[90vh] sm:w-[min(1300px,calc(100vw-2rem))] lg:w-[85vw] sm:max-w-[100vw] sm:max-h-[100vh] max-w-full max-h-full overflow-hidden flex flex-col m-0"
                     >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 flex-shrink-0 gap-3 sm:gap-0">
                         <div className="flex-1 min-w-0">
@@ -171,6 +184,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
                                 primaryColor={resolvedPrimary}
                                 secondaryColor={resolvedSecondary}
                                 textColor={resolvedText}
+                                surfaceColor={resolvedSurface}
                                 currentTheme={currentTheme}
                                 isSelectedTheme={isSelectedTheme}
                                 updatePreviewColor={updatePreviewColor}
@@ -201,6 +215,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
                                             primaryColor={resolvedPrimary}
                                             secondaryColor={resolvedSecondary}
                                             textColor={resolvedText}
+                                            surfaceColor={resolvedSurface}
                                             currentTheme={currentTheme}
                                             isSelectedTheme={isSelectedTheme}
                                             updatePreviewColor={updatePreviewColor}
@@ -213,7 +228,7 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
 
                         <div className="flex-1 overflow-y-auto bg-gray-50 min-h-0 w-full">
                             <div className="flex items-start justify-center p-0 w-full">
-                                <div className="w-full max-w-full sm:max-w-[calc(100%-1rem)] md:max-w-[calc(100%-2rem)] lg:max-w-[calc(100%-3rem)]">
+                                <div className="w-full">
                                     {previewStoreElement}
                                 </div>
                             </div>

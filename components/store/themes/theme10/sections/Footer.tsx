@@ -4,6 +4,7 @@ import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 import { Monitor } from 'lucide-react';
 import GeometricDecorations from '../../shared/GeometricDecorations';
 import { getStoreTranslation } from '../../../utils/translations';
+import { useParams } from 'next/navigation';
 
 const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href: string; color: string }> = ({
     platform,
@@ -34,6 +35,7 @@ const SocialIcon: React.FC<{ platform: 'facebook' | 'instagram' | 'tiktok'; href
 
 const Footer: React.FC = () => {
     const { selectedStore } = useStore();
+    const params = useParams();
 
     if (!selectedStore) return null;
 
@@ -46,7 +48,12 @@ const Footer: React.FC = () => {
 
     const socialLinks = selectedStore.socialLinks || {};
     const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
-    const storeLanguage = selectedStore.language || 'en';
+    const rawLocale = params?.locale;
+    const localeFromRoute = Array.isArray(rawLocale) ? rawLocale[0] : rawLocale;
+    const languageSource = localeFromRoute && typeof localeFromRoute === 'string' && localeFromRoute.length > 0
+        ? localeFromRoute
+        : selectedStore.language || 'en';
+    const storeLanguage = languageSource.split('-')[0]?.toLowerCase() || 'en';
     
     // Header links (same as in Header component) with translations
     const headerLinks = [

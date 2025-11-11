@@ -9,7 +9,7 @@ import StorePreviewWithEdit from './ai/components/StorePreviewWithEdit';
 interface StoreGeneratorProps {
     selectedTheme: {
         themeId: number;
-        theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
+        theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string };
     };
     selectedThemeStructure: {
         header: boolean;

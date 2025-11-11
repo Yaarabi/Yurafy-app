@@ -15,6 +15,8 @@ const Trust: React.FC = () => {
     if (!selectedStore) return null;
     
     const primaryColor = selectedStore.theme?.primaryColor || '#22c55e';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#e9f9ef';
+    const surfaceGradient = `linear-gradient(160deg, ${surfaceColor} 0%, #ffffff 65%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const features = [
@@ -47,8 +49,8 @@ const Trust: React.FC = () => {
                     transition: { staggerChildren: 0.2 },
                 },
             }}
-            className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 border-t border-b overflow-hidden"
-            style={{ borderColor: `${primaryColor}20` }}
+            className="relative py-16 sm:py-20 md:py-24 border-t border-b overflow-hidden"
+            style={{ borderColor: `${primaryColor}20`, background: surfaceGradient }}
         >
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />

@@ -15,6 +15,8 @@ const Trust: React.FC = () => {
     if (!selectedStore) return null;
     
     const primaryColor = selectedStore.theme?.primaryColor || '#f59e0b';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#fde7c2';
+    const surfaceGradient = `linear-gradient(160deg, ${surfaceColor} 0%, #ffffff 70%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const features = [
@@ -36,7 +38,7 @@ const Trust: React.FC = () => {
     ];
 
     return (
-        <section className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+        <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden" style={{ background: surfaceGradient }}>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}

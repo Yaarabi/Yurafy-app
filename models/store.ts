@@ -12,6 +12,7 @@ export interface IStore extends Document {
         primaryColor: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
     hero: {
         title: string;
@@ -75,9 +76,10 @@ const storeSchema = new Schema<IStore>(
         },
 
         theme: {
-        primaryColor: { type: String, required: true, trim: true },
-        secondaryColor: { type: String, trim: true },
-        textColor: { type: String, trim: true },
+            primaryColor: { type: String, required: true, trim: true },
+            secondaryColor: { type: String, trim: true },
+            textColor: { type: String, trim: true },
+            surfaceColor: { type: String, trim: true },
         },
 
 

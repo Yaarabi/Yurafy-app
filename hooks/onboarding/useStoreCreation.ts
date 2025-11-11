@@ -12,6 +12,7 @@ interface StoreCreationData {
         primaryColor: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
     themeStructure?: {
         header: boolean;
@@ -76,6 +77,7 @@ export function useStoreCreation(options: UseStoreCreationOptions = {}) {
                     primaryColor: data.theme.primaryColor,
                     secondaryColor: data.theme.secondaryColor,
                     textColor: data.theme.textColor,
+                    surfaceColor: data.theme.surfaceColor,
                 },
                 themeStructure: data.themeStructure || {
                     header: true,

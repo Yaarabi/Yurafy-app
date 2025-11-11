@@ -22,6 +22,8 @@ const ProductGrid: React.FC = () => {
 
     if (!selectedStore) return null;
     const primaryColor = selectedStore.theme?.primaryColor || '#ca8a04';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#f8fafc';
+    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
@@ -42,7 +44,7 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-gray-50 overflow-hidden">
+        <div id="products" className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ background: surfaceGradient }}>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <motion.div

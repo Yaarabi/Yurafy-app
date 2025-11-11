@@ -14,7 +14,7 @@ export interface ConfirmationData {
 
 export interface SelectedTheme {
     themeId: number;
-    theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
+    theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string };
 }
 
 export interface SelectedThemeStructure {
@@ -308,6 +308,7 @@ export function useAIStoreSetup(
                     primaryColor: selectedTheme?.theme?.primaryColor || currentData.theme?.primaryColor || '#3B82F6',
                     secondaryColor: selectedTheme?.theme?.secondaryColor || currentData.theme?.secondaryColor,
                     textColor: selectedTheme?.theme?.textColor || currentData.theme?.textColor,
+                    surfaceColor: selectedTheme?.theme?.surfaceColor || currentData.theme?.surfaceColor,
                 },
                 themeStructure: selectedThemeStructure || currentData.themeStructure || {
                     header: true,

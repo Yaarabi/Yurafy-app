@@ -270,6 +270,7 @@
         "primaryColor": "اللون الأساسي",
         "secondaryColor": "اللون الثانوي",
         "textColor": "لون النص",
+    "surfaceColor": "لون خلفية الأقسام",
         "store": "المتجر",
         "product": "المنتج",
         "selectThisTheme": "اختر هذه السمة",

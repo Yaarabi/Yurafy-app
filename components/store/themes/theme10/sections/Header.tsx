@@ -20,7 +20,12 @@ const Header: React.FC = () => {
 
     if (!selectedStore) return null;
 
-    const storeLanguage = selectedStore.language || 'en';
+    const rawLocale = params?.locale;
+    const localeFromRoute = Array.isArray(rawLocale) ? rawLocale[0] : rawLocale;
+    const languageSource = localeFromRoute && typeof localeFromRoute === 'string' && localeFromRoute.length > 0
+        ? localeFromRoute
+        : selectedStore.language || 'en';
+    const storeLanguage = languageSource.split('-')[0]?.toLowerCase() || 'en';
     
     // Header links with translations based on store language
     const headerLinks = [

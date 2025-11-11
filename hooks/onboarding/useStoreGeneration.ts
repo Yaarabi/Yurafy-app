@@ -15,6 +15,7 @@ interface SelectedTheme {
         primaryColor: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
 }
 

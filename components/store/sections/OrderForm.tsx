@@ -3,6 +3,7 @@ import { useStore } from '../hooks/useStore';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
+import { getStoreTranslation } from '../../store/utils/translations';
 
 const OrderForm: React.FC = () => {
     const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
@@ -29,6 +30,9 @@ const OrderForm: React.FC = () => {
         const newQuantity = Math.max(1, Math.min(currentQuantity + delta, selectedProduct?.stock || 999));
         setProductOptions({ ...productOptions, quantity: newQuantity });
     };
+
+    const storeLanguage = (selectedStore?.language || 'en').split('-')[0]?.toLowerCase() || 'en';
+    const isRTL = storeLanguage === 'ar';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -123,16 +127,16 @@ const OrderForm: React.FC = () => {
     }
 
     return (
-        <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg" id="order-form">
+        <div className={`bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg ${isRTL ? 'text-right' : ''}`} id="order-form" dir={isRTL ? 'rtl' : 'ltr'}>
             <div className="mb-6">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Order Details</h3>
+                <h3 className={`text-xl sm:text-2xl font-bold text-gray-800 mb-2 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('orderDetails', storeLanguage)}</h3>
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
                     <div className="flex-1">
-                        <p className="text-sm text-gray-600">Product</p>
-                        <p className="text-base font-semibold text-gray-900 line-clamp-2">{selectedProduct.name}</p>
+                        <p className={`text-sm text-gray-600 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('product', storeLanguage)}</p>
+                        <p className={`text-base font-semibold text-gray-900 line-clamp-2 ${isRTL ? 'text-right' : ''}`}>{selectedProduct.name}</p>
                     </div>
                     <div className="ml-4 text-right">
-                        <p className="text-sm text-gray-600">Price</p>
+                        <p className="text-sm text-gray-600">{getStoreTranslation('price', storeLanguage)}</p>
                         <p className="text-lg font-bold" style={{ color: primaryColor }}>
                             ${((productOptions.quantity || 1) * selectedProduct.price).toFixed(2)}
                         </p>
@@ -144,8 +148,8 @@ const OrderForm: React.FC = () => {
                 {/* Color Selection */}
                 {selectedProduct.colors && selectedProduct.colors.length > 0 && (
                     <div>
-                        <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
-                            Color {productOptions.color ? `(${productOptions.color})` : '*'}
+                        <label htmlFor="color" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}> 
+                            {getStoreTranslation('color', storeLanguage)} {productOptions.color ? `(${productOptions.color})` : '*'}
                         </label>
                         <select
                             name="color"
@@ -155,7 +159,7 @@ const OrderForm: React.FC = () => {
                             required
                             className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                         >
-                            <option value="">Select a color</option>
+                            <option value="">{getStoreTranslation('selectColor', storeLanguage)}</option>
                             {selectedProduct.colors.map(color => (
                                 <option key={color} value={color}>{color}</option>
                             ))}
@@ -166,8 +170,8 @@ const OrderForm: React.FC = () => {
                 {/* Size Selection */}
                 {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
                     <div>
-                        <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
-                            Size {productOptions.size ? `(${productOptions.size})` : '*'}
+                        <label htmlFor="size" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
+                            {getStoreTranslation('size', storeLanguage)} {productOptions.size ? `(${productOptions.size})` : '*'}
                         </label>
                         <select
                             name="size"
@@ -177,7 +181,7 @@ const OrderForm: React.FC = () => {
                             required
                             className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                         >
-                            <option value="">Select a size</option>
+                            <option value="">{getStoreTranslation('selectSize', storeLanguage)}</option>
                             {selectedProduct.sizes.map(size => (
                                 <option key={size} value={size}>{size}</option>
                             ))}
@@ -187,7 +191,7 @@ const OrderForm: React.FC = () => {
 
                 {/* Quantity - Improved Style */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('quantity', storeLanguage)}</label>
                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
                         <button
                             type="button"
@@ -224,17 +228,17 @@ const OrderForm: React.FC = () => {
                         </button>
                     </div>
                     {selectedProduct.stock > 0 && (
-                        <p className="mt-1 text-xs text-green-600 font-medium">In Stock</p>
+                        <p className="mt-1 text-xs text-green-600 font-medium">{getStoreTranslation('inStock', storeLanguage)}</p>
                     )}
                 </div>
 
                 <div className="pt-4 border-t border-gray-200">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Shipping Information</h4>
+                    <h4 className={`text-lg font-semibold text-gray-800 mb-4 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('shippingInformation', storeLanguage)}</h4>
                 </div>
 
                 <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name *
+                    <label htmlFor="fullName" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
+                        {getStoreTranslation('fullName', storeLanguage)} *
                     </label>
                     <input
                         type="text"
@@ -243,26 +247,26 @@ const OrderForm: React.FC = () => {
                         value={formData.fullName}
                         onChange={handleChange}
                         required
-                        className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        className={`mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm ${isRTL ? 'text-right' : ''}`}
                         placeholder="Full name"
                     />
                 </div>
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number *
+                    <label htmlFor="phone" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
+                        {getStoreTranslation('phoneNumber', storeLanguage)} *
                     </label>
                     <PhoneInput
                         defaultCountry="ma"
                         value={formData.phone}
                         onChange={(phone) => setFormData({ ...formData, phone })}
-                        className="mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none"
+                        className={`mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                         style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
                         required
                     />
                 </div>
                 <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Address *
+                    <label htmlFor="address" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
+                        {getStoreTranslation('fullAddress', storeLanguage)} *
                     </label>
                     <textarea
                         name="address"
@@ -271,7 +275,7 @@ const OrderForm: React.FC = () => {
                         value={formData.address}
                         onChange={handleChange}
                         required
-                        className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                        className={`mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm ${isRTL ? 'text-right' : ''}`}
                         placeholder="Rue Hassan II, Quartier Agdal, Rabat"
                     />
                 </div>
@@ -285,7 +289,11 @@ const OrderForm: React.FC = () => {
                         className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
                         style={{ backgroundColor: primaryColor }}
                     >
-                        {submissionState.status === 'submitting' ? 'Placing Order...' : selectedProduct.stock <= 0 ? 'Out of Stock' : 'Place Order (COD)'}
+                        {submissionState.status === 'submitting' 
+                            ? getStoreTranslation('placingOrder', storeLanguage) 
+                            : selectedProduct.stock <= 0 
+                                ? getStoreTranslation('outOfStock', storeLanguage) 
+                                : getStoreTranslation('placeOrder', storeLanguage)}
                     </button>
                 </div>
             </form>

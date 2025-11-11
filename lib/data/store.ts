@@ -16,6 +16,7 @@ export interface SerializedStore {
         primaryColor: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
     themeStructure: {
         header: boolean;
@@ -76,6 +77,7 @@ export function serializeStore(store: any): SerializedStore {
             primaryColor: store.theme?.primaryColor || '#3B82F6',
             secondaryColor: store.theme?.secondaryColor,
             textColor: store.theme?.textColor,
+            surfaceColor: store.theme?.surfaceColor,
         },
         themeStructure: {
             header: store.themeStructure?.header ?? true,

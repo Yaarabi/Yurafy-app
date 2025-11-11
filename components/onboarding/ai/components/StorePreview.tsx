@@ -10,6 +10,7 @@ interface StorePreviewData {
         primaryColor?: string;
         secondaryColor?: string;
         textColor?: string;
+        surfaceColor?: string;
     };
     hero?: {
         title?: string;

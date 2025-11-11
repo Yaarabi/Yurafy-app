@@ -23,6 +23,8 @@ const ProductGrid: React.FC = () => {
     if (!selectedStore) return null;
 
     const primaryColor = selectedStore.theme?.primaryColor || '#22c55e';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#e9f9ef';
+    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
@@ -43,7 +45,7 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="relative py-24 bg-gradient-to-b from-green-50 to-white overflow-hidden">
+        <div id="products" className="relative py-24 overflow-hidden" style={{ background: surfaceGradient }}>
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />
             

@@ -10,6 +10,8 @@ const About: React.FC = () => {
 
     const { about, brandName, whoWeAre } = selectedStore;
     const primaryColor = selectedStore.theme?.primaryColor || '#f43f5e';
+    const surfaceColor = selectedStore.theme?.surfaceColor || '#fff1f5';
+    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,
@@ -21,7 +23,8 @@ const About: React.FC = () => {
     return (
         <div
             id="about"
-            className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-white overflow-hidden"
+            className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden"
+            style={{ background: surfaceGradient }}
         >
             {/* Decorative background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useStore } from '../../hooks/useStore';
 import { useRouter, useParams } from 'next/navigation';
-import Header from '../../sections/Header';
-import Footer from '../../sections/Footer';
+import Header from './sections/Header';
+import Footer from './sections/Footer';
 import ProductDetails from '../../sections/ProductDetails';
 import OrderForm from '../../sections/OrderForm';
 import Trust from './sections/Trust';

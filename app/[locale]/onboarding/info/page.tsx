@@ -18,7 +18,7 @@ export default function InfoPage() {
     
     const [selectedTheme, setSelectedTheme] = useState<{
         themeId: number;
-        theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
+        theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string };
     } | null>(null);
     const [showBasicInfoForm, setShowBasicInfoForm] = useState(false);
     const [basicInfo, setBasicInfo] = useState<{
@@ -61,7 +61,7 @@ export default function InfoPage() {
         // Allow user to continue with info page flow for upgrade
     }, [sessionStatus, storeStatus, router, params.locale, plan]);
 
-    const handleThemeSelect = (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string }) => {
+    const handleThemeSelect = (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string }) => {
         setSelectedTheme({ themeId, theme });
         // ✅ FIXED: Redirect directly to form after theme selection
         setTimeout(() => {

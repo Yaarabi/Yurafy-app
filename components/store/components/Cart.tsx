@@ -35,6 +35,8 @@ const Cart: React.FC = () => {
     const [itemVariants, setItemVariants] = useState<Record<string, { color?: string; size?: string }>>({});
 
     const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
+    const storeLanguage = (selectedStore?.language || 'en').split('-')[0]?.toLowerCase() || 'en';
+    const isRTL = storeLanguage === 'ar';
 
     // Initialize itemVariants when items change
     useEffect(() => {
@@ -157,11 +159,12 @@ const Cart: React.FC = () => {
                     animate={{ x: 0 }}
                     exit={{ x: '100%' }}
                     transition={{ type: 'tween', duration: 0.3 }}
-                    className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl flex flex-col"
+                    className={`absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl flex flex-col ${isRTL ? 'text-right' : ''}`}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: `${primaryColor}20` }}>
-                        <h2 className="text-xl font-bold" style={{ color: primaryColor }}>
+                            <h2 className={`text-xl font-bold ${isRTL ? 'text-right' : ''}`} style={{ color: primaryColor }}>
                             Shopping Cart ({getTotalItems()})
                         </h2>
                         <button
@@ -202,10 +205,10 @@ const Cart: React.FC = () => {
                                                 <div className="flex-1">
                                                     <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">{item.product.name}</h3>
                                                     {item.color && (
-                                                        <p className="text-xs text-gray-700 dark:text-gray-300">Color: {item.color}</p>
+                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>Color: {item.color}</p>
                                                     )}
                                                     {item.size && (
-                                                        <p className="text-xs text-gray-700 dark:text-gray-300">Size: {item.size}</p>
+                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>Size: {item.size}</p>
                                                     )}
                                                     <p className="text-sm font-bold mt-1" style={{ color: primaryColor }}>
                                                         ${item.price.toFixed(2)}
@@ -251,23 +254,23 @@ const Cart: React.FC = () => {
                                 <div className="border-t p-4 space-y-4" style={{ borderColor: `${primaryColor}20` }}>
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span>Subtotal</span>
+                                            <span className={`${isRTL ? 'text-right' : ''}`}>Subtotal</span>
                                             <span className="font-semibold">${getSubtotal().toFixed(2)}</span>
                                         </div>
                                         {getShippingEstimate() > 0 && (
                                             <div className="flex justify-between text-sm">
-                                                <span>Shipping</span>
+                                                <span className={`${isRTL ? 'text-right' : ''}`}>Shipping</span>
                                                 <span className="font-semibold">${getShippingEstimate().toFixed(2)}</span>
                                             </div>
                                         )}
                                         {getShippingEstimate() === 0 && (
                                             <div className="flex justify-between text-sm text-green-600">
-                                                <span>Shipping</span>
+                                                <span className={`${isRTL ? 'text-right' : ''}`}>Shipping</span>
                                                 <span className="font-semibold">FREE</span>
                                             </div>
                                         )}
                                         <div className="flex justify-between text-lg font-bold pt-2 border-t" style={{ borderColor: `${primaryColor}20` }}>
-                                            <span>Total</span>
+                                            <span className={`${isRTL ? 'text-right' : ''}`}>Total</span>
                                             <span style={{ color: primaryColor }}>${getTotal().toFixed(2)}</span>
                                         </div>
                                     </div>
@@ -297,13 +300,13 @@ const Cart: React.FC = () => {
                                 Back to Cart
                             </button>
 
-                            <h3 className="text-lg font-bold mb-4" style={{ color: primaryColor }}>
+                            <h3 className={`text-lg font-bold mb-4 ${isRTL ? 'text-right' : ''}`} style={{ color: primaryColor }}>
                                 Customer Details
                             </h3>
 
                             <form onSubmit={handleSubmitOrder} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                         Full Name *
                                     </label>
                                     <input
@@ -311,28 +314,28 @@ const Cart: React.FC = () => {
                                         required
                                         value={checkoutForm.fullName}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, fullName: e.target.value })}
-                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
+                                        className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your full name"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                         Phone Number *
                                     </label>
                                     <PhoneInput
                                         defaultCountry="ma"
                                         value={checkoutForm.phone}
                                         onChange={(phone) => setCheckoutForm({ ...checkoutForm, phone })}
-                                        className="w-full border rounded-md focus:ring-2 focus:outline-none"
+                                        className={`w-full border rounded-md focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                                         style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
                                         required
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                         Address *
                                     </label>
                                     <textarea
@@ -340,21 +343,21 @@ const Cart: React.FC = () => {
                                         rows={3}
                                         value={checkoutForm.address}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
-                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
+                                        className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your delivery address"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                         City
                                     </label>
                                     <input
                                         type="text"
                                         value={checkoutForm.city}
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, city: e.target.value })}
-                                        className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400"
+                                        className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
                                         placeholder="Enter your city (optional)"
                                     />
@@ -363,7 +366,7 @@ const Cart: React.FC = () => {
                                 {/* Product Variants Selection */}
                                 {items.length > 0 && (
                                     <div className="border-t pt-4 mt-4" style={{ borderColor: `${primaryColor}20` }}>
-                                        <h4 className="font-semibold mb-3">Product Options</h4>
+                                        <h4 className={`font-semibold mb-3 ${isRTL ? 'text-right' : ''}`}>Product Options</h4>
                                         <div className="space-y-4">
                                             {items.map((item) => {
                                                 const itemKey = `${item.productId}-${item.color || 'no-color'}-${item.size || 'no-size'}`;
@@ -376,7 +379,7 @@ const Cart: React.FC = () => {
                                                         {/* Color Selection */}
                                                         {item.product.colors && item.product.colors.length > 0 && (
                                                             <div className="mb-2">
-                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                                <label className={`block text-xs font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                                                     Color
                                                                 </label>
                                                                 <select
@@ -385,7 +388,7 @@ const Cart: React.FC = () => {
                                                                         ...itemVariants,
                                                                         [itemKey]: { ...variant, color: e.target.value || undefined }
                                                                     })}
-                                                                    className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
+                                                                    className={`w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                                                                     style={{ outlineColor: primaryColor }}
                                                                 >
                                                                     <option value="">Select a color</option>
@@ -399,7 +402,7 @@ const Cart: React.FC = () => {
                                                         {/* Size Selection */}
                                                         {item.product.sizes && item.product.sizes.length > 0 && (
                                                             <div>
-                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                                <label className={`block text-xs font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
                                                                     Size
                                                                 </label>
                                                                 <select
@@ -408,7 +411,7 @@ const Cart: React.FC = () => {
                                                                         ...itemVariants,
                                                                         [itemKey]: { ...variant, size: e.target.value || undefined }
                                                                     })}
-                                                                    className="w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none"
+                                                                    className={`w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                                                                     style={{ outlineColor: primaryColor }}
                                                                 >
                                                                     <option value="">Select a size</option>

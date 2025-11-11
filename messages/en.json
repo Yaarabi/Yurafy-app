@@ -295,6 +295,7 @@
         "primaryColor": "Primary Color",
         "secondaryColor": "Secondary Color",
         "textColor": "Text Color",
+    "surfaceColor": "Section Background",
         "store": "Store",
         "product": "Product",
         "selectThisTheme": "Select This Theme",

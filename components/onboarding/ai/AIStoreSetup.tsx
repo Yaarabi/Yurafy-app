@@ -10,7 +10,7 @@ import StorePreviewWithEdit from './components/StorePreviewWithEdit';
 
 interface SelectedTheme {
     themeId: number;
-    theme: { primaryColor: string; secondaryColor?: string; textColor?: string };
+    theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string };
 }
 
 interface SelectedThemeStructure {

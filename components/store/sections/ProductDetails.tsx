@@ -4,6 +4,7 @@ import { useStore } from '../hooks/useStore';
 import { useCart } from '../context/CartContext';
 import ProductVariantsUI from './ProductVariantsUI';
 import toast from 'react-hot-toast';
+import { getStoreTranslation } from '../../store/utils/translations';
 
 const ProductDetails: React.FC = () => {
     const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
@@ -39,6 +40,9 @@ const ProductDetails: React.FC = () => {
             setTimeout(() => openCart(), 500);
         }
     };
+
+    // Language resolution: use user-selected store language from basics form (not route locale)
+    const storeLanguage = (selectedStore?.language || 'en').split('-')[0]?.toLowerCase() || 'en';
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -78,21 +82,21 @@ const ProductDetails: React.FC = () => {
                         backgroundColor: `${primaryColor}15`
                     }}>
                         <h3 className="text-lg font-bold mb-2" style={{ color: primaryColor }}>
-                            Special Offer! 🎉
+                            {getStoreTranslation('ourCollection', storeLanguage)} 🎉
                         </h3>
                         {selectedProduct.bundles.type === 'buy_x_get_y' && selectedProduct.bundles.buyQuantity && selectedProduct.bundles.getQuantity && (
                             <p className="text-base text-gray-700">
-                                Buy {selectedProduct.bundles.buyQuantity} Get {selectedProduct.bundles.getQuantity} Free!
+                                {`Buy ${selectedProduct.bundles.buyQuantity} Get ${selectedProduct.bundles.getQuantity} Free!`}
                             </p>
                         )}
                         {selectedProduct.bundles.type === 'special_price' && selectedProduct.bundles.specialPrice && (
                             <p className="text-base text-gray-700">
-                                Special Bundle Price: ${selectedProduct.bundles.specialPrice.toFixed(2)}
+                                {`Special Bundle Price: $${selectedProduct.bundles.specialPrice.toFixed(2)}`}
                             </p>
                         )}
                         {selectedProduct.bundles.type === 'percentage_off' && selectedProduct.bundles.percentageOff && (
                             <p className="text-base text-gray-700">
-                                {selectedProduct.bundles.percentageOff}% Off on Bundles!
+                                {`${selectedProduct.bundles.percentageOff}% Off on Bundles!`}
                             </p>
                         )}
                     </div>
@@ -120,17 +124,17 @@ const ProductDetails: React.FC = () => {
                             backgroundColor: selectedProduct.stock > 0 ? primaryColor : '#9CA3AF'
                         }}
                     >
-                        {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                        {selectedProduct.stock > 0 ? getStoreTranslation('addToCart', storeLanguage) : getStoreTranslation('outOfStock', storeLanguage)}
                     </button>
                 </div>
 
                 <div className="mt-8">
-                    <h3 className="text-lg font-medium text-gray-900">Specifications</h3>
+                    <h3 className="text-lg font-medium text-gray-900">{getStoreTranslation('specifications', storeLanguage)}</h3>
                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 text-sm text-gray-600">
-                        {selectedProduct.category && <div><span className="font-semibold text-gray-800">Category:</span> {selectedProduct.category}</div>}
-                        {selectedProduct.brand && <div><span className="font-semibold text-gray-800">Brand:</span> {selectedProduct.brand}</div>}
-                        {selectedProduct.stock > 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-green-600">In Stock</span></div>}
-                        {selectedProduct.stock === 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-red-600">Out of Stock</span></div>}
+                        {selectedProduct.category && <div><span className="font-semibold text-gray-800">{getStoreTranslation('category', storeLanguage)}:</span> {selectedProduct.category}</div>}
+                        {selectedProduct.brand && <div><span className="font-semibold text-gray-800">{getStoreTranslation('brand', storeLanguage)}:</span> {selectedProduct.brand}</div>}
+                        {selectedProduct.stock > 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-green-600">{getStoreTranslation('inStock', storeLanguage)}</span></div>}
+                        {selectedProduct.stock === 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-red-600">{getStoreTranslation('outOfStock', storeLanguage)}</span></div>}
                     </div>
                 </div>
             </div>

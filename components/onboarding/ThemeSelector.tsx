@@ -10,7 +10,7 @@ import ThemeSelectorHeader from './theme-selector/ThemeSelectorHeader';
 import useThemeSelectorState from './theme-selector/hooks/useThemeSelectorState';
 
 interface ThemeSelectorProps {
-    onThemeSelect: (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string }) => void;
+    onThemeSelect: (themeId: number, theme: { primaryColor: string; secondaryColor?: string; textColor?: string; surfaceColor?: string }) => void;
 }
 
 export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
@@ -115,15 +115,19 @@ export default function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
                     previewPrimaryColor={previewColors.primary}
                     previewSecondaryColor={previewColors.secondary}
                     previewTextColor={previewColors.text}
+                    previewSurfaceColor={previewColors.surface}
                     setPreviewPrimaryColor={previewColors.setPrimary}
                     setPreviewSecondaryColor={previewColors.setSecondary}
                     setPreviewTextColor={previewColors.setText}
+                    setPreviewSurfaceColor={previewColors.setSurface}
                     customPrimaryColor={customColors.primary}
                     customSecondaryColor={customColors.secondary}
                     customTextColor={customColors.text}
+                    customSurfaceColor={customColors.surface}
                     setCustomPrimaryColor={customColors.setPrimary}
                     setCustomSecondaryColor={customColors.setSecondary}
                     setCustomTextColor={customColors.setText}
+                    setCustomSurfaceColor={customColors.setSurface}
                     selectedThemeIndex={selectedThemeIndex}
                     updatePreviewColor={updatePreviewColor}
                     previewStoreElement={previewStoreElement}

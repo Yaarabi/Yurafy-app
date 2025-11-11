@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, type MouseEvent, type ReactNode } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect, type MouseEvent, type ReactNode } from 'react';
 import { storeThemes } from '../../../../public/themes';
 import { THEME_PREVIEWS, type ThemePreview } from '../../../store/constants/themePreviews';
 import { StoreProvider } from '../../../store/context/StoreContext';
@@ -12,25 +12,103 @@ import ProductPageAutoSelect from '../ProductPageAutoSelect';
 
 type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE';
 
-type ColorKey = 'primary' | 'secondary' | 'text';
+type ColorKey = 'primary' | 'secondary' | 'text' | 'surface';
 
 interface ThemeSelection {
     primaryColor: string;
     secondaryColor?: string;
     textColor?: string;
+    surfaceColor?: string;
 }
 
 interface UseThemeSelectorStateProps {
     onThemeSelect: (themeId: number, theme: ThemeSelection) => void;
 }
 
+interface ScaledPreviewProps {
+    scale: number;
+    storeKey: string;
+    children: ReactNode;
+}
+
+const MIN_PREVIEW_HEIGHT = 720;
+
+const ScaledPreview = ({ scale, storeKey, children }: ScaledPreviewProps) => {
+    const contentRef = useRef<HTMLDivElement | null>(null);
+    const [contentHeight, setContentHeight] = useState<number>(0);
+
+    useLayoutEffect(() => {
+        const element = contentRef.current;
+        if (!element) {
+            return;
+        }
+
+        const updateHeight = () => {
+            setContentHeight(element.offsetHeight);
+        };
+
+        updateHeight();
+
+        if (typeof ResizeObserver !== 'undefined') {
+            const observer = new ResizeObserver(() => {
+                updateHeight();
+            });
+            observer.observe(element);
+
+            return () => {
+                observer.disconnect();
+            };
+        }
+
+        const intervalId = window.setInterval(updateHeight, 500);
+        return () => window.clearInterval(intervalId);
+    }, [scale, storeKey]);
+
+    const baseClassName = 'w-full bg-white rounded-lg shadow-2xl border border-gray-200';
+
+    if (scale === 1) {
+        return (
+            <div ref={contentRef} className={baseClassName}>
+                {children}
+            </div>
+        );
+    }
+
+    const scaledHeight = contentHeight > 0 ? contentHeight * scale : MIN_PREVIEW_HEIGHT;
+
+    const scaledWidthPercent = `${100 / scale}%`;
+
+    return (
+        <div className="relative w-full overflow-hidden" style={{ height: scaledHeight }}>
+            <div
+                ref={contentRef}
+                className={baseClassName}
+                style={{
+                    transform: `translateX(-50%) scale(${scale})`,
+                    transformOrigin: 'top center',
+                    width: scaledWidthPercent,
+                    maxWidth: 'none',
+                    overflow: 'visible',
+                    position: 'absolute',
+                    top: 0,
+                    left: '50%',
+                }}
+            >
+                {children}
+            </div>
+        </div>
+    );
+};
+
 interface ColorControls {
     primary: string;
     secondary: string;
     text: string;
+    surface: string;
     setPrimary: (value: string) => void;
     setSecondary: (value: string) => void;
     setText: (value: string) => void;
+    setSurface: (value: string) => void;
 }
 
 export interface UseThemeSelectorStateResult {
@@ -61,10 +139,12 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
     const [customPrimaryColor, setCustomPrimaryColor] = useState<string>('');
     const [customSecondaryColor, setCustomSecondaryColor] = useState<string>('');
     const [customTextColor, setCustomTextColor] = useState<string>('');
+    const [customSurfaceColor, setCustomSurfaceColor] = useState<string>('');
 
     const [previewPrimaryColor, setPreviewPrimaryColor] = useState<string>('');
     const [previewSecondaryColor, setPreviewSecondaryColor] = useState<string>('');
     const [previewTextColor, setPreviewTextColor] = useState<string>('');
+    const [previewSurfaceColor, setPreviewSurfaceColor] = useState<string>('');
 
     const [scale, setScale] = useState<number>(0.4);
 
@@ -116,6 +196,12 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                     ? customTextColor
                     : themeData.theme.textColor;
 
+            const surfaceColor = isPreviewTheme && previewSurfaceColor
+                ? previewSurfaceColor
+                : isSelectedTheme && customSurfaceColor
+                    ? customSurfaceColor
+                    : themeData.theme.surfaceColor;
+
             return {
                 _id: `preview_${themeId}`,
                 owner: 'preview',
@@ -127,6 +213,7 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                     primaryColor,
                     secondaryColor,
                     textColor,
+                    surfaceColor,
                 },
                 themeStructure: {
                     header: true,
@@ -152,7 +239,18 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                 updatedAt: new Date().toISOString(),
             };
         },
-        [previewThemeId, previewPrimaryColor, previewSecondaryColor, previewTextColor, selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor]
+        [
+            previewThemeId,
+            previewPrimaryColor,
+            previewSecondaryColor,
+            previewTextColor,
+            previewSurfaceColor,
+            selectedThemeIndex,
+            customPrimaryColor,
+            customSecondaryColor,
+            customTextColor,
+            customSurfaceColor,
+        ]
     );
 
     const updatePreviewColor = useCallback(
@@ -173,12 +271,29 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                 return;
             }
 
+            if (type === 'surface') {
+                setPreviewSurfaceColor(value);
+                if (isSelectedTheme) {
+                    setCustomSurfaceColor(value);
+                }
+                return;
+            }
+
             setPreviewTextColor(value);
             if (isSelectedTheme) {
                 setCustomTextColor(value);
             }
         },
-        [setPreviewPrimaryColor, setPreviewSecondaryColor, setPreviewTextColor, setCustomPrimaryColor, setCustomSecondaryColor, setCustomTextColor]
+        [
+            setPreviewPrimaryColor,
+            setPreviewSecondaryColor,
+            setPreviewSurfaceColor,
+            setPreviewTextColor,
+            setCustomPrimaryColor,
+            setCustomSecondaryColor,
+            setCustomSurfaceColor,
+            setCustomTextColor,
+        ]
     );
 
     const previewTheme = useCallback(
@@ -190,6 +305,7 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                 setPreviewPrimaryColor('');
                 setPreviewSecondaryColor('');
                 setPreviewTextColor('');
+                setPreviewSurfaceColor('');
                 setShowColorPanel(false);
                 return;
             }
@@ -204,9 +320,10 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
 
             setPreviewPrimaryColor(isSelected ? customPrimaryColor || themeData.theme.primaryColor : themeData.theme.primaryColor);
             setPreviewSecondaryColor(isSelected ? customSecondaryColor || themeData.theme.secondaryColor || '' : themeData.theme.secondaryColor || '');
-            setPreviewTextColor(isSelected ? customTextColor || themeData.theme.textColor : themeData.theme.textColor);
+            setPreviewTextColor(isSelected ? customTextColor || themeData.theme.textColor || '' : themeData.theme.textColor || '');
+            setPreviewSurfaceColor(isSelected ? customSurfaceColor || themeData.theme.surfaceColor || '' : themeData.theme.surfaceColor || '');
         },
-        [previewThemeId, selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor]
+        [previewThemeId, selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor, customSurfaceColor]
     );
 
     const closePreview = useCallback(() => {
@@ -214,6 +331,7 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
         setPreviewPrimaryColor('');
         setPreviewSecondaryColor('');
         setPreviewTextColor('');
+        setPreviewSurfaceColor('');
         setShowColorPanel(false);
     }, []);
 
@@ -225,10 +343,11 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
 
         onThemeSelect(themeId, {
             primaryColor: customPrimaryColor || themeData.theme.primaryColor,
-            secondaryColor: customSecondaryColor || themeData.theme.secondaryColor,
-            textColor: customTextColor || themeData.theme.textColor,
+            secondaryColor: customSecondaryColor || themeData.theme.secondaryColor || '',
+            textColor: customTextColor || themeData.theme.textColor || '',
+            surfaceColor: customSurfaceColor || themeData.theme.surfaceColor || '',
         });
-    }, [selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor, onThemeSelect]);
+    }, [selectedThemeIndex, customPrimaryColor, customSecondaryColor, customTextColor, customSurfaceColor, onThemeSelect]);
 
     const selectTheme = useCallback(
         (index: number, preserveColors: boolean = false) => {
@@ -238,6 +357,7 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
                 setCustomPrimaryColor('');
                 setCustomSecondaryColor('');
                 setCustomTextColor('');
+                setCustomSurfaceColor('');
             }
         },
         []
@@ -247,26 +367,16 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
         if (!previewThemeId) return null;
 
         const previewStore = getPreviewStore(previewThemeId);
-        const storeKey = `preview-${previewThemeId}-${previewPage}-${previewStore.theme.primaryColor}-${previewStore.theme.secondaryColor || ''}-${previewStore.theme.textColor || ''}`;
+        const storeKey = `preview-${previewThemeId}-${previewPage}-${previewStore.theme.primaryColor}-${previewStore.theme.secondaryColor || ''}-${previewStore.theme.textColor || ''}-${previewStore.theme.surfaceColor || ''}`;
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
         const finalScale = isMobile ? 1 : scale;
 
         return (
             <StoreProvider key={storeKey} stores={[previewStore]} initialStore={previewStore} products={FAKE_PRODUCTS}>
                 <ProductPageAutoSelect product={demoProduct} currentPage={previewPage} />
-                <div
-                    className="w-full bg-white rounded-lg shadow-2xl border border-gray-200"
-                    style={{
-                        transform: `scale(${finalScale})`,
-                        transformOrigin: 'top center',
-                        width: '100%',
-                        maxWidth: '100%',
-                        margin: '0 auto',
-                        overflow: 'visible',
-                    }}
-                >
+                <ScaledPreview scale={finalScale} storeKey={storeKey}>
                     <ThemeRenderer themeId={previewThemeId} currentPage={previewPage} />
-                </div>
+                </ScaledPreview>
             </StoreProvider>
         );
     }, [previewThemeId, previewPage, scale, getPreviewStore]);
@@ -280,17 +390,21 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
             primary: previewPrimaryColor,
             secondary: previewSecondaryColor,
             text: previewTextColor,
+            surface: previewSurfaceColor,
             setPrimary: setPreviewPrimaryColor,
             setSecondary: setPreviewSecondaryColor,
             setText: setPreviewTextColor,
+            setSurface: setPreviewSurfaceColor,
         },
         customColors: {
             primary: customPrimaryColor,
             secondary: customSecondaryColor,
             text: customTextColor,
+            surface: customSurfaceColor,
             setPrimary: setCustomPrimaryColor,
             setSecondary: setCustomSecondaryColor,
             setText: setCustomTextColor,
+            setSurface: setCustomSurfaceColor,
         },
         selectTheme,
         previewTheme,
