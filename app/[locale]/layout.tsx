@@ -17,6 +17,7 @@ export default async function LocaleLayout({
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }) {
+  // Next 15 dynamic route params are async – await to satisfy runtime expectation
   const { locale } = await params;
   const supportedLocales = ['en', 'fr', 'ar'];
 
