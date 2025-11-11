@@ -2,7 +2,8 @@
 
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
-import { PLANS } from "../plan/page";
+// Use default hardcoded plans from the shared hook as a safe fallback
+import { DEFAULT_PLANS as PLANS } from "@/hooks/onboarding/usePlansData";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
