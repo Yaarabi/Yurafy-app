@@ -15,7 +15,7 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, products } = useStore();
+    const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -29,6 +29,7 @@ const ProductGrid: React.FC = () => {
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const locale = (params as any)?.locale || "en";
         
         // Always use /locale/shop/slug format (subdomain handles store context)
@@ -38,6 +39,7 @@ const ProductGrid: React.FC = () => {
 
     const handleAddToCart = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const success = addToCart(product, 1);
         if (success) {
             openCart();
@@ -87,7 +89,7 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                onClick={() => handleViewProduct({ stopPropagation: () => {} } as React.MouseEvent, product)}
+                                onClick={() => { if (!disableNavigation) handleViewProduct({ stopPropagation: () => {} } as React.MouseEvent, product); }}
                                 className="group relative cursor-pointer bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-400 overflow-hidden break-inside-avoid mb-6 transform hover:-translate-y-2"
                                 style={{ 
                                     borderTop: `4px solid ${primaryColor}`,

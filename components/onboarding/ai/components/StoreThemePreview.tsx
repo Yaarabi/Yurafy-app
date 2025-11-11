@@ -169,7 +169,7 @@ export default function StoreThemePreview({
                                     }
                                 >
                                     <ThemeInjector theme={previewStore.theme} />
-                                    <StoreProvider stores={[previewStore]} initialStore={previewStore} products={products}>
+                                    <StoreProvider stores={[previewStore]} initialStore={previewStore} products={products} disableNavigation>
                                         <ProductPreviewInitializer active={previewPage === 'PRODUCT_PAGE'} />
                                         <ThemeRenderer themeId={themeId} currentPage={previewPage} />
                                     </StoreProvider>

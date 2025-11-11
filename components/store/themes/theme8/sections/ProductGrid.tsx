@@ -15,7 +15,7 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, products } = useStore();
+    const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -29,6 +29,7 @@ const ProductGrid: React.FC = () => {
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const locale = (params as any)?.locale || "en";
         const href = `/${locale}/shop/${product.slug}`;
         router.push(href);

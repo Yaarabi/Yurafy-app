@@ -16,6 +16,7 @@ export type StoreContextValue = {
     setProductOptions: (o: Record<string, any>) => void;
     goHome: () => void;
     products: IProduct[];
+    disableNavigation?: boolean;
 };
 
 export const StoreContext = createContext<StoreContextValue | undefined>(undefined);
@@ -25,7 +26,8 @@ export const StoreProvider: React.FC<{
     stores?: SerializedStore[];
     initialStore?: SerializedStore | null;
     products?: IProduct[];
-}> = ({ children, stores = [], initialStore = null, products = [] }) => {
+    disableNavigation?: boolean;
+}> = ({ children, stores = [], initialStore = null, products = [], disableNavigation = false }) => {
     const [allStores] = useState<SerializedStore[]>(stores);
     const [selectedStore, setSelectedStore] = useState<SerializedStore | null>(initialStore || (stores[0] ?? null));
     const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
@@ -101,6 +103,7 @@ export const StoreProvider: React.FC<{
         setProductOptions,
         goHome,
         products: allProducts,
+        disableNavigation,
     };
 
     return (

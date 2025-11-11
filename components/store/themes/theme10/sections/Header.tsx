@@ -12,7 +12,7 @@ import GeometricDecorations from '../../shared/GeometricDecorations';
 import { getStoreTranslation } from '../../../utils/translations';
 
 const Header: React.FC = () => {
-    const { selectedStore, selectProduct } = useStore();
+    const { selectedStore, selectProduct, disableNavigation } = useStore();
     const { openCart, getTotalItems } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -38,6 +38,7 @@ const Header: React.FC = () => {
 
     const handleLogoClick = (e: React.MouseEvent) => {
         e.preventDefault();
+        if (disableNavigation) return;
 
         const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
         const parts = hostname ? hostname.split('.') : [];
@@ -106,7 +107,8 @@ const Header: React.FC = () => {
                         {headerLinks.map((link) => (
                             <a
                                 key={link.label}
-                                href={link.href}
+                                href={disableNavigation ? '#' : link.href}
+                                onClick={(e) => { if (disableNavigation) e.preventDefault(); }}
                                 className="relative text-base font-semibold text-gray-700 hover:text-gray-900 transition-colors duration-200 whitespace-nowrap group"
                                 style={{ 
                                     color: link.href === '#about' ? primaryColor : undefined 
@@ -133,7 +135,8 @@ const Header: React.FC = () => {
                     <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                         {/* Login Link */}
                         <a
-                            href={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
+                            href={disableNavigation ? '#' : `${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
+                            onClick={(e) => { if (disableNavigation) e.preventDefault(); }}
                             className="hidden md:flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200"
                             style={{ color: primaryColor }}
                         >
@@ -202,8 +205,8 @@ const Header: React.FC = () => {
                                     {headerLinks.map((link, index) => (
                                         <motion.a
                                             key={link.label}
-                                            href={link.href}
-                                            onClick={() => setMobileMenuOpen(false)}
+                                            href={disableNavigation ? '#' : link.href}
+                                            onClick={(e) => { if (disableNavigation) { e.preventDefault(); } else { setMobileMenuOpen(false); } }}
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: index * 0.1 }}
@@ -218,8 +221,8 @@ const Header: React.FC = () => {
                                     ))}
                                     {/* Login Link */}
                                     <motion.a
-                                        href={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
-                                        onClick={() => setMobileMenuOpen(false)}
+                                        href={disableNavigation ? '#' : `${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
+                                        onClick={(e) => { if (disableNavigation) e.preventDefault(); else setMobileMenuOpen(false); }}
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: headerLinks.length * 0.1 }}

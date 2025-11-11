@@ -15,7 +15,7 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, products } = useStore();
+    const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -29,6 +29,7 @@ const ProductGrid: React.FC = () => {
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const locale = (params as any)?.locale || "en";
         
         // Always use /locale/shop/slug format (subdomain handles store context)
@@ -38,6 +39,7 @@ const ProductGrid: React.FC = () => {
 
     const handleAddToCart = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const success = addToCart(product, 1);
         if (success) {
             openCart();

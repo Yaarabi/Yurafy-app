@@ -372,7 +372,7 @@ const useThemeSelectorState = ({ onThemeSelect }: UseThemeSelectorStateProps): U
         const finalScale = isMobile ? 1 : scale;
 
         return (
-            <StoreProvider key={storeKey} stores={[previewStore]} initialStore={previewStore} products={FAKE_PRODUCTS}>
+            <StoreProvider key={storeKey} stores={[previewStore]} initialStore={previewStore} products={FAKE_PRODUCTS} disableNavigation>
                 <ProductPageAutoSelect product={demoProduct} currentPage={previewPage} />
                 <ScaledPreview scale={finalScale} storeKey={storeKey}>
                     <ThemeRenderer themeId={previewThemeId} currentPage={previewPage} />

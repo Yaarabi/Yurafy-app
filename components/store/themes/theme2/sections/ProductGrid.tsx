@@ -15,7 +15,7 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, products } = useStore();
+    const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -28,9 +28,8 @@ const ProductGrid: React.FC = () => {
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const locale = (params as any)?.locale || "en";
-        
-        // Always use /locale/shop/slug format (subdomain handles store context)
         const href = `/${locale}/shop/${product.slug}`;
         router.push(href);
     };
@@ -127,6 +126,7 @@ const ProductGrid: React.FC = () => {
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.9 }}
                                             onClick={(e) => handleViewProduct(e, product)}
+                                            disabled={disableNavigation}
                                             className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
                                             title="View Details"
                                         >
@@ -166,7 +166,8 @@ const ProductGrid: React.FC = () => {
                                     <div className="flex gap-2 sm:hidden">
                                         <button
                                             onClick={(e) => handleViewProduct(e, product)}
-                                            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all"
+                                            disabled={disableNavigation}
+                                            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                             style={{
                                                 borderColor: primaryColor,
                                                 color: primaryColor,

@@ -4,6 +4,7 @@ import React, { Suspense, lazy } from 'react';
 type ThemeRendererProps = {
     themeId: number;
     currentPage: 'STORE_PAGE' | 'PRODUCT_PAGE';
+    disableNavigation?: boolean;
 }
 
 const themeComponents: Record<number, Record<string, React.LazyExoticComponent<React.FC<{}>>>> = {

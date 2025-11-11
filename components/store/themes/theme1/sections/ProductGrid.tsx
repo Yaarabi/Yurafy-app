@@ -15,7 +15,7 @@ const cardVariants: Variants = {
 };
 
 const ProductGrid: React.FC = () => {
-    const { selectedStore, products } = useStore();
+    const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
     const router = useRouter();
     const params = useParams();
@@ -29,9 +29,8 @@ const ProductGrid: React.FC = () => {
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
+        if (disableNavigation) return;
         const locale = (params as any)?.locale || "en";
-        
-        // Always use /locale/shop/slug format (subdomain handles store context)
         const href = `/${locale}/shop/${product.slug}`;
         router.push(href);
     };
@@ -133,7 +132,8 @@ const ProductGrid: React.FC = () => {
                                         <div className="flex gap-2">
                                             <button 
                                                 onClick={(e) => handleViewProduct(e, product)}
-                                                className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:scale-105"
+                                                disabled={disableNavigation}
+                                                className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 style={{ backgroundColor: primaryColor }}
                                             >
                                                 View

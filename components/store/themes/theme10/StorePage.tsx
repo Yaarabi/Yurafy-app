@@ -8,7 +8,7 @@ import About from './sections/About';
 import { useStore } from '../../hooks/useStore';
 
 const StorePage: React.FC = () => {
-    const { selectedStore } = useStore();
+    const { selectedStore, disableNavigation } = useStore();
 
     if (!selectedStore) return null;
 
