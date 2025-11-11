@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
-import GeometricDecorations from '../../shared/GeometricDecorations';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { getStoreTranslation } from '../../../utils/translations';
 
 const Hero: React.FC = () => {
@@ -15,76 +15,119 @@ const Hero: React.FC = () => {
     const storeLanguage = selectedStore.language || 'en';
 
     return (
-        <div className="relative text-white min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-rose-900 via-pink-900 to-rose-800">
-            {/* Elegant Geometric Pattern */}
-            <GeometricDecorations type="elegant" color={primaryColor} />
-            
-            {/* Hero Image Overlay */}
-            {hero.imageUrl && (
-                <div 
-                    className="absolute inset-0 bg-cover bg-center opacity-30" 
-                    style={{ backgroundImage: `url(${hero.imageUrl})` }}
-                ></div>
-            )}
-            
-            {/* Gradient Overlay */}
+        <div className="relative text-white min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden">
+            {/* Animated gradient background */}
             <div 
-                className="absolute inset-0" 
-                style={{ background: `linear-gradient(135deg, ${primaryColor}dd, ${secondaryColor}cc)` }}
-            ></div>
+                className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+                style={{
+                    backgroundImage: hero.imageUrl ? `url(${hero.imageUrl})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
+                <div 
+                    className="absolute inset-0 bg-gradient-to-br"
+                    style={{ 
+                        background: `linear-gradient(135deg, ${primaryColor}f5, ${secondaryColor}e5, ${primaryColor}d5)` 
+                    }}
+                />
+            </div>
             
-            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl z-10">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1 }}
-                    className="bg-white/10 backdrop-blur-md rounded-3xl p-8 sm:p-12 lg:p-16 border border-white/20 shadow-2xl"
-                >
+            {/* Animated particles */}
+            <div className="absolute inset-0 overflow-hidden">
+                {[...Array(20)].map((_, i) => (
+                    <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-white rounded-full opacity-20"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                        }}
+                        animate={{
+                            y: [0, -30, 0],
+                            opacity: [0.2, 0.5, 0.2],
+                        }}
+                        transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Infinity,
+                            delay: Math.random() * 2,
+                        }}
+                    />
+                ))}
+            </div>
+            
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 z-10 py-12 sm:py-16">
+                <div className="max-w-5xl mx-auto text-center">
+                    {/* Sparkle badge */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-6 sm:mb-8"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">
+                            {getStoreTranslation("premium", storeLanguage) || "Premium Collection"}
+                        </span>
+                    </motion.div>
                     
-                    <motion.h2 
+                    <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight italic"
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-4 sm:mb-6 leading-tight tracking-tight"
                     >
                         {hero.title}
-                    </motion.h2>
-                    <motion.div 
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: '100px' }}
+                    </motion.h1>
+                    
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="h-1 bg-white mx-auto mb-8"
-                        style={{ backgroundColor: secondaryColor }}
-                    ></motion.div>
-                    <motion.p 
+                        className="h-1 w-24 sm:w-32 mx-auto mb-6 sm:mb-8 rounded-full"
+                        style={{ backgroundColor: 'white' }}
+                    />
+                    
+                    <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
-                        className="text-lg sm:text-xl md:text-2xl mb-12 text-white/95 leading-relaxed font-light"
+                        className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 text-white/90 leading-relaxed max-w-3xl mx-auto px-4"
                     >
                         {hero.subtitle}
                     </motion.p>
+                    
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.7 }}
+                        className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
                     >
-                        <a 
-                            href="#products" 
-                            className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-semibold bg-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
-                            style={{ color: primaryColor }}
+                        <a
+                            href="#products"
+                            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-base sm:text-lg font-bold bg-white text-gray-900 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center"
                         >
-                            <span className="relative z-10">{getStoreTranslation("shopNow", storeLanguage)}</span>
-                            <motion.span
-                                className="relative z-10"
-                                animate={{ x: [0, 5, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                            >
-                                →
-                            </motion.span>
+                            <span>{getStoreTranslation("shopNow", storeLanguage)}</span>
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </a>
+                        <a
+                            href="#about"
+                            className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base sm:text-lg font-semibold bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 transition-all duration-300 w-full sm:w-auto justify-center"
+                        >
+                            {getStoreTranslation("learnMore", storeLanguage) || "Learn More"}
                         </a>
                     </motion.div>
-                </motion.div>
+                </div>
+            </div>
+            
+            {/* Bottom wave decoration */}
+            <div className="absolute bottom-0 left-0 right-0">
+                <svg viewBox="0 0 1440 120" className="w-full h-auto">
+                    <path
+                        fill="white"
+                        d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
+                    />
+                </svg>
             </div>
         </div>
     );

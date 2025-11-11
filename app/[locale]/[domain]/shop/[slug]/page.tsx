@@ -12,12 +12,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders(headers);
+    const headersList = await headers();
+    const subdomain = await getSubdomainFromHeaders(headers, { mainDomains: ['www', 'app', 'admin'] });
+    
+    // Also check the x-subdomain header set by middleware
+    const subdomainFromHeader = headersList.get('x-subdomain');
+    
+    const storeSubdomain = subdomain || subdomainFromHeader;
     
     // If we have a subdomain from headers, use it (subdomain takes precedence)
     // Otherwise, use the domain from params (path-based routing)
-    if (subdomain) {
-        storeDomain = subdomain;
+    if (storeSubdomain) {
+        storeDomain = storeSubdomain;
     }
     
     // Normalize domain (lowercase, trim) if we have it

@@ -28,6 +28,8 @@ const ProductGrid: React.FC = () => {
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
         const locale = (params as any)?.locale || "en";
+        
+        // Always use /locale/shop/slug format (subdomain handles store context)
         const href = `/${locale}/shop/${product.slug}`;
         router.push(href);
     };

@@ -6,12 +6,12 @@ import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/products";
-import GeometricDecorations from "../../shared/GeometricDecorations";
+import { ShoppingCart, Eye, Sparkles } from "lucide-react";
 import { getStoreTranslation } from "../../../utils/translations";
 
 const cardVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
 const ProductGrid: React.FC = () => {
@@ -27,6 +27,8 @@ const ProductGrid: React.FC = () => {
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
         const locale = (params as any)?.locale || "en";
+        
+        // Always use /locale/shop/slug format (subdomain handles store context)
         const href = `/${locale}/shop/${product.slug}`;
         router.push(href);
     };
@@ -40,41 +42,63 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="relative py-20 bg-gradient-to-b from-rose-50 to-white overflow-hidden">
-            {/* Elegant Geometric Pattern */}
-            <GeometricDecorations type="elegant" color={primaryColor} className="opacity-5" />
-            
-            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 z-10">
+        <div id="products" className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-gray-50 overflow-hidden">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Section Header */}
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    className="text-center mb-12 sm:mb-16"
                 >
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold italic mb-6" style={{ color: primaryColor }}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-4 sm:mb-6"
+                        style={{ 
+                            backgroundColor: `${primaryColor}10`,
+                            borderColor: `${primaryColor}30`,
+                        }}
+                    >
+                        <Sparkles className="w-4 h-4" style={{ color: primaryColor }} />
+                        <span className="text-xs sm:text-sm font-bold uppercase tracking-wider" style={{ color: primaryColor }}>
+                            {getStoreTranslation("featured", storeLanguage) || "Featured"}
+                        </span>
+                    </motion.div>
+                    
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 sm:mb-4 text-gray-900">
                         {getStoreTranslation("ourCollection", storeLanguage)}
-                    </h3>
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="w-16 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-2 h-2 rounded-full rotate-45" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                    </div>
+                    </h2>
+                    
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="h-1 w-20 sm:w-24 mx-auto rounded-full"
+                        style={{ backgroundColor: primaryColor }}
+                    />
                 </motion.div>
 
                 {products.length === 0 ? (
-                    <p className="text-center text-gray-500 text-lg">No products available.</p>
+                    <div className="text-center py-12 sm:py-16">
+                        <p className="text-lg sm:text-xl text-gray-500">
+                            {getStoreTranslation("noProducts", storeLanguage) || "No products available."}
+                        </p>
+                    </div>
                 ) : (
                     <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
                         initial="hidden"
                         whileInView="visible"
-                        viewport={{ once: true, amount: 0.1 }}
+                        viewport={{ once: true, amount: 0.05 }}
                         variants={{
                             hidden: { opacity: 0 },
                             visible: {
                                 opacity: 1,
-                                transition: { staggerChildren: 0.15 },
+                                transition: { staggerChildren: 0.1 },
                             },
                         }}
                     >
@@ -82,69 +106,80 @@ const ProductGrid: React.FC = () => {
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
-                                className="group relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-2 border-transparent hover:border-[var(--color-primary)]"
+                                whileHover={{ y: -8 }}
+                                className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
                             >
-                                {/* Elegant Corner Accent */}
-                                <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden z-10">
-                                    <div 
-                                        className="absolute top-0 right-0 w-0 h-0 border-l-[40px] border-l-transparent border-t-[40px] transition-all duration-300 group-hover:border-t-[50px] group-hover:border-l-[50px]"
-                                        style={{ borderTopColor: primaryColor }}
-                                    ></div>
-                                </div>
-                                
-                                <div className="relative overflow-hidden h-72">
+                                {/* Image Section */}
+                                <div className="relative overflow-hidden aspect-square">
                                     <motion.img
                                         src={product.mainImage}
                                         alt={product.name}
                                         className="w-full h-full object-cover"
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.6 }}
+                                        whileHover={{ scale: 1.05 }}
+                                        transition={{ duration: 0.4 }}
                                     />
-                                    {/* Elegant Overlay */}
-                                    <div 
-                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                                        style={{ backgroundColor: primaryColor }}
-                                    >
-                                        <GeometricDecorations type="elegant" color={primaryColor} className="opacity-30" />
+                                    
+                                    {/* Hover overlay with actions */}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={(e) => handleViewProduct(e, product)}
+                                            className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
+                                            title="View Details"
+                                        >
+                                            <Eye className="w-5 h-5" style={{ color: primaryColor }} />
+                                        </motion.button>
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={(e) => handleAddToCart(e, product)}
+                                            className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+                                            style={{ backgroundColor: primaryColor }}
+                                            title="Add to Cart"
+                                        >
+                                            <ShoppingCart className="w-5 h-5 text-white" />
+                                        </motion.button>
                                     </div>
                                     
-                                </div>
-                                <div className="p-6 flex-grow flex flex-col justify-between">
-                                    <div>
-                                        <h4 className="text-xl font-bold italic text-gray-900 mb-3 line-clamp-2">
-                                            {product.name}
-                                        </h4>
-                                        <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                                            {product.description}
-                                        </p>
+                                    {/* Price badge */}
+                                    <div 
+                                        className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-sm font-bold text-white shadow-lg"
+                                        style={{ backgroundColor: primaryColor }}
+                                    >
+                                        ${product.price?.toFixed(2) ?? "0.00"}
                                     </div>
-                                    <div className="pt-4 border-t-2" style={{ borderColor: `${primaryColor}30` }}>
-                                        <p 
-                                            className="text-2xl font-bold italic mb-3"
-                                            style={{ color: primaryColor }}
+                                </div>
+                                
+                                {/* Content Section */}
+                                <div className="p-5 flex-grow flex flex-col">
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-opacity-80 transition-all">
+                                        {product.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed flex-grow">
+                                        {product.description}
+                                    </p>
+                                    
+                                    {/* Mobile buttons */}
+                                    <div className="flex gap-2 sm:hidden">
+                                        <button
+                                            onClick={(e) => handleViewProduct(e, product)}
+                                            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all"
+                                            style={{
+                                                borderColor: primaryColor,
+                                                color: primaryColor,
+                                            }}
                                         >
-                                            ${product.price?.toFixed(2) ?? "0.00"}
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <button 
-                                                onClick={(e) => handleViewProduct(e, product)}
-                                                className="flex-1 px-4 py-2 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-105"
-                                                style={{ backgroundColor: primaryColor }}
-                                            >
-                                                View
-                                            </button>
-                                            <button 
-                                                onClick={(e) => handleAddToCart(e, product)}
-                                                className="flex-1 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-300 hover:scale-105"
-                                                style={{ 
-                                                    borderColor: primaryColor,
-                                                    color: primaryColor,
-                                                    backgroundColor: 'transparent'
-                                                }}
-                                            >
-                                                Add to Cart
-                                            </button>
-                                        </div>
+                                            {getStoreTranslation("view", storeLanguage) || "View"}
+                                        </button>
+                                        <button
+                                            onClick={(e) => handleAddToCart(e, product)}
+                                            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all flex items-center justify-center gap-2"
+                                            style={{ backgroundColor: primaryColor }}
+                                        >
+                                            <ShoppingCart className="w-4 h-4" />
+                                            {getStoreTranslation("add", storeLanguage) || "Add"}
+                                        </button>
                                     </div>
                                 </div>
                             </motion.div>

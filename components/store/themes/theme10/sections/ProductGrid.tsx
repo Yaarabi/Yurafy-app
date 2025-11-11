@@ -41,38 +41,44 @@ const ProductGrid: React.FC = () => {
     };
 
     return (
-        <div id="products" className="relative py-24 bg-gradient-to-br from-indigo-50 to-white overflow-hidden">
-            {/* Professional Geometric Pattern */}
-            <GeometricDecorations type="professional" color={primaryColor} className="opacity-5" />
-            
-            <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r opacity-5"
-                style={{ background: `linear-gradient(90deg, ${primaryColor}, transparent)` }}
-            ></div>
-            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 z-10">
+        <section id="products" className="relative overflow-hidden bg-slate-950 py-24">
+            <GeometricDecorations type="professional" color={primaryColor} className="opacity-10" />
+            <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                    background: `linear-gradient(115deg, ${primaryColor}12 0%, transparent 55%), radial-gradient(circle at 85% 20%, ${primaryColor}20, transparent 60%)`,
+                }}
+            />
+
+            <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
                 <motion.div
-                    initial={{ opacity: 0, y: -30 }}
+                    initial={{ opacity: 0, y: -24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    className="mb-14"
                 >
-                    <div className="inline-block px-6 py-2 bg-[var(--color-primary)] text-white font-black uppercase tracking-widest text-sm mb-4"
-                        style={{ '--color-primary': primaryColor } as React.CSSProperties}
+                    <div
+                        className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-6 py-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70"
+                        style={{ borderColor: `${primaryColor}35`, color: primaryColor }}
                     >
-                        {getStoreTranslation("products", storeLanguage)}
+                        {getStoreTranslation('products', storeLanguage)}
                     </div>
-                    <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black"
-                        style={{ color: primaryColor }}
-                    >
-                        {getStoreTranslation("ourCollection", storeLanguage)}
+                    <h3 className="mt-6 text-3xl font-semibold text-white sm:text-4xl md:text-5xl">
+                        {getStoreTranslation('ourCollection', storeLanguage)}
                     </h3>
+                    <div className="mt-6 flex items-center gap-3">
+                        <span className="h-px w-20 bg-white/20" />
+                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: primaryColor }} />
+                        <span className="h-px flex-1 bg-white/20" />
+                    </div>
                 </motion.div>
 
                 {products.length === 0 ? (
-                    <p className="text-center text-gray-500 text-xl font-bold">No products available.</p>
+                    <p className="text-center text-white/60">No products available.</p>
                 ) : (
                     <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
+                        className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.1 }}
@@ -84,94 +90,63 @@ const ProductGrid: React.FC = () => {
                             },
                         }}
                     >
-                        {products.map((product, index) => (
-                            <motion.div
+                        {products.map((product) => (
+                            <motion.article
                                 key={product._id}
                                 variants={cardVariants}
-                                onClick={() => handleViewProduct({ stopPropagation: () => {} } as React.MouseEvent, product)}
-                                className="group relative cursor-pointer bg-white rounded-none shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden flex flex-col transform hover:-rotate-1 border-4 border-transparent hover:border-[var(--color-primary)]"
-                                style={{ 
-                                    borderColor: index % 2 === 0 ? undefined : primaryColor,
-                                    '--color-primary': primaryColor
-                                } as React.CSSProperties}
+                                onClick={(event) => handleViewProduct(event, product)}
+                                className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.08] text-white shadow-[0_40px_120px_-60px_rgba(15,23,42,1)] transition-all duration-300 hover:border-white/25 hover:bg-white/[0.12]"
                             >
-                                {/* Professional Corner Accent */}
-                                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden z-10">
-                                    <div 
-                                        className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
-                                        style={{ borderTopColor: primaryColor }}
-                                    ></div>
-                                </div>
-                                
-                                <div className="relative overflow-hidden h-80">
+                                <div className="relative h-64 overflow-hidden">
                                     <motion.img
                                         src={product.mainImage}
                                         alt={product.name}
-                                        className="w-full h-full object-cover"
-                                        whileHover={{ scale: 1.15 }}
+                                        className="h-full w-full object-cover"
+                                        whileHover={{ scale: 1.1 }}
                                         transition={{ duration: 0.6 }}
                                     />
-                                    {/* Professional Overlay */}
-                                    <div 
-                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                                        style={{ backgroundColor: primaryColor }}
-                                    >
-                                        <GeometricDecorations type="professional" color={primaryColor} className="opacity-30" />
-                                    </div>
-                                    
-                                    
-                                    <div 
-                                        className="absolute top-4 right-4 px-4 py-2 bg-white font-black text-sm uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        style={{ color: primaryColor }}
-                                    >
-                                        View
-                                    </div>
+                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/10 to-transparent" />
+                                    <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundColor: primaryColor }} />
+                                    <div className="pointer-events-none absolute -right-10 top-8 h-24 w-24 rotate-45 border border-white/10" />
                                 </div>
-                                <div className="p-8 flex-grow flex flex-col justify-between bg-white">
-                                    <div>
-                                        <h4 className="text-2xl font-black text-gray-900 mb-4 uppercase tracking-tight line-clamp-2">
+
+                                <div className="flex flex-1 flex-col gap-6 p-8">
+                                    <div className="flex-1">
+                                        <h4 className="text-xl font-semibold leading-tight text-white">
                                             {product.name}
                                         </h4>
-                                        <p className="text-sm text-gray-600 mb-6 line-clamp-3 font-medium">
+                                        <p className="mt-4 text-sm leading-relaxed text-white/70 line-clamp-3">
                                             {product.description}
                                         </p>
                                     </div>
-                                    <div className="pt-6 border-t-4"
-                                        style={{ borderColor: primaryColor }}
-                                    >
-                                        <p 
-                                            className="text-3xl font-black mb-3"
-                                            style={{ color: primaryColor }}
-                                        >
-                                            ${product.price?.toFixed(2) ?? "0.00"}
+
+                                    <div className="border-t border-white/10 pt-6">
+                                        <p className="text-2xl font-semibold" style={{ color: primaryColor }}>
+                                            ${product.price?.toFixed(2) ?? '0.00'}
                                         </p>
-                                        <div className="flex gap-2">
-                                            <button 
-                                                onClick={(e) => handleViewProduct(e, product)}
-                                                className="flex-1 px-4 py-3 bg-[var(--color-primary)] text-white text-sm font-black uppercase tracking-wider rounded-none hover:bg-[var(--color-primary)]/90 transition-colors duration-300"
+                                        <div className="mt-4 flex gap-3">
+                                            <button
+                                                onClick={(event) => handleViewProduct(event, product)}
+                                                className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-white transition-colors duration-300 hover:border-white/40 hover:bg-white/20"
                                             >
                                                 View
                                             </button>
-                                            <button 
-                                                onClick={(e) => handleAddToCart(e, product)}
-                                                className="flex-1 px-4 py-3 border-2 text-sm font-black uppercase tracking-wider rounded-none transition-colors duration-300 hover:bg-[var(--color-primary)] hover:text-white"
-                                                style={{ 
-                                                    borderColor: primaryColor,
-                                                    color: primaryColor,
-                                                    backgroundColor: 'transparent'
-                                                }}
+                                            <button
+                                                onClick={(event) => handleAddToCart(event, product)}
+                                                className="flex-1 rounded-full border border-transparent bg-white px-4 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate-900 transition-colors duration-300 hover:bg-white/90"
+                                                style={{ color: primaryColor }}
                                             >
                                                 Add to Cart
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </motion.article>
                         ))}
                     </motion.div>
                 )}
             </div>
-        </div>
+        </section>
     );
 };
 

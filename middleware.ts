@@ -1,13 +1,13 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSubdomain } from '@/lib/utils/subdomain';
-import { routing } from './i18n/routing';
 
 // --- Internationalization middleware ---
-// Disable automatic locale detection to respect user's explicit choice via cookie
 const intlMiddleware = createMiddleware({
-    ...routing,
-    localeDetection: false, // User choice via NEXT_LOCALE cookie takes precedence
+    locales: ['en', 'fr', 'ar'],
+    defaultLocale: 'en',
+    localePrefix: 'as-needed',
+    localeDetection: true,
 });
 
 // --- Main middleware ---
@@ -15,10 +15,6 @@ export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     const subdomain = getSubdomain(hostname, { mainDomains: ['www', 'app', 'admin'] });
     const pathname = request.nextUrl.pathname;
-
-    // Check if user explicitly set locale to 'en' via cookie
-    const localeCookie = request.cookies.get('NEXT_LOCALE')?.value;
-    const isEnglishSelected = localeCookie === 'en';
 
     // Skip internal/protected routes
     if (
@@ -41,34 +37,41 @@ export default function middleware(request: NextRequest) {
             const url = request.nextUrl.clone();
             url.pathname = pathname.replace(/^\/en/, '') || '/';
             const response = NextResponse.redirect(url);
-            response.cookies.set('NEXT_LOCALE', 'en', {
-                path: '/',
-                maxAge: 60 * 60 * 24 * 365,
-                sameSite: 'lax',
-            });
+            response.cookies.delete('NEXT_LOCALE');
             return response;
         }
-        
-        // If user selected English and not on /en path, ensure cookie is set
-        if (isEnglishSelected && !pathname.startsWith('/fr') && !pathname.startsWith('/ar')) {
-            const response = intlMiddleware(request);
-            response.cookies.set('NEXT_LOCALE', 'en', {
-                path: '/',
-                maxAge: 60 * 60 * 24 * 365,
-                sameSite: 'lax',
-            });
-            return response;
-        }
-        
         return intlMiddleware(request);
     }
 
-    // If we have a subdomain (store subdomain), let the root page handle it
-    // Don't rewrite - just pass through to app/page.tsx
+    // If we have a subdomain (store subdomain), handle locale-aware rewrites
     if (subdomain && !mainDomains.includes(subdomain)) {
-        // For store subdomains, don't interfere with routing
-        // The root page (app/page.tsx) will handle subdomain detection
-        return NextResponse.next();
+        const segments = pathname.split('/').filter(Boolean);
+        const locales = ['en', 'fr', 'ar'];
+        const locale = segments[0];
+
+        if (locale && locales.includes(locale)) {
+            const hasDomainInPath = segments[1] === subdomain;
+
+            if (!hasDomainInPath) {
+                const restSegments = segments.slice(1);
+                const rewrittenSegments = [locale, subdomain, ...restSegments];
+                const url = request.nextUrl.clone();
+                url.pathname = `/${rewrittenSegments.join('/')}`;
+
+                const response = NextResponse.rewrite(url);
+                response.headers.set('x-subdomain', subdomain);
+                response.cookies.set('NEXT_LOCALE', locale);
+                return response;
+            }
+
+            const response = NextResponse.next();
+            response.headers.set('x-subdomain', subdomain);
+            return response;
+        }
+
+        const response = NextResponse.next();
+        response.headers.set('x-subdomain', subdomain);
+        return response;
     }
 
     // For root domain (no subdomain), handle locale routing
@@ -77,22 +80,7 @@ export default function middleware(request: NextRequest) {
         const url = request.nextUrl.clone();
         url.pathname = pathname.replace(/^\/en/, '') || '/';
         const response = NextResponse.redirect(url);
-        response.cookies.set('NEXT_LOCALE', 'en', {
-            path: '/',
-            maxAge: 60 * 60 * 24 * 365,
-            sameSite: 'lax',
-        });
-        return response;
-    }
-
-    // If user selected English and not on a localized path, ensure cookie is set
-    if (isEnglishSelected && !pathname.startsWith('/fr') && !pathname.startsWith('/ar')) {
-        const response = intlMiddleware(request);
-        response.cookies.set('NEXT_LOCALE', 'en', {
-            path: '/',
-            maxAge: 60 * 60 * 24 * 365,
-            sameSite: 'lax',
-        });
+        response.cookies.delete('NEXT_LOCALE');
         return response;
     }
 

@@ -37,7 +37,7 @@ const Trust: React.FC = () => {
     ];
 
     return (
-        <motion.div 
+        <motion.section
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -48,77 +48,66 @@ const Trust: React.FC = () => {
                     transition: { staggerChildren: 0.2 },
                 },
             }}
-            className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 border-t border-b overflow-hidden"
-            style={{ borderColor: `${primaryColor}20` }}
+            className="relative overflow-hidden border-y border-white/10 bg-slate-950 py-20 sm:py-24"
         >
-            {/* Professional Geometric Pattern */}
-            <GeometricDecorations type="professional" color={primaryColor} className="opacity-5" />
-            
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center mb-12 sm:mb-16">
+            <GeometricDecorations type="professional" color={primaryColor} className="opacity-10" />
+
+            <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                    background: `linear-gradient(160deg, transparent 0%, ${primaryColor}12 35%, transparent 70%), radial-gradient(circle at 15% 15%, ${primaryColor}20, transparent 55%)`,
+                }}
+            />
+
+            <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+                <div className="mx-auto mb-14 max-w-2xl text-center">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
-                        style={{ 
-                            backgroundColor: `${primaryColor}15`,
-                            borderColor: `${primaryColor}30`,
-                        }}
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-6 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70"
+                        style={{ borderColor: `${primaryColor}40`, color: primaryColor }}
                     >
-                        <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            {getStoreTranslation("whyChooseUs", storeLanguage)}
-                        </span>
+                        {getStoreTranslation('whyChooseUs', storeLanguage)}
                     </motion.div>
-                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        {getStoreTranslation("whyChooseUs", storeLanguage)}
+                    <h3 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
+                        {getStoreTranslation('whyChooseUs', storeLanguage)}
                     </h3>
-                    <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                    <div className="mt-6 flex items-center justify-center gap-3">
+                        <span className="h-px w-16 bg-white/20" />
+                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: primaryColor }} />
+                        <span className="h-px w-24 bg-white/20" />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
+
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature, index) => (
-                        <motion.div 
-                            key={index} 
+                        <motion.div
+                            key={index}
                             variants={itemVariants}
-                            className="relative text-center p-6 sm:p-8 rounded-xl bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                            style={{ 
-                                borderColor: `${primaryColor}30`,
-                            } as React.CSSProperties}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = primaryColor;
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = `${primaryColor}30`;
-                            }}
+                            className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.07] p-8 text-center text-white shadow-[0_40px_120px_-60px_rgba(15,23,42,1)] transition-all duration-300 hover:border-white/25 hover:bg-white/[0.12]"
                         >
-                            {/* Professional Corner Accent */}
-                            <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-                                <div 
-                                    className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
-                                    style={{ borderTopColor: primaryColor }}
-                                ></div>
-                            </div>
-                            
-                            <div 
-                                className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl mb-4 sm:mb-6 relative z-10"
-                                style={{ backgroundColor: `${primaryColor}15` }}
+                            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,rgba(255,255,255,0.3),transparent_55%)]" />
+                            <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-45 border border-white/10" />
+                            <div className="pointer-events-none absolute -left-12 bottom-10 h-32 w-32 rotate-[30deg] border border-white/10" />
+
+                            <div
+                                className="relative mx-auto mb-6 grid h-16 w-16 place-content-center rounded-2xl border border-white/20 bg-white/10"
+                                style={{ borderColor: `${primaryColor}55`, color: primaryColor }}
                             >
-                                <feature.Icon 
-                                    className="w-7 h-7 sm:w-8 sm:h-8"
-                                    style={{ color: primaryColor }}
-                                />
+                                <feature.Icon className="h-8 w-8" />
                             </div>
-                            <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{feature.title}</h4>
-                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
+                            <h4 className="relative text-lg font-semibold text-white">
+                                {feature.title}
+                            </h4>
+                            <p className="relative mt-4 text-sm leading-relaxed text-white/70">
+                                {feature.description}
+                            </p>
                         </motion.div>
                     ))}
                 </div>
             </div>
-        </motion.div>
+        </motion.section>
     );
 };
 

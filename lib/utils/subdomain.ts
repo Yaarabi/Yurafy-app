@@ -40,32 +40,32 @@ export function getSubdomain(
     // For production domains
     const parts = host.split('.');
     
-    // Handle Vercel preview URLs with hyphens: store1-yurait.vercel.app
-    // Vercel creates preview URLs in format: subdomain-appname.vercel.app
-    if (host.endsWith('.vercel.app')) {
-        // Extract the first part before .vercel.app
+    // Handle Vercel preview URLs with hyphens: subdomain-appname.vercel.app (3 parts)
+    // In this case, extract the part before the first hyphen as the subdomain
+    if (host.endsWith('.vercel.app') && parts.length === 3) {
         const firstPart = parts[0];
+        const hyphenParts = firstPart.split('-');
         
-        // If it contains a hyphen, split and take the leftmost part as subdomain
-        if (firstPart.includes('-')) {
-            const hyphenParts = firstPart.split('-');
-            const potentialSubdomain = hyphenParts[0];
+        // If there's a hyphen, the subdomain is before the first hyphen
+        // Example: store1-yurait.vercel.app -> store1
+        if (hyphenParts.length > 1) {
+            const subdomain = hyphenParts[0];
             // Don't treat main domains as store subdomains
-            if (mainDomains.includes(potentialSubdomain)) {
+            if (mainDomains.includes(subdomain)) {
                 return null;
             }
-            return potentialSubdomain;
+            return subdomain;
         }
         
-        // Otherwise, use the first part as-is (e.g., store1.vercel.app)
-        const potentialSubdomain = firstPart;
-        if (mainDomains.includes(potentialSubdomain)) {
+        // No hyphen, check if it's a main domain
+        if (mainDomains.includes(firstPart)) {
             return null;
         }
-        return potentialSubdomain;
+        return firstPart;
     }
     
-    // Handle standard domains: subdomain.app.vercel.app (4 parts) or subdomain.example.com (3 parts)
+    // Handle Vercel domains: subdomain.app.vercel.app (4 parts)
+    // Handle regular domains: subdomain.example.com (3 parts)
     // If we have 3+ parts, the first is potentially a subdomain
     if (parts.length >= 3) {
         const potentialSubdomain = parts[0];

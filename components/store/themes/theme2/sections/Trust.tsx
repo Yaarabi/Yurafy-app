@@ -2,12 +2,11 @@ import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion, Variants } from 'framer-motion';
 import { DollarSign, Truck, CheckCircle } from 'lucide-react';
-import GeometricDecorations from '../../shared/GeometricDecorations';
 import { getStoreTranslation } from '../../../utils/translations';
 
 const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
+    hidden: { y: 50, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
 };
 
 const Trust: React.FC = () => {
@@ -23,105 +22,148 @@ const Trust: React.FC = () => {
             Icon: DollarSign,
             title: getStoreTranslation("cashOnDelivery", storeLanguage),
             description: getStoreTranslation("cashOnDeliveryDesc", storeLanguage),
+            gradient: 'from-blue-500 to-blue-600',
         },
         {
             Icon: Truck,
             title: getStoreTranslation("fastShipping", storeLanguage),
             description: getStoreTranslation("fastShippingDesc", storeLanguage),
+            gradient: 'from-green-500 to-green-600',
         },
         {
             Icon: CheckCircle,
             title: getStoreTranslation("highQuality", storeLanguage),
             description: getStoreTranslation("highQualityDesc", storeLanguage),
+            gradient: 'from-purple-500 to-purple-600',
         },
     ];
 
     return (
-        <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.2 },
-                },
-            }}
-            className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 border-t border-b overflow-hidden"
-            style={{ borderColor: `${primaryColor}20` }}
-        >
-            {/* Elegant Geometric Pattern */}
-            <GeometricDecorations type="elegant" color={primaryColor} className="opacity-5" />
+        <div className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-gray-50 overflow-hidden">
+            {/* Decorative circles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div 
+                    className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-10 blur-3xl"
+                    style={{ backgroundColor: primaryColor }}
+                />
+                <div 
+                    className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full opacity-10 blur-3xl"
+                    style={{ backgroundColor: primaryColor }}
+                />
+            </div>
             
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center mb-12 sm:mb-16">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-12 sm:mb-16"
+                >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full border"
+                        className="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4 sm:mb-6"
                         style={{ 
                             backgroundColor: `${primaryColor}15`,
-                            borderColor: `${primaryColor}30`,
+                            color: primaryColor 
                         }}
                     >
-                        <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider" style={{ color: primaryColor }}>
-                            {getStoreTranslation("whyChooseUs", storeLanguage)}
-                        </span>
+                        {getStoreTranslation("benefits", storeLanguage) || "BENEFITS"}
                     </motion.div>
-                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold italic text-gray-900 mb-4 tracking-tight">
+                    
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 sm:mb-6">
                         {getStoreTranslation("whyChooseUs", storeLanguage)}
-                    </h3>
-                    <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
+                    </h2>
+                    
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="h-1 w-20 sm:w-24 mx-auto rounded-full"
+                        style={{ backgroundColor: primaryColor }}
+                    />
+                </motion.div>
+                
+                {/* Features Grid */}
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.15 },
+                        },
+                    }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                >
                     {features.map((feature, index) => (
-                        <motion.div 
-                            key={index} 
+                        <motion.div
+                            key={index}
                             variants={itemVariants}
-                            className="relative text-center p-6 sm:p-8 rounded-xl bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                            style={{ 
-                                borderColor: `${primaryColor}30`,
-                            } as React.CSSProperties}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = primaryColor;
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = `${primaryColor}30`;
-                            }}
+                            whileHover={{ y: -8 }}
+                            className="group relative bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-300"
                         >
-                            {/* Elegant Corner Accent */}
-                            <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-                                <div 
-                                    className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
-                                    style={{ borderTopColor: primaryColor }}
-                                ></div>
-                            </div>
-                            
-                            <div 
-                                className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full mb-4 sm:mb-6 relative z-10 border-2"
-                                style={{ 
-                                    backgroundColor: `${primaryColor}15`,
-                                    borderColor: primaryColor
-                                }}
+                            {/* Icon container */}
+                            <motion.div
+                                whileHover={{ rotate: 360, scale: 1.1 }}
+                                transition={{ duration: 0.6 }}
+                                className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 sm:mb-6 shadow-lg"
+                                style={{ backgroundColor: primaryColor }}
                             >
-                                <feature.Icon 
-                                    className="w-7 h-7 sm:w-8 sm:h-8"
-                                    style={{ color: primaryColor }}
-                                />
-                            </div>
-                            <h4 className="text-lg sm:text-xl font-bold italic text-gray-900 mb-2 sm:mb-3">{feature.title}</h4>
-                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">{feature.description}</p>
+                                <feature.Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                            </motion.div>
+                            
+                            {/* Content */}
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
+                                {feature.title}
+                            </h3>
+                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                                {feature.description}
+                            </p>
+                            
+                            {/* Hover effect - bottom border */}
+                            <motion.div
+                                initial={{ scaleX: 0 }}
+                                whileInView={{ scaleX: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.2 + index * 0.1 }}
+                                className="absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl"
+                                style={{ backgroundColor: primaryColor }}
+                            />
                         </motion.div>
                     ))}
-                </div>
+                </motion.div>
+                
+                {/* Bottom CTA */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 }}
+                    className="text-center mt-12 sm:mt-16"
+                >
+                    <p className="text-base sm:text-lg text-gray-600 mb-6">
+                        {getStoreTranslation("trustMessage", storeLanguage) || "Join thousands of satisfied customers"}
+                    </p>
+                    <motion.a
+                        href="#products"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold shadow-lg hover:shadow-xl transition-all"
+                        style={{ backgroundColor: primaryColor }}
+                    >
+                        {getStoreTranslation("shopNow", storeLanguage)}
+                        <span className="text-xl">→</span>
+                    </motion.a>
+                </motion.div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

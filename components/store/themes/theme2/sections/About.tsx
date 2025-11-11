@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
-import GeometricDecorations from '../../shared/GeometricDecorations';
+import { Heart, Star, Target } from 'lucide-react';
 
 const About: React.FC = () => {
     const { selectedStore } = useStore();
@@ -19,45 +19,113 @@ const About: React.FC = () => {
     if (!aboutData.description && !aboutData.title) return null;
 
     return (
-        <motion.div
+        <div
             id="about"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="relative py-16 sm:py-20 md:py-24 bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 overflow-hidden"
+            className="relative py-12 sm:py-16 md:py-20 lg:py-24 bg-white overflow-hidden"
         >
-            {/* Elegant Geometric Pattern */}
-            <GeometricDecorations type="elegant" color={primaryColor} className="opacity-5" />
+            {/* Decorative background elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div 
+                    className="absolute top-0 left-0 w-96 h-96 rounded-full opacity-5 blur-3xl"
+                    style={{ backgroundColor: primaryColor }}
+                />
+                <div 
+                    className="absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-5 blur-3xl"
+                    style={{ backgroundColor: primaryColor }}
+                />
+            </div>
             
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">
-                <div className="text-center">
-                    <motion.h3
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-3xl sm:text-4xl md:text-5xl font-bold italic text-gray-900 mb-6 sm:mb-8 tracking-tight"
-                    >
-                        {aboutData.title || `About ${brandName}`}
-                    </motion.h3>
-                    <div className="flex items-center justify-center gap-2 mb-8 sm:mb-10">
-                        <div className="w-12 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                        <div className="w-24 h-0.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                    </div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    {/* Left side - Visual element */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
+                        transition={{ duration: 0.8 }}
+                        className="relative"
                     >
-                        <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed font-light max-w-3xl mx-auto">
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-square lg:aspect-auto lg:h-full min-h-[400px]"
+                            style={{ 
+                                background: `linear-gradient(135deg, ${primaryColor}15, ${primaryColor}05)` 
+                            }}
+                        >
+                            {/* Icon grid decoration */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="grid grid-cols-3 gap-8 sm:gap-12">
+                                    {[Heart, Star, Target].map((Icon, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, scale: 0 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
+                                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center shadow-lg"
+                                            style={{ backgroundColor: primaryColor }}
+                                        >
+                                            <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                    
+                    {/* Right side - Content */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="space-y-6"
+                    >
+                        <div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4 sm:mb-6"
+                                style={{ 
+                                    backgroundColor: `${primaryColor}15`,
+                                    color: primaryColor 
+                                }}
+                            >
+                                OUR STORY
+                            </motion.div>
+                            
+                            <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.1 }}
+                                className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 sm:mb-6 leading-tight"
+                            >
+                                {aboutData.title || `About ${brandName}`}
+                            </motion.h2>
+                            
+                            <motion.div
+                                initial={{ scaleX: 0 }}
+                                whileInView={{ scaleX: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.2, duration: 0.6 }}
+                                className="h-1 w-20 rounded-full mb-6"
+                                style={{ backgroundColor: primaryColor }}
+                            />
+                        </div>
+                        
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 }}
+                            className="text-base sm:text-lg text-gray-600 leading-relaxed"
+                        >
                             {aboutData.description}
-                        </p>
+                        </motion.p>
                     </motion.div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
