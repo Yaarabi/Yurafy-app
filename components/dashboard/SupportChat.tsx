@@ -99,12 +99,12 @@ export default function SupportChat() {
     return (
         <div className="flex flex-col h-full w-full bg-white dark:bg-gray-800 overflow-hidden">
             {/* Header */}
-            <div className="p-4 sm:p-6 bg-gradient-to-r from-[var(--brand-blue)] via-[var(--brand-blue)]/90 to-[var(--brand-blue)]/80 text-white backdrop-blur-sm">
+            <div className="p-4 sm:p-6 bg-[var(--brand-blue)] text-white">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <motion.div
                             whileHover={{ scale: 1.1, rotate: 5 }}
-                            className="p-2 bg-white/20 rounded-xl backdrop-blur-sm"
+                            className="p-2 bg-white/20 rounded-xl"
                         >
                             <MessageSquare className="w-5 h-5" />
                         </motion.div>
@@ -168,7 +168,7 @@ export default function SupportChat() {
                             <div
                                 className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl break-words text-sm sm:text-base shadow-sm transition-all duration-200 hover:shadow-md ${
                                     message.role === "user"
-                                        ? "bg-gradient-to-br from-[var(--brand-blue)] to-[var(--brand-blue)]/90 text-white rounded-br-md"
+                                        ? "bg-[var(--brand-blue)] text-white rounded-br-md"
                                         : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-md border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600"
                                 }`}
                             >
@@ -198,7 +198,7 @@ export default function SupportChat() {
             </div>
 
             {/* Input */}
-            <div className="p-4 sm:p-6 bg-white dark:bg-gray-800 backdrop-blur-sm">
+            <div className="p-4 sm:p-6 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex gap-3 items-end">
                     <div className="flex-1 relative">
                         <input
@@ -207,40 +207,40 @@ export default function SupportChat() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
-                        placeholder={t('input.placeholder')}
-                        disabled={sending}
-                        className="w-full px-4 py-3.5 pr-12 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:bg-white dark:focus:bg-gray-700 text-sm sm:text-base border border-gray-200 dark:border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
-                    />
-                    {input.trim() && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2"
-                        >
-                            <MessageSquare className="w-4 h-4 text-[var(--brand-blue)]" />
-                        </motion.div>
-                    )}
+                            placeholder={t('input.placeholder')}
+                            disabled={sending}
+                            className="w-full px-4 py-3.5 pr-12 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] focus:bg-white dark:focus:bg-gray-700 text-sm sm:text-base border border-gray-200 dark:border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                        />
+                        {input.trim() && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="absolute right-3 top-1/2 -translate-y-1/2"
+                            >
+                                <MessageSquare className="w-4 h-4 text-[var(--brand-blue)]" />
+                            </motion.div>
+                        )}
+                    </div>
+                    <motion.button
+                        onClick={sendMessage}
+                        disabled={!input.trim() || sending}
+                        whileHover={!sending && input.trim() ? { scale: 1.05 } : {}}
+                        whileTap={!sending && input.trim() ? { scale: 0.95 } : {}}
+                        className="px-5 sm:px-7 py-3.5 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    >
+                        {sending ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <>
+                                <Send className="w-5 h-5" />
+                                <span className="hidden sm:inline font-semibold">{t('input.send')}</span>
+                            </>
+                        )}
+                    </motion.button>
                 </div>
-                <motion.button
-                    onClick={sendMessage}
-                    disabled={!input.trim() || sending}
-                    whileHover={!sending && input.trim() ? { scale: 1.05 } : {}}
-                    whileTap={!sending && input.trim() ? { scale: 0.95 } : {}}
-                    className="px-5 sm:px-7 py-3.5 bg-gradient-to-r from-[var(--brand-blue)] to-[var(--brand-blue)]/90 hover:from-[var(--brand-blue)]/90 hover:to-[var(--brand-blue)]/80 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl border border-[var(--brand-blue)]/20"
-                >
-                    {sending ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                        <>
-                            <Send className="w-5 h-5" />
-                            <span className="hidden sm:inline font-semibold">{t('input.send')}</span>
-                        </>
-                    )}
-                </motion.button>
-            </div>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 ml-1">
-                {t('input.hint')}
-            </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    {t('input.hint')}
+                </p>
             </div>
         </div>
     );

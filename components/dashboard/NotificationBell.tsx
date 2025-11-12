@@ -208,7 +208,7 @@ export default function NotificationBell() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[500px] flex flex-col"
+                        className="fixed sm:absolute right-2 sm:right-0 left-2 sm:left-auto top-16 sm:top-auto sm:mt-2 w-auto sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[calc(100vh-80px)] sm:max-h-[500px] flex flex-col"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -218,7 +218,7 @@ export default function NotificationBell() {
                                     <button
                                         onClick={markAllAsRead}
                                         disabled={loading}
-                                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium disabled:opacity-50"
+                                        className="text-xs text-[var(--brand-blue)] hover:text-[var(--brand-blue)]/80 dark:text-[var(--brand-blue)] dark:hover:text-[var(--brand-blue)]/80 font-medium disabled:opacity-50"
                                         title={t('markAllRead')}
                                     >
                                         {t('markAllRead')}

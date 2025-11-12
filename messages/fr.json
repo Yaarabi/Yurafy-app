@@ -212,6 +212,7 @@
         "whatsapp": "WhatsApp",
         "agent": "Agent IA",
         "conversations": "Conversations",
+        "guides": "Guides",
         "support": "Support"
     },
     "dashboard": {
@@ -789,13 +790,22 @@
         "title": "Centre de Support",
         "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
         "chat": {
-            "title": "Chat en Direct",
-            "description": "Chattez avec notre équipe de support en temps réel pour une aide instantanée.",
-            "action": "Démarrer le Chat",
-            "today": "Aujourd'hui",
-            "quickReply": "Réponse rapide",
-            "writeMessage": "Écrire un message à Copilot",
-            "editInPage": "Modifier dans une page"
+            "title": "Chat de Support",
+            "subtitle": "Nous sommes là pour vous aider 24/7",
+            "empty": {
+                "title": "Pas encore de messages",
+                "description": "Démarrez une conversation avec notre équipe de support. Nous sommes là pour vous aider !"
+            },
+            "messages": {
+                "sent": "Message envoyé avec succès",
+                "sendError": "Échec de l'envoi du message",
+                "loadError": "Échec du chargement des messages"
+            },
+            "input": {
+                "placeholder": "Tapez votre message...",
+                "send": "Envoyer",
+                "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+            }
         },
         "email": {
             "title": "Support par E-mail",
@@ -840,6 +850,71 @@
             "title": "Des questions sur nos Conditions ?",
             "description": "Si vous avez des questions sur nos Conditions de Service ou notre Politique de Confidentialité, n'hésitez pas à nous contacter.",
             "button": "Contacter le Support"
+        }
+    },
+    "guides": {
+        "title": "Guides Vidéo",
+        "subtitle": "Apprenez à utiliser notre plateforme avec ces tutoriels vidéo étape par étape",
+        "categories": {
+            "all": "Tous les Guides",
+            "overview": "Aperçu",
+            "products": "Produits",
+            "orders": "Commandes",
+            "automation": "Automatisation",
+            "ai-agent": "Agent IA"
+        },
+        "watchNow": "Regarder Maintenant",
+        "close": "Fermer",
+        "empty": "Aucun guide disponible dans cette catégorie",
+        "errors": {
+            "loadFailed": "Échec du chargement des guides"
+        }
+    },
+    "admin": {
+        "guides": {
+            "title": "Gérer les Guides",
+            "subtitle": "Ajoutez, modifiez et organisez les guides vidéo pour les utilisateurs",
+            "addNew": "Ajouter un Nouveau Guide",
+            "editGuide": "Modifier le Guide",
+            "createGuide": "Créer un Nouveau Guide",
+            "empty": "Aucun guide pour le moment. Cliquez sur 'Ajouter un Nouveau Guide' pour en créer un.",
+            "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce guide ?",
+            "edit": "Modifier",
+            "delete": "Supprimer",
+            "save": "Enregistrer",
+            "saving": "Enregistrement...",
+            "cancel": "Annuler",
+            "table": {
+                "category": "Catégorie",
+                "title": "Titre",
+                "videoUrl": "URL de la Vidéo",
+                "order": "Ordre",
+                "status": "Statut",
+                "actions": "Actions"
+            },
+            "status": {
+                "active": "Actif",
+                "inactive": "Inactif"
+            },
+            "form": {
+                "category": "Catégorie",
+                "title": "Titre",
+                "description": "Description",
+                "videoUrl": "URL de la Vidéo YouTube",
+                "order": "Ordre d'Affichage",
+                "status": "Statut",
+                "isActive": "Actif"
+            },
+            "success": {
+                "created": "Guide créé avec succès",
+                "updated": "Guide mis à jour avec succès",
+                "deleted": "Guide supprimé avec succès"
+            },
+            "errors": {
+                "loadFailed": "Échec du chargement des guides",
+                "saveFailed": "Échec de l'enregistrement du guide",
+                "deleteFailed": "Échec de la suppression du guide"
+            }
         }
     }
 }

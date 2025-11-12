@@ -148,22 +148,22 @@ export default function AdminSupportChat() {
     const selectedConversation = conversations.find((c) => c.userId === selectedUser);
 
     return (
-        <div className="flex flex-col sm:flex-row h-[calc(100vh-200px)] min-h-[600px] gap-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="flex flex-col sm:flex-row h-[calc(100vh-200px)] min-h-[600px] gap-0 sm:gap-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Conversations List */}
-            <div className="w-full sm:w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-gray-900">
+            <div className={`w-full sm:w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-gray-900 ${selectedUser ? 'hidden sm:flex' : 'flex'}`}>
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-2 mb-3">
-                        <Users className="w-5 h-5 text-indigo-600" />
+                        <Users className="w-5 h-5 text-[var(--brand-blue)]" />
                         <h3 className="font-semibold text-gray-900 dark:text-white">Conversations</h3>
                     </div>
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search users..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm"
                         />
                     </div>
                 </div>
@@ -171,7 +171,7 @@ export default function AdminSupportChat() {
                 <div className="flex-1 overflow-y-auto">
                     {loading && conversations.length === 0 ? (
                         <div className="flex items-center justify-center py-8">
-                            <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
+                            <Loader2 className="w-6 h-6 text-[var(--brand-blue)] animate-spin" />
                         </div>
                     ) : filteredConversations.length === 0 ? (
                         <div className="p-8 text-center text-gray-500 dark:text-gray-400">
@@ -187,7 +187,7 @@ export default function AdminSupportChat() {
                                 animate={{ opacity: 1, x: 0 }}
                                 className={`w-full p-4 text-left border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
                                     selectedUser === conv.userId
-                                        ? "bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-600"
+                                        ? "bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-l-4 border-[var(--brand-blue)]"
                                         : ""
                                 }`}
                             >
@@ -216,7 +216,7 @@ export default function AdminSupportChat() {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 flex flex-col bg-white dark:bg-gray-800">
+            <div className={`flex-1 flex flex-col bg-white dark:bg-gray-800 ${!selectedUser ? 'hidden sm:flex' : 'flex'}`}>
                 {selectedUser ? (
                     <>
                         {/* Chat Header */}
@@ -224,11 +224,12 @@ export default function AdminSupportChat() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="font-semibold">{selectedConversation?.user?.username || 'Unknown User'}</h3>
-                                    <p className="text-xs text-white/80">{selectedConversation?.user?.email || 'No email'}</p>
+                                    <p className="text-xs text-white/90">{selectedConversation?.user?.email || 'No email'}</p>
                                 </div>
                                 <button
                                     onClick={() => setSelectedUser(null)}
-                                    className="p-2 rounded-lg hover:bg-white/20 transition-colors"
+                                    className="p-2 rounded-lg hover:bg-white/20 transition-colors sm:hidden"
+                                    aria-label="Close chat"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -242,11 +243,11 @@ export default function AdminSupportChat() {
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center py-8">
-                                    <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
+                                    <Loader2 className="w-6 h-6 text-[var(--brand-blue)] animate-spin" />
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <MessageSquare className="w-16 h-16 text-gray-400 mb-4" />
+                                    <MessageSquare className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" />
                                     <p className="text-gray-600 dark:text-gray-400">No messages yet</p>
                                 </div>
                             ) : (
@@ -265,8 +266,8 @@ export default function AdminSupportChat() {
                                             <div
                                                 className={`p-2 rounded-full ${
                                                     message.role === "user"
-                                                        ? "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                                        : "bg-indigo-500 text-white"
+                                                        ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                                        : "bg-[var(--brand-blue)] text-white"
                                                 }`}
                                             >
                                                 {message.role === "user" ? (
@@ -279,7 +280,7 @@ export default function AdminSupportChat() {
                                                 className={`px-4 py-2 rounded-2xl ${
                                                     message.role === "user"
                                                         ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-tl-none"
-                                                        : "bg-indigo-600 text-white rounded-tr-none"
+                                                        : "bg-[var(--brand-blue)] text-white rounded-tr-none"
                                                 }`}
                                             >
                                                 <p className="text-sm whitespace-pre-wrap break-words">
@@ -290,7 +291,7 @@ export default function AdminSupportChat() {
                                                         className={`text-xs mt-1 ${
                                                             message.role === "user"
                                                                 ? "text-gray-500 dark:text-gray-400"
-                                                                : "text-indigo-100"
+                                                                : "text-white/90"
                                                         }`}
                                                     >
                                                         {new Date(message.createdAt).toLocaleTimeString([], {
@@ -321,14 +322,14 @@ export default function AdminSupportChat() {
                                 <button
                                     onClick={sendReply}
                                     disabled={!input.trim() || sending}
-                                    className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    className="px-4 sm:px-6 py-2 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
                                 >
                                     {sending ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
                                         <Send className="w-4 h-4" />
                                     )}
-                                    <span>Send</span>
+                                    <span className="hidden sm:inline">Send</span>
                                 </button>
                             </div>
                         </div>

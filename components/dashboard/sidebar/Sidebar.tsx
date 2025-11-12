@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
-import { MdClose, MdMenu } from "react-icons/md";
+import { Menu, X } from "lucide-react";
 import SidebarProfile from "./SidebarProfile";
 import SidebarNav from "./SidebarNav";
 import SidebarLogout from "./SidebarLogout";
@@ -52,12 +52,21 @@ export default function Sidebar() {
 
     return (
         <>
-        {/* Mobile toggle */}
+        {/* Mobile toggle - Modern hamburger menu on the right */}
         <button
-            className="fixed top-4 left-4 z-50 p-2 rounded-md bg-[var(--brand-blue)] text-white md:hidden shadow-md"
+            className="fixed top-4 right-4 z-50 p-2 md:hidden transition-all duration-200"
             onClick={() => setOpen(!open)}
+            aria-label={open ? "Close menu" : "Open menu"}
         >
-            {open ? <MdClose size={24} /> : <MdMenu size={24} />}
+            {open ? (
+                <X className="w-6 h-6 text-gray-700 dark:text-gray-200" strokeWidth={2.5} />
+            ) : (
+                <div className="flex flex-col gap-1.5">
+                    <span className="w-6 h-0.5 bg-gray-700 dark:bg-gray-200 rounded-full transition-all"></span>
+                    <span className="w-6 h-0.5 bg-gray-700 dark:bg-gray-200 rounded-full transition-all"></span>
+                    <span className="w-6 h-0.5 bg-gray-700 dark:bg-gray-200 rounded-full transition-all"></span>
+                </div>
+            )}
         </button>
 
         {/* Sidebar */}
@@ -74,7 +83,7 @@ export default function Sidebar() {
         {/* Mobile overlay */}
         {open && (
             <div
-            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            className="fixed inset-0 bg-black/50 z-30 md:hidden transition-opacity duration-300"
             onClick={() => setOpen(false)}
             />
         )}

@@ -26,6 +26,7 @@
         "whatsapp": "WhatsApp",
         "agent": "AI Agent",
         "conversations": "Conversations",
+        "guides": "Guides",
         "support": "Support"
     },
     "Footer": {
@@ -509,13 +510,22 @@
         "title": "Support Center",
         "description": "Get the help you need to succeed with Yurafy. Our support team is available via multiple channels.",
         "chat": {
-            "title": "Live Chat",
-            "description": "Chat with our support team in real time for instant help.",
-            "action": "Start Chat",
-            "today": "Today",
-            "quickReply": "Quick reply",
-            "writeMessage": "Write a message to Copilot",
-            "editInPage": "Edit in a page"
+            "title": "Support Chat",
+            "subtitle": "We're here to help you 24/7",
+            "empty": {
+                "title": "No messages yet",
+                "description": "Start a conversation with our support team. We're here to help!"
+            },
+            "messages": {
+                "sent": "Message sent successfully",
+                "sendError": "Failed to send message",
+                "loadError": "Failed to load messages"
+            },
+            "input": {
+                "placeholder": "Type your message...",
+                "send": "Send",
+                "hint": "Press Enter to send, Shift+Enter for new line"
+            }
         },
         "email": {
             "title": "Email Support",
@@ -830,6 +840,71 @@
             "title": "Questions about our Terms?",
             "description": "If you have any questions about our Terms of Service or Privacy Policy, please don't hesitate to contact us.",
             "button": "Contact Support"
+        }
+    },
+    "guides": {
+        "title": "Video Guides",
+        "subtitle": "Learn how to use our platform with these step-by-step video tutorials",
+        "categories": {
+            "all": "All Guides",
+            "overview": "Overview",
+            "products": "Products",
+            "orders": "Orders",
+            "automation": "Automation",
+            "ai-agent": "AI Agent"
+        },
+        "watchNow": "Watch Now",
+        "close": "Close",
+        "empty": "No guides available in this category",
+        "errors": {
+            "loadFailed": "Failed to load guides"
+        }
+    },
+    "admin": {
+        "guides": {
+            "title": "Manage Guides",
+            "subtitle": "Add, edit, and organize video guides for users",
+            "addNew": "Add New Guide",
+            "editGuide": "Edit Guide",
+            "createGuide": "Create New Guide",
+            "empty": "No guides yet. Click 'Add New Guide' to create one.",
+            "confirmDelete": "Are you sure you want to delete this guide?",
+            "edit": "Edit",
+            "delete": "Delete",
+            "save": "Save",
+            "saving": "Saving...",
+            "cancel": "Cancel",
+            "table": {
+                "category": "Category",
+                "title": "Title",
+                "videoUrl": "Video URL",
+                "order": "Order",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive"
+            },
+            "form": {
+                "category": "Category",
+                "title": "Title",
+                "description": "Description",
+                "videoUrl": "YouTube Video URL",
+                "order": "Display Order",
+                "status": "Status",
+                "isActive": "Active"
+            },
+            "success": {
+                "created": "Guide created successfully",
+                "updated": "Guide updated successfully",
+                "deleted": "Guide deleted successfully"
+            },
+            "errors": {
+                "loadFailed": "Failed to load guides",
+                "saveFailed": "Failed to save guide",
+                "deleteFailed": "Failed to delete guide"
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import {
     MdMessage,
     MdSupervisorAccount,
 } from "react-icons/md";
+import { BookOpen } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 const NAV_ITEMS = {
@@ -18,17 +19,18 @@ const NAV_ITEMS = {
     whatsapp: { href: "dashboard/whatsapp", icon: <MdWhatsapp size={20} />, key: "nav.whatsapp" },
     agent: { href: "dashboard/agent", icon: <MdSupervisorAccount size={20} />, key: "nav.agent" },
     conversations: { href: "dashboard/conversations", icon: <MdMessage size={20} />, key: "nav.conversations" },
+    guides: { href: "dashboard/guides", icon: <BookOpen size={20} />, key: "nav.guides" },
     settings: { href: "dashboard/settings", icon: <MdSettings size={20} />, key: "nav.settings" },
     support: { href: "dashboard/support", icon: <MdSupportAgent size={20} />, key: "nav.support" },
 };
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
-    "Starter": ["dashboard", "products", "orders", "customers", "settings", "support"],
-    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "whatsapp", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "whatsapp", "settings", "support"],
-    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "whatsapp", "settings", "support"],
-    "free": ["dashboard", "products", "orders", "settings", "support"],
+    "Starter": ["dashboard", "products", "orders", "customers", "guides", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "whatsapp", "guides", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "whatsapp", "guides", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "whatsapp", "guides", "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "whatsapp", "guides", "settings", "support"],
+    "free": ["dashboard", "products", "orders", "guides", "settings", "support"],
 };
 
 export default function SidebarNav({
