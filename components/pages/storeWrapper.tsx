@@ -5,13 +5,15 @@ import { useRouter, useParams } from "next/navigation";
 import StoreComponent from "./StorePage";
 import { SerializedStore } from "@/lib/data/products";
 import { IProduct } from "@/models/products";
+import SeoJsonLd from "@/components/common/SeoJsonLd";
 
 interface StoreClientWrapperProps {
     store: SerializedStore;
     products: IProduct[];
+    storeUrl?: string;
 }
 
-const StoreClientWrapper: React.FC<StoreClientWrapperProps> = ({ store, products }) => {
+const StoreClientWrapper: React.FC<StoreClientWrapperProps> = ({ store, products, storeUrl }) => {
     const router = useRouter();
     const params = useParams();
 
@@ -30,11 +32,14 @@ const StoreClientWrapper: React.FC<StoreClientWrapperProps> = ({ store, products
     }, [params, router, store.domain]);
 
     return (
-        <StoreComponent
-            store={store}
-            products={products}
-            onProductSelect={onProductSelect}
-        />
+        <>
+            <SeoJsonLd store={store} storeUrl={storeUrl} />
+            <StoreComponent
+                store={store}
+                products={products}
+                onProductSelect={onProductSelect}
+            />
+        </>
     );
 };
 

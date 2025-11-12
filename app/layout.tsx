@@ -7,7 +7,10 @@ import { Toaster } from 'react-hot-toast'
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurait.vercel.app';
+
 export const metadata: Metadata = {
+    metadataBase: new URL(baseUrl),
     title: 'Yurafy - AI-Powered Business Automation Platform',
     description: 'Transform your business with AI-driven automation. Create stunning stores, automate WhatsApp messaging, and scale effortlessly with intelligent solutions.',
     keywords: 'AI automation, business automation, WhatsApp automation, e-commerce, custom web development, AI agent, business tools',
@@ -18,13 +21,13 @@ export const metadata: Metadata = {
     openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://yurafy.com',
+        url: baseUrl,
         siteName: 'Yurafy',
         title: 'Yurafy - AI-Powered Business Automation Platform',
         description: 'Transform your business with AI-driven automation. Create stunning stores, automate WhatsApp messaging, and scale effortlessly.',
         images: [
             {
-                url: '/og-image.png',
+                url: `${baseUrl}/og-image.png`,
                 width: 1200,
                 height: 630,
                 alt: 'Yurafy Platform',
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Yurafy - AI-Powered Business Automation Platform',
         description: 'Transform your business with AI-driven automation.',
-        images: ['/og-image.png'],
+        images: [`${baseUrl}/og-image.png`],
     },
     robots: {
         index: true,

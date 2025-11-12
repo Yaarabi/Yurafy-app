@@ -1,12 +1,12 @@
 import { connectDB } from "../db/mongoDB";
 import { getStoreByDomain } from "../data/store";
+import { buildStoreUrl } from './url';
 
-export async function generateStoreMetadata(domain: string) {
+export async function generateStoreMetadata(domain: string, locale: string = 'en') {
     await connectDB();
 
     const store = await getStoreByDomain(domain);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://yurait.vercel.app";
-    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || "yurait.vercel.app";
+    const baseUrlEnv = process.env.NEXT_PUBLIC_BASE_URL || "https://yurait.vercel.app";
 
     if (!store) {
         return {
@@ -15,32 +15,44 @@ export async function generateStoreMetadata(domain: string) {
         };
     }
 
-    const title = `${store.brandName} | Yurafy Store`;
+    const title = `${store.brandName} | Yurafy`;
     const description =
         store.description ||
         `Discover products from ${store.brandName}, your trusted online store powered by Yurafy.`;
 
-    const logo = store.logoUrl?.startsWith("http")
+    const logo = store.logoUrl?.startsWith('http')
         ? store.logoUrl
-        : `${baseUrl}${store.logoUrl || "/og-default.jpg"}`;
+        : `${baseUrlEnv.replace(/\/$/, '')}${store.logoUrl || '/og-default.jpg'}`;
 
-    // Use subdomain URL format: https://[domain].[main-domain] instead of path-based
-    // Example: https://my-store.yurait.vercel.app instead of https://yurait.vercel.app/my-store
-    const storeUrl = `https://${store.domain}.${domainPart}`;
+    const storeUrl = await buildStoreUrl({ locale, storeDomain: store.domain });
 
     // const themeColor = store.theme?.primaryColor || "#22c55e";
 
     return {
+        metadataBase: new URL(storeUrl),
         title,
         description,
+        alternates: {
+            canonical: storeUrl,
+        },
         openGraph: {
+            type: 'website',
+            siteName: store.brandName,
             title,
             description,
             url: storeUrl,
-            images: [logo],
+            locale,
+            images: [
+                {
+                    url: logo,
+                    width: 1200,
+                    height: 630,
+                    alt: `${store.brandName} logo`
+                }
+            ],
         },
         twitter: {
-            card: "summary_large_image",
+            card: 'summary_large_image',
             title,
             description,
             images: [logo],

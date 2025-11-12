@@ -13,7 +13,9 @@ const intlMiddleware = createMiddleware({
 // --- Main middleware ---
 export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
-    const subdomain = getSubdomain(hostname, { mainDomains: ['www', 'app', 'admin'] });
+    // Treat the Vercel project domain (yurait) as a main domain to avoid store subdomain handling on production
+    const MAIN_DOMAINS = ['www', 'app', 'admin', 'yurait'];
+    const subdomain = getSubdomain(hostname, { mainDomains: MAIN_DOMAINS });
     const pathname = request.nextUrl.pathname;
 
     // Skip internal/protected routes
@@ -30,16 +32,9 @@ export default function middleware(request: NextRequest) {
     }
 
     // Main domains (www, app, admin) - use normal intl behavior
-    const mainDomains = ['www', 'app', 'admin'];
+    const mainDomains = MAIN_DOMAINS;
     if (subdomain && mainDomains.includes(subdomain)) {
-        // Redirect /en/* to /* (hide default locale) for main domains
-        if (pathname.startsWith('/en/') || pathname === '/en') {
-            const url = request.nextUrl.clone();
-            url.pathname = pathname.replace(/^\/en/, '') || '/';
-            const response = NextResponse.redirect(url);
-            response.cookies.delete('NEXT_LOCALE');
-            return response;
-        }
+        // Keep locale segment for consistency with filesystem routing
         return intlMiddleware(request);
     }
 
@@ -75,14 +70,7 @@ export default function middleware(request: NextRequest) {
     }
 
     // For root domain (no subdomain), handle locale routing
-    // Redirect /en/* to /* (hide default locale)
-    if (pathname.startsWith('/en/') || pathname === '/en') {
-        const url = request.nextUrl.clone();
-        url.pathname = pathname.replace(/^\/en/, '') || '/';
-        const response = NextResponse.redirect(url);
-        response.cookies.delete('NEXT_LOCALE');
-        return response;
-    }
+    // Do not strip default locale. Keep /en to match /[locale] filesystem routing
 
     // Apply intl middleware for root domain
     return intlMiddleware(request);

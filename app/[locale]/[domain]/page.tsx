@@ -8,41 +8,26 @@ import { headers } from "next/headers";
 import { getSubdomainFromHeaders } from "@/lib/utils/subdomain";
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
-    const { domain } = await params;
-    
-    // If domain is from subdomain, use it directly; otherwise use path param
-    let storeDomain = domain;
-    
-    // Check if domain param looks like a locale (edge case handling)
-    if (domain && !domain.includes('/') && domain.length <= 5) {
-        // Might be locale, check for subdomain
-        const subdomain = await getSubdomainFromHeaders(headers);
-        if (subdomain) {
-            storeDomain = subdomain;
-        }
-    }
-    
-    return await generateStoreMetadata(storeDomain);
+    const { domain, locale = 'en' } = await params;
+    // Prefer subdomain if present in headers; otherwise use path domain
+    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    const effectiveDomain = (sub || domain).toLowerCase().trim();
+    return await generateStoreMetadata(effectiveDomain, locale);
 }
 
 export async function generateViewport({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;
-    
-    // Extract actual store domain (handle subdomain case)
-    let storeDomain = domain;
-    const subdomain = await getSubdomainFromHeaders(headers);
-    if (subdomain) {
-        storeDomain = subdomain;
-    }
-    
+    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    const storeDomain = (sub || domain).toLowerCase().trim();
     const store = await getStoreByDomain(storeDomain);
-    return { themeColor: store?.theme };
+    const primary = (store?.theme as any)?.primaryColor || '#3B82F6';
+    return { themeColor: primary };
 }
 
 export const revalidate = 60;
 
 export default async function StorePage({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
-    const { domain } = await params;
+    const { domain, locale = 'en' } = await params;
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
@@ -73,10 +58,16 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     const ownerId = typeof store.owner === 'string' ? store.owner : store.owner;
     const products = await getProductsByOwner(ownerId);
 
+    // Build store URL for SEO (subdomain-aware)
+    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurait.vercel.app';
+    const storeUrl = storeSubdomain 
+        ? `https://${storeSubdomain}.${domainPart}`
+        : `https://${domainPart}/${locale}/${storeDomain}`;
+
     return (
         <>
             <ThemeInjector theme={store.theme} />
-            <StoreClientWrapper store={store} products={products} />
+            <StoreClientWrapper store={store} products={products} storeUrl={storeUrl} />
         </>
     );
 }

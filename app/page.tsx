@@ -7,6 +7,7 @@ import ThemeInjector from '@/components/productPage/ThemeInjector';
 import StoreClientWrapper from '@/components/pages/storeWrapper';
 import NotFound from './[locale]/[domain]/not-found';
 import { getSubdomainFromHeaders } from '@/lib/utils/subdomain';
+import { generateStoreMetadata } from '@/lib/metadata/storeMetadata';
 
 export default async function RootPage() {
     // Check if we're using subdomain (exclude main domains like www, app, admin)
@@ -43,4 +44,27 @@ export default async function RootPage() {
     
     // No subdomain, redirect to default locale
     redirect('/en');
+}
+
+// Provide store-specific metadata when accessed via subdomain root
+export async function generateMetadata() {
+    const hdrs = await headers();
+    const xSub = hdrs.get('x-subdomain');
+    const sub = xSub || await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    if (sub) {
+        return await generateStoreMetadata(sub.toLowerCase().trim(), 'en');
+    }
+    return {};
+}
+
+export async function generateViewport() {
+    const hdrs = await headers();
+    const xSub = hdrs.get('x-subdomain');
+    const sub = xSub || await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    if (sub) {
+        const store = await getStoreByDomain(sub.toLowerCase().trim());
+        const primary = (store as any)?.theme?.primaryColor || '#3B82F6';
+        return { themeColor: primary };
+    }
+    return { themeColor: '#3B82F6' };
 }
