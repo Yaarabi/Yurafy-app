@@ -18,6 +18,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
+
     try {
         const { phone, optInStatus } = await req.json();
 
@@ -92,6 +97,11 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
 
     try {
         const url = new URL(req.url);

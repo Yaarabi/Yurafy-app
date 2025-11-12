@@ -19,6 +19,11 @@ export async function GET(req: NextRequest) {
         if (!session?.user?.id)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+        // Ensure WhatsApp feature is allowed for this user
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+        if (check) return check;
+
         // Fetch all conversations for this owner
         const conversations = await WhatsAppConversation.find({ owner: session.user.id })
             .sort({ lastTimestamp: -1 }); // latest first
@@ -51,6 +56,11 @@ export async function POST(req: NextRequest) {
         const session = await getServerSession(authOptions);
         if (!session?.user?.id)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        // Ensure WhatsApp feature is allowed for this user
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+        if (check) return check;
 
         const { phone, message } = await req.json();
         if (!phone || !message)

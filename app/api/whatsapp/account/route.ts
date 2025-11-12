@@ -37,6 +37,11 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id)
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
+
     const account = await WhatsAppAccount.findOne({ owner: session.user.id });
 
         if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });                                                                    
@@ -52,6 +57,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id)
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
 
     try {
         const {

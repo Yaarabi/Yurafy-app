@@ -87,6 +87,11 @@ export const POST = withRateLimit(async (req: NextRequest) => {
         const userId = session.user.id;
         const body = await req.json();
 
+    // Ensure store feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const featureCheck = await ensureFeatureEnabled(userId, 'store');
+    if (featureCheck) return featureCheck;
+
         // Validate required fields
         if (!body.name || !body.price || !body.category || !body.mainImage) {
             return createErrorResponse(
@@ -203,6 +208,11 @@ export const PUT = withRateLimit(async (req: NextRequest) => {
         const id = searchParams.get("id");
         const detail = await req.json();
 
+    // Ensure store feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const featureCheck = await ensureFeatureEnabled(userId, 'store');
+    if (featureCheck) return featureCheck;
+
         if (!id) {
             return createErrorResponse("Product ID is required", 400, "MISSING_ID");
         }
@@ -265,6 +275,11 @@ export const DELETE = withRateLimit(async (req: NextRequest) => {
         if (!isValidObjectId(id)) {
             return createErrorResponse("Invalid product ID", 400, "INVALID_ID");
         }
+
+        // Ensure store feature is allowed for this user
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const featureCheck = await ensureFeatureEnabled(userId, 'store');
+        if (featureCheck) return featureCheck;
 
         // Check ownership before deletion
         const product = await Product.findById(id);

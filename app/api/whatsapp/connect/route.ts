@@ -11,6 +11,11 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
+
     try {
         const { status } = await req.json();
         if (!["connected", "disconnected"].includes(status)) {

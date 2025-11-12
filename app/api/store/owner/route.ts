@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import Store from "@/models/store";
+import { ensureFeatureEnabled } from "@/lib/utils/planEnforcer";
 import { connectDB } from "@/lib/db/mongoDB";
 import type { IStore } from "@/models/store";
 import { 
@@ -73,9 +74,13 @@ export async function GET(req: NextRequest) {
         // 🔐 Get the logged-in user from the session
         const session = await getServerSession(authOptions);
 
-        if (!session?.user?.id) {
-        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-        }
+    if (!session?.user?.id) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Enforce plan feature
+    const planCheck = await ensureFeatureEnabled(session.user.id, 'store');
+    if (planCheck) return planCheck;
 
         // 🏪 Find the store belonging to this user
         const store = await Store.findOne({ owner: session.user.id });
@@ -101,6 +106,10 @@ export async function PATCH(req: NextRequest) {
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
         }
+
+        // Enforce plan feature
+        const planCheck = await ensureFeatureEnabled(session.user.id, 'store');
+        if (planCheck) return planCheck;
 
         const body = await req.json();
         const { updates } = body || {};

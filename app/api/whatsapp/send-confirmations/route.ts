@@ -27,6 +27,11 @@ export async function POST(req: Request) {
         const ownerId = session.user.id;
         await connectDB();
 
+    // Ensure WhatsApp feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const featureCheck = await ensureFeatureEnabled(ownerId, 'whatsapp');
+    if (featureCheck) return featureCheck;
+
         // Fetch orders
         const orderDocs = await Order.find({ _id: { $in: orderIds }, owner: ownerId });                                                                         
         if (!orderDocs.length) {

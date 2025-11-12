@@ -140,6 +140,11 @@ export async function PATCH(req: NextRequest) {
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Ensure store feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'store');
+    if (check) return check;
+
         const body = await req.json();
         const { storeId, updates } = body;
 
@@ -173,6 +178,11 @@ export async function DELETE(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Ensure store feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'store');
+    if (check) return check;
 
         const url = new URL(req.url);
         const storeId = url.searchParams.get("storeId");

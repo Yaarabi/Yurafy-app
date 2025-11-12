@@ -20,7 +20,7 @@ import mongoose from "mongoose";
 /**
  * Get user's active plan with real-time expiration check
  */
-async function getUserActivePlan(userId: string, session?: mongoose.ClientSession): Promise<{ plan: any; planKey: string; features: any } | null> {
+export async function getUserActivePlan(userId: string, session?: mongoose.ClientSession): Promise<{ plan: any; planKey: string; features: any } | null> {
     await connectDB();
     
     const user = await User.findById(userId).session(session || null);

@@ -178,14 +178,15 @@ export async function POST(req: NextRequest) {
 
         // ✅ IMPROVED: Create AI Agent if needed and missing
         if (planNeeds.needsAIAgent && !hasAIAgent) {
-            // Check for existing inactive AI agent
+            // Only reactivate an existing inactive AI agent here.
+            // Do NOT create placeholder WhatsApp accounts or AI agents during plan selection.
+            // Creation of new WhatsApp accounts or AI agents should happen after checkout/payment
+            // (e.g., in the payment webhook/confirmation flow).
             const existingAgent = await AIAgent.findOne({ owner: userId });
-            
             if (existingAgent && !existingAgent.active) {
-                // Reactivate existing agent
                 existingAgent.enabled = true;
                 existingAgent.active = true;
-                
+
                 // Link to WhatsApp account if available
                 let waAccount = whatsappAccount;
                 if (!waAccount) {
@@ -196,64 +197,13 @@ export async function POST(req: NextRequest) {
                     waAccount.settings.aiAgent = true;
                     await waAccount.save();
                 }
-                
+
                 await existingAgent.save();
                 created.push('aiAgent');
-            } else if (!existingAgent) {
-                // Find or create WhatsApp account for AI agent
-                let waAccount = whatsappAccount;
-                if (!waAccount) {
-                    waAccount = await WhatsAppAccount.findOne({ owner: userId });
-                }
-
-                // ✅ Create placeholder WhatsApp account if none exists
-                if (!waAccount) {
-                    // Generate webhook verify token helper
-                    function generateWebhookVerifyToken(): string {
-                        return crypto.randomBytes(6).toString('hex');
-                    }
-                    
-                    const tempToken = `temp-token-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-                    waAccount = await WhatsAppAccount.create({
-                        owner: userId,
-                        waBusinessId: `temp-${Date.now()}`,
-                        waNumberId: `temp-${Date.now()}`,
-                        waNumber: '+1234567890',
-                        waTokenEncrypted: encryptToken(tempToken),
-                        webhookVerifyToken: generateWebhookVerifyToken(),
-                        verified: false,
-                        status: "disconnected",
-                        settings: {
-                            autoReply: false,
-                            orderConfirmation: false,
-                            ad: false,
-                            aiAgent: true,
-                        },
-                        aiConfig: { personality: "friendly assistant" },
-                        preferredTemplates: { greeting: null, orderConfirmation: null, ad: null },
-                        active: true,
-                    });
-                    console.log(`[Upgrade] Created placeholder WhatsApp account for AI agent`);
-                }
-
-                const newAgent = await AIAgent.create({
-                    owner: userId,
-                    account: waAccount._id, // ✅ Always assign WhatsApp account
-                    enabled: true,
-                    prompt: "You are a helpful sales assistant that helps customers with their questions and guides them through purchases.",
-                    templates: [],
-                    memory: "",
-                    file: "",
-                    active: true,
-                });
-
-                // Update WhatsApp account to enable AI agent
-                waAccount.settings.aiAgent = true;
-                await waAccount.save();
-                console.log(`[Upgrade] Created AI agent with WhatsApp account ${waAccount._id}`);
-
-                created.push('aiAgent');
             }
+            // If there's no existing agent, we do not auto-create one here. The frontend should
+            // redirect the user to the setup page (dashboard/whatsapp or onboarding) where they
+            // can configure WhatsApp and create an AI agent after checkout completes.
         }
 
         // ✅ FIXED: Re-check configuration status after reactivation
@@ -282,63 +232,67 @@ export async function POST(req: NextRequest) {
                 !reactivatedWa.waBusinessId.startsWith('temp-');
         }
 
-        // ✅ FIXED: Determine redirect path based on what user needs to configure
+        // ✅ FIXED: Determine redirect path.
+        // Behavior: Paid plans always go to checkout first. Free plans are activated immediately
+        // (after optional reactivation above) and if required resources are missing we redirect
+        // to the appropriate setup pages for free plans only.
         let redirectTo = '';
 
-        // Check if user needs to configure store first
-        if (planNeeds.needsStore && !finalStoreConfigured) {
-            // User needs store features but doesn't have a properly configured store
-            redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
-        } 
-        // ✅ FIXED: Check if user needs to configure WhatsApp first
-        else if (planNeeds.needsWhatsApp && !finalWhatsAppConnected) {
-            // User needs WhatsApp features but doesn't have a connected WhatsApp account
-            // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
-            redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
-        } 
-        // ✅ FIXED: Check if plan is free or paid to determine redirect
-        else if (planTemplate.defaultPrice === 0) {
-            // Free plan - activate plan directly (no payment needed)
-            const startDate = new Date();
-            const endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + planTemplate.defaultDurationDays);
-
-            // Check for existing plan
-            let userPlan = user.currentPlanId 
-                ? await Plan.findById(user.currentPlanId)
-                : null;
-
-            if (userPlan) {
-                // Update existing plan
-                userPlan.planKey = normalizedPlanKey;
-                userPlan.price = 0;
-                userPlan.durationDays = planTemplate.defaultDurationDays;
-                userPlan.startDate = startDate;
-                userPlan.endDate = endDate;
-                userPlan.status = "active";
-                await userPlan.save();
-            } else {
-                // Create new plan
-                userPlan = new Plan({
-                    userId: user._id,
-                    planKey: normalizedPlanKey,
-                    price: 0,
-                    durationDays: planTemplate.defaultDurationDays,
-                    startDate: startDate,
-                    endDate: endDate,
-                    status: "active",
-                });
-                await userPlan.save();
-                user.currentPlanId = userPlan._id;
-                await user.save();
-            }
-
-            // Redirect to dashboard
-            redirectTo = `/${locale}/dashboard`;
-        }
-        else {
-            // Paid plan - redirect to checkout for payment
+        // If this is a paid plan, always send the user to checkout regardless of current resources.
+        if (planTemplate.defaultPrice && planTemplate.defaultPrice > 0) {
             redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
+        } else {
+            // Free plan - only then we consider missing resources and immediate activation
+            // Check if user needs to configure store first
+            if (planNeeds.needsStore && !finalStoreConfigured) {
+                // User needs store features but doesn't have a properly configured store
+                redirectTo = `/${locale}/onboarding/info?plan=${planKey}`;
+            }
+            // Check if user needs to configure WhatsApp first
+            else if (planNeeds.needsWhatsApp && !finalWhatsAppConnected) {
+                // User needs WhatsApp features but doesn't have a connected WhatsApp account
+                // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
+                redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
+            }
+            else {
+                // Activate free plan immediately (no payment needed)
+                const startDate = new Date();
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + planTemplate.defaultDurationDays);
+
+                // Check for existing plan
+                let userPlan = user.currentPlanId 
+                    ? await Plan.findById(user.currentPlanId)
+                    : null;
+
+                if (userPlan) {
+                    // Update existing plan
+                    userPlan.planKey = normalizedPlanKey;
+                    userPlan.price = 0;
+                    userPlan.durationDays = planTemplate.defaultDurationDays;
+                    userPlan.startDate = startDate;
+                    userPlan.endDate = endDate;
+                    userPlan.status = "active";
+                    await userPlan.save();
+                } else {
+                    // Create new plan
+                    userPlan = new Plan({
+                        userId: user._id,
+                        planKey: normalizedPlanKey,
+                        price: 0,
+                        durationDays: planTemplate.defaultDurationDays,
+                        startDate: startDate,
+                        endDate: endDate,
+                        status: "active",
+                    });
+                    await userPlan.save();
+                    user.currentPlanId = userPlan._id;
+                    await user.save();
+                }
+
+                // Redirect to dashboard
+                redirectTo = `/${locale}/dashboard`;
+            }
         }
 
         return NextResponse.json({

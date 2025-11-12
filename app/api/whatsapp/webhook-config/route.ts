@@ -11,6 +11,11 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id)
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Make sure the user has whatsapp feature enabled
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(session.user.id, 'whatsapp');
+    if (check) return check;
+
     const globalVerifyToken = process.env.WHATSAPP_VERIFY_TOKEN || null;
 
     return NextResponse.json({ globalVerifyToken });

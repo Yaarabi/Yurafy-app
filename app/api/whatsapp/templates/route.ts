@@ -17,6 +17,11 @@ export async function GET(req: NextRequest) {
         await connectDB();
         const userId = await getUserId(req);
 
+        // Ensure WhatsApp feature is available for this user
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const check = await ensureFeatureEnabled(userId, 'whatsapp');
+        if (check) return check;
+
         const account = await WhatsAppAccount.findOne({ owner: userId });
         if (!account) return NextResponse.json({ error: "WhatsApp account not found" }, { status: 404 });
 
@@ -82,6 +87,10 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const userId = await getUserId(req);
+        // Ensure WhatsApp feature is available for this user before creating templates
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const check = await ensureFeatureEnabled(userId, 'whatsapp');
+        if (check) return check;
         const { name, type, content, link, caption, variables } = await req.json();
 
         if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });

@@ -28,12 +28,20 @@ export async function POST(req: NextRequest) {
         if (!account)
             return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
+        // Ensure owner has WhatsApp feature
+        const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+        const check = await ensureFeatureEnabled(String(account.owner), 'whatsapp');
+        if (check) return check;
+
         const decryptedToken = decryptToken(account.waTokenEncrypted);
 
         // 🧩 1️⃣ AI Agent (Customer)
         if (account.settings.aiAgent) {
             console.log("AI active")
             try {
+                // Ensure owner has AI agent feature
+                const aiCheck = await ensureFeatureEnabled(String(account.owner), 'ai.agent');
+                if (aiCheck) return aiCheck;
                 const customerReply = await generateCustomerAIResponse(
                     account.owner,
                     normalizedFrom,

@@ -37,6 +37,10 @@ export async function GET(req: NextRequest) {
         }
 
         const ownerId = session.user.id;
+    // Ensure orders feature is allowed for this user (customers are derived from orders)
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const featureCheck = await ensureFeatureEnabled(ownerId, 'orders');
+    if (featureCheck) return featureCheck;
         const ownerObjectId = new Types.ObjectId(ownerId);
 
         const url = new URL(req.url);

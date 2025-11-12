@@ -9,11 +9,15 @@ import Products from "@/models/products";
 export async function GET(req: Request) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user?.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id; // 👈 get owner from session
+    // Ensure store feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const featureCheck = await ensureFeatureEnabled(userId, 'store');
+    if (featureCheck) return featureCheck;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

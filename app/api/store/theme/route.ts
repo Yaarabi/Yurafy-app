@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth"; // ⬅️ Add this
 import { authOptions } from "@/lib/auth/auth"; 
 import { connectDB } from "@/lib/db/mongoDB";
+import { ensureFeatureEnabled } from "@/lib/utils/planEnforcer";
 import Store from "@/models/store";
 import { getThemeById } from "@/lib/store/themes";
 
@@ -14,6 +15,10 @@ export async function PATCH(req: NextRequest) {
         if (!session || !session.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
+    // ✅ Enforce plan feature
+    const planCheck = await ensureFeatureEnabled(session.user.id, 'store');
+    if (planCheck) return planCheck;
 
         // ✅ Parse request body
         const body = await req.json();

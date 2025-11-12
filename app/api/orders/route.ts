@@ -10,11 +10,15 @@ import mongoose from "mongoose";
 export async function GET(req: Request) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user?.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id; // 👈 get owner from session
+    // Ensure orders feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(userId, 'orders');
+    if (check) return check;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -39,14 +43,15 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user?.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
-    if (!userId) {
-        return NextResponse.json({ message: "User ID not found" }, { status: 401 });
-    }
+    // Ensure orders feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(userId, 'orders');
+    if (check) return check;
     try {
         const body = await req.json();
 
@@ -239,11 +244,15 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user?.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
+    // Ensure orders feature is allowed for this user
+    const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
+    const check = await ensureFeatureEnabled(userId, 'orders');
+    if (check) return check;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     const detail = await req.json();
