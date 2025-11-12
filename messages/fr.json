@@ -370,7 +370,15 @@
         }
     },
     "settings": {
-        "title": "Paramètres",
+            "title": "Paramètres",
+            "tabs": {
+                "profile": "Profil",
+                "plan": "Plan",
+                "store": "Boutique",
+                "whatsapp": "WhatsApp",
+                "language": "Langue",
+                "mode": "Mode"
+            },
         "profileTitle": "Informations personnelles",
         "name": "Nom",
         "email": "E-mail",
@@ -423,6 +431,14 @@
         }
     },
     "whatsapp": {
+        "tabs": {
+            "connection": "Connexion",
+            "aiAgent": "Agent IA",
+            "tools": "Outils",
+            "automation": "Paramètres d'automatisation",
+            "templates": "Modèles",
+            "testPanel": "Panneau de test"
+        },
         "conversations": {
             "searchPlaceholder": "Rechercher par nom ou numéro de téléphone...",
             "filters": "Filtres :",

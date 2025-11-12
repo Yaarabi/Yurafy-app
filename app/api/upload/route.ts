@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir, unlink } from "fs/promises";
-import path from "path";
-import fs from "fs";
+import { put, del } from "@vercel/blob";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { validateFileUpload, sanitizeFilename } from "@/lib/utils/validation";
@@ -9,20 +7,15 @@ import { withRateLimit, getStrictRateLimit } from "@/lib/utils/rateLimit";
 import { handleApiError, createErrorResponse } from "@/lib/utils/errors";
 import { logger } from "@/lib/utils/logging";
 
-// Shared helper
-async function ensureUserDir(userId: string) {
-    const userDir = path.join(process.cwd(), "public", "uploads", userId);
-    if (!fs.existsSync(userDir)) {
-        await mkdir(userDir, { recursive: true });
-    }
-    return userDir;
-}
+// Route config for Next.js 15 to handle larger file uploads
+export const config = {
+    api: {
+        bodyParser: false, // Disable body parsing for file uploads
+    },
+};
 
-// Helper to build full URL
-function buildFileUrl(userId: string, filename: string) {
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    return `${baseUrl}/uploads/${userId}/${filename}`;
-}
+// Route segment config for body size limits
+export const maxDuration = 60; // Max duration in seconds
 
 // POST: Upload new file with validation
 export const POST = withRateLimit(async (req: NextRequest) => {
@@ -68,19 +61,18 @@ export const POST = withRateLimit(async (req: NextRequest) => {
         const randomSuffix = Math.random().toString(36).substring(2, 8);
         const filename = `${timestamp}-${randomSuffix}.${fileExtension}`;
 
-        // Ensure user directory exists
-        const userDir = await ensureUserDir(userId);
-        const filepath = path.join(userDir, filename);
+        // Upload to Vercel Blob
+        const pathname = `uploads/${userId}/${filename}`;
+        const blob = await put(pathname, file, {
+            access: "public",
+            addRandomSuffix: false,
+        });
 
-        // Write file
-        const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filepath, buffer);
-
-        logger.info("File uploaded", { userId, filename, size: file.size, type: file.type });
+        logger.info("File uploaded", { userId, filename, size: file.size, type: file.type, url: blob.url });
 
         return NextResponse.json({
             message: "File uploaded successfully",
-            url: buildFileUrl(userId, filename),
+            url: blob.url,
             filename,
             size: file.size,
             type: file.type,
@@ -120,42 +112,36 @@ export const PUT = withRateLimit(async (req: NextRequest) => {
             return createErrorResponse(validation.error || "Invalid file", 400, "INVALID_FILE");
         }
 
-        // Delete old files (verify ownership)
+        // Delete old files from Vercel Blob (verify ownership)
         for (const url of oldUrls) {
             if (url.includes(`/uploads/${userId}/`)) {
-                const relativePath = url.split(`/uploads/${userId}/`)[1];
-                if (relativePath) {
-                    const filePath = path.join(process.cwd(), "public", "uploads", userId, relativePath);
-                    try {
-                        // Verify file exists and belongs to user
-                        if (fs.existsSync(filePath)) {
-                            await unlink(filePath);
-                            logger.debug("Deleted old file", { userId, filePath });
-                        }
-                    } catch (err) {
-                        logger.warn("Failed to delete old file", { error: err, userId, filePath });
-                    }
+                try {
+                    await del(url);
+                    logger.debug("Deleted old file", { userId, url });
+                } catch (err) {
+                    logger.warn("Failed to delete old file", { error: err, userId, url });
                 }
             }
         }
 
-        // Upload new file
+        // Upload new file to Vercel Blob
         const sanitizedName = sanitizeFilename(file.name);
         const fileExtension = sanitizedName.split(".").pop() || "";
         const timestamp = Date.now();
         const randomSuffix = Math.random().toString(36).substring(2, 8);
         const filename = `${timestamp}-${randomSuffix}.${fileExtension}`;
 
-        const userDir = await ensureUserDir(userId);
-        const filepath = path.join(userDir, filename);
-        const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filepath, buffer);
+        const pathname = `uploads/${userId}/${filename}`;
+        const blob = await put(pathname, file, {
+            access: "public",
+            addRandomSuffix: false,
+        });
 
-        logger.info("File updated", { userId, filename });
+        logger.info("File updated", { userId, filename, url: blob.url });
 
         return NextResponse.json({
             message: "File updated successfully",
-            url: buildFileUrl(userId, filename),
+            url: blob.url,
             filename,
         });
     } catch (error) {
@@ -186,30 +172,12 @@ export const DELETE = withRateLimit(async (req: NextRequest) => {
         for (const url of urls) {
             // Verify ownership - only allow deletion of files in user's upload directory
             if (url.includes(`/uploads/${userId}/`)) {
-                const relativePath = url.split(`/uploads/${userId}/`)[1];
-                if (relativePath) {
-                    const filePath = path.join(process.cwd(), "public", "uploads", userId, relativePath);
-                    
-                    // Security: Prevent path traversal
-                    if (!filePath.startsWith(path.join(process.cwd(), "public", "uploads", userId))) {
-                        failed.push(url);
-                        logger.warn("Path traversal attempt blocked", { userId, url });
-                        continue;
-                    }
-
-                    try {
-                        if (fs.existsSync(filePath)) {
-                            await unlink(filePath);
-                            deleted.push(url);
-                            logger.debug("File deleted", { userId, filePath });
-                        } else {
-                            failed.push(url);
-                        }
-                    } catch (err) {
-                        logger.warn("Failed to delete file", { error: err, userId, filePath });
-                        failed.push(url);
-                    }
-                } else {
+                try {
+                    await del(url);
+                    deleted.push(url);
+                    logger.debug("File deleted from Vercel Blob", { userId, url });
+                } catch (err) {
+                    logger.warn("Failed to delete file", { error: err, userId, url });
                     failed.push(url);
                 }
             } else {

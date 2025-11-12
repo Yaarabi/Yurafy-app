@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import toast from 'react-hot-toast';
@@ -15,11 +15,13 @@ import { useParams, useSearchParams } from 'next/navigation';
 import LogoLoader from '@/components/themePreview/loadder';
 import { ArrowRight, Crown, Zap, User, Package, MessageCircle, Globe, Palette, ChevronRight, Lock, Copy, Check } from 'lucide-react';
 import { useUserFeatures } from '@/hooks/useUserFeatures';
+import { useTranslations } from 'next-intl';
 
 export default function SettingsPage() {
     const { data: featuresData, loading, error } = useUserFeatures();
     const searchParams = useSearchParams();
-    const [activeTab, setActiveTab] = useState('Profile');
+    const t = useTranslations('settings');
+    const [activeTab, setActiveTab] = useState('profile');
     const [user, setUser] = useState<any>(null);
     const [whatsapp, setWhatsApp] = useState<any>(null);
     const [store, setStore] = useState<any>(null);
@@ -45,43 +47,41 @@ export default function SettingsPage() {
 
     // Tab icons mapping
     const tabIcons: Record<string, any> = {
-        Profile: User,
-        Plan: Crown,
-        Store: Package,
-        WhatsApp: MessageCircle,
-        Language: Globe,
-        Mode: Palette,
+        profile: User,
+        plan: Crown,
+        store: Package,
+        whatsapp: MessageCircle,
+        language: Globe,
+        mode: Palette,
     };
 
     // 👇 Tabs are built dynamically (no WhatsApp/Store unless they exist)
     // Memoize tabs array to prevent unnecessary re-renders
     const tabs = useMemo(() => [
-        'Profile',
-        'Plan',
-        ...(store ? ['Store'] : []),
-        ...(whatsapp ? ['WhatsApp'] : []),
-        'Language',
-        'Mode',
+        'profile',
+        'plan',
+        ...(store ? ['store'] : []),
+        ...(whatsapp ? ['whatsapp'] : []),
+        'language',
+        'mode',
     ], [store?._id, whatsapp?._id]); // Only recalculate when store/whatsapp IDs change
 
     // Set active tab from URL query parameter (only once on mount or when tab param changes)
     useEffect(() => {
         const tabParam = searchParams.get('tab');
         if (tabParam) {
-            // Capitalize first letter to match tab names (e.g., 'plan' -> 'Plan')
-            const normalizedTab = tabParam.charAt(0).toUpperCase() + tabParam.slice(1).toLowerCase();
-            
-            // Recalculate tabs here to ensure they're up to date
+            const normalizedTab = tabParam.toLowerCase();
+
+            // Recalculate available tabs in lowercase
             const availableTabs = [
-                'Profile',
-                'Plan',
-                ...(store ? ['Store'] : []),
-                ...(whatsapp ? ['WhatsApp'] : []),
-                'Language',
-                'Mode',
+                'profile',
+                'plan',
+                ...(store ? ['store'] : []),
+                ...(whatsapp ? ['whatsapp'] : []),
+                'language',
+                'mode',
             ];
-            
-            // Validate that the tab exists in the available tabs and only update if different
+
             if (availableTabs.includes(normalizedTab) && activeTab !== normalizedTab) {
                 setActiveTab(normalizedTab);
             }
@@ -253,8 +253,8 @@ export default function SettingsPage() {
             const result = await uploadFile(file);
 
             if (result.success) {
-                if (activeTab === 'Profile') await updateField('logo', result.data.url);
-                else if (activeTab === 'Store') await updateStoreField('logoUrl', result.data.url);
+                if (activeTab === 'profile') await updateField('logo', result.data.url);
+                else if (activeTab === 'store') await updateStoreField('logoUrl', result.data.url);
                 toast.success('Logo updated successfully!');
             } else {
                 toast.error(result.error.message || 'Failed to upload logo.');
@@ -286,58 +286,63 @@ export default function SettingsPage() {
                 </motion.div>
 
                 {/* Tabs Navigation - Mobile Scrollable with Smart UX */}
+                {/* Tabs Navigation - Mobile: fixed bottom bar, Desktop: centered nav */}
                 <div className="mb-6 sm:mb-8 relative">
-                    {/* Scrollable Tabs Container */}
-                    <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0 scroll-smooth">
-                        <div className="flex gap-2 sm:gap-3 min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center">
-                            {tabs.map((tab, index) => {
-                                const Icon = tabIcons[tab];
-                                const isActive = activeTab === tab;
-                                return (
-                                    <motion.button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        whileHover={{ scale: 1.02, y: -2 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        className={`
-                                            flex items-center gap-2 px-4 py-3 sm:px-5 sm:py-2.5 
-                                            rounded-xl sm:rounded-lg font-medium 
-                                            transition-all duration-200 whitespace-nowrap
-                                            text-sm sm:text-base
-                                            relative
-                                            ${
-                                                isActive
-                                                    ? 'bg-[var(--brand-blue)] text-white shadow-lg shadow-[var(--brand-blue)]/50 ring-2 ring-[var(--brand-blue)]/30 dark:ring-[var(--brand-blue)]/50'
-                                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-[var(--brand-blue)]/10 dark:hover:bg-[var(--brand-blue)]/20 hover:text-[var(--brand-blue)] dark:hover:text-[var(--brand-blue)] border border-gray-200 dark:border-gray-700 hover:border-[var(--brand-blue)]/30 dark:hover:border-[var(--brand-blue)]/50'
-                                            }
-                                        `}
-                                    >
-                                        {Icon && <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
-                                        <span className="font-medium">{tab}</span>
-                                        {isActive && (
-                                            <motion.div
-                                                layoutId="activeTabIndicator"
-                                                className="absolute bottom-0 left-0 right-0 h-1 bg-white/50 rounded-full hidden sm:block"
-                                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                            />
-                                        )}
-                                    </motion.button>
-                                );
-                            })}
+                    <div className="fixed bottom-0 left-0 right-0 z-40 sm:static sm:z-auto bg-white dark:bg-gray-900 border-t sm:border-0 border-gray-200 dark:border-gray-700 p-2 sm:p-0">
+                        {/* Scrollable Tabs Container */}
+                        <div className="overflow-x-auto scrollbar-hide sm:-mx-4 sm:mx-0 sm:px-0 px-2 scroll-smooth">
+                            <div className="flex gap-2 sm:gap-3 min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center items-center">
+                                {tabs.map((tab, index) => {
+                                    const Icon = tabIcons[tab];
+                                    const isActive = activeTab === tab;
+                                    return (
+                                        <motion.button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            whileHover={{ scale: 1.02, y: -2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className={`
+                                                flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 
+                                                rounded-full sm:rounded-lg font-medium 
+                                                transition-all duration-200 whitespace-nowrap
+                                                text-sm sm:text-base
+                                                relative
+                                                ${
+                                                    isActive
+                                                        ? 'bg-[var(--brand-blue)] text-white shadow-lg shadow-[var(--brand-blue)]/50 ring-2 ring-[var(--brand-blue)]/30 dark:ring-[var(--brand-blue)]/50'
+                                                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-[var(--brand-blue)]/10 dark:hover:bg-[var(--brand-blue)]/20 hover:text-[var(--brand-blue)] dark:hover:text-[var(--brand-blue)] border border-gray-200 dark:border-gray-700 hover:border-[var(--brand-blue)]/30 dark:hover:border-[var(--brand-blue)]/50'
+                                                }
+                                            `}
+                                        >
+                                            {Icon && <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
+                                            <span className="font-medium">{t(`tabs.${tab}`)}</span>
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="activeTabIndicator"
+                                                    className="absolute bottom-0 left-0 right-0 h-1 bg-white/50 rounded-full hidden sm:block"
+                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                />
+                                            )}
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Mobile Scroll Indicator */}
+                        <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <div className="flex gap-1 opacity-50">
+                                <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse"></div>
+                                <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            </div>
                         </div>
                     </div>
-                    
-                    {/* Mobile Scroll Indicator */}
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none">
-                        <div className="flex gap-1 opacity-50">
-                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse"></div>
-                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                            <div className="w-1 h-1 rounded-full bg-[var(--brand-blue)] animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                        </div>
-                    </div>
+                    {/* add spacing so content isn't hidden behind the fixed mobile bar */}
+                    <div className="h-14 sm:hidden" />
                 </div>
 
                 {/* Tab Content - Animated */}
@@ -350,7 +355,7 @@ export default function SettingsPage() {
                         transition={{ duration: 0.3 }}
                         className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
                     >
-                        {activeTab === 'Profile' && (
+                        {activeTab === 'profile' && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="Profile">
                                     <div className="space-y-6">
@@ -364,7 +369,7 @@ export default function SettingsPage() {
                             </div>
                         )}
 
-                        {activeTab === 'Plan' && (
+                        {activeTab === 'plan' && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="Plan">
                                     <div className="space-y-6">
@@ -439,13 +444,13 @@ export default function SettingsPage() {
                             </div>
                         )}
 
-                        {activeTab === 'Store' && store && (
+                        {activeTab === 'store' && store && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <StoreSettings store={store} onUpdate={updateStoreField} onUploadLogo={handleLogoUpload} locale={params.locale} />
                             </div>
                         )}
 
-                        {activeTab === 'WhatsApp' && whatsapp && (
+                        {activeTab === 'whatsapp' && whatsapp && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="WhatsApp Account">
                                     <div className="space-y-4">
@@ -579,7 +584,7 @@ export default function SettingsPage() {
                             </div>
                         )}
 
-                        {activeTab === 'Language' && (
+                        {activeTab === 'language' && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="Language">
                                     <LocaleSwitcher />
@@ -587,7 +592,7 @@ export default function SettingsPage() {
                             </div>
                         )}
 
-                        {activeTab === 'Mode' && (
+                        {activeTab === 'mode' && (
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="Mode">
                                     <ThemeToggle />

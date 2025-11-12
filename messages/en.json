@@ -355,6 +355,14 @@
         }
     },
     "whatsapp": {
+        "tabs": {
+            "connection": "Connection",
+            "aiAgent": "AI Agent",
+            "tools": "Tools",
+            "automation": "Automation Settings",
+            "templates": "Templates",
+            "testPanel": "Test Panel"
+        },
         "conversations": {
             "searchPlaceholder": "Search by name or phone number...",
             "filters": "Filters:",
@@ -526,6 +534,14 @@
     },
     "settings": {
         "title": "Settings",
+        "tabs": {
+            "profile": "Profile",
+            "plan": "Plan",
+            "store": "Store",
+            "whatsapp": "WhatsApp",
+            "language": "Language",
+            "mode": "Mode"
+        },
         "profileTitle": "Personal information",
         "name": "Name",
         "email": "Email",

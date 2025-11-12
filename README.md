@@ -77,6 +77,10 @@ WHATSAPP_VERIFY_TOKEN=your-verify-token
 
 # Application
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Vercel Blob Storage (Required for file uploads in production)
+# Get this from: https://vercel.com/dashboard/stores
+BLOB_READ_WRITE_TOKEN=your-vercel-blob-token
 ```
 
 4. **Run the development server**
@@ -208,6 +212,11 @@ The application can be deployed to any Node.js hosting platform. Make sure to:
 - `MISTRAL_API_KEY` - For AI agent features
 - `WHATSAPP_VERIFY_TOKEN` - For WhatsApp webhook
 - `NEXT_PUBLIC_BASE_URL` - Public base URL
+
+### Production (Vercel Deployment)
+- `BLOB_READ_WRITE_TOKEN` - **Required for file uploads** (Get from [Vercel Blob Storage](https://vercel.com/dashboard/stores))
+  - File uploads use Vercel Blob Storage in production
+  - Local development uses filesystem (no token needed)
 
 ## 📝 Scripts
 

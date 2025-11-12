@@ -340,6 +340,14 @@
     },
     "settings": {
         "title": "الإعدادات",
+        "tabs": {
+            "profile": "الملف الشخصي",
+            "plan": "الخطة",
+            "store": "المتجر",
+            "whatsapp": "واتساب",
+            "language": "اللغة",
+            "mode": "الوضع"
+        },
         "profileTitle": "المعلومات الشخصية",
         "name": "الاسم",
         "email": "البريد الإلكتروني",
@@ -392,6 +400,14 @@
         }
     },
     "whatsapp": {
+        "tabs": {
+            "connection": "الاتصال",
+            "aiAgent": "الوكيل الذكي",
+            "tools": "الأدوات",
+            "automation": "إعدادات التشغيل الآلي",
+            "templates": "القوالب",
+            "testPanel": "لوحة الاختبار"
+        },
         "conversations": {
             "searchPlaceholder": "البحث بالاسم أو رقم الهاتف...",
             "filters": "الفلاتر:",
