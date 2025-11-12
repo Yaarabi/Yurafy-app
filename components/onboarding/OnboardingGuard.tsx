@@ -20,15 +20,17 @@ export default function OnboardingGuard({
     const { data: session, status } = useSession();
 
     // Check if user is on pages that should be accessible during upgrades
-    // Allow access to plan, info, and checkout pages for upgrades
+    // Allow access to plan, info, checkout and upgrade pages for upgrades
     const isUpgradePage = useMemo(() => {
         const path = pathname || '';
         return path.includes("/onboarding/plan") || 
                path.includes("/onboarding/info") || 
                path.includes("/onboarding/checkout") ||
+               path.includes("/onboarding/upgrade") ||
                path.endsWith("/plan") ||
                path.endsWith("/info") ||
-               path.endsWith("/checkout");
+               path.endsWith("/checkout") ||
+               path.endsWith("/upgrade");
     }, [pathname]);
 
     useEffect(() => {

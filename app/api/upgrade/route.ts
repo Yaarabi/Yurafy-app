@@ -42,10 +42,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });                                                                               
         }
 
-        const { planKey, locale = 'en' } = await req.json();
+        let planKey: string | undefined;
+        let locale: string = 'en';
+
+        // Parse JSON body safely and return a helpful error if parsing fails
+        try {
+            const body = await req.json();
+            planKey = body?.planKey;
+            locale = body?.locale || 'en';
+        } catch (err) {
+            console.error('[Upgrade] Failed to parse request body:', err);
+            return NextResponse.json({ error: 'Invalid or missing JSON body' }, { status: 400 });
+        }
 
         if (!planKey) {
-            return NextResponse.json({ error: "Plan key is required" }, { status: 400 });                                                                       
+            return NextResponse.json({ error: "Plan key is required" }, { status: 400 });                                                                        
         }
 
         const userId = session.user.id;
@@ -285,8 +296,48 @@ export async function POST(req: NextRequest) {
             // Redirect to WhatsApp setup page (dashboard WhatsApp tab)
             redirectTo = `/${locale}/dashboard/whatsapp?setup=true&plan=${planKey}`;
         } 
-        // ✅ FIXED: All required resources are configured, always go to checkout for paid plans
+        // ✅ FIXED: Check if plan is free or paid to determine redirect
+        else if (planTemplate.defaultPrice === 0) {
+            // Free plan - activate plan directly (no payment needed)
+            const startDate = new Date();
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + planTemplate.defaultDurationDays);
+
+            // Check for existing plan
+            let userPlan = user.currentPlanId 
+                ? await Plan.findById(user.currentPlanId)
+                : null;
+
+            if (userPlan) {
+                // Update existing plan
+                userPlan.planKey = normalizedPlanKey;
+                userPlan.price = 0;
+                userPlan.durationDays = planTemplate.defaultDurationDays;
+                userPlan.startDate = startDate;
+                userPlan.endDate = endDate;
+                userPlan.status = "active";
+                await userPlan.save();
+            } else {
+                // Create new plan
+                userPlan = new Plan({
+                    userId: user._id,
+                    planKey: normalizedPlanKey,
+                    price: 0,
+                    durationDays: planTemplate.defaultDurationDays,
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: "active",
+                });
+                await userPlan.save();
+                user.currentPlanId = userPlan._id;
+                await user.save();
+            }
+
+            // Redirect to dashboard
+            redirectTo = `/${locale}/dashboard`;
+        }
         else {
+            // Paid plan - redirect to checkout for payment
             redirectTo = `/${locale}/onboarding/checkout?plan=${planKey}`;
         }
 

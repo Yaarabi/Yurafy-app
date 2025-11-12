@@ -29,6 +29,10 @@ export default function SignupForm() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
+    const locale = params.locale as string;
+    const isRTL = locale === 'ar';
+    const dir = isRTL ? 'rtl' : 'ltr';
+
     const validate = () => {
         const newErrors: Record<string, string> = {};
 
@@ -116,6 +120,7 @@ export default function SignupForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-md mx-auto mt-20 p-8 bg-white shadow-xl rounded-2xl w-full border border-blue-50"
+            dir={dir}
         >
             <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">
                 {t('signupTitle') || 'Create your account'}
@@ -131,6 +136,7 @@ export default function SignupForm() {
                     onChange={handleChange}
                     error={errors.username}
                     required
+                    dir={dir}
                 />
                 <InputField
                     label={t('emailLabel')}
@@ -141,12 +147,13 @@ export default function SignupForm() {
                     onChange={handleChange}
                     error={errors.email}
                     required
+                    dir={dir}
                 />
                 {/* Phone Input */}
-                <div className="space-y-1">
+                <div className="space-y-1" dir={dir}>
                     <label
                         htmlFor="phone"
-                        className="block text-gray-700 mb-1 font-medium"
+                        className={`block text-gray-700 mb-1 font-medium ${isRTL ? 'text-right' : 'text-left'}`}
                     >
                         {t('phoneLabel')}
                     </label>
@@ -165,11 +172,13 @@ export default function SignupForm() {
                                 border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
                                 borderRadius: '0.5rem',
                                 outline: 'none',
+                                textAlign: isRTL ? 'right' : 'left',
+                                direction: dir,
                             }}
                         />
                     </div>
                     {errors.phone && (
-                        <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                        <p className={`text-red-500 text-xs mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{errors.phone}</p>
                     )}
                 </div>
                 <InputField
@@ -181,6 +190,7 @@ export default function SignupForm() {
                     onChange={handleChange}
                     error={errors.password}
                     required
+                    dir={dir}
                 />
                 <InputField
                     label={t('confirmPasswordLabel') || 'Confirm Password'}
@@ -191,11 +201,12 @@ export default function SignupForm() {
                     onChange={handleChange}
                     error={errors.confirmPassword}
                     required
+                    dir={dir}
                 />
 
                 {/* Terms and Conditions Checkbox */}
                 <div className="space-y-1">
-                    <div className="flex items-start gap-3">
+                    <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
                         <input
                             type="checkbox"
                             id="acceptTerms"
@@ -208,7 +219,7 @@ export default function SignupForm() {
                                 '--tw-ring-color': '#0ea5e9'
                             } as React.CSSProperties}
                         />
-                        <label htmlFor="acceptTerms" className="text-sm text-gray-700">
+                        <label htmlFor="acceptTerms" className={`text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
                             {t('acceptTermsLabel') || 'I accept the'}{' '}
                             <a
                                 href={`/${params.locale}/terms`}
@@ -221,11 +232,11 @@ export default function SignupForm() {
                             >
                                 {t('termsAndPrivacy') || 'Terms & Privacy Policy'}
                             </a>
-                            <span className="text-red-400 ml-1">*</span>
+                            <span className={`text-red-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>*</span>
                         </label>
                     </div>
                     {errors.acceptTerms && (
-                        <p className="text-red-500 text-xs mt-1 ml-7">{errors.acceptTerms}</p>
+                        <p className={`text-red-500 text-xs mt-1 ${isRTL ? 'mr-7' : 'ml-7'} ${isRTL ? 'text-right' : 'text-left'}`}>{errors.acceptTerms}</p>
                     )}
                 </div>
 
@@ -235,7 +246,7 @@ export default function SignupForm() {
                 />
             </form>
 
-            <p className="text-gray-600 text-sm text-center mt-6">
+            <p className={`text-gray-600 text-sm text-center mt-6 ${isRTL ? 'rtl' : 'ltr'}`}>
                 {t('alreadyHaveAccount') || 'Already have an account?'}{' '}
                 <a
                     href={`/${params.locale}/login`}

@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import { Sparkles, Crown } from "lucide-react"
+import { useParams } from "next/navigation"
 import PlanCard from "@/components/onboarding/plan/PlanCard"
 import SpecialPlanCard from "@/components/onboarding/plan/SpecialPlanCard"
 import { usePlansData } from "@/hooks/onboarding/usePlansData"
@@ -8,6 +9,7 @@ import { useUpgradeMode } from "@/hooks/onboarding/useUpgradeMode"
 import { usePlanSelection } from "@/hooks/onboarding/usePlanSelection"
 
 export default function PlanPage() {
+    const params = useParams()
     const isUpgrade = useUpgradeMode()
     const { plans, specialPlans, loading: plansLoading } = usePlansData()
     const { loading, handlePlanSelect } = usePlanSelection(isUpgrade)
@@ -42,10 +44,18 @@ export default function PlanPage() {
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium"
+                            className="mt-4 flex flex-col gap-2 items-center"
                         >
-                            <Crown className="w-4 h-4" />
-                            <span>Upgrade Mode: Features will be set up automatically</span>
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium">
+                                <Crown className="w-4 h-4" />
+                                <span>Upgrade Mode: Features will be set up automatically</span>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                                Looking for a cleaner upgrade experience?{" "}
+                                <a href={`/${(params.locale || 'en')}/onboarding/upgrade`} className="text-indigo-600 hover:text-indigo-700 font-medium underline">
+                                    Use our dedicated upgrade page
+                                </a>
+                            </p>
                         </motion.div>
                     )}
                 </div>

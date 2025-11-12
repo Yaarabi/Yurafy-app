@@ -19,6 +19,10 @@ export default function LoginForm() {
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     const [loading, setLoading] = useState(false);
 
+    const locale = params.locale as string;
+    const isRTL = locale === 'ar';
+    const dir = isRTL ? 'rtl' : 'ltr';
+
     const validate = () => {
         const newErrors: typeof errors = {};
 
@@ -75,6 +79,7 @@ export default function LoginForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-md mx-auto p-8 bg-white shadow-xl rounded-2xl w-full border border-blue-50"
+            dir={dir}
         >
             <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">
                 {tAuth('loginTitle')}
@@ -93,6 +98,7 @@ export default function LoginForm() {
                         setErrors({ ...errors, email: '' });
                     }}
                     error={errors.email}
+                    dir={dir}
                 />
 
                 <div className="space-y-1">
@@ -108,8 +114,9 @@ export default function LoginForm() {
                             setErrors({ ...errors, password: '' });
                         }}
                         error={errors.password}
+                        dir={dir}
                     />
-                    <div className="flex justify-end">
+                    <div className={`flex ${isRTL ? 'justify-start' : 'justify-end'}`}>
                         <a
                             href={`/${params.locale}/forgot-password`}
                             className="text-sm text-[var(--brand-blue)] hover:opacity-80 transition"
@@ -125,7 +132,7 @@ export default function LoginForm() {
                 />
             </form>
 
-            <p className="text-gray-600 text-sm text-center mt-6">
+            <p className={`text-gray-600 text-sm text-center mt-6 ${isRTL ? 'rtl' : 'ltr'}`}>
                 {tAuth('noAccountYet')}{' '}
                 <a
                     href={`/${params.locale}/signup`}

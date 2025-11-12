@@ -262,7 +262,7 @@ export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppInt
                                         Enable intelligent conversations, automated responses, and AI-powered customer support.
                                     </p>
                                     <Link
-                                        href="/onboarding/plan"
+                                        href="/onboarding/upgrade"
                                         className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--brand-blue)] text-white rounded-lg font-semibold hover:bg-[var(--brand-blue)]/90 transition-all shadow-lg hover:shadow-xl"
                                     >
                                         <ArrowUpCircle className="w-5 h-5" />
@@ -319,7 +319,7 @@ export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppInt
                                         Access advanced AI tools for enhanced automation, intelligent responses, and smart integrations.
                                     </p>
                                     <Link
-                                        href="/onboarding/plan"
+                                        href="/onboarding/upgrade"
                                         className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--brand-blue)] text-white rounded-lg font-semibold hover:bg-[var(--brand-blue)]/90 transition-all shadow-lg hover:shadow-xl"
                                     >
                                         <ArrowUpCircle className="w-5 h-5" />

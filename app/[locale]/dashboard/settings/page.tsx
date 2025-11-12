@@ -405,7 +405,7 @@ export default function SettingsPage() {
                                         {featuresData?.plan?.planKey?.toLowerCase() !== 'visionary' && (
                                             <div className="flex justify-center">
                                                 <Link
-                                                    href={`/${params.locale}/onboarding/plan`}
+                                                    href={`/${params.locale}/onboarding/upgrade`}
                                                     className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
                                                 >
                                                     <Crown className="w-5 h-5" />
@@ -418,7 +418,7 @@ export default function SettingsPage() {
                                         {featuresData?.plan?.isExpired && featuresData?.plan?.planKey?.toLowerCase() === 'visionary' && (
                                             <div className="flex justify-center">
                                                 <Link
-                                                    href={`/${params.locale}/onboarding/plan`}
+                                                    href={`/${params.locale}/onboarding/upgrade`}
                                                     className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[var(--brand-blue)] text-white font-semibold rounded-xl hover:bg-[var(--brand-blue)]/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto justify-center"
                                                 >
                                                     <Crown className="w-5 h-5" />

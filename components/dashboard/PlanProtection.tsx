@@ -99,7 +99,7 @@ export default function PlanProtection({
 
                     <div className="flex gap-4 justify-center">
                         <Link
-                            href={`/${locale}/dashboard/settings?tab=plan`}
+                            href={`/${locale}/onboarding/upgrade`}
                             className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
                         >
                             <ArrowUpCircle className="w-5 h-5 inline-block mr-2" />

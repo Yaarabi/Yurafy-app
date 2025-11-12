@@ -186,7 +186,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             {/* Only show upgrade/renew button if not Visionary plan */}
                             {planKey.toLowerCase() !== 'visionary' && (
                                 <Link
-                                    href="/dashboard/settings?tab=plan"
+                                    href="/onboarding/upgrade"
                                     className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
                                 >
                                     {isExpired ? t('plan.renewPlan') : t('plan.upgradePlan')}
@@ -195,7 +195,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             {/* Show renew button if expired, even for Visionary */}
                             {isExpired && planKey.toLowerCase() === 'visionary' && (
                                 <Link
-                                    href="/dashboard/settings?tab=plan"
+                                    href="/onboarding/upgrade"
                                     className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
                                 >
                                     {t('plan.renewPlan')}
@@ -368,7 +368,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             </p>
                         </div>
                         <Link
-                            href="/onboarding/plan"
+                            href="/onboarding/upgrade"
                             className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-[var(--brand-blue)] rounded-lg font-semibold hover:bg-gray-100 transition-colors whitespace-nowrap text-sm sm:text-base shadow-sm hover:shadow-md"
                         >
                             View Plans
@@ -402,7 +402,7 @@ function PlanLockedCard({
                     {description}
                 </p>
                 <Link
-                    href="/dashboard/settings?tab=plan"
+                    href="/onboarding/upgrade"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-blue)] text-white rounded-lg hover:bg-[var(--brand-blue)]/90 transition-colors text-sm font-medium shadow-sm hover:shadow-md"
                 >
                     <TrendingUp className="w-4 h-4" />
