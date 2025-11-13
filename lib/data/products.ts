@@ -90,7 +90,7 @@ export async function getProductsByOwner(ownerId: string): Promise<IProduct[]> {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
         const res = await fetch(`${baseUrl}/api/products?owner=${ownerId}`, {
             method: "GET",
-            cache: 'no-store', // Don't cache in server components to avoid stale data
+            next: { revalidate: 3600 }, // Cache for 1 hour
         });
 
         if (!res.ok) {

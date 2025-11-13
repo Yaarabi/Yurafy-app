@@ -3,6 +3,9 @@ import { connectDB } from '@/lib/db/mongoDB';
 import { getAllStores } from '@/lib/data/store';
 import { getProductsByOwner } from '@/lib/data/products';
 
+// Revalidate sitemap every 24 hours
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     await connectDB();
     
