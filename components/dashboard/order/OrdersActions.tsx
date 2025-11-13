@@ -1,11 +1,13 @@
 'use client';
 
-import { FaFileUpload, FaPlus } from 'react-icons/fa';
+import { FaFileUpload, FaPlus, FaEllipsisV, FaFileDownload } from 'react-icons/fa';
 import Papa from 'papaparse';
 import { IOrder } from '@/models/orders';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import CSVExport from './CSVexport';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface OrdersActionsProps {
     orders: IOrder[];
@@ -57,6 +59,7 @@ const productMap: Record<string, string> = {
 
 export default function OrdersActions({ orders, setOrders, setShowAddModal }: OrdersActionsProps) {
     const { data: session } = useSession();
+    const [showCSVMenu, setShowCSVMenu] = useState(false);
 
     const getColumnValue = (row: CSVRow, possibleKeys: string[]) => {
         for (const key of possibleKeys) {
@@ -143,15 +146,83 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
 
     return (
         <div className="flex flex-wrap justify-end items-center gap-2 sm:gap-3">
-            {/* Upload CSV */}
-            <label className="flex items-center justify-center gap-2 cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 sm:px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm transition-all text-sm sm:text-base h-10">
-                <FaFileUpload className="w-4 h-4" />
-                <span className="hidden sm:inline">Upload CSV</span>
-                <span className="sm:hidden">Upload</span>
-                <input type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} />
-            </label>
+            {/* Desktop View - Show all buttons */}
+            <div className="hidden sm:flex items-center gap-3">
+                {/* Upload CSV */}
+                <label className="flex items-center justify-center gap-2 cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm transition-all text-sm sm:text-base h-10">
+                    <FaFileUpload className="w-4 h-4" />
+                    <span>Upload CSV</span>
+                    <input type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} />
+                </label>
 
-            {/* Add Order */}
+                {/* Export CSV */}
+                <CSVExport
+                    orders={orders}
+                    icon={<FaFileDownload className="w-4 h-4" />}
+                    text="Export CSV"
+                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 dark:from-green-600 dark:to-green-500 dark:hover:from-green-500 dark:hover:to-green-400 text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all text-sm sm:text-base font-medium h-10"
+                />
+            </div>
+
+            {/* Mobile View - CSV Menu Button */}
+            <div className="relative sm:hidden">
+                <button
+                    onClick={() => setShowCSVMenu(!showCSVMenu)}
+                    className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm transition-all"
+                    aria-label="CSV actions"
+                >
+                    <FaEllipsisV className="w-4 h-4" />
+                </button>
+
+                {/* CSV Dropdown Menu */}
+                <AnimatePresence>
+                    {showCSVMenu && (
+                        <>
+                            {/* Backdrop */}
+                            <div 
+                                className="fixed inset-0 z-40"
+                                onClick={() => setShowCSVMenu(false)}
+                            />
+                            
+                            {/* Menu */}
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                transition={{ duration: 0.15 }}
+                                className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1 z-50"
+                            >
+                                {/* Upload CSV */}
+                                <label className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                                    <FaFileUpload className="w-4 h-4 text-[var(--brand-blue)]" />
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Upload CSV</span>
+                                    <input 
+                                        type="file" 
+                                        accept=".csv" 
+                                        className="hidden" 
+                                        onChange={(e) => {
+                                            handleCSVUpload(e);
+                                            setShowCSVMenu(false);
+                                        }} 
+                                    />
+                                </label>
+
+                                {/* Export CSV */}
+                                <div onClick={() => setShowCSVMenu(false)}>
+                                    <CSVExport
+                                        orders={orders}
+                                        icon={<FaFileDownload className="w-4 h-4 text-green-600 dark:text-green-500" />}
+                                        text="Export CSV"
+                                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-200"
+                                    />
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Add Order Button - Always visible */}
             <button
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center justify-center gap-2 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 text-white px-3 sm:px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow-md text-sm sm:text-base font-medium h-10"
@@ -160,12 +231,6 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
                 <span className="hidden sm:inline">Add Order</span>
                 <span className="sm:hidden">Add</span>
             </button>
-
-            {/* Export CSV */}
-            <CSVExport
-                orders={orders}
-                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 sm:px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm transition-all text-sm sm:text-base h-10"
-            />
         </div>
     );
 }

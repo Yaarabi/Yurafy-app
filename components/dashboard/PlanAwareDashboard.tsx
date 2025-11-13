@@ -65,36 +65,32 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
         : 0;
     const isExpired = daysRemaining < 0;
 
-    // Fetch store domain if user has store plan
+    // Fetch store domain for all users (including free plan)
     useEffect(() => {
-        if (isStorePlan) {
-            const fetchStore = async () => {
-                try {
-                    const res = await fetch('/api/store/owner');
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.domain) {
-                            setStoreDomain(data.domain);
-                        }
+        const fetchStore = async () => {
+            try {
+                const res = await fetch('/api/store/owner');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.domain) {
+                        setStoreDomain(data.domain);
                     }
-                } catch (error) {
-                    console.error('Error fetching store:', error);
-                } finally {
-                    setStoreLoading(false);
                 }
-            };
-            fetchStore();
-        } else {
-            setStoreLoading(false);
-        }
-    }, [isStorePlan]);
+            } catch (error) {
+                console.error('Error fetching store:', error);
+            } finally {
+                setStoreLoading(false);
+            }
+        };
+        fetchStore();
+    }, []);
 
     // Build store URL
     const getStoreUrl = (domain: string | null): string | null => {
         if (!domain) return null;
         
         // Extract base domain from current hostname or use environment variable
-        let domainPart = "yurait.vercel.app"; // Default fallback
+        let domainPart = "yurafy.com"; // Default fallback
         
         if (typeof window !== 'undefined') {
             const hostname = window.location.hostname;
@@ -102,9 +98,9 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
             
             // Extract base domain
             // Examples:
-            // - "yurait.vercel.app" -> "yurait.vercel.app"
-            // - "app.yurait.vercel.app" -> "yurait.vercel.app"
-            // - "store.yurait.vercel.app" -> "yurait.vercel.app"
+            // - "yurafy.com" -> "yurafy.com"
+            // - "app.yurafy.com" -> "yurafy.com"
+            // - "store.yurafy.com" -> "yurafy.com"
             if (parts.length >= 3) {
                 // Remove first part (subdomain) to get base domain
                 domainPart = parts.slice(1).join('.');
@@ -171,8 +167,8 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             )}
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
-                            {/* Visit Store Button - Only show if store plan and store exists */}
-                            {isStorePlan && !storeLoading && storeUrl && (
+                            {/* Visit Store Button - Show if store exists (including free plan) */}
+                            {!storeLoading && storeUrl && (
                                 <a
                                     href={storeUrl}
                                     target="_blank"

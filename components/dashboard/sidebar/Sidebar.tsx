@@ -76,7 +76,7 @@ export default function Sidebar() {
             ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:shadow-none`}
         >
             <SidebarProfile user={userDetails} />
-            <SidebarNav userPlan={userDetails.plan || "free"} pathname={pathname} t={t} />
+            <SidebarNav userPlan={userDetails.plan || "free"} pathname={pathname} t={t} onNavClick={() => setOpen(false)} />
             <SidebarLogout handleSignOut={handleSignOut} t={t} />
         </aside>
 

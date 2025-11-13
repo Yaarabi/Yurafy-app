@@ -37,14 +37,21 @@ export default function SidebarNav({
     userPlan,
     pathname,
     t,
+    onNavClick,
     }: {
     userPlan: string;
     pathname: string | null;
     t: any;
+    onNavClick?: () => void;
     }) {
     const allowedNav = PLAN_NAV_MAP[userPlan] || PLAN_NAV_MAP["free"];
     const params = useParams();
     const router = useRouter();
+
+    const handleNavigation = (href: string) => {
+        router.push(`/${params.locale}/${href}`);
+        onNavClick?.(); // Close sidebar on mobile
+    };
 
     return (
         <nav className="flex flex-col gap-2 mt-6 overflow-y-auto">
@@ -55,7 +62,7 @@ export default function SidebarNav({
             return (
             <div
                 key={href}
-                onClick={() => router.push(`/${params.locale}/${href}`)}
+                onClick={() => handleNavigation(href)}
                 className={`cursor-pointer flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150
                 ${
                     active

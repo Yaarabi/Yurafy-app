@@ -64,10 +64,10 @@ export default function CSVExport({
     return (
         <button
             onClick={exportCSV}
-            className={`flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md transition h-10 ${className}`}
+            className={className || `flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md transition h-10`}
         >
-            {icon || <FaFileDownload />}
-            {text}
+            {icon || <FaFileDownload className="w-4 h-4" />}
+            <span>{text}</span>
         </button>
     );
 }
