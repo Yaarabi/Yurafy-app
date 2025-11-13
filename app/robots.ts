@@ -1,55 +1,55 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurafy.com';
-    
+    const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ||
+        "https://yurafy.com";
+
+    const disallow = [
+        "/api/",
+        "/dashboard/",
+        "/admin/",
+        "/onboarding/",
+        "/verify-email",
+        "/forgot-password",
+        "/reset-password",
+        "/_next/",
+    ];
+
     return {
         rules: [
         {
-            userAgent: '*',
+            userAgent: "*",
             allow: [
-                '/', // Homepage
-                '/en/', // Locale pages
-                '/fr/',
-                '/ar/',
-                '/shop/', // Product pages  
+            "/",          // Homepage
+            "/login",
+            "/signup",
+            "/services",
+            "/support",
+            "/en/",        // Locales
+            "/fr/",
+            "/ar/",
             ],
-            disallow: [
-                '/api/', // All API routes (protected)
-                '/dashboard/', // User dashboard (auth required)
-                '/admin/', // Admin panel (admin only)
-                '/_next/', // Next.js internal
-                '/onboarding/', // Onboarding flow (auth required)
-                '/login', // Auth pages
-                '/signup',
-                '/verify-email',
-                '/forgot-password',
-                '/reset-password',
-            ],
+            disallow,
         },
         {
-            userAgent: 'Googlebot',
+            userAgent: "Googlebot",
             allow: [
-                '/',
-                '/en/',
-                '/fr/',
-                '/ar/',
-                '/shop/',
+            "/",
+            "/login",
+            "/signup",
+            "/services",
+            "/support",
+            "/en/",
+            "/fr/",
+            "/ar/",
             ],
-            disallow: [
-                '/api/',
-                '/dashboard/',
-                '/admin/',
-                '/onboarding/',
-                '/login',
-                '/signup',
-                '/verify-email',
-                '/forgot-password',
-                '/reset-password',
-            ],
-            crawlDelay: 1, // Respectful crawling
+            disallow,
+            crawlDelay: 1,
         },
         ],
+
         sitemap: `${baseUrl}/sitemap.xml`,
+        host: baseUrl,
     };
 }

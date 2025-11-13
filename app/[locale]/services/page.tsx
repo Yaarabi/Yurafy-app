@@ -8,15 +8,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurafy.com';
 
     const titles: Record<string, string> = {
-        en: 'Web Development Services in Morocco - Yurafy',
-        fr: 'Services de Développement Web au Maroc - Yurafy',
-        ar: 'خدمات تطوير الويب في المغرب - Yurafy',
+        en: 'Web Development Services - Yurafy',
+        fr: 'Services de Développement - Yurafy',
+        ar: 'خدمات تطوير الويب - Yurafy',
     };
 
     const descriptions: Record<string, string> = {
-        en: 'Professional web development services in Morocco. E-commerce stores, WhatsApp automation, delivery API integration, and AI chatbots. Prices from 2,000 MAD.',
-        fr: 'Services de développement web professionnel au Maroc. Boutiques e-commerce, automatisation WhatsApp, intégration API de livraison et chatbots IA. À partir de 2 000 MAD.',
-        ar: 'خدمات تطوير ويب احترافية في المغرب. متاجر إلكترونية، أتمتة واتساب، تكامل API التوصيل، وروبوتات الدردشة بالذكاء الاصطناعي. من 2000 درهم.',
+        en: 'Professional web development services. E-commerce stores, WhatsApp automation, delivery API integration, and AI chatbots. Prices from 2,000 MAD.',
+        fr: 'Services de développement web professionnel. Boutiques e-commerce, automatisation WhatsApp, intégration API de livraison et chatbots IA. À partir de 2 000 MAD.',
+        ar: 'خدمات تطوير ويب احترافية. متاجر إلكترونية، أتمتة واتساب، تكامل API التوصيل، وروبوتات الدردشة بالذكاء الاصطناعي. من 2000 درهم.',
     };
 
     const title = titles[locale] || titles.en;
