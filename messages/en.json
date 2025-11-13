@@ -905,6 +905,92 @@
                 "saveFailed": "Failed to save guide",
                 "deleteFailed": "Failed to delete guide"
             }
+        },
+        "services": {
+            "title": "Service Inquiries",
+            "subtitle": "Manage customer service requests and inquiries",
+            "search": "Search by name, email, or phone...",
+            "filters": {
+                "allServices": "All Services",
+                "allStatuses": "All Statuses"
+            },
+            "showing": "Showing",
+            "of": "of",
+            "inquiries": "inquiries",
+            "empty": "No inquiries found",
+            "confirmDelete": "Are you sure you want to delete this inquiry?",
+            "delete": "Delete",
+            "table": {
+                "date": "Date",
+                "customer": "Customer",
+                "service": "Service Type",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "new": "New",
+                "contacted": "Contacted",
+                "converted": "Converted",
+                "closed": "Closed"
+            },
+            "details": {
+                "title": "Inquiry Details",
+                "customerInfo": "Customer Information",
+                "email": "Email",
+                "phone": "Phone Number",
+                "serviceInfo": "Service Information",
+                "message": "Message",
+                "updateStatus": "Update Status",
+                "submitted": "Submitted"
+            },
+            "success": {
+                "statusUpdated": "Status updated successfully",
+                "deleted": "Inquiry deleted successfully"
+            },
+            "errors": {
+                "loadFailed": "Failed to load inquiries",
+                "updateFailed": "Failed to update status",
+                "deleteFailed": "Failed to delete inquiry"
+            }
+        }
+    },
+    "services": {
+        "hero": {
+            "title": "Professional Web Development Services",
+            "subtitle": "Transform your business with custom e-commerce solutions built for Moroccan market",
+            "tagline": "Trusted by businesses across Morocco"
+        },
+        "popular": "Most Popular",
+        "priceNote": "One-time payment",
+        "getStarted": "Get Started",
+        "cta": {
+            "title": "Ready to Start Your Project?",
+            "subtitle": "Contact us today for a free consultation and quote",
+            "button": "Request a Quote"
+        },
+        "form": {
+            "title": "Request a Quote",
+            "fullName": "Full Name",
+            "fullNamePlaceholder": "Enter your full name",
+            "phoneNumber": "Phone Number",
+            "email": "Email Address",
+            "serviceType": "Service Type",
+            "selectService": "Select a service",
+            "message": "Additional Details",
+            "optional": "Optional",
+            "messagePlaceholder": "Tell us about your project requirements...",
+            "submit": "Submit Request",
+            "submitting": "Submitting...",
+            "cancel": "Cancel",
+            "success": "Thank you! Your request has been submitted successfully. We will contact you soon.",
+            "errors": {
+                "fullName": "Please enter a valid full name (at least 2 characters)",
+                "phoneNumber": "Please enter a valid Moroccan phone number (e.g., +212 600 000 000)",
+                "email": "Please enter a valid email address",
+                "serviceType": "Please select a service type",
+                "validation": "Please fix the errors in the form",
+                "submit": "Failed to submit request. Please try again."
+            }
         }
     }
 }

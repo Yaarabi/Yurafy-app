@@ -33,89 +33,94 @@ export default function UpgradeSpecialPlanCard({
 
     return (
         <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 30 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            whileHover={!isCurrent ? { y: -8, scale: 1.02 } : {}}
-            className={`relative p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 border-2 ${
-                isCurrent
-                    ? "bg-gray-100 border-gray-300 opacity-75"
-                    : `border-yellow-400 bg-gradient-to-br ${plan.color} text-white cursor-pointer`
-            }`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="relative group"
         >
             {/* Current Plan Badge */}
             {isCurrent && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-gray-500 text-white rounded-full shadow-lg flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" />
-                    Current Plan
-                </span>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                    <span className="bg-gray-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" />
+                        Current Plan
+                    </span>
+                </div>
             )}
 
             {/* Special Offer Badge */}
             {!isCurrent && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
-                    ⭐ Special Offer
-                </span>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                    <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                        ⭐ Special Offer
+                    </span>
+                </div>
             )}
 
-            {/* Plan Header */}
-            <div className="flex items-center gap-3 mb-4 text-white">
-                <div className={`p-3 rounded-lg bg-gradient-to-br ${plan.color} bg-opacity-20`}>
-                    <Icon className="w-6 h-6 text-white" />
+            <div className={`h-full rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 ${
+                isCurrent 
+                    ? "bg-gray-100 border-gray-300 opacity-75" 
+                    : "bg-white dark:bg-gray-800 border-yellow-400 hover:border-[var(--brand-blue)] cursor-pointer"
+            }`}>
+                {/* Header with icon and title */}
+                <div className="p-6 text-white" style={{ background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' }}>
+                    <Icon className="w-12 h-12 mb-4" />
+                    <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                    <p className="text-white/90 text-sm">{plan.description}</p>
                 </div>
-                <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
+                
+                {/* Content */}
+                <div className="p-6">
+                    {/* Price */}
+                    <div className="mb-6">
+                        <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                            ${plan.price}
+                            <span className="text-lg text-gray-500 dark:text-gray-400 ml-2">
+                                /{plan.durationDays} days
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {/* Features */}
+                    <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                <span className="text-sm">{feature}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    
+                    {/* Action Button */}
+                    <button
+                        onClick={() => !isCurrent && onSelect(plan.key)}
+                        disabled={isLoading || isCurrent}
+                        className={`w-full font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                            isCurrent
+                                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                : "text-white hover:opacity-90 active:scale-95"
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        style={!isCurrent ? { background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' } : undefined}
+                    >
+                        {isLoading ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span>Processing...</span>
+                            </>
+                        ) : isCurrent ? (
+                            <>
+                                <CheckCircle className="w-5 h-5" />
+                                <span>Current Plan</span>
+                            </>
+                        ) : (
+                            <>
+                                <ArrowUpCircle className="w-5 h-5" />
+                                <span>Upgrade Now</span>
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
-
-            {/* Description */}
-            <p className="text-sm mb-4 text-blue-100">{plan.description}</p>
-
-            {/* Price */}
-            <div className="mb-6">
-                <span className="text-4xl font-extrabold text-yellow-300">
-                    ${plan.price}
-                </span>
-                <span className="text-lg ml-2 text-blue-100">
-                    /{plan.durationDays} days
-                </span>
-            </div>
-
-            {/* Features */}
-            <ul className="space-y-3 mb-8">
-                {plan.features.map((feature: string, idx: number) => (
-                    <li key={idx} className="flex items-center gap-2 text-blue-50">
-                        <FaCheck className="flex-shrink-0 text-yellow-300" />
-                        <span className="text-sm">{feature}</span>
-                    </li>
-                ))}
-            </ul>
-
-            {/* Action Button */}
-            <button
-                onClick={() => !isCurrent && onSelect(plan.key)}
-                disabled={isLoading || isCurrent}
-                className={`w-full py-3 sm:py-3.5 rounded-lg font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2 ${
-                    isCurrent
-                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                        : "bg-white text-indigo-600 hover:bg-gray-100 shadow-lg active:scale-95"
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-                {isLoading ? (
-                    <>
-                        <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                        <span>Processing...</span>
-                    </>
-                ) : isCurrent ? (
-                    <>
-                        <CheckCircle className="w-5 h-5" />
-                        <span>Current Plan</span>
-                    </>
-                ) : (
-                    <>
-                        <ArrowUpCircle className="w-5 h-5" />
-                        <span>Upgrade Now</span>
-                    </>
-                )}
-            </button>
         </motion.div>
     );
 }

@@ -35,79 +35,73 @@ export default function PlanCard({
 
     return (
         <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 30 }}
-            whileInView={{ scale: 1, opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            whileHover={{ y: -8, scale: 1.02 }}
-            className={`relative p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 cursor-pointer touch-manipulation active:scale-[0.98] ${
-                isHighlighted
-                    ? `bg-gradient-to-br ${plan.color} text-white border-2 border-transparent`
-                    : "bg-white border-2 border-gray-200 hover:border-blue-400"
-            }`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="relative group"
         >
             {(isHighlighted || isPopular) && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
-                    {isHighlighted ? "⭐ Best Value" : "⭐ Popular"}
-                </span>
-            )}
-            
-            <div className={`flex items-center gap-3 mb-4 ${isHighlighted ? "text-white" : "text-gray-900"}`}>
-                <div className={`p-3 rounded-lg bg-gradient-to-br ${plan.color} bg-opacity-10 ${isHighlighted ? "bg-opacity-20" : ""}`}>
-                    <Icon className={`w-6 h-6 ${isHighlighted ? "text-white" : `text-gradient-to-r ${plan.color.split(' ')[1]}`}`} />
-                </div>
-                <h3 className={`text-2xl font-bold ${isHighlighted ? "text-white" : "text-gray-900"}`}>
-                    {plan.name}
-                </h3>
-            </div>
-
-            <p className={`text-sm mb-4 ${isHighlighted ? "text-blue-100" : "text-gray-600"}`}>
-                {plan.description}
-            </p>
-
-            <div className="mb-6">
-                <span className={`text-4xl font-extrabold ${isHighlighted ? "text-yellow-300" : "text-blue-600"}`}>
-                    ${plan.price}
-                </span>
-                {plan.price > 0 && (
-                    <span className={`text-lg ml-2 ${isHighlighted ? "text-blue-100" : "text-gray-500"}`}>
-                        /mo
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                    <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                        ⭐ {isHighlighted ? "Best Value" : "Popular"}
                     </span>
-                )}
+                </div>
+            )}
+            <div className="h-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--brand-blue)] cursor-pointer touch-manipulation">
+                {/* Header with icon and title */}
+                <div className="bg-gradient-to-r from-[var(--brand-blue)] to-blue-600 p-6 text-white">
+                    <Icon className="w-12 h-12 mb-4" />
+                    <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                    <p className="text-white/90 text-sm">{plan.description}</p>
+                </div>
+                
+                {/* Content */}
+                <div className="p-6">
+                    {/* Price */}
+                    <div className="mb-6">
+                        <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                            ${plan.price}
+                            {plan.price > 0 && (
+                                <span className="text-lg text-gray-500 dark:text-gray-400 ml-2">
+                                    /mo
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Features */}
+                    <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                <span className="text-sm">{feature}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    
+                    {/* Button */}
+                    <button
+                        onClick={() => onSelect(planKey)}
+                        disabled={isLoading}
+                        className="w-full text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation active:scale-95"
+                        style={{ background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' }}
+                    >
+                        {isLoading ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span>Processing...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>
+                                    {plan.price === 0 ? "Get Started Free" : isUpgrade ? 'Upgrade to' : 'Choose Plan'}
+                                </span>
+                                {isPopular && <Crown className="w-5 h-5" />}
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
-
-            <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, idx) => (
-                    <li key={idx} className={`flex items-center gap-2 ${isHighlighted ? "text-blue-50" : "text-gray-700"}`}>
-                        <FaCheck className={`flex-shrink-0 ${isHighlighted ? "text-yellow-300" : "text-green-500"}`} /> 
-                        <span className="text-sm">{feature}</span>
-                    </li>
-                ))}
-            </ul>
-
-            <button
-                onClick={() => onSelect(planKey)}
-                disabled={isLoading}
-                className={`w-full py-3 sm:py-3.5 rounded-lg font-semibold text-base transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 ${
-                    isHighlighted
-                        ? "bg-white text-blue-600 hover:bg-gray-100 shadow-lg"
-                        : `bg-gradient-to-r ${plan.color} text-white hover:shadow-lg`
-                }`}
-            >
-                {isLoading ? (
-                    <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Processing...</span>
-                    </>
-                ) : (
-                    <>
-                        <span>
-                            {plan.price === 0 ? "Get Started Free" : isUpgrade ? 'Upgrade to' : 'Choose Plan'}
-                        </span>
-                        {isPopular && <Crown className="w-5 h-5" />}
-                    </>
-                )}
-            </button>
         </motion.div>
     )
 }

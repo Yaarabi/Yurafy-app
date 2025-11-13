@@ -42,7 +42,7 @@ export async function generateProductMetadata(slug: string, locale: string = 'en
         description,
         alternates: { canonical: productUrl },
         openGraph: {
-            type: 'product',
+            type: 'website',
             siteName: store?.brandName || 'Yurafy',
             title,
             description,

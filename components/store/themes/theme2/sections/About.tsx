@@ -38,95 +38,74 @@ const About: React.FC = () => {
                 />
             </div>
             
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                    {/* Left side - Visual element */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">
+                {/* Content Section */}
+                <div className="text-center space-y-6 mb-12 sm:mb-16">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="relative"
+                        className="inline-block px-4 py-2 rounded-full text-sm font-bold"
+                        style={{ 
+                            backgroundColor: `${primaryColor}15`,
+                            color: primaryColor 
+                        }}
                     >
-                        <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-square lg:aspect-auto lg:h-full min-h-[400px]"
-                            style={{ 
-                                background: `linear-gradient(135deg, ${primaryColor}15, ${primaryColor}05)` 
-                            }}
-                        >
-                            {/* Icon grid decoration */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="grid grid-cols-3 gap-8 sm:gap-12">
-                                    {[Heart, Star, Target].map((Icon, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ opacity: 0, scale: 0 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-                                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center shadow-lg"
-                                            style={{ backgroundColor: primaryColor }}
-                                        >
-                                            <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                        OUR STORY
                     </motion.div>
                     
-                    {/* Right side - Content */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="space-y-6"
+                        transition={{ delay: 0.1 }}
+                        className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight"
                     >
-                        <div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4 sm:mb-6"
-                                style={{ 
-                                    backgroundColor: `${primaryColor}15`,
-                                    color: primaryColor 
-                                }}
-                            >
-                                OUR STORY
-                            </motion.div>
-                            
-                            <motion.h2
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.1 }}
-                                className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 sm:mb-6 leading-tight"
-                            >
-                                {aboutData.title || `About ${brandName}`}
-                            </motion.h2>
-                            
-                            <motion.div
-                                initial={{ scaleX: 0 }}
-                                whileInView={{ scaleX: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.2, duration: 0.6 }}
-                                className="h-1 w-20 rounded-full mb-6"
-                                style={{ backgroundColor: primaryColor }}
-                            />
-                        </div>
-                        
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
-                            className="text-base sm:text-lg text-gray-600 leading-relaxed"
-                        >
-                            {aboutData.description}
-                        </motion.p>
-                    </motion.div>
+                        {aboutData.title || `About ${brandName}`}
+                    </motion.h2>
+                    
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2, duration: 0.6 }}
+                        className="h-1 w-20 rounded-full mx-auto"
+                        style={{ backgroundColor: primaryColor }}
+                    />
+                    
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 }}
+                        className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto px-4"
+                    >
+                        {aboutData.description}
+                    </motion.p>
                 </div>
+                
+                {/* Icons Section Below */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                    className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-12"
+                >
+                    {[Heart, Star, Target].map((Icon, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
+                            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300"
+                            style={{ backgroundColor: primaryColor }}
+                        >
+                            <Icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
+                        </motion.div>
+                    ))}
+                </motion.div>
             </div>
         </div>
     );

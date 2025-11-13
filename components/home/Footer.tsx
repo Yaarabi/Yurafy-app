@@ -67,14 +67,14 @@ export default function Footer() {
                             </div>
                             <span>Whatsapp</span>
                         </a>
-                        <p className="flex items-center gap-3 text-gray-400 mt-4">
+                        <div className="flex items-center gap-3 text-gray-400 mt-4">
                             <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
                                 </svg>
                             </div>
                             <span>Agadir, Morocco</span>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>

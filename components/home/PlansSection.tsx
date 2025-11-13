@@ -239,68 +239,66 @@ export default function PlansSection() {
                 ) : (
                     <>
                         {/* Regular Plans */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                             {plans.map((plan, i) => {
                                 const { key, name, price, description, icon: Icon, color, features, highlighted, popular } = plan;
                         return (
                             <motion.div
                                 key={key}
-                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                                whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1, duration: 0.5 }}
-                                whileHover={{ y: -8, scale: 1.02 }}
-                                className={`relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl transition-all duration-300 cursor-pointer
-                                    ${highlighted
-                                        ? `bg-gradient-to-br ${color} text-white border-2 border-transparent`
-                                        : "bg-white border-2 border-gray-200 hover:border-blue-400"
-                                    }`}
-                                >
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                className="relative group"
+                            >
                                 {(highlighted || popular) && (
-                                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
-                                        {highlighted ? "⭐ Best Value" : "⭐ Popular"}
-                                    </span>
-                                )}
-                                <div className={`flex items-center gap-3 mb-4 ${highlighted ? "text-white" : "text-gray-900"}`}>
-                                    <div className={`p-3 rounded-lg bg-gradient-to-br ${color} bg-opacity-10 ${highlighted ? "bg-opacity-20" : ""}`}>
-                                        <Icon className={`w-6 h-6 ${highlighted ? "text-white" : `text-gradient-to-r ${color.split(' ')[1]}`}`} />
-                                    </div>
-                                    <h3 className={`text-2xl font-bold ${highlighted ? "text-white" : "text-gray-900"}`}>
-                                        {name}
-                                    </h3>
-                                </div>
-                                <p className={`text-sm mb-4 ${highlighted ? "text-blue-100" : "text-gray-600"}`}>
-                                    {description}
-                                </p>
-                                <div className="mb-6">
-                                    <span className={`text-4xl font-extrabold ${highlighted ? "text-yellow-300" : ""}`} style={!highlighted ? { color: 'var(--brand-blue)' } : undefined}>
-                                        ${price}
-                                    </span>
-                                    {price > 0 && (
-                                        <span className={`text-lg ml-2 ${highlighted ? "text-blue-100" : "text-gray-500"}`}>
-                                            /mo
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                                        <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                            ⭐ {highlighted ? "Best Value" : "Popular"}
                                         </span>
-                                    )}
+                                    </div>
+                                )}
+                                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--brand-blue)]">
+                                    {/* Header with icon and title */}
+                                    <div className={`bg-gradient-to-r from-[var(--brand-blue)] to-blue-600 p-6 text-white`}>
+                                        <Icon className="w-12 h-12 mb-4" />
+                                        <h3 className="text-2xl font-bold mb-2">{name}</h3>
+                                        <p className="text-white/90 text-sm">{description}</p>
+                                    </div>
+                                    
+                                    {/* Content */}
+                                    <div className="p-6">
+                                        {/* Price */}
+                                        <div className="mb-6">
+                                            <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                                                ${price}
+                                                {price > 0 && (
+                                                    <span className="text-lg text-gray-500 dark:text-gray-400 ml-2">
+                                                        /mo
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Features */}
+                                        <ul className="space-y-3 mb-6">
+                                            {features.map((f: string, idx: number) => (
+                                                <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                                    <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                                    <span className="text-sm">{f}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        
+                                        {/* Button */}
+                                        <button
+                                            onClick={() => handlePlanClick(key)}
+                                            className="w-full text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:opacity-90"
+                                            style={{ background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' }}
+                                        >
+                                            {price === 0 ? "Get Started Free" : "Choose Plan"}
+                                        </button>
+                                    </div>
                                 </div>
-                                <ul className="space-y-3 mb-8">
-                                    {features.map((f: string, idx: number) => (
-                                        <li key={idx} className={`flex items-center gap-2 ${highlighted ? "text-blue-50" : "text-gray-700"}`}>
-                                            <FaCheck className={`flex-shrink-0 ${highlighted ? "text-yellow-300" : "text-green-500"}`} /> 
-                                            <span className="text-sm">{f}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <button
-                                    onClick={() => handlePlanClick(key)}
-                                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 ${
-                                        highlighted
-                                            ? "bg-white hover:bg-gray-100 shadow-lg"
-                                            : `bg-gradient-to-r ${color} text-white hover:shadow-lg`
-                                    }`}
-                                    style={highlighted ? { color: 'var(--brand-blue)' } : undefined}
-                                >
-                                    {price === 0 ? "Get Started Free" : "Choose Plan"}
-                                </button>
                             </motion.div>
                         );
                     })}
@@ -317,58 +315,64 @@ export default function PlansSection() {
                                 >
                                     Special Offers
                                 </motion.h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                                     {specialPlans.map((plan, i) => {
                                         const { key, name, price, description, icon: Icon, color, features, durationDays } = plan;
                                         return (
                                             <motion.div
                                                 key={key}
-                                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                                                whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ delay: i * 0.1, duration: 0.5 }}
-                                                whileHover={{ y: -8, scale: 1.02 }}
-                                                className={`relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl transition-all duration-300 cursor-pointer border-2 border-yellow-400 bg-gradient-to-br ${color} text-white`}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                                className="relative group"
                                             >
-                                                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-semibold bg-yellow-400 text-gray-900 rounded-full shadow-lg">
-                                                    ⭐ Special Offer
-                                                </span>
-                                                <div className="flex items-center gap-3 mb-4 text-white">
-                                                    <div className={`p-3 rounded-lg bg-gradient-to-br ${color} bg-opacity-20`}>
-                                                        <Icon className="w-6 h-6 text-white" />
-                                                    </div>
-                                                    <h3 className="text-2xl font-bold text-white">
-                                                        {name}
-                                                    </h3>
-                                                </div>
-                                                <p className="text-sm mb-4 text-blue-100">
-                                                    {description}
-                                                </p>
-                                                <div className="mb-6">
-                                                    <span className="text-4xl font-extrabold text-yellow-300">
-                                                        ${price}
+                                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                                                    <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                                        ⭐ Special Offer
                                                     </span>
-                                                    {price > 0 && (
-                                                        <span className="text-lg ml-2 text-blue-100">
-                                                            /{durationDays} days
-                                                        </span>
-                                                    )}
                                                 </div>
-                                                <ul className="space-y-3 mb-8">
-                                                    {features.map((f: string, idx: number) => (
-                                                        <li key={idx} className="flex items-center gap-2 text-blue-50">
-                                                            <FaCheck className="flex-shrink-0 text-yellow-300" /> 
-                                                            <span className="text-sm">{f}</span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                                <button
-                                                    onClick={() => handlePlanClick(key)}
-                                                    className="w-full py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 bg-white hover:bg-gray-100 shadow-lg"
-                                                    style={{ color: 'var(--brand-blue)' }}
-                                                >
-                                                    Choose Plan
-                                                </button>
+                                                <div className="h-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-yellow-400 hover:border-[var(--brand-blue)]">
+                                                    {/* Header with icon and title */}
+                                                    <div className="p-6 text-white" style={{ background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' }}>
+                                                        <Icon className="w-12 h-12 mb-4" />
+                                                        <h3 className="text-2xl font-bold mb-2">{name}</h3>
+                                                        <p className="text-white/90 text-sm">{description}</p>
+                                                    </div>
+                                                    
+                                                    {/* Content */}
+                                                    <div className="p-6">
+                                                        {/* Price */}
+                                                        <div className="mb-6">
+                                                            <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                                                                ${price}
+                                                                {price > 0 && (
+                                                                    <span className="text-lg text-gray-500 dark:text-gray-400 ml-2">
+                                                                        /{durationDays} days
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {/* Features */}
+                                                        <ul className="space-y-3 mb-6">
+                                                            {features.map((f: string, idx: number) => (
+                                                                <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                                                    <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                                                    <span className="text-sm">{f}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                        
+                                                        {/* Button */}
+                                                        <button
+                                                            onClick={() => handlePlanClick(key)}
+                                                            className="w-full text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:opacity-90"
+                                                            style={{ background: 'linear-gradient(to right, var(--brand-blue), #1e40af)' }}
+                                                        >
+                                                            Choose Plan
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </motion.div>
                                         );
                                     })}

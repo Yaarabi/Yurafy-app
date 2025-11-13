@@ -39,7 +39,7 @@ export default function ServicesSection() {
 
     const handleContact = () => {
         const locale = params.locale || 'en';
-        router.push(`/${locale}/signup`);
+        router.push(`/${locale}/services`);
     };
 
     return (
