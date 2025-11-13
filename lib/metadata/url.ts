@@ -7,11 +7,11 @@ interface UrlOptions {
   productSlug?: string;
 }
 
-const MAIN_DOMAINS = ['www', 'app', 'admin', 'yurait'];
+const MAIN_DOMAINS = ['www', 'app', 'admin', 'yurafy'];
 
 export async function buildStoreUrl({ locale = 'en', storeDomain }: UrlOptions): Promise<string> {
   const hdrs = await headers();
-  const host = hdrs.get('host') || 'yurait.vercel.app';
+  const host = hdrs.get('host') || 'yurafy.com';
   const xSub = hdrs.get('x-subdomain');
   const subdomain = xSub || await getSubdomainFromHeaders(headers, { mainDomains: MAIN_DOMAINS });
 
@@ -29,7 +29,7 @@ export async function buildStoreUrl({ locale = 'en', storeDomain }: UrlOptions):
 export async function buildProductUrl({ locale = 'en', storeDomain, productSlug }: UrlOptions): Promise<string> {
   if (!productSlug) return '';
   const hdrs = await headers();
-  const host = hdrs.get('host') || 'yurait.vercel.app';
+  const host = hdrs.get('host') || 'yurafy.com';
   const xSub = hdrs.get('x-subdomain');
   const subdomain = xSub || await getSubdomainFromHeaders(headers, { mainDomains: MAIN_DOMAINS });
 

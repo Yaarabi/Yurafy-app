@@ -13,8 +13,8 @@ const intlMiddleware = createMiddleware({
 // --- Main middleware ---
 export default function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
-    // Treat the Vercel project domain (yurait) as a main domain to avoid store subdomain handling on production
-    const MAIN_DOMAINS = ['www', 'app', 'admin', 'yurait'];
+    // Treat the main domain (yurafy) as a main domain to avoid store subdomain handling on production
+    const MAIN_DOMAINS = ['www', 'app', 'admin', 'yurafy'];
     const subdomain = getSubdomain(hostname, { mainDomains: MAIN_DOMAINS });
     const pathname = request.nextUrl.pathname;
 

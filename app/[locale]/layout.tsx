@@ -13,7 +13,7 @@ async function getMessages(locale: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurait.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurafy.com';
   
   const titles: Record<string, string> = {
     en: 'Yurafy - AI-Powered Business Automation Platform',

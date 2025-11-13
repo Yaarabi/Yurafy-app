@@ -1,7 +1,7 @@
 /**
  * Shared utility for subdomain extraction
- * Handles both development (localhost) and production domains
- * Supports Vercel domains (4 parts: subdomain.app.vercel.app)
+ * Handles both development (localhost) and production domains (yurafy.com)
+ * Supports custom domains and subdomain routing
  */
 
 export interface SubdomainConfig {
@@ -40,14 +40,14 @@ export function getSubdomain(
     // For production domains
     const parts = host.split('.');
     
-    // Handle Vercel preview URLs with hyphens: subdomain-appname.vercel.app (3 parts)
+    // Handle deployment preview URLs with hyphens: subdomain-appname.domain.com (3 parts)
     // In this case, extract the part before the first hyphen as the subdomain
-    if (host.endsWith('.vercel.app') && parts.length === 3) {
+    if (parts.length === 3) {
         const firstPart = parts[0];
         const hyphenParts = firstPart.split('-');
         
         // If there's a hyphen, the subdomain is before the first hyphen
-        // Example: store1-yurait.vercel.app -> store1
+        // Example: store1-yurafy.com -> store1
         if (hyphenParts.length > 1) {
             const subdomain = hyphenParts[0];
             // Don't treat main domains as store subdomains
@@ -64,7 +64,7 @@ export function getSubdomain(
         return firstPart;
     }
     
-    // Handle Vercel domains: subdomain.app.vercel.app (4 parts)
+    // Handle custom domains: subdomain.yurafy.com (3+ parts)
     // Handle regular domains: subdomain.example.com (3 parts)
     // If we have 3+ parts, the first is potentially a subdomain
     if (parts.length >= 3) {

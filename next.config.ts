@@ -12,7 +12,12 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: '*.yurait.vercel.app',
+                hostname: '*.yurafy.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'yurafy.com',
                 pathname: '/**',
             },
             {

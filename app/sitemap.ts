@@ -6,8 +6,8 @@ import { getProductsByOwner } from '@/lib/data/products';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     await connectDB();
     
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurait.vercel.app';
-    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurait.vercel.app';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '') || 'https://yurafy.com';
+    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurafy.com';
     
     const sitemap: MetadataRoute.Sitemap = [
         {

@@ -20,12 +20,12 @@ const ProductPage: React.FC = () => {
     const textColor = selectedStore?.theme?.textColor || '#ffffff';
 
     const handleGoBack = () => {
-        // Check if we're using subdomain (e.g., store.yura-saas.com or coutanova.localhost)
+        // Check if we're using subdomain (e.g., store.yurafy.com or store.localhost)
         const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
         const parts = hostname ? hostname.split('.') : [];
         // Subdomain detection: 
-        // - For localhost: subdomain.localhost (e.g., coutanova.localhost)
-        // - For production: subdomain.domain.com (e.g., store.yura-saas.com)
+        // - For localhost: subdomain.localhost (e.g., store.localhost)
+        // - For production: subdomain.domain.com (e.g., store.yurafy.com)
         const isLocalhostSubdomain = hostname.includes('localhost') && parts.length > 1 && parts[0] !== 'localhost';
         const isProductionSubdomain = parts.length >= 3 && !hostname.includes('localhost') && !hostname.startsWith('127.0.0.1');
         const isSubdomain = isLocalhostSubdomain || isProductionSubdomain;

@@ -113,7 +113,7 @@ Your application has comprehensive security measures in place. All sensitive rou
 Ensure these are set securely in production:
 ```env
 NEXTAUTH_SECRET=<strong-random-secret>
-NEXTAUTH_URL=https://yurait.vercel.app
+NEXTAUTH_URL=https://yurafy.com
 MONGODB_URI=<secure-connection-string>
 ```
 

@@ -6,7 +6,7 @@ export async function generateStoreMetadata(domain: string, locale: string = 'en
     await connectDB();
 
     const store = await getStoreByDomain(domain);
-    const baseUrlEnv = process.env.NEXT_PUBLIC_BASE_URL || "https://yurait.vercel.app";
+    const baseUrlEnv = process.env.NEXT_PUBLIC_BASE_URL || "https://yurafy.com";
 
     if (!store) {
         return {

@@ -241,7 +241,7 @@ This project is licensed under the MIT License.
 
 ## 🆘 Support
 
-For support, email support@yura-saas.com or open an issue in the repository.
+For support, email support@yurafy.com or open an issue in the repository.
 
 ## 🗺️ Roadmap
 
@@ -271,8 +271,8 @@ For support, email support@yura-saas.com or open an issue in the repository.
 ## 📞 Contact
 
 For questions or inquiries, please contact:
-- Email: support@yura-saas.com
-- GitHub: [Your GitHub Profile]
+- Email: support@yurafy.com
+- Website: https://yurafy.com
 
 ---
 

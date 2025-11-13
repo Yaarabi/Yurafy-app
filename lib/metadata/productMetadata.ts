@@ -4,7 +4,7 @@ import { buildProductUrl } from './url';
 export async function generateProductMetadata(slug: string, locale: string = 'en') {
     const { product, store } = await getProductWithStoreBySlug(slug);
 
-    const baseUrlEnv = process.env.NEXT_PUBLIC_BASE_URL || 'https://yurait.vercel.app';
+    const baseUrlEnv = process.env.NEXT_PUBLIC_BASE_URL || 'https://yurafy.com';
 
     if (!product) {
         const notFoundUrl = `${baseUrlEnv.replace(/\/$/, '')}/products/${encodeURIComponent(slug)}`;
