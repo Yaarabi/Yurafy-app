@@ -14,22 +14,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     
     const sitemap: MetadataRoute.Sitemap = [
         {
-        url: baseUrl,
-        lastModified: new Date(),
-        changeFrequency: 'daily',
-        priority: 1,
+            url: baseUrl,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 1,
         },
         {
-        url: `${baseUrl}/en/login`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.5,
+            url: `${baseUrl}/services`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.7,
         },
         {
-        url: `${baseUrl}/en/signup`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.5,
+            url: `${baseUrl}/blog`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.6,
+        },
+        {
+            url: `${baseUrl}/contact`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.6,
+        },
+        {
+            url: `${baseUrl}/login`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/signup`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
         },
     ];
 
@@ -38,31 +56,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const stores = await getAllStores();
         
         for (const store of stores) {
-        const storeUrl = `https://${store.domain}.${domainPart}`;
-        
-        // Add store homepage
-        sitemap.push({
-            url: storeUrl,
-            lastModified: new Date(store.updatedAt),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        });
-
-        // Get products for this store
-        try {
-            const products = await getProductsByOwner(store.owner);
+            const storeUrl = `https://${store.domain}.${domainPart}`;
             
-            for (const product of products) {
+            // Add store homepage
             sitemap.push({
-                url: `${storeUrl}/shop/${product.slug}`,
-                lastModified: new Date(product.updatedAt || product.createdAt),
+                url: storeUrl,
+                lastModified: new Date(store.updatedAt),
                 changeFrequency: 'weekly',
-                priority: 0.7,
+                priority: 0.8,
             });
+
+            // Get products for this store
+            try {
+                const products = await getProductsByOwner(store.owner);
+                
+                for (const product of products) {
+                    sitemap.push({
+                        url: `${storeUrl}/shop/${product.slug}`,
+                        lastModified: new Date(product.updatedAt || product.createdAt),
+                        changeFrequency: 'weekly',
+                        priority: 0.7,
+                    });
+                }
+            } catch (err) {
+                console.error(`Error fetching products for store ${store.domain}:`, err);
             }
-        } catch (err) {
-            console.error(`Error fetching products for store ${store.domain}:`, err);
-        }
         }
     } catch (err) {
         console.error('Error generating sitemap:', err);
