@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 export interface IUser {
     _id: string;
     username: string;
-    logo?: string;
     email: string;
     phone?: string;
     role: "user" | "admin";
@@ -20,10 +19,6 @@ const userSchema = new mongoose.Schema(
         required: true,
         trim: true,
         index: true, // Index for faster lookups
-        },
-        logo: {
-        type: String,
-        required: false,
         },
         email: {
         type: String,

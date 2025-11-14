@@ -63,19 +63,6 @@ export async function getProductWithStoreBySlug(slug: string): Promise<{
 
     const { product, store } = serializeProductWithStore(productDoc, storeDoc);
     
-    // If store doesn't have a logoUrl, fetch the user's logo as fallback (same logic as getStoreByDomain)
-    if (store && !store.logoUrl && storeDoc?.owner) {
-        try {
-            const user = await User.findById(storeDoc.owner).select('logo').lean() as IUser | null;
-            if (user && user.logo) {
-                store.logoUrl = user.logo;
-            }
-        } catch (error) {
-            // Silently fail if user lookup fails
-            console.error('Error fetching user logo:', error);
-        }
-    }
-
     return { product, store };
 }
 

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         username: user.username,
         email: user.email,
         phone: user.phone || '',
-        logo: user.logo || '',
+
         role: user.role,
         plan: activePlan,
         onboardingCompleted: user.onboardingCompleted || false,

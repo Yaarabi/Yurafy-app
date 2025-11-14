@@ -5,7 +5,7 @@ import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
 import Plan from "@/models/plan";
 
-const ALLOWED_UPDATE_FIELDS = ["username", "email", "phone", "logo"];
+const ALLOWED_UPDATE_FIELDS = ["username", "email", "phone"];
 
 const isValidObjectId = (id: string) => {
     const mongoose = require("mongoose");
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
             username: user.username,
             email: user.email,
             phone: user.phone || '',
-            logo: user.logo || '',
+
             role: user.role,
             plan: planKey,
             onboardingCompleted: user.onboardingCompleted || false,
@@ -102,7 +102,7 @@ export async function PUT(req: NextRequest) {
             username: updatedUser.username,
             email: updatedUser.email,
             phone: updatedUser.phone || '',
-            logo: updatedUser.logo || '',
+
             role: updatedUser.role,
             plan: planKey,
             onboardingCompleted: updatedUser.onboardingCompleted || false,

@@ -119,7 +119,6 @@ export default function SettingsPage() {
                     username: updatedData.username ?? user.username,
                     email: updatedData.email ?? user.email,
                     phone: updatedData.phone ?? user.phone ?? '',
-                    logo: updatedData.logo ?? user.logo ?? '',
                     role: updatedData.role ?? user.role,
                     plan: updatedData.plan ?? user.plan,
                     active: updatedData.active ?? user.active,
@@ -282,7 +281,7 @@ export default function SettingsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-6 sm:mb-8"
                 >
-                    <ProfileHeader name={user.username} email={user.email} logo={user.logo} />
+                    <ProfileHeader name={user.username} email={user.email} />
                 </motion.div>
 
                 {/* Tabs Navigation - Mobile Scrollable with Smart UX */}
@@ -359,7 +358,6 @@ export default function SettingsPage() {
                             <div className="p-4 sm:p-6 lg:p-8">
                                 <SettingsSection title="Profile">
                                     <div className="space-y-6">
-                                        <LogoUploader logoUrl={user.logo || '/logo.png'} onUpload={handleLogoUpload} />
                                         <div className="space-y-4">
                                             <EditableField label="Name" value={user.username} onSave={(val) => updateField('name', val)} />
                                             <EditableField label="Phone" value={user.phone || ''} onSave={(val) => updateField('phone', val)} />

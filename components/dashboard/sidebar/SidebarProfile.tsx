@@ -24,7 +24,6 @@ export default function SidebarProfile({ user }: { user: any }) {
             } catch (err) {
                 console.error("Failed to fetch user data:", err);
                 // Fallback to session user data if API fails
-                if (user?.logo) setLogo(user.logo);
                 if (user?.username) setBrandName(user.username);
             }
         };

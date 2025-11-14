@@ -198,7 +198,7 @@ export async function GET(req: NextRequest) {
                 username: user.username,
                 email: user.email,
                 phone: user.phone,
-                logo: user.logo,
+
                 role: user.role,
                 plan: planKey, // Return the actual current plan key, not the old user.plan field
                 active: user.active,
