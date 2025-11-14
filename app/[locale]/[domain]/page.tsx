@@ -10,14 +10,14 @@ import { getSubdomainFromHeaders } from "@/lib/utils/subdomain";
 export async function generateMetadata({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
     const { domain, locale = 'en' } = await params;
     // Prefer subdomain if present in headers; otherwise use path domain
-    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurafy'] });
     const effectiveDomain = (sub || domain).toLowerCase().trim();
     return await generateStoreMetadata(effectiveDomain, locale);
 }
 
 export async function generateViewport({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;
-    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurait'] });
+    const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurafy'] });
     const storeDomain = (sub || domain).toLowerCase().trim();
     const store = await getStoreByDomain(storeDomain);
     const primary = (store?.theme as any)?.primaryColor || '#3B82F6';
@@ -59,7 +59,7 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     const products = await getProductsByOwner(ownerId);
 
     // Build store URL for SEO (subdomain-aware)
-    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurait.vercel.app';
+    const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurafy.vercel.app';
     const storeUrl = storeSubdomain 
         ? `https://${storeSubdomain}.${domainPart}`
         : `https://${domainPart}/${locale}/${storeDomain}`;
