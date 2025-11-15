@@ -4,9 +4,12 @@ import { useState, FormEvent, ChangeEvent, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl';
 import { IProduct } from '@/models/products';
 import { useSession } from 'next-auth/react';
-import ProductVariants from './product/ProductVariant';
 import BackButton from './BackButton';
 import toast from 'react-hot-toast';
+import BasicInfo from './product-form/BasicInfo';
+import MediaUploads from './product-form/MediaUploads';
+import VariantsAndBundles from './product-form/VariantsAndBundles';
+import { Input, Textarea } from './product-form/FormControls';
 
 // Helper function to create valid bundle objects
 function createBundleObject(type: 'buy_x_get_y' | 'special_price' | 'percentage_off', values: {
@@ -30,13 +33,6 @@ function createBundleObject(type: 'buy_x_get_y' | 'special_price' | 'percentage_
     }
     
     return bundle;
-}
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; 
-
-function isValidFileType(file: File) {
-    const allowedTypes = ['image/', 'video/', 'audio/'];
-    return allowedTypes.some((type) => file.type.startsWith(type));
 }
 
 interface ProductFormProps {
@@ -155,48 +151,6 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         };
     }, [resetForm]);
 
-    const handleImageUpload = async (
-        e: ChangeEvent<HTMLInputElement>,
-        field: 'mainImage' | 'images' | 'descriptionsImage'
-    ) => {
-        const files = e.target.files;
-        if (!files) return;
-
-        const uploadedUrls: string[] = [];
-
-        for (const file of Array.from(files)) {
-            if (!isValidFileType(file)) {
-                toast.error('Unsupported file type. Only images, videos, and audio files are allowed.');
-                continue;
-            }
-
-            if (file.size > MAX_FILE_SIZE) {
-                toast.error('File too large. Maximum size is 10MB.');
-                continue;
-            }
-
-            const { uploadFile } = await import('@/lib/utils/upload');
-            const result = await uploadFile(file);
-
-            if (result.success) {
-                uploadedUrls.push(result.data.url);
-            } else {
-                console.error('Upload failed:', result.error.message);
-                toast.error(result.error.message || 'Failed to upload file');
-            }
-        }
-
-        setValues((prev) => ({
-            ...prev,
-            [field]:
-                field === 'mainImage'
-                ? uploadedUrls[0]
-                : field === 'descriptionsImage'
-                ? [...(prev.descriptionsImage || []), ...uploadedUrls]
-                : [...(prev.images || []), ...uploadedUrls],
-        }));
-    };
-
     function handleChange(
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
@@ -244,339 +198,28 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
     return (
         <form onSubmit={handleSubmit} className="w-full relative p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col gap-4 sm:gap-6 border border-gray-200 dark:border-gray-700">
             <BackButton/>
-            {/* Name & Slug */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input label={t('name')} name="name" value={values.name || ''} onChange={handleChange} error={errors.name} />
-                <Input label={t('slug')} name="slug" value={values.slug || ''} onChange={handleChange} error={errors.slug} />
-            </div>
+            
+            <BasicInfo 
+                values={values}
+                handleChange={handleChange}
+                errors={errors}
+                Input={Input}
+                Textarea={Textarea}
+                PRODUCT_CATEGORIES={PRODUCT_CATEGORIES}
+            />
 
-            <Textarea label={t('description')} name="description" value={values.description || ''} onChange={handleChange} />
+            <MediaUploads values={values} setValues={setValues} />
 
-            {/* Price, Discount, Stock */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input label={t('price')} name="price" type="number" step="0.01" value={values.price || ''} onChange={handleChange} error={errors.price} placeholder="0.00" />
-                <Input label={t('discount')} name="discount" type="number" min="0" max="100" value={values.discount || ''} onChange={handleChange} placeholder="0" />
-                <Input label={t('stock')} name="stock" type="number" min="0" value={values.stock || ''} onChange={handleChange} error={errors.stock} placeholder="0" />
-            </div>
-
-            {/* Brand & Category */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input label={t('brand')} name="brand" value={values.brand || ''} onChange={handleChange} />
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('category')}</label>
-                    <select
-                        name="category"
-                        value={values.category}
-                        onChange={handleChange}
-                        className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition`}
-                    >
-                        <option value="" disabled>{t('selectCategory')}</option>
-                        {PRODUCT_CATEGORIES.map((cat) => (
-                            <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                    </select>
-                    {errors.category && <span className="text-red-500 text-sm">{errors.category}</span>}
-                </div>
-            </div>
-
-            {/* Media Uploads */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Main Image */}
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('mainImage')}</label>
-                    <input
-                        type="file"
-                        accept="image/*,video/*,audio/*"
-                        onChange={(e) => handleImageUpload(e, 'mainImage')}
-                        className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
-                    />
-                    {values.mainImage && (
-                        <img src={values.mainImage} alt="Main Preview" className="mt-2 w-full h-60 object-cover rounded-lg border border-gray-700" />
-                    )}
-                </div>
-
-                {/* Additional Media */}
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('otherImages')}</label>
-                    <input
-                        type="file"
-                        accept="image/*,video/*,audio/*"
-                        multiple
-                        onChange={(e) => handleImageUpload(e, 'images')}
-                        className="file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:opacity-90 cursor-pointer text-gray-800 dark:text-gray-200"
-                    />
-                    <div className="flex flex-wrap gap-3 mt-2">
-                        {values.images?.map((url, idx) => {
-                            const ext = url.split('.').pop()?.toLowerCase();
-                            if (ext?.match(/(jpg|jpeg|png|webp|gif)/)) {
-                                return (
-                                    <div key={idx} className="relative">
-                                        <img
-                                            src={url}
-                                            alt={`Preview ${idx + 1}`}
-                                            className="w-28 h-28 object-cover rounded-lg border border-gray-700"
-                                        />
-                                    </div>
-                                );
-                            } else if (ext?.match(/(mp4|webm|ogg)/)) {
-                                return (
-                                    <video
-                                        key={idx}
-                                        src={url}
-                                        controls
-                                        className="w-28 h-28 rounded-lg border border-gray-700"
-                                    />
-                                );
-                            } else if (ext?.match(/(mp3|wav|ogg)/)) {
-                                return (
-                                    <audio
-                                        key={idx}
-                                        src={url}
-                                        controls
-                                        className="w-28 mt-2"
-                                    />
-                                );
-                            }
-                            return null;
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            {/* Description Images Section */}
-            <div className="mt-4">
-                <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
-                    Description Images (Optional)
-                </label>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                    Images to display in the description section (different from main image and product images)
-                </p>
-                <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleImageUpload(e, 'descriptionsImage')}
-                    className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
-                />
-                {values.descriptionsImage && values.descriptionsImage.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {values.descriptionsImage.map((url, idx) => (
-                            <div key={idx} className="relative">
-                                <img
-                                    src={url}
-                                    alt={`Description image ${idx + 1}`}
-                                    className="w-24 h-24 object-cover rounded-lg border border-gray-700"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const newImages = values.descriptionsImage?.filter((_, i) => i !== idx) || [];
-                                        setValues(prev => ({ ...prev, descriptionsImage: newImages }));
-                                    }}
-                                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
-                                >
-                                    ×
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Sizes & Colors */}
-            <div className="mt-4">
-                <button
-                    type="button"
-                    onClick={() => setShowVariants((prev) => !prev)}
-                    className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-medium"
-                >
-                    {showVariants ? 'Hide Sizes & Colors' : 'Manage Sizes & Colors'}
-                </button>
-
-                {showVariants && (
-                    <div className="mt-4">
-                        <ProductVariants
-                            sizes={values.sizes || []}
-                            colors={values.colors || []}
-                            onChange={({ sizes, colors }) =>
-                                setValues((prev) => ({ ...prev, sizes, colors }))
-                            }
-                        />
-                    </div>
-                )}
-            </div>
-
-            {/* Bundles & Promotions Section */}
-            <div className="mt-4">
-                <button
-                    type="button"
-                    onClick={() => setShowBundles((prev) => !prev)}
-                    className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-medium"
-                >
-                    {showBundles ? 'Hide Bundles & Promotions' : 'Manage Bundles & Promotions'}
-                </button>
-
-                {showBundles && (
-                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 mb-4">
-                            <input
-                                type="checkbox"
-                                id="bundleEnabled"
-                                checked={values.bundles?.enabled || false}
-                                onChange={(e) => {
-                                    if (!e.target.checked) {
-                                        // Remove bundles when disabled
-                                        const newValues = { ...values };
-                                        delete newValues.bundles;
-                                        setValues(newValues);
-                                    } else {
-                                        // Create a new bundle with default values
-                                        setValues({
-                                            ...values,
-                                            bundles: createBundleObject('buy_x_get_y', { buyQuantity: 0 })
-                                        });
-                                    }
-                                }}
-                                className="w-4 h-4 rounded text-brand-blue focus:ring-brand-blue"
-                            />
-                            <label htmlFor="bundleEnabled" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Enable Bundle/Promotion
-                            </label>
-                        </div>
-
-                        {values.bundles?.enabled && (
-                            <div className="space-y-4">
-                                {/* Bundle Type */}
-                                <div>
-                                    <label className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2 block">
-                                        Promotion Type
-                                    </label>
-                                    <select
-                                        value={values.bundles.type}
-                                        onChange={(e) => {
-                                            const type = e.target.value as 'buy_x_get_y' | 'special_price' | 'percentage_off';
-                                            setValues({
-                                                ...values,
-                                                bundles: createBundleObject(type, {
-                                                    buyQuantity: values.bundles?.buyQuantity
-                                                })
-                                            });
-                                        }}
-                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue"
-                                    >
-                                        <option value="buy_x_get_y">Buy X Get Y Free</option>
-                                        <option value="special_price">Special Bundle Price</option>
-                                        <option value="percentage_off">Percentage Off</option>
-                                    </select>
-                                </div>
-
-                                {/* Buy X Get Y */}
-                                {values.bundles.type === 'buy_x_get_y' && (
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input
-                                            label={t('buyQuantity') || "Buy Quantity (e.g., 2)"}
-                                            name="buyQuantity"
-                                            type="number"
-                                            min="1"
-                                            value={String(values.bundles.buyQuantity || '')}
-                                            onChange={(e) => {
-                                                setValues({
-                                                    ...values,
-                                                    bundles: createBundleObject('buy_x_get_y', {
-                                                        buyQuantity: Number(e.target.value),
-                                                        getQuantity: values.bundles?.getQuantity
-                                                    })
-                                                });
-                                            }}
-                                            placeholder="2"
-                                        />
-                                        <Input
-                                            label={t('getQuantity') || "Get Quantity Free (e.g., 1)"}
-                                            name="getQuantity"
-                                            type="number"
-                                            min="1"
-                                            value={String(values.bundles.getQuantity || '')}
-                                            onChange={(e) => {
-                                                setValues({
-                                                    ...values,
-                                                    bundles: createBundleObject('buy_x_get_y', {
-                                                        buyQuantity: values.bundles?.buyQuantity,
-                                                        getQuantity: Number(e.target.value)
-                                                    })
-                                                });
-                                            }}
-                                            placeholder="1"
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Special Price */}
-                                {values.bundles.type === 'special_price' && (
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input
-                                            label={t('buyQuantity') || "Buy Quantity (e.g., 2)"}
-                                            name="buyQuantity"
-                                            type="number"
-                                            min="1"
-                                            value={String(values.bundles.buyQuantity || '')}
-                                            onChange={(e) => {
-                                                setValues({
-                                                    ...values,
-                                                    bundles: createBundleObject('special_price', {
-                                                        buyQuantity: Number(e.target.value),
-                                                        specialPrice: values.bundles?.specialPrice
-                                                    })
-                                                });
-                                            }}
-                                            placeholder="2"
-                                        />
-                                        <Input
-                                            label={t('specialPrice') || "Special Price (e.g., 10.00)"}
-                                            name="specialPrice"
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={String(values.bundles.specialPrice || '')}
-                                            onChange={(e) => {
-                                                setValues({
-                                                    ...values,
-                                                    bundles: createBundleObject('special_price', {
-                                                        buyQuantity: values.bundles?.buyQuantity,
-                                                        specialPrice: Number(e.target.value)
-                                                    })
-                                                });
-                                            }}
-                                            placeholder="10.00"
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Percentage Off */}
-                                {values.bundles.type === 'percentage_off' && (
-                                    <Input
-                                        label={t('percentageOff') || "Discount Percentage (e.g., 20)"}
-                                        name="percentageOff"
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value={String(values.bundles.percentageOff || '')}
-                                        onChange={(e) => {
-                                            setValues({
-                                                ...values,
-                                                bundles: createBundleObject('percentage_off', {
-                                                    buyQuantity: values.bundles?.buyQuantity,
-                                                    percentageOff: Number(e.target.value)
-                                                })
-                                            });
-                                        }}
-                                        placeholder="20"
-                                    />
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
+            <VariantsAndBundles
+                values={values}
+                setValues={setValues}
+                showVariants={showVariants}
+                setShowVariants={setShowVariants}
+                showBundles={showBundles}
+                setShowBundles={setShowBundles}
+                createBundleObject={createBundleObject}
+                Input={Input}
+            />
 
             {/* Submit Button */}
             <button
@@ -597,42 +240,5 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                     : t('create')}
             </button>
         </form>
-    );
-}
-
-/* Reusable Input */
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-    error?: string;
-}
-
-function Input({ label, error, ...props }: InputProps) {
-    return (
-        <label className="flex flex-col gap-1">
-            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">{label}</span>
-            <input
-                className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${error ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition`}
-                {...props}
-            />
-            {error && <span className="text-red-500 text-sm">{error}</span>}
-        </label>
-    );
-}
-
-/* Reusable Textarea */
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-    label: string;
-}
-
-function Textarea({ label, ...props }: TextareaProps) {
-    return (
-        <label className="flex flex-col gap-1">
-            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">{label}</span>
-            <textarea
-                className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition resize-none"
-                rows={4}
-                {...props}
-            />
-        </label>
     );
 }

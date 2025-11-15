@@ -18,6 +18,7 @@ const Trust: React.FC = () => {
     const surfaceColor = selectedStore.theme?.surfaceColor || '#fff1f5';
     const surfaceGradient = `linear-gradient(170deg, ${surfaceColor} 0%, #ffffff 70%)`;
     const storeLanguage = selectedStore.language || 'en';
+    const isArabic = storeLanguage.toLowerCase().startsWith('ar');
 
     const features = [
         {
@@ -41,7 +42,7 @@ const Trust: React.FC = () => {
     ];
 
     return (
-        <div className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ background: surfaceGradient }}>
+        <div className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ background: surfaceGradient }} dir={isArabic ? 'rtl' : undefined}>
             {/* Decorative circles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div 
@@ -61,7 +62,7 @@ const Trust: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-12 sm:mb-16"
+                    className={`text-center mb-12 sm:mb-16`}
                 >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -85,7 +86,7 @@ const Trust: React.FC = () => {
                         whileInView={{ scaleX: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="h-1 w-20 sm:w-24 mx-auto rounded-full"
+                        className={`h-1 w-20 sm:w-24 mx-auto rounded-full`}
                         style={{ backgroundColor: primaryColor }}
                     />
                 </motion.div>
@@ -102,7 +103,7 @@ const Trust: React.FC = () => {
                             transition: { staggerChildren: 0.15 },
                         },
                     }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                    className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 ${isArabic ? 'text-right' : ''}`}
                 >
                     {features.map((feature, index) => (
                         <motion.div
@@ -143,16 +144,14 @@ const Trust: React.FC = () => {
                 </motion.div>
                 
                 {/* Bottom CTA */}
+                {/* Bottom CTA (trust message removed as requested) */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 }}
-                    className="text-center mt-12 sm:mt-16"
+                    className={`text-center mt-12 sm:mt-16`}
                 >
-                    <p className="text-base sm:text-lg text-gray-600 mb-6">
-                        {getStoreTranslation("trustMessage", storeLanguage) || "Join thousands of satisfied customers"}
-                    </p>
                     <motion.a
                         href="#products"
                         whileHover={{ scale: 1.05 }}
@@ -161,7 +160,7 @@ const Trust: React.FC = () => {
                         style={{ backgroundColor: primaryColor }}
                     >
                         {getStoreTranslation("shopNow", storeLanguage)}
-                        <span className="text-xl">→</span>
+                        <span className="text-xl">{isArabic ? '←' : '→'}</span>
                     </motion.a>
                 </motion.div>
             </div>

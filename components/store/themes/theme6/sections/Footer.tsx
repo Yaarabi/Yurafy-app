@@ -1,7 +1,6 @@
 import React from 'react';
 import { useStore } from '@/components/store/hooks/useStore'; 
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
-import { Palette } from 'lucide-react';
 import GeometricDecorations from '../../shared/GeometricDecorations';
 import { getStoreTranslation } from '../../../utils/translations';
 
@@ -73,11 +72,8 @@ const Footer: React.FC = () => {
                                 <img
                                     src={selectedStore.logoUrl}
                                     alt={`${brandName} logo`}
-                                    className="h-12 w-auto object-contain mb-4"
+                                    className="h-12 w-auto object-contain mb-4 rounded-full"
                                 />
-                                <div className="absolute -top-1 -right-1">
-                                    <Palette className="w-4 h-4 text-white" />
-                                </div>
                             </div>
                         ) : (
                             <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">{brandName}</h3>
@@ -116,8 +112,10 @@ const Footer: React.FC = () => {
                     <p className="text-center text-sm text-white/80">
                         &copy; {new Date().getFullYear()} {brandName}. {getStoreTranslation("allRightsReserved", storeLanguage)}
                     </p>
-                    <p className="text-center text-xs text-white/60 mt-2">
-                        Powered by Yurafy
+                    <p className="text-center text-xs text-white/80 mt-2">
+                        <a href="https://yurafy.com" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+                            Powered by Yurafy
+                        </a>
                     </p>
                 </div>
             </div>

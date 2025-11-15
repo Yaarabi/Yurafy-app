@@ -82,10 +82,8 @@ const Header: React.FC = () => {
                                 <img
                                     src={selectedStore.logoUrl}
                                     alt={`${selectedStore.brandName} logo`}
-                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
+                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0 rounded-full"
                                 />
-                                {/* Tech Badge */}
-                                <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500 border border-white animate-pulse"></div>
                             </div>
                         )}
                         <div className="flex flex-col">

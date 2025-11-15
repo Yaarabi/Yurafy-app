@@ -31,7 +31,7 @@ const Header: React.FC = () => {
                             <img
                                 src={selectedStore.logoUrl}
                                 alt={`${selectedStore.brandName} logo`}
-                                className="h-10 w-auto object-contain"
+                                className="h-10 w-auto object-contain rounded-full"
                             />
                         ) : (
                             <h1 className="text-2xl font-bold text-gray-800">

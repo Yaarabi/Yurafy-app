@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Palette } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import GeometricDecorations from "../../shared/GeometricDecorations";
 import { getStoreTranslation } from "../../../utils/translations";
 
@@ -79,12 +79,8 @@ const Header: React.FC = () => {
                                 <img
                                     src={selectedStore.logoUrl}
                                     alt={`${selectedStore.brandName} logo`}
-                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0"
+                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0 rounded-full"
                                 />
-                                {/* Traditional/Handicraft Badge */}
-                                <div className="absolute -top-1 -right-1">
-                                    <Palette className="w-3 h-3 text-amber-600" />
-                                </div>
                             </div>
                         )}
                         <div className="flex flex-col">

@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import GeometricDecorations from "../../shared/GeometricDecorations";
 import { getStoreTranslation } from "../../../utils/translations";
 
@@ -81,12 +81,8 @@ const Header: React.FC = () => {
                                 <img
                                     src={selectedStore.logoUrl}
                                     alt={`${selectedStore.brandName} logo`}
-                                    className="h-8 sm:h-10 lg:h-12 w-auto object-contain"
+                                    className="h-8 sm:h-10 lg:h-12 w-auto object-contain rounded-full"
                                 />
-                                {/* Fashion Badge */}
-                                <div className="absolute -top-1 -right-1">
-                                    <Sparkles className="w-3 h-3 text-rose-500" />
-                                </div>
                             </div>
                         )}
                         <div className="flex flex-col">
