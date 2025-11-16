@@ -13,26 +13,26 @@ export default function HowItWorks() {
     const steps = [
         {
             icon: Store,
-            title: "Choose Your Plan",
-            description: "Select the perfect plan for your business needs - from Free to Visionary.",
+            title: t('step1.title'),
+            description: t('step1.description'),
             color: "text-blue-600",
         },
         {
             icon: MessageCircle,
-            title: "Set Up Your Store",
-            description: "Create your store with custom branding, domain, and theme in minutes.",
+            title: t('step2.title'),
+            description: t('step2.description'),
             color: "text-blue-600",
         },
         {
             icon: Bot,
-            title: "Enable Automation",
-            description: "Connect WhatsApp and activate AI agents for automated customer support.",
+            title: t('step3.title'),
+            description: t('step3.description'),
             color: "text-blue-600",
         },
         {
             icon: Zap,
-            title: "Start Selling",
-            description: "Add products, generate content with AI, and start accepting orders.",
+            title: t('step4.title'),
+            description: t('step4.description'),
             color: "text-blue-600",
         },
     ];
@@ -96,7 +96,7 @@ export default function HowItWorks() {
                     transition={{ delay: 0.1 }}
                     className="text-gray-600 mb-12 text-lg"
                 >
-                    Get started in four simple steps
+                    {t('subtitle')}
                 </motion.p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -132,7 +132,7 @@ export default function HowItWorks() {
                         className="text-white px-8 py-3 rounded-lg hover:opacity-90 transition font-semibold shadow-lg"
                         style={{ backgroundColor: 'var(--brand-blue)' }}
                     >
-                        Get Started Now
+                        {t('cta')}
                     </button>
                 </motion.div>
             </div>

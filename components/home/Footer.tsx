@@ -7,6 +7,8 @@ export default function Footer() {
     const t = useTranslations("Footer");
     const params = useParams();
     const locale = params.locale || 'en';
+    const url = `https://wa.me/0716413605?text=Bonjour,%20je%20veux%20plus%20le%20d'informations!:%20`;
+
 
     return (
         <footer className="bg-gray-900 text-gray-200 pt-16 pb-6">
@@ -33,7 +35,7 @@ export default function Footer() {
                     <li><a href={`/${params.locale}#features`} className="hover:text-white">{t("navigation.products")}</a></li>
                     <li><a href={`/${params.locale}#pricing`} className="hover:text-white">{t("navigation.pricing")}</a></li>
                     <li><a href={`/${params.locale}#about`} className="hover:text-white">{t("navigation.about")}</a></li>
-                    <li><a href={`/${params.locale}#contact`} className="hover:text-white">{t("navigation.contact")}</a></li>
+                    <li><a href={`/${locale}/login`} className="hover:text-white">Login</a></li>
                     </ul>
                 </div>
 
@@ -45,6 +47,7 @@ export default function Footer() {
                         <li><a href={`/${locale}/blog`} className="hover:text-white">{t("resources.blog")}</a></li>
                         <li><a href={`/${locale}/support`} className="hover:text-white">{t("resources.support")}</a></li>
                         <li><a href={`/${locale}/terms`} className="hover:text-white">{t("resources.terms")}</a></li>
+                        <li><a href={`/${locale}/services`} className="hover:text-white">{t("resources.services")}</a></li>
                     </ul>
                 </div>
 
@@ -78,6 +81,14 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
+            <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-green-500 hover:bg-green-600 text-white p-3 sm:p-4 rounded-full shadow-lg z-50 flex items-center justify-center transition"
+                >
+                    <FaWhatsapp className="text-lg sm:text-xl" />
+            </a>  
 
             <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
                 {t("copyright")}

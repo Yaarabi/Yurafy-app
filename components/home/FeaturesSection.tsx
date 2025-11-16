@@ -10,26 +10,26 @@ export default function FeaturesSection() {
     const features = [
         {
             icon: Store,
-            title: "Online Store",
-            description: "Create beautiful, responsive stores with custom themes and domains. Perfect for showcasing your products.",
+            title: t('feature1.title'),
+            description: t('feature1.description'),
             color: "text-blue-600",
         },
         {
             icon: MessageCircle,
-            title: "WhatsApp Automation",
-            description: "Automate customer interactions, order confirmations, and marketing campaigns through WhatsApp.",
+            title: t('feature2.title'),
+            description: t('feature2.description'),
             color: "text-blue-600",
         },
         {
             icon: Bot,
-            title: "AI Assistant",
-            description: "Intelligent 24/7 customer support with natural language understanding and multi-language support.",
+            title: t('feature3.title'),
+            description: t('feature3.description'),
             color: "text-blue-600",
         },
         {
             icon: Sparkles,
-            title: "AI Store Content",
-            description: "Generate your store description and titles by AI automatically in multiple languages.",
+            title: t('feature4.title'),
+            description: t('feature4.description'),
             color: "text-blue-600",
         },
     ];
@@ -88,7 +88,7 @@ export default function FeaturesSection() {
                     transition={{ delay: 0.1 }}
                     className="text-gray-600 mb-16 text-lg"
                 >
-                    Everything you need to grow your business in one platform
+                    {t('subtitle')}
                 </motion.p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">

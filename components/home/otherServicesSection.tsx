@@ -2,20 +2,31 @@
 
 import { motion } from 'framer-motion';
 import { Code, Globe, Smartphone, Palette, Zap, Shield } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useMessages, useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function ServicesSection() {
     const t = useTranslations('OtherServicesSection');
+    const locale = useLocale();
+    const messages = useMessages() as any;
     const router = useRouter();
     const params = useParams();
+    const isRTL = locale === 'ar';
+
+    const getFeatures = (serviceKey: 'service1' | 'service2' | 'service3'): string[] => {
+        const base = messages?.OtherServicesSection?.[serviceKey]?.features;
+        if (!base || typeof base !== 'object') return [];
+        return Object.keys(base)
+            .sort((a, b) => Number(a) - Number(b))
+            .map((k) => String(base[k]));
+    };
 
     const services = [
         {
             icon: Code,
             title: t('service1.title'),
             description: t('service1.description'),
-            features: ['Custom Design', 'Responsive Layout', 'Fast Performance', 'SEO Optimized'],
+            features: getFeatures('service1'),
             color: 'from-blue-500 to-cyan-500',
             bgColor: 'bg-blue-50',
         },
@@ -23,7 +34,7 @@ export default function ServicesSection() {
             icon: Globe,
             title: t('service2.title'),
             description: t('service2.description'),
-            features: ['AI Integration', 'Content Generation', 'Smart Automation', 'Multi-language'],
+            features: getFeatures('service2'),
             color: 'from-blue-500 to-blue-600',
             bgColor: 'bg-blue-50',
         },
@@ -31,7 +42,7 @@ export default function ServicesSection() {
             icon: Smartphone,
             title: t('service3.title'),
             description: t('service3.description'),
-            features: ['Mobile-First', 'WhatsApp Integration', 'Social Media', 'Real-time Updates'],
+            features: getFeatures('service3'),
             color: 'from-green-500 to-emerald-500',
             bgColor: 'bg-green-50',
         },
@@ -90,7 +101,7 @@ export default function ServicesSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    className={`text-center mb-16 ${isRTL ? 'rtl' : ''}`}
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-4 text-blue-600">
                         {t('title')}
@@ -112,10 +123,10 @@ export default function ServicesSection() {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: i * 0.15 }}
                                 whileHover={{ y: -10, scale: 1.02 }}
-                                className={`relative ${service.bgColor} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-400 group`}
+                                className={`relative ${service.bgColor} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-400 group ${isRTL ? 'text-right' : ''}`}
                             >
                                 {/* Icon */}
-                                <div className={`mb-6 p-4 rounded-2xl bg-gradient-to-br ${service.color} w-fit group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`mb-6 p-4 rounded-2xl bg-gradient-to-br ${service.color} w-fit group-hover:scale-110 transition-transform duration-300 ${isRTL ? 'ml-auto' : ''}`}>
                                     <Icon className="w-8 h-8 text-white" />
                                 </div>
                                 
@@ -128,11 +139,11 @@ export default function ServicesSection() {
                                 </p>
 
                                 {/* Features */}
-                                <ul className="space-y-2 mb-6">
+                                <ul className={`space-y-2 mb-6 ${isRTL ? 'pr-1' : ''}`}>
                                     {service.features.map((feature, idx) => (
-                                        <li key={idx} className="flex items-center gap-2 text-sm text-gray-700">
+                                        <li key={idx} className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                             <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${service.color}`}></div>
-                                            {feature}
+                                            <span>{feature}</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -142,7 +153,7 @@ export default function ServicesSection() {
                                     onClick={handleContact}
                                     className={`w-full py-3 rounded-lg font-semibold bg-gradient-to-r ${service.color} text-white hover:shadow-lg transform hover:scale-105 transition-all duration-200`}
                                 >
-                                    Get Started
+                                    {t('cta.contact')}
                                 </button>
                             </motion.div>
                         );
@@ -157,9 +168,9 @@ export default function ServicesSection() {
                     className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
                 >
                     {[
-                        { icon: Zap, text: 'Fast Delivery', color: 'text-yellow-500' },
-                        { icon: Shield, text: 'Secure & Reliable', color: 'text-green-500' },
-                        { icon: Palette, text: 'Custom Design', color: 'text-blue-500' },
+                        { icon: Zap, text: t('highlights.fast'), color: 'text-yellow-500' },
+                        { icon: Shield, text: t('highlights.secure'), color: 'text-green-500' },
+                        { icon: Palette, text: t('highlights.design'), color: 'text-blue-500' },
                     ].map((item, i) => {
                         const ItemIcon = item.icon;
                         return (
@@ -169,7 +180,7 @@ export default function ServicesSection() {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.3 + i * 0.1 }}
-                                className="flex items-center justify-center gap-3 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                                className={`flex items-center justify-center gap-3 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow ${isRTL ? 'flex-row-reverse text-right' : ''}`}
                             >
                                 <ItemIcon className={`w-6 h-6 ${item.color}`} />
                                 <span className="font-semibold text-gray-700">{item.text}</span>

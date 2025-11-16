@@ -35,7 +35,7 @@ export default function SupportPage() {
             title: t("phone.title"),
             description: t("phone.description"),
             action: t("phone.action"),
-            link: "tel:+212600000000",
+            link: "tel:+212716413605",
             color: "from-green-500 to-emerald-500",
         },
     ];

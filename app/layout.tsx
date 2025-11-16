@@ -143,9 +143,53 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const structuredWebsite = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': `${baseUrl}#website`,
+        url: baseUrl,
+        name: 'Yurafy',
+        potentialAction: {
+            '@type': 'SearchAction',
+            target: `${baseUrl}/search?query={search_term_string}`,
+            'query-input': 'required name=search_term_string',
+        },
+    };
+
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': `${baseUrl}#organization`,
+        name: 'Yurafy',
+        url: baseUrl,
+        logo: `${baseUrl}/logo.png`,
+        sameAs: [
+            'https://facebook.com/yurafy',
+            'https://instagram.com/yurafy',
+            'https://linkedin.com/company/yurafy',
+            'https://twitter.com/yurafy',
+        ],
+        contactPoint: {
+            '@type': 'ContactPoint',
+            telephone: '+212-716413605',
+            contactType: 'Customer Service',
+            areaServed: 'MA',
+            availableLanguage: ['English', 'French', 'Arabic'],
+        },
+    };
+
     return (
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                {/* Global Schema.org JSON-LD */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredWebsite) }}
+                />
                 <Providers>{children}</Providers>
                 <Toaster />
             </body>

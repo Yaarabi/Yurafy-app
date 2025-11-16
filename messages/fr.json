@@ -8,7 +8,24 @@
         "highlight4": "Plateforme complète d'automatisation commerciale des pages produits à la communication client"
     },
     "FeaturesSection": {
-        "title": "Automatisation Tout-en-Un pour les Vendeurs"
+        "title": "Automatisation Tout-en-Un pour les Vendeurs",
+        "subtitle": "Tout ce dont vous avez besoin pour développer votre entreprise en une seule plateforme",
+        "feature1": {
+            "title": "Boutique en Ligne",
+            "description": "Créez votre boutique en ligne professionnelle avec un design moderne et des fonctionnalités e-commerce complètes."
+        },
+        "feature2": {
+            "title": "Automatisation WhatsApp",
+            "description": "Automatisez vos communications WhatsApp et gérez les conversations clients avec l'IA pour des réponses instantanées."
+        },
+        "feature3": {
+            "title": "Assistant IA",
+            "description": "Agent IA intelligent qui répond aux questions des clients, traite les commandes et fournit des recommandations de produits."
+        },
+        "feature4": {
+            "title": "Contenu Généré par IA",
+            "description": "Générez automatiquement des descriptions de produits, des images et du contenu marketing optimisé par l'IA."
+        }
     },
     "Footer": {
         "companyName": "Yurafy",
@@ -26,7 +43,8 @@
         "resources": "Ressources",
         "blog": "Blog",
         "support": "Support",
-        "terms": "Conditions & Confidentialité"
+        "terms": "Conditions & Confidentialité",
+        "services": "Services"
         },
         "contact": {
         "title": "Contactez-Nous",
@@ -51,46 +69,140 @@
     },
     "HowItWorks": {
         "title": "Comment Ça Marche",
+        "subtitle": "Commencez en quatre étapes simples",
         "step1": {
-        "title": "Connectez Votre Compte",
-        "description": "Liez vos comptes Instagram Business et WhatsApp Business en quelques clics."
+            "title": "Choisissez Votre Plan",
+            "description": "Sélectionnez le plan parfait pour votre entreprise. Commencez avec notre essai gratuit et passez à une version supérieure quand vous êtes prêt."
         },
         "step2": {
-        "title": "Ajoutez Vos Produits",
-        "description": "Téléchargez vos images et informations de produits. Notre IA génère automatiquement descriptions et légendes."
+            "title": "Configurez Votre Boutique",
+            "description": "Créez votre boutique en ligne avec notre configurateur facile. Ajoutez des produits, personnalisez le design et intégrez WhatsApp."
         },
         "step3": {
-        "title": "Programmez les Publications",
-        "description": "Choisissez quand et où publier — posts Instagram ou messages WhatsApp — et laissez l'IA faire le reste."
+            "title": "Activez l'Automatisation",
+            "description": "Configurez votre agent IA pour gérer les conversations clients, traiter les commandes et fournir une assistance 24h/24 et 7j/7."
         },
         "step4": {
-        "title": "Développez & Suivez",
-        "description": "Suivez l'engagement, la portée et les ventes avec des tableaux de bord analytiques intégrés."
-        }
+            "title": "Commencez à Vendre",
+            "description": "Lancez votre boutique et commencez à vendre. Suivez les performances, engagez les clients et développez votre entreprise."
+        },
+        "cta": "Commencer Maintenant"
     },
     "OtherServicesSection": {
         "title": "Transformez Votre Entreprise avec des Solutions Web Personnalisées",
         "subtitle": "Vous cherchez un site web entièrement personnalisé ? Notre équipe d'experts construit des sites web magnifiques et réactifs adaptés à votre marque unique et aux besoins de votre entreprise. Du concept au lancement, nous livrons des expériences web exceptionnelles qui génèrent des résultats.",
         "service1": {
         "title": "Développement Web Sur Mesure",
-        "description": "Sites web professionnels et réactifs construits à partir de zéro. Nous créons des sites rapides, optimisés pour le SEO qui représentent parfaitement votre marque et convertissent les visiteurs en clients."
+        "description": "Sites web professionnels et réactifs construits à partir de zéro. Nous créons des sites rapides, optimisés pour le SEO qui représentent parfaitement votre marque et convertissent les visiteurs en clients.",
+        "features": {
+            "0": "Design personnalisé",
+            "1": "Mise en page responsive",
+            "2": "Performance rapide",
+            "3": "Optimisé SEO"
+        }
         },
         "service2": {
         "title": "Solutions Pilotées par l'IA",
-        "description": "Intégrez l'IA de pointe pour automatiser les flux de travail, générer du contenu et fournir des interactions client intelligentes qui s'adaptent à votre entreprise."
+        "description": "Intégrez l'IA de pointe pour automatiser les flux de travail, générer du contenu et fournir des interactions client intelligentes qui s'adaptent à votre entreprise.",
+        "features": {
+            "0": "Intégration IA",
+            "1": "Génération de contenu",
+            "2": "Automatisation intelligente",
+            "3": "Multilingue"
+        }
         },
         "service3": {
         "title": "Automatisation Commerciale",
-        "description": "Connectez vos applications, réseaux sociaux et canaux de communication en un système automatisé transparent qui fonctionne 24/7 pour développer votre entreprise."
+        "description": "Connectez vos applications, réseaux sociaux et canaux de communication en un système automatisé transparent qui fonctionne 24/7 pour développer votre entreprise.",
+        "features": {
+            "0": "Priorité au mobile",
+            "1": "Intégration WhatsApp",
+            "2": "Réseaux sociaux",
+            "3": "Mises à jour en temps réel"
+        }
+        },
+        "highlights": {
+        "fast": "Livraison rapide",
+        "secure": "Sécurisé & fiable",
+        "design": "Design personnalisé"
         },
         "cta": {
         "contact": "Commencer"
         }
     },
     "PlansSection": {
-    "title": "Des Plans Flexibles pour Votre Entreprise",
-    "mostPopular": "⭐ Le plus populaire",
-    "choosePlan": "Choisir le Plan"
+        "title": "Des Plans Flexibles pour Votre Entreprise",
+        "subtitle": "Choisissez le plan parfait pour les besoins de votre entreprise",
+        "popular": "Populaire",
+        "bestValue": "Meilleure Valeur",
+        "choosePlan": "Choisir le Plan",
+        "getStartedFree": "Commencer Gratuitement",
+        "perMonth": "mois",
+        "free": {
+            "name": "Gratuit",
+            "price": "0",
+            "description": "Testez toutes les fonctionnalités avec une utilisation limitée.",
+            "features": {
+                "0": "5 Produits",
+                "1": "10 Commandes",
+                "2": "Support Basique"
+            }
+        },
+        "starter": {
+            "name": "Débutant",
+            "price": "13",
+            "description": "Configuration de boutique de base avec marque et domaine.",
+            "features": {
+                "0": "500 Commandes",
+                "1": "Domaine Personnalisé",
+                "2": "Thème Personnalisé",
+                "3": "Outils SEO"
+            }
+        },
+        "whatsapp": {
+            "name": "Automatisation WhatsApp",
+            "price": "11",
+            "description": "Automatisez la messagerie avec l'API WhatsApp Cloud.",
+            "features": {
+                "0": "500 Contacts",
+                "1": "Réponses Auto",
+                "2": "Modèles",
+                "3": "Diffusions"
+            }
+        },
+        "aiAgent": {
+            "name": "Agent IA WhatsApp",
+            "price": "21",
+            "description": "Automatisation + assistant WhatsApp alimenté par l'IA.",
+            "features": {
+                "0": "1000 Contacts",
+                "1": "Assistant IA",
+                "2": "Réponses Intelligentes",
+                "3": "Multilingue"
+            }
+        },
+        "proSeller": {
+            "name": "Vendeur Pro",
+            "price": "27",
+            "description": "Débutant + Automatisation WhatsApp pour vendeurs sérieux.",
+            "features": {
+                "0": "1500 Commandes",
+                "1": "Boutique + WhatsApp",
+                "2": "2000 Contacts",
+                "3": "Support Prioritaire"
+            }
+        },
+        "visionary": {
+            "name": "Visionnaire",
+            "price": "50",
+            "description": "Vendeur Pro + Agent IA pour une mise à l'échelle complète.",
+            "features": {
+                "0": "Commandes Illimitées",
+                "1": "Toutes les Fonctionnalités",
+                "2": "Agent IA",
+                "3": "Support Prioritaire"
+            }
+        }
     },
     "TestimonialsSection": {
         "title": "Ce Que Nos Clients Disent",
@@ -788,7 +900,7 @@
         },
         "faq4": {
             "question": "Puis-je personnaliser le design de mon magasin ?",
-            "answer": "Oui ! Yurafy propose plusieurs thèmes préconçus et vous permet de personnaliser les couleurs, les polices et les mises en page. Pour les plans Pro Seller et Visionary, vous pouvez également ajouter du CSS et JavaScript personnalisés pour un contrôle de design complet."
+            "answer": "Oui ! Yurafy propose plusieurs thèmes préconçus et vous permet de personnaliser les couleurs, les polices et les mises en page."
         },
         "faq5": {
             "question": "Comment fonctionne l'automatisation WhatsApp ?",
@@ -807,6 +919,8 @@
         "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
         "chat": {
             "title": "Chat de Support",
+            "description": "Discutez avec notre équipe de support en temps réel. Obtenez une aide instantanée pour toutes vos questions.",
+            "action": "Démarrer le Chat",
             "subtitle": "Nous sommes là pour vous aider 24/7",
             "empty": {
                 "title": "Pas encore de messages",
@@ -989,6 +1103,64 @@
         "popular": "Le Plus Populaire",
         "priceNote": "Paiement unique",
         "getStarted": "Commencer",
+        "basicStore": {
+            "type": "Boutique Basique",
+            "description": "Liste de produits, formulaire COD, tableau de bord (sans automatisation)",
+            "features": {
+                "catalog": "Catalogue de produits",
+                "checkout": "Formulaire de paiement COD",
+                "dashboard": "Tableau de bord administrateur basique",
+                "responsive": "Design responsive mobile",
+                "seo": "Optimisation SEO"
+            }
+        },
+        "whatsappAuto": {
+            "type": "Boutique + Réponse Auto WhatsApp",
+            "description": "Configuration API WhatsApp, modèles, messages de confirmation",
+            "features": {
+                "basic": "Tout de Boutique Basique",
+                "api": "Configuration API WhatsApp Business",
+                "templates": "Modèles de messages automatisés",
+                "confirmation": "Confirmation de commande via WhatsApp",
+                "notifications": "Notifications clients"
+            }
+        },
+        "deliveryApi": {
+            "type": "Boutique + Intégration API Livraison",
+            "description": "Connecter la boutique à Ameex, Ozon ou autre société",
+            "features": {
+                "basic": "Tout de Boutique Basique",
+                "integration": "Intégration société de livraison",
+                "labels": "Étiquettes d'expédition automatisées",
+                "tracking": "Suivi en temps réel",
+                "bulk": "Traitement de commandes en masse"
+            }
+        },
+        "fullCod": {
+            "type": "Système COD Complet (Automatisation)",
+            "description": "Boutique + WhatsApp + livraison + tableau de bord",
+            "features": {
+                "complete": "Solution e-commerce complète",
+                "whatsapp": "Automatisation WhatsApp",
+                "delivery": "Intégration API livraison",
+                "team": "Gestion d'équipe",
+                "analytics": "Tableau de bord analytique avancé",
+                "orders": "Système de gestion des commandes",
+                "payment": "Suivi des paiements"
+            }
+        },
+        "aiAgent": {
+            "type": "Intégration Agent IA WhatsApp",
+            "description": "Agent OpenAI ou Dialogflow personnalisé, gestion et formation",
+            "features": {
+                "fullCod": "Tout du Système COD Complet",
+                "chatbot": "Chatbot IA personnalisé (OpenAI/Dialogflow)",
+                "nlu": "Compréhension du langage naturel",
+                "support": "Support client automatisé",
+                "orderChat": "Gestion des commandes via chat",
+                "training": "Formation et optimisation de l'agent"
+            }
+        },
         "cta": {
             "title": "Prêt à Démarrer Votre Projet ?",
             "subtitle": "Contactez-nous aujourd'hui pour une consultation et un devis gratuits",

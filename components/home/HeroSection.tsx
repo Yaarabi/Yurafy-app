@@ -197,7 +197,7 @@ export default function HeroSection() {
                     >
                         <div className="flex flex-col items-center md:items-start mb-6">
                             <Image
-                                src="/logo.png"
+                                src="/favi.png"
                                 alt={t('logoAlt')}
                                 width={100}
                                 height={50}
@@ -234,19 +234,19 @@ export default function HeroSection() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.7 }}
-                        className="flex-1 w-full order-first md:order-none"
+                        className="flex-1 w-full max-w-2xl mx-auto order-first md:order-none"
                     >
-                        <div className="relative w-full h-[280px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
+                        <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:h-[450px] lg:h-[500px] md:aspect-auto">
                             <Image
                                 src="/uihome.png"
                                 alt={t('dashboardAlt')}
                                 fill
                                 className="object-contain rounded-xl shadow-2xl"
                             />
-                            <div className="absolute bottom-4 left-4 flex gap-4 text-2xl text-white/90">
-                                <FaInstagram className="hover:scale-110 transition-transform" />
-                                <FaWhatsapp className="hover:scale-110 transition-transform" />
-                                <FaChartLine className="hover:scale-110 transition-transform" />
+                            <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 flex gap-2 sm:gap-4 text-lg sm:text-2xl text-white/90">
+                                <FaInstagram className="hover:scale-110 transition-transform cursor-pointer" />
+                                <FaWhatsapp className="hover:scale-110 transition-transform cursor-pointer" />
+                                <FaChartLine className="hover:scale-110 transition-transform cursor-pointer" />
                             </div>
                         </div>
                     </motion.div>

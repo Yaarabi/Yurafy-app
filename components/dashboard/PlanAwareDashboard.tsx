@@ -211,7 +211,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             animate={{ opacity: 1, scale: 1 }}
                             className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between min-w-0">
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.totalRevenue')}</p>
                                     <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
@@ -231,10 +231,10 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             animate={{ opacity: 1, scale: 1 }}
                             className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between min-w-0">
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.products')}</p>
-                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                                         {statistics.productsCount}
                                     </p>
                                 </div>
@@ -251,10 +251,10 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             animate={{ opacity: 1, scale: 1 }}
                             className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between min-w-0">
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.orders')}</p>
-                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                                         {statistics.ordersCount}
                                     </p>
                                 </div>
@@ -271,10 +271,10 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             animate={{ opacity: 1, scale: 1 }}
                             className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
                         >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between min-w-0">
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{t('stats.templates')}</p>
-                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
                                         {templatesCount}
                                     </p>
                                 </div>
@@ -291,7 +291,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Revenue Chart - Only for plans with orders */}
                 {hasOrders ? (
-                    <RevenueChart orders={orders} />
+                    <div className="min-w-0"><RevenueChart orders={orders} /></div>
                 ) : (
                     <PlanLockedCard
                         title="Revenue Chart"
@@ -302,7 +302,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
 
                 {/* Orders Status Chart - Only for plans with orders */}
                 {hasOrders ? (
-                    <OrdersStatusChart orders={orders} />
+                    <div className="min-w-0"><OrdersStatusChart orders={orders} /></div>
                 ) : (
                     <PlanLockedCard
                         title="Orders Status"
@@ -315,7 +315,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Products Chart - Only for store plans */}
                 {isStorePlan ? (
-                    <TopProductsChart products={products as DashboardProduct[]} />
+                    <div className="min-w-0"><TopProductsChart products={products as DashboardProduct[]} /></div>
                 ) : (
                     <PlanLockedCard
                         title="Top Products"
@@ -326,7 +326,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
 
                 {/* Customers Chart - Only for plans with orders or whatsapp */}
                 {hasOrders || isWhatsAppPlan ? (
-                    <CustomersChart />
+                    <div className="min-w-0"><CustomersChart /></div>
                 ) : (
                     <PlanLockedCard
                         title="Customers"

@@ -2,10 +2,14 @@
 
 import BrandHeader from '@/components/login/brandHeader';
 import Footer from '@/components/login/footer';
-import SignupForm from '@/components/login/signUpForm';
+// Temporarily disabled: Signup form under maintenance
+// import SignupForm from '@/components/login/signUpForm';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 export default function SignupPage() {
+    const router = useRouter();
     return (
         <div className="min-h-screen relative overflow-hidden flex flex-col justify-center items-center px-4" style={{ backgroundColor: '#f0f9ff' }}>
             {/* Background decorations */}
@@ -82,7 +86,20 @@ export default function SignupPage() {
             </motion.div>
             
             <div className="relative z-10 w-full max-w-md">
-                <SignupForm />
+                {/* Back button */}
+                <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="mb-4 inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                </button>
+                {/* Signup temporarily unavailable: feature under maintenance */}
+                <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 p-4 dark:border-blue-900/50 dark:bg-blue-950/40 dark:text-blue-200">
+                    <p className="font-semibold">Signup is under maintenance</p>
+                    <p className="text-sm opacity-80">We're improving the experience. Please check back soon.</p>
+                </div>
                 <Footer />
             </div>
         </div>
