@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
         const recentUsers = await User.find({ role: { $ne: 'admin' } }).sort({ createdAt: -1 }).limit(5).select('username email createdAt');
         const recentServices = await ServiceInquiry.find({}).sort({ createdAt: -1 }).limit(5)
-            .select('fullName email serviceType status createdAt');
+            .select('fullName email serviceType domainOfWork status createdAt');
 
         return NextResponse.json({
             counts: { users: usersCount, stores: storesCount, orders: ordersCount, whatsappAccounts: waAccountsCount, supportMessages: supportCount },

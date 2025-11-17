@@ -24,6 +24,7 @@ interface ServiceInquiry {
     phoneNumber: string;
     email: string;
     serviceType: string;
+    domainOfWork?: string;
     message?: string;
     status: 'new' | 'contacted' | 'converted' | 'closed';
     createdAt: string;
@@ -231,6 +232,9 @@ export default function AdminServicesManagement() {
                                     Service
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                                    Domain
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
                                     Status
                                 </th>
                                 <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
@@ -267,6 +271,9 @@ export default function AdminServicesManagement() {
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
                                                 {inquiry.serviceType}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
+                                                {inquiry.domainOfWork || '-'}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusColors[inquiry.status]}`}>
@@ -360,6 +367,11 @@ export default function AdminServicesManagement() {
                                         <div className="text-xl font-bold text-gray-900 dark:text-white">
                                             {selectedInquiry.serviceType}
                                         </div>
+                                        {selectedInquiry.domainOfWork && (
+                                            <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                                Domain: <span className="font-medium">{selectedInquiry.domainOfWork}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

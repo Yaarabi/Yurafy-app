@@ -26,6 +26,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
         phoneNumber: '',
         email: '',
         serviceType: initialServiceType || '',
+        domainOfWork: '',
         message: '',
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,6 +50,11 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
 
         if (!formData.serviceType) {
             newErrors.serviceType = t('form.errors.serviceType');
+        }
+
+        // domainOfWork optional: validate only length if provided
+        if (formData.domainOfWork && formData.domainOfWork.length > 100) {
+            newErrors.domainOfWork = 'Domain must not exceed 100 characters';
         }
 
         setErrors(newErrors);
@@ -85,6 +91,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                 phoneNumber: '',
                 email: '',
                 serviceType: '',
+                domainOfWork: '',
                 message: '',
             });
             setErrors({});
@@ -223,6 +230,28 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 </select>
                                 {errors.serviceType && (
                                     <p className="mt-1 text-sm text-red-500">{errors.serviceType}</p>
+                                )}
+                            </div>
+
+                            {/* Domain of Work (Optional) */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Domain of work ({t('form.optional')})
+                                </label>
+                                <input
+                                    type="text"
+                                    name="domainOfWork"
+                                    value={formData.domainOfWork}
+                                    onChange={handleInputChange}
+                                    className={`w-full px-4 py-3 border ${
+                                        errors.domainOfWork ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                                    } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                                    style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
+                                    placeholder="e.g., E-commerce, Restaurant, Electronics"
+                                    maxLength={100}
+                                />
+                                {errors.domainOfWork && (
+                                    <p className="mt-1 text-sm text-red-500">{errors.domainOfWork}</p>
                                 )}
                             </div>
 

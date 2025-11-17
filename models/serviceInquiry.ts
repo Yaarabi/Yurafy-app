@@ -5,6 +5,7 @@ export interface IServiceInquiry extends Document {
     phoneNumber: string;
     email: string;
     serviceType: string;
+    domainOfWork?: string;
     message?: string;
     status: 'new' | 'contacted' | 'converted' | 'closed';
     createdAt: Date;
@@ -44,6 +45,11 @@ const serviceInquirySchema = new Schema<IServiceInquiry>(
                 'AI WhatsApp Agent Integration',
                 'Other',
             ],
+        },
+        domainOfWork: {
+            type: String,
+            trim: true,
+            maxlength: [100, 'Domain of work must not exceed 100 characters'],
         },
         message: {
             type: String,

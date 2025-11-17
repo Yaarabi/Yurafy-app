@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
         await connectDB();
 
         const body = await request.json();
-        const { fullName, phoneNumber, email, serviceType, message } = body;
+        const { fullName, phoneNumber, email, serviceType, message, domainOfWork } = body;
 
         // Validate required fields
         if (!fullName || !phoneNumber || !email || !serviceType) {
@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
             phoneNumber,
             email,
             serviceType,
+            domainOfWork: domainOfWork?.trim() || undefined,
             message: message || '',
             status: 'new',
         });
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
                 fullName: inquiry.fullName,
                 email: inquiry.email,
                 serviceType: inquiry.serviceType,
+                domainOfWork: inquiry.domainOfWork,
             },
         }, { status: 201 });
     } catch (error: any) {
