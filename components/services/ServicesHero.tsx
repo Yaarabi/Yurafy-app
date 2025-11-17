@@ -164,7 +164,7 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                 </div>
 
                 {/* Stats Bar */}
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 1 }}
@@ -181,7 +181,7 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                             <div className="text-sm text-blue-100/80">{stat.label}</div>
                         </div>
                     ))}
-                </motion.div>
+                </motion.div> */}
             </div>
         </section>
     );
