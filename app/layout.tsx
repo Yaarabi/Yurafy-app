@@ -155,6 +155,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             target: `${baseUrl}/search?query={search_term_string}`,
             'query-input': 'required name=search_term_string',
         },
+        publisher: {
+            '@type': 'Organization',
+            '@id': `${baseUrl}#organization`,
+            name: 'Yurafy',
+            url: baseUrl,
+            logo: `${baseUrl}/logo.png`,
+        },
     };
 
     const structuredData = {
