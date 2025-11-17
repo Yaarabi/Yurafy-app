@@ -42,6 +42,7 @@ const serviceInquirySchema = new Schema<IServiceInquiry>(
                 'Store + Delivery API Integration',
                 'Full COD System (Automation)',
                 'AI WhatsApp Agent Integration',
+                'Other',
             ],
         },
         message: {

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -29,22 +30,23 @@ export default function DashboardHeader() {
         localStorage.setItem('theme', newTheme);
     };
 
+    
+
     return (
         <header className="w-full border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-300 sticky top-0 z-10 backdrop-blur-sm bg-white/95 dark:bg-gray-900/95">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-2">
                 {/* Heading */}
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                     <div className="w-1 h-6 sm:h-8 bg-[var(--brand-blue)] rounded-full"></div>
-                    <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 truncate max-w-full">
+                    <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 truncate">
                         {t('title')}
                     </h1>
                 </div>
 
                 {/* Right Section: Notifications + Toggle */}
-                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 w-full sm:w-auto justify-end">
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-none">
                     {/* Notification Bell */}
                     <NotificationBell />
-
                     {/* Dark/Light Toggle */}
                     <label className="flex items-center cursor-pointer group" title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
                         <input

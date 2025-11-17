@@ -130,7 +130,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                             : "bg-[var(--brand-blue)]/10 border-[var(--brand-blue)]/30 text-[var(--brand-blue)] dark:bg-[var(--brand-blue)]/20 dark:border-[var(--brand-blue)]/40 dark:text-[var(--brand-blue)]/80"
                     }`}
                 >
-                    <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="flex-1 min-w-0">
                             <p className="font-semibold">
                                 {isExpired
@@ -166,7 +166,7 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                                 </div>
                             )}
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-start sm:justify-end mt-2 sm:mt-0">
                             {/* Visit Store Button - Show if store exists (including free plan) */}
                             {!storeLoading && storeUrl && (
                                 <a

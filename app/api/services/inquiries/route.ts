@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
 import ServiceInquiry from '@/models/serviceInquiry';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/auth';
 
 // GET - Fetch all service inquiries (Admin only)
 export async function GET(request: NextRequest) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
 
         // Check if user is admin
         if (!session || (session.user as any)?.role !== 'admin') {
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
 // PATCH - Update inquiry status (Admin only)
 export async function PATCH(request: NextRequest) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
 
         // Check if user is admin
         if (!session || (session.user as any)?.role !== 'admin') {
@@ -163,7 +164,7 @@ export async function PATCH(request: NextRequest) {
 // DELETE - Delete an inquiry (Admin only)
 export async function DELETE(request: NextRequest) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
 
         // Check if user is admin
         if (!session || (session.user as any)?.role !== 'admin') {

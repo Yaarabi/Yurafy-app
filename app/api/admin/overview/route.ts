@@ -7,7 +7,7 @@ import Store from '@/models/store';
 import Order from '@/models/orders';
 import WhatsAppAccount from '@/models/whatsappAccount';
 import SupportMessage from '@/models/support';
-import Plan from '@/models/plan';
+import ServiceInquiry from '@/models/serviceInquiry';
 
 export async function GET(req: NextRequest) {
     try {
@@ -28,13 +28,12 @@ export async function GET(req: NextRequest) {
         ]);
 
         const recentUsers = await User.find({ role: { $ne: 'admin' } }).sort({ createdAt: -1 }).limit(5).select('username email createdAt');
-        const recentPlans = await Plan.find({}).sort({ createdAt: -1 }).limit(5)
-            .populate('userId', 'username email')
-            .select('planKey price status startDate endDate createdAt userId');
+        const recentServices = await ServiceInquiry.find({}).sort({ createdAt: -1 }).limit(5)
+            .select('fullName email serviceType status createdAt');
 
         return NextResponse.json({
             counts: { users: usersCount, stores: storesCount, orders: ordersCount, whatsappAccounts: waAccountsCount, supportMessages: supportCount },
-            recent: { users: recentUsers, plans: recentPlans },
+            recent: { users: recentUsers, services: recentServices },
         });
     } catch (err) {
         console.error('Admin overview error:', err);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Send, Bot, User, X, Loader2, Users, Search } from "lucide-react";
+import { MessageSquare, Send, Bot, User, X, Loader2, Users, Search, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Conversation {
@@ -83,6 +83,28 @@ export default function AdminSupportChat() {
             toast.error("Failed to load messages");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const deleteConversation = async (userId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!confirm("Are you sure you want to delete this conversation and all its messages?")) return;
+
+        try {
+            const response = await fetch(`/api/admin/support?userId=${userId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) throw new Error("Failed to delete conversation");
+
+            toast.success("Conversation deleted");
+            if (selectedUser === userId) {
+                setSelectedUser(null);
+            }
+            fetchConversations();
+        } catch (error) {
+            console.error("Error deleting conversation:", error);
+            toast.error("Failed to delete conversation");
         }
     };
 
@@ -180,36 +202,47 @@ export default function AdminSupportChat() {
                         </div>
                     ) : (
                         filteredConversations.map((conv) => (
-                            <motion.button
+                            <motion.div
                                 key={conv.userId}
-                                onClick={() => setSelectedUser(conv.userId)}
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                className={`w-full p-4 text-left border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                                className={`relative group border-b border-gray-200 dark:border-gray-700 ${
                                     selectedUser === conv.userId
                                         ? "bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 border-l-4 border-[var(--brand-blue)]"
                                         : ""
                                 }`}
                             >
-                                <div className="flex items-start justify-between gap-2">
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-semibold text-gray-900 dark:text-white truncate">
-                                            {conv.user?.username || 'Unknown User'}
-                                        </p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                                            {conv.user?.email || 'No email'}
-                                        </p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 line-clamp-1">
-                                            {conv.lastMessage?.text || "No messages"}
-                                        </p>
+                                <button
+                                    onClick={() => setSelectedUser(conv.userId)}
+                                    className="w-full p-4 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                >
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex-1 min-w-0 pr-8">
+                                            <p className="font-semibold text-gray-900 dark:text-white truncate">
+                                                {conv.user?.username || 'Unknown User'}
+                                            </p>
+                                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                                                {conv.user?.email || 'No email'}
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 line-clamp-1">
+                                                {conv.lastMessage?.text || "No messages"}
+                                            </p>
+                                        </div>
+                                        <div className="flex-shrink-0 text-right">
+                                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                                                {conv.count}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex-shrink-0 text-right">
-                                        <span className="text-xs text-gray-500 dark:text-gray-500">
-                                            {conv.count}
-                                        </span>
-                                    </div>
-                                </div>
-                            </motion.button>
+                                </button>
+                                <button
+                                    onClick={(e) => deleteConversation(conv.userId, e)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                    title="Delete conversation"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </motion.div>
                         ))
                     )}
                 </div>

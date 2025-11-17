@@ -20,6 +20,8 @@ export default function Sidebar() {
     const { data: session, status } = useSession();
     const userId = session?.user?.id;
 
+    
+
     useEffect(() => {
         if (status === "authenticated" && userId) {
         fetch("/api/auth/refresh", {
@@ -49,6 +51,8 @@ export default function Sidebar() {
         router.push(`/${params.locale}/login`);
         });
     };
+
+    
 
     return (
         <>

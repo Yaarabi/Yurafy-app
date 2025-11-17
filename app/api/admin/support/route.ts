@@ -53,4 +53,32 @@ export async function POST(req: NextRequest) {
     }
 }
 
+// DELETE: delete a conversation and all its messages
+export async function DELETE(req: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id || session.user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const userId = searchParams.get('userId');
+
+        if (!userId) {
+            return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+        }
+
+        await connectDB();
+        const result = await SupportMessage.deleteMany({ owner: userId });
+        
+        return NextResponse.json({ 
+            message: 'Conversation deleted successfully',
+            deletedCount: result.deletedCount 
+        });
+    } catch (err) {
+        console.error('Admin support delete error:', err);
+        return NextResponse.json({ error: 'Failed to delete conversation' }, { status: 500 });
+    }
+}
+
 

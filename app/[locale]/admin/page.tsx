@@ -7,7 +7,7 @@ import {
     Users, Store, ShoppingCart, MessageSquare, TrendingUp, 
     Shield, UserCheck, XCircle, Clock, CheckCircle,
     AlertTriangle, Activity, BarChart3, Settings, Bot,
-    Building2, Upload, Package
+    Building2, Upload, Package, BookOpen, Briefcase
 } from "lucide-react";
 import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminPlanMonitoring from "@/components/admin/AdminPlanMonitoring";
@@ -17,6 +17,10 @@ import AdminStoresManagement from "@/components/admin/AdminStoresManagement";
 import AdminAccountsManagement from "@/components/admin/AdminAccountsManagement";
 import AdminAgentsManagement from "@/components/admin/AdminAgentsManagement";
 import AdminUploadsManagement from "@/components/admin/AdminUploadsManagement";
+import AdminGuidesManagement from "@/components/admin/AdminGuidesManagement";
+import AdminServicesManagement from "@/components/admin/AdminServicesManagement";
+import AdminUsersPlans from "@/components/admin/AdminUsersPlans";
+import AdminResourcesManagement from "@/components/admin/AdminResourcesManagement";
 
 interface OverviewData {
     counts: {
@@ -28,7 +32,7 @@ interface OverviewData {
     };
     recent: {
         users: any[];
-        plans: any[];
+        services: any[];
     };
 }
 
@@ -36,7 +40,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'plans' | 'plan-templates' | 'resources' | 'support' | 'uploads'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'plan-templates' | 'resources' | 'support' | 'uploads' | 'guides' | 'services'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -128,83 +132,97 @@ export default function AdminPage() {
             {/* Tabs */}
             <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-40 shadow-sm transition-colors duration-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex gap-1 overflow-x-auto">
+                    <div className="flex gap-1 overflow-x-auto scrollbar-hide">
                         <button
                             onClick={() => setActiveTab('overview')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'overview'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <BarChart3 className="w-4 h-4 inline mr-2" />
-                            Overview
+                            <BarChart3 className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Overview</span>
+                            <span className="sm:hidden">Home</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('users')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'users'
+                            onClick={() => setActiveTab('users-plans')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'users-plans'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <Users className="w-4 h-4 inline mr-2" />
-                            Users
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('plans')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'plans'
-                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                            }`}
-                        >
-                            <Activity className="w-4 h-4 inline mr-2" />
-                            Plans & Limits
+                            <Users className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Users & Plans</span>
+                            <span className="sm:hidden">Users</span>
                         </button>
                         <button
                             onClick={() => setActiveTab('plan-templates')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'plan-templates'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <Package className="w-4 h-4 inline mr-2" />
-                            Plan Templates
+                            <Package className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Templates</span>
+                            <span className="sm:hidden">Plans</span>
                         </button>
                         <button
                             onClick={() => setActiveTab('resources')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'resources'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <Building2 className="w-4 h-4 inline mr-2" />
+                            <Building2 className="w-4 h-4 inline mr-1 sm:mr-2" />
                             Resources
                         </button>
                         <button
                             onClick={() => setActiveTab('support')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'support'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <MessageSquare className="w-4 h-4 inline mr-2" />
+                            <MessageSquare className="w-4 h-4 inline mr-1 sm:mr-2" />
                             Support
                         </button>
                         <button
                             onClick={() => setActiveTab('uploads')}
-                            className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                                 activeTab === 'uploads'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <Upload className="w-4 h-4 inline mr-2" />
+                            <Upload className="w-4 h-4 inline mr-1 sm:mr-2" />
                             Uploads
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('guides')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'guides'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <BookOpen className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            Guides
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('services')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'services'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Briefcase className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            Services
                         </button>
                     </div>
                 </div>
@@ -265,35 +283,36 @@ export default function AdminPage() {
                                 </div>
                             </div>
 
-                            {/* Recent Plans */}
+                            {/* Recent Service Inquiries */}
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                    <Package className="w-5 h-5 text-purple-600" />
-                                    Recent Plans
+                                    <Briefcase className="w-5 h-5 text-purple-600" />
+                                    Recent Service Inquiries
                                 </h3>
                                 <div className="space-y-3">
-                                    {overview.recent.plans && overview.recent.plans.length > 0 ? (
-                                        overview.recent.plans.map((plan: any, idx: number) => (
+                                    {overview.recent.services && overview.recent.services.length > 0 ? (
+                                        overview.recent.services.map((service: any, idx: number) => (
                                             <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                                <div>
-                                                    <p className="font-medium text-gray-900 dark:text-white">
-                                                        {plan.userId?.username || plan.userId?.email || 'Unknown User'}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-gray-900 dark:text-white truncate">
+                                                        {service.fullName || 'Unknown'}
                                                     </p>
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                        {plan.planKey} - ${plan.price?.toFixed(2)}
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                                        {service.serviceType}
                                                     </p>
                                                 </div>
-                                                <span className={`text-xs px-2 py-1 rounded-full ${
-                                                    plan.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                                                    plan.status === 'expired' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2 ${
+                                                    service.status === 'new' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                    service.status === 'contacted' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                                    service.status === 'converted' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
                                                     'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                                 }`}>
-                                                    {plan.status}
+                                                    {service.status}
                                                 </span>
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm">No recent plans</p>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm">No recent inquiries</p>
                                     )}
                                 </div>
                             </div>
@@ -301,23 +320,15 @@ export default function AdminPage() {
                     </motion.div>
                 )}
 
-                {activeTab === 'users' && (
+                {activeTab === 'users-plans' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                     >
-                        <AdminUserManagement onRefresh={fetchOverview} />
+                        <AdminUsersPlans onRefresh={fetchOverview} />
                     </motion.div>
                 )}
 
-                {activeTab === 'plans' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
-                        <AdminPlanMonitoring />
-                    </motion.div>
-                )}
                 {activeTab === 'plan-templates' && (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -331,29 +342,8 @@ export default function AdminPage() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="space-y-6"
                     >
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Store className="w-6 h-6 text-indigo-600" />
-                                Stores
-                            </h2>
-                            <AdminStoresManagement />
-                        </div>
-                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Building2 className="w-6 h-6 text-indigo-600" />
-                                WhatsApp Accounts
-                            </h2>
-                            <AdminAccountsManagement />
-                        </div>
-                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Bot className="w-6 h-6 text-indigo-600" />
-                                AI Agents
-                            </h2>
-                            <AdminAgentsManagement />
-                        </div>
+                        <AdminResourcesManagement />
                     </motion.div>
                 )}
 
@@ -367,6 +357,24 @@ export default function AdminPage() {
                 )}
                 {activeTab === 'uploads' && (
                     <AdminUploadsManagement />
+                )}
+
+                {activeTab === 'guides' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminGuidesManagement />
+                    </motion.div>
+                )}
+
+                {activeTab === 'services' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminServicesManagement />
+                    </motion.div>
                 )}
             </div>
         </div>
