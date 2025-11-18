@@ -1177,6 +1177,9 @@
             "message": "Détails Supplémentaires",
             "optional": "Optionnel",
             "messagePlaceholder": "Parlez-nous des exigences de votre projet...",
+            "domainOfWork": "Domaine d'activité",
+            "domainOfWorkPlaceholder": "Ex: E-commerce, Restaurant, Électronique",
+            "otherOption": "Autre",
             "submit": "Soumettre la Demande",
             "submitting": "Envoi en cours...",
             "cancel": "Annuler",
@@ -1186,9 +1189,21 @@
                 "phoneNumber": "Veuillez entrer un numéro de téléphone marocain valide (ex: +212 600 000 000)",
                 "email": "Veuillez entrer une adresse email valide",
                 "serviceType": "Veuillez sélectionner un type de service",
+                "domainOfWorkRequired": "Veuillez entrer le domaine d'activité (requis pour Autre)",
+                "domainOfWorkMax": "Le domaine d'activité ne doit pas dépasser 100 caractères",
+                "messageRequired": "Veuillez fournir plus de détails (requis pour Autre)",
                 "validation": "Veuillez corriger les erreurs dans le formulaire",
                 "submit": "Échec de la soumission de la demande. Veuillez réessayer."
             }
+        },
+        "conversion": {
+            "heading": "Vous n'êtes pas sûr du plan adapté à vos besoins ?",
+            "subtext": "Que vous démarriez ou que vous passiez à l'échelle, nous avons des options flexibles pour chaque marchand.",
+            "chatLabel": "Discutez avec nous sur WhatsApp",
+            "chatAria": "Ouvrir le chat WhatsApp",
+            "requestLabel": "Dites-nous ce dont vous avez besoin",
+            "requestNote": "Nous reviendrons vers vous avec une offre personnalisée.",
+            "addon": "Besoin d'une configuration personnalisée ou d'un tarif flexible ? Parlons-en — nous aidons les marchands marocains à croître."
         }
     }
 }

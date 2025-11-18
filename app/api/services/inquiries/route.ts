@@ -62,12 +62,22 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { fullName, phoneNumber, email, serviceType, message, domainOfWork } = body;
 
-        // Validate required fields
+        // Basic required fields
         if (!fullName || !phoneNumber || !email || !serviceType) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
             );
+        }
+
+        // Additional conditional requirements for "Other"
+        if (serviceType === 'Other') {
+            if (!domainOfWork || !domainOfWork.trim() || !message || !message.trim()) {
+                return NextResponse.json(
+                    { error: 'Domain of work and more details message are required for Other service type.' },
+                    { status: 400 }
+                );
+            }
         }
 
         // Create new inquiry

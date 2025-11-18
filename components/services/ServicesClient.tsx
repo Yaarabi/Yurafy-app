@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ServicesHero from './ServicesHero';
 import ServiceCard from './ServiceCard';
 import ServicesCTA from './ServicesCTA';
+import ServicesConversion from './ServicesConversion';
 import ServiceForm from './ServiceForm';
 
 export interface Service {
@@ -60,6 +61,9 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
                     ))}
                 </div>
             </section>
+
+            {/* Conversion Assist Section */}
+            <ServicesConversion onRequest={handleRequestQuote} />
 
             <ServicesCTA onRequestQuote={handleRequestQuote} />
 

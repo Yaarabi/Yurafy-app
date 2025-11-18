@@ -7,7 +7,7 @@ export default function Footer() {
     const t = useTranslations("Footer");
     const params = useParams();
     const locale = params.locale || 'en';
-    const url = `https://wa.me/0716413605?text=Bonjour,%20je%20veux%20plus%20le%20d'informations!:%20`;
+    const url = `https://wa.me/+212716413605?text=Bonjour,%20je%20veux%20plus%20le%20d'informations!:%20`;
 
 
     return (

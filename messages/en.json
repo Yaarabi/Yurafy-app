@@ -1171,6 +1171,9 @@
             "message": "Additional Details",
             "optional": "Optional",
             "messagePlaceholder": "Tell us about your project requirements...",
+            "domainOfWork": "Domain of Work",
+            "domainOfWorkPlaceholder": "e.g., E-commerce, Restaurant, Electronics",
+            "otherOption": "Other",
             "submit": "Submit Request",
             "submitting": "Submitting...",
             "cancel": "Cancel",
@@ -1180,9 +1183,21 @@
                 "phoneNumber": "Please enter a valid Moroccan phone number (e.g., +212 600 000 000)",
                 "email": "Please enter a valid email address",
                 "serviceType": "Please select a service type",
+                "domainOfWorkRequired": "Please enter the domain of work (required for Other)",
+                "domainOfWorkMax": "Domain of work must not exceed 100 characters",
+                "messageRequired": "Please provide more details (required for Other)",
                 "validation": "Please fix the errors in the form",
                 "submit": "Failed to submit request. Please try again."
             }
+        },
+        "conversion": {
+            "heading": "Not sure which plan fits your needs?",
+            "subtext": "Whether you're just starting or scaling fast, we’ve got flexible options for every merchant.",
+            "chatLabel": "Chat with us on WhatsApp",
+            "chatAria": "Open WhatsApp chat",
+            "requestLabel": "Tell us what you need",
+            "requestNote": "We’ll get back to you with a tailored offer.",
+            "addon": "Need a custom setup or flexible pricing? Let’s talk — we’re here to help Moroccan merchants grow."
         }
     }
 }

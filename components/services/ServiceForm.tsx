@@ -52,9 +52,23 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             newErrors.serviceType = t('form.errors.serviceType');
         }
 
-        // domainOfWork optional: validate only length if provided
+        const isOther = formData.serviceType === 'Other';
+
+        // domainOfWork validation: required if Other, else only length check
+        if (isOther) {
+            if (!formData.domainOfWork.trim()) {
+                newErrors.domainOfWork = t('form.errors.domainOfWorkRequired');
+            }
+        }
         if (formData.domainOfWork && formData.domainOfWork.length > 100) {
-            newErrors.domainOfWork = 'Domain must not exceed 100 characters';
+            newErrors.domainOfWork = t('form.errors.domainOfWorkMax');
+        }
+
+        // message required if Other
+        if (isOther) {
+            if (!formData.message.trim()) {
+                newErrors.message = t('form.errors.messageRequired');
+            }
         }
 
         setErrors(newErrors);
@@ -212,31 +226,32 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     {t('form.serviceType')} <span className="text-red-500">*</span>
                                 </label>
-                                <select
-                                    name="serviceType"
-                                    value={formData.serviceType}
-                                    onChange={handleInputChange}
-                                    className={`w-full px-4 py-3 border ${
-                                        errors.serviceType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                                    } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-                                    style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
-                                >
-                                    <option value="">{t('form.selectService')}</option>
-                                    {services.map((service) => (
-                                        <option key={service.id} value={service.type}>
-                                            {service.type} ({service.priceMin.toLocaleString()} - {service.priceMax.toLocaleString()} MAD)
-                                        </option>
-                                    ))}
-                                </select>
+                                    <select
+                                        name="serviceType"
+                                        value={formData.serviceType}
+                                        onChange={handleInputChange}
+                                        className={`w-full px-4 py-3 border ${
+                                            errors.serviceType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                                        } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                                        style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
+                                    >
+                                        <option value="">{t('form.selectService')}</option>
+                                        {services.map((service) => (
+                                            <option key={service.id} value={service.type}>
+                                                {service.type} ({service.priceMin.toLocaleString()} - {service.priceMax.toLocaleString()} MAD)
+                                            </option>
+                                        ))}
+                                        <option value="Other">{t('form.otherOption')}</option>
+                                    </select>
                                 {errors.serviceType && (
                                     <p className="mt-1 text-sm text-red-500">{errors.serviceType}</p>
                                 )}
                             </div>
 
-                            {/* Domain of Work (Optional) */}
+                            {/* Domain of Work (Optional / Required if Other) */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Domain of work ({t('form.optional')})
+                                    {t('form.domainOfWork')} {formData.serviceType === 'Other' && <span className="text-red-500">*</span>} {formData.serviceType !== 'Other' && `(${t('form.optional')})`}
                                 </label>
                                 <input
                                     type="text"
@@ -247,7 +262,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                         errors.domainOfWork ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                     } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
                                     style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
-                                    placeholder="e.g., E-commerce, Restaurant, Electronics"
+                                    placeholder={t('form.domainOfWorkPlaceholder')}
                                     maxLength={100}
                                 />
                                 {errors.domainOfWork && (
@@ -262,16 +277,19 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 </label>
                                 <div className="relative">
                                     <MessageSquare className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                    <textarea
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleInputChange}
-                                        rows={4}
-                                        className="w-full pl-11 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
-                                        style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
-                                        placeholder={t('form.messagePlaceholder')}
-                                        maxLength={1000}
-                                    />
+                                            <textarea
+                                                name="message"
+                                                value={formData.message}
+                                                onChange={handleInputChange}
+                                                rows={4}
+                                                className={`w-full pl-11 pr-4 py-3 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none`}
+                                                style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
+                                                placeholder={t('form.messagePlaceholder')}
+                                                maxLength={1000}
+                                            />
+                                            {errors.message && (
+                                                <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                                            )}
                                 </div>
                             </div>
 
