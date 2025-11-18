@@ -64,7 +64,7 @@ export default function Footer() {
                             </div>
                             <span>Email</span>
                         </a>
-                        <a href="https://wa.me/212716413605" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group">
+                        <a href="https://wa.me/+212716413605" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group">
                             <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-green-500 transition-colors">
                                 <FaWhatsapp className="w-5 h-5" />
                             </div>
