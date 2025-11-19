@@ -21,7 +21,7 @@ export default function ChatMessages({ messages, typing }: Props) {
     }, [messages, typing]);
 
     return (
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 flex flex-col gap-3 sm:gap-4 h-full scroll-smooth">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 flex flex-col gap-3 sm:gap-4 h-full scroll-smooth">
             
             {messages.length === 0 && !typing && (
                 <motion.div
@@ -59,7 +59,7 @@ export default function ChatMessages({ messages, typing }: Props) {
                         className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl break-words text-sm sm:text-base shadow-sm transition-all duration-200 ${
                             msg.role === "user"
                             ? "bg-gradient-to-br from-[var(--brand-blue)] to-[var(--brand-blue)]/90 text-white rounded-br-md hover:shadow-md"
-                            : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-md border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600"
+                            : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-md hover:shadow-md"
                         }`}
                     >
                         {msg.role === "agent" ? (
@@ -90,7 +90,7 @@ export default function ChatMessages({ messages, typing }: Props) {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--brand-blue)]/20 to-[var(--brand-blue)]/10 dark:from-[var(--brand-blue)]/30 dark:to-[var(--brand-blue)]/20 flex items-center justify-center flex-shrink-0 mb-1">
                         <Bot className="w-4 h-4 text-[var(--brand-blue)]" />
                     </div>
-                    <div className="max-w-[60%] px-4 py-3 rounded-2xl rounded-bl-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="max-w-[60%] px-4 py-3 rounded-2xl rounded-bl-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm">
                         <div className="flex gap-1.5 items-center">
                             <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                             <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>

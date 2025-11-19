@@ -6,9 +6,10 @@ interface EditableFieldProps {
     label: string;
     value: string;
     onSave: (newValue: string) => void;
+    textarea?: boolean;
 }
 
-export default function EditableField({ label, value, onSave }: EditableFieldProps) {
+export default function EditableField({ label, value, onSave, textarea = false }: EditableFieldProps) {
     const [editing, setEditing] = useState(false);
     const [input, setInput] = useState(value);
     const [saving, setSaving] = useState(false);
@@ -48,16 +49,28 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
             <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
             {editing ? (
                 <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-                    <input
-                        className="flex-1 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] dark:focus:ring-[var(--brand-blue)] transition"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleSave();
-                            if (e.key === 'Escape') handleCancel();
-                        }}
-                        disabled={saving}
-                    />
+                    {textarea ? (
+                        <textarea
+                            className="flex-1 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] dark:focus:ring-[var(--brand-blue)] transition min-h-[100px] resize-y"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Escape') handleCancel();
+                            }}
+                            disabled={saving}
+                        />
+                    ) : (
+                        <input
+                            className="flex-1 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue)] dark:focus:ring-[var(--brand-blue)] transition"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSave();
+                                if (e.key === 'Escape') handleCancel();
+                            }}
+                            disabled={saving}
+                        />
+                    )}
                     <div className="flex gap-2">
                         <button
                             className="px-4 py-2 rounded-lg bg-[var(--brand-blue)] text-white text-sm font-medium hover:bg-[var(--brand-blue)]/90 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
@@ -77,7 +90,7 @@ export default function EditableField({ label, value, onSave }: EditableFieldPro
                 </div>
             ) : (
                 <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 min-h-[40px]">
-                    <span className="text-gray-800 dark:text-gray-100 text-sm flex-1 truncate">
+                    <span className={`text-gray-800 dark:text-gray-100 text-sm flex-1 ${textarea ? 'whitespace-pre-wrap' : 'truncate'}`}>
                         {value || <em className="text-gray-500 dark:text-gray-400">Not set</em>}
                     </span>
                     <button

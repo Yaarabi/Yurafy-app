@@ -8,7 +8,7 @@ import {
     MdMessage,
     MdSupervisorAccount,
 } from "react-icons/md";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Bot } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 const NAV_ITEMS = {
@@ -17,7 +17,7 @@ const NAV_ITEMS = {
     products: { href: "dashboard/products", icon: <MdInventory2 size={20} />, key: "nav.products" },
     customers: { href: "dashboard/customers", icon: <MdSupervisorAccount size={20} />, key: "nav.customers" },
     whatsapp: { href: "dashboard/whatsapp", icon: <MdWhatsapp size={20} />, key: "nav.whatsapp" },
-    agent: { href: "dashboard/agent", icon: <MdSupervisorAccount size={20} />, key: "nav.agent" },
+    agent: { href: "dashboard/agent", icon: <Bot size={20} />, key: "nav.agent" },
     conversations: { href: "dashboard/conversations", icon: <MdMessage size={20} />, key: "nav.conversations" },
     guides: { href: "dashboard/guides", icon: <BookOpen size={20} />, key: "nav.guides" },
     settings: { href: "dashboard/settings", icon: <MdSettings size={20} />, key: "nav.settings" },

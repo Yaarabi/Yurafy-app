@@ -14,7 +14,7 @@ export default function ChatHeader({ onClear }: Props) {
         <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-700"
+            className="flex items-center justify-between gap-4 p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700"
         >
             <div className="flex items-center gap-3">
                 <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg">
@@ -26,10 +26,10 @@ export default function ChatHeader({ onClear }: Props) {
             </div>
             <button
                 onClick={onClear}
-                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
+                className="p-2 hover:bg-red-500/10 dark:hover:bg-red-500/20 text-red-500 rounded-lg transition-all"
+                title={t('header.clearChat')}
             >
-                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-sm sm:text-base">{t('header.clearChat')}</span>
+                <Trash2 className="w-5 h-5" />
             </button>
         </motion.div>
     );
