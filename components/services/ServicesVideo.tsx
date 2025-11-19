@@ -32,7 +32,7 @@ export default function ServicesVideo() {
     const embed = toYouTubeEmbedUrl(guide.videoUrl);
 
     return (
-        <section className="max-w-5xl mx-auto px-4 pt-6">
+        <section id="video" className="max-w-5xl mx-auto px-4 pt-6 scroll-mt-20">
             <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <div className="aspect-video">
                     <iframe

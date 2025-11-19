@@ -1091,9 +1091,28 @@
     },
     "services": {
         "hero": {
-            "title": "Professional Web Development Services",
-            "subtitle": "Transform your business with custom e-commerce solutions built for Moroccan market",
-            "tagline": "Trusted by businesses across Morocco"
+            "title": "Launch New Generation Store with WhatsApp & Delivery Automation and AI",
+            "subtitle": "Custom storefronts, WhatsApp auto-replies, Link delivery company, and team dashboards and management",
+            "ctaPrimary": "Get Your Store Now",
+            "ctaSecondary": "Chat with Us on WhatsApp",
+            "features": {
+                "codCheckout": {
+                    "title": "COD Checkout Form",
+                    "description": "Optimized for conversion and mobile."
+                },
+                "whatsappAuto": {
+                    "title": "WhatsApp Automation",
+                    "description": "Auto-confirm orders and notify customers."
+                },
+                "deliveryApi": {
+                    "title": "Delivery API Integration",
+                    "description": "Real-time tracking and bulk label generation."
+                },
+                "teamDashboard": {
+                    "title": "Team Dashboard",
+                    "description": "Assign, track, and manage orders with ease."
+                }
+            }
         },
         "popular": "Most Popular",
         "priceNote": "One-time payment",

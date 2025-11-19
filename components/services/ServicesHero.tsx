@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Sparkles, Globe2, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Globe2, ArrowRight, ShoppingCart, MessageCircle, Truck, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
+import FeatureCard from './FeatureCard';
 
 interface ServicesHeroProps {
     locale: string;
@@ -33,7 +34,81 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                     <rect width="100%" height="100%" fill="url(#modern-grid)" />
                 </svg>
 
-                {/* Floating elements */}
+                {/* Large floating hexagons */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 0.25, scale: 1, rotate: [0, 360] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-20 right-10 w-40 h-40"
+                >
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                    </svg>
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 0.3, scale: 1, rotate: [360, 0] }}
+                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                    className="absolute bottom-20 left-10 w-36 h-36"
+                >
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                    </svg>
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 0.2, scale: 1, rotate: [0, -360] }}
+                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-1/2 left-1/4 w-28 h-28"
+                >
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.25" />
+                    </svg>
+                </motion.div>
+                
+                {/* Medium hexagons */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 0.2, scale: 1, rotate: [360, 0] }}
+                    transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-1/3 right-1/3 w-24 h-24"
+                >
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                    </svg>
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 0.18, scale: 1, rotate: [0, 360] }}
+                    transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+                    className="absolute bottom-1/3 left-1/3 w-20 h-20"
+                >
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                    </svg>
+                </motion.div>
+                
+                {/* Circuit pattern nodes */}
+                <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
+                <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
+                <div className="absolute bottom-1/3 left-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
+                <div className="absolute top-1/5 right-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
+                <div className="absolute bottom-1/5 left-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
+                <div className="absolute top-1/2 left-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
+                <div className="absolute top-1/2 right-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
+                
+                {/* Connection lines */}
+                <svg className="absolute inset-0 w-full h-full opacity-30">
+                    <line x1="25%" y1="25%" x2="33%" y2="33%" stroke="white" strokeWidth="1.5" />
+                    <line x1="67%" y1="33%" x2="75%" y2="25%" stroke="white" strokeWidth="1.5" />
+                    <line x1="75%" y1="75%" x2="67%" y2="67%" stroke="white" strokeWidth="1.5" />
+                    <line x1="33%" y1="67%" x2="25%" y2="75%" stroke="white" strokeWidth="1.5" />
+                    <line x1="16%" y1="50%" x2="25%" y2="50%" stroke="white" strokeWidth="1" />
+                    <line x1="75%" y1="50%" x2="84%" y2="50%" stroke="white" strokeWidth="1" />
+                </svg>
+
+                {/* Floating rectangles */}
                 <motion.div
                     animate={{ 
                         y: [0, -20, 0],
@@ -63,13 +138,14 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                             className="relative"
                         >
                             <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl group-hover:bg-white/30 transition-all"></div>
-                            <div className="relative w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md p-3 group-hover:scale-110 transition-transform duration-300 border border-white/20">
+                            <div className="relative group-hover:scale-110 transition-transform duration-300">
                                 <Image
                                     src="/favi.png"
                                     alt="Yurafy logo"
                                     width={64}
                                     height={64}
                                     className="w-full h-full object-contain"
+                                    priority
                                 />
                             </div>
                         </motion.div>
@@ -97,69 +173,74 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                 </div>
 
                 {/* Hero Content */}
-                <div className="text-center max-w-5xl mx-auto">
+                <div className="text-center max-w-6xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.3 }}
                     >
-                    
-
                         {/* Main Title */}
-                        <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight px-4" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
                             {t('hero.title')}
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-xl md:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+                        <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed font-semibold px-4" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
                             {t('hero.subtitle')}
                         </p>
 
-                        {/* Feature Pills */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 mb-10">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5, delay: 0.5 }}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10"
-                            >
-                                <CheckCircle2 className="w-4 h-4 text-green-400" />
-                                <span className="text-sm text-white/90">Professional Quality</span>
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5, delay: 0.6 }}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10"
-                            >
-                                <CheckCircle2 className="w-4 h-4 text-green-400" />
-                                <span className="text-sm text-white/90">Fast Delivery</span>
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5, delay: 0.7 }}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10"
-                            >
-                                <CheckCircle2 className="w-4 h-4 text-green-400" />
-                                <span className="text-sm text-white/90">24/7 Support</span>
-                            </motion.div>
-                        </div>
-
-                        {/* CTA Button */}
+                        {/* CTA Buttons */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.8 }}
+                            transition={{ duration: 0.7, delay: 0.5 }}
+                            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 px-4"
                         >
                             <a
-                                href="#services"
-                                className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[var(--brand-blue)] rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 group"
+                                href="#video"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[var(--brand-blue)] rounded-xl font-bold text-base sm:text-lg hover:bg-blue-50 transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 group"
                             >
-                                Explore Services
+                                Learn More
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </a>
+                            <a
+                                href="https://wa.me/+212716413605"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md text-white rounded-xl font-bold text-base sm:text-lg hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50 hover:scale-105 group"
+                            >
+                                <MessageCircle className="w-5 h-5" />
+                                {t('hero.ctaSecondary')}
+                            </a>
                         </motion.div>
+
+                        {/* Feature Highlights - 4 Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-4">
+                            <FeatureCard
+                                icon={ShoppingCart}
+                                title={t('hero.features.codCheckout.title')}
+                                description={t('hero.features.codCheckout.description')}
+                                index={0}
+                            />
+                            <FeatureCard
+                                icon={MessageCircle}
+                                title={t('hero.features.whatsappAuto.title')}
+                                description={t('hero.features.whatsappAuto.description')}
+                                index={1}
+                            />
+                            <FeatureCard
+                                icon={Truck}
+                                title={t('hero.features.deliveryApi.title')}
+                                description={t('hero.features.deliveryApi.description')}
+                                index={2}
+                            />
+                            <FeatureCard
+                                icon={Users}
+                                title={t('hero.features.teamDashboard.title')}
+                                description={t('hero.features.teamDashboard.description')}
+                                index={3}
+                            />
+                        </div>
                     </motion.div>
                 </div>
 

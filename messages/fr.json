@@ -1097,9 +1097,28 @@
     },
     "services": {
         "hero": {
-            "title": "Services de Développement Web Professionnel",
-            "subtitle": "Transformez votre entreprise avec des solutions e-commerce sur mesure pour le marché marocain",
-            "tagline": "Approuvé par des entreprises à travers le Maroc"
+            "title": "Lancez Boutique Nouvelle Génération avec Automatisation WhatsApp & Livraison et IA",
+            "subtitle": "Vitrines personnalisées, réponses automatiques WhatsApp, Lien société de livraison, et tableaux de bord et gestion d'équipe",
+            "ctaPrimary": "Obtenez Votre Boutique Maintenant",
+            "ctaSecondary": "Discutez avec Nous sur WhatsApp",
+            "features": {
+                "codCheckout": {
+                    "title": "Formulaire de Paiement COD",
+                    "description": "Optimisé pour la conversion et le mobile."
+                },
+                "whatsappAuto": {
+                    "title": "Automatisation WhatsApp",
+                    "description": "Confirmez automatiquement les commandes et notifiez les clients."
+                },
+                "deliveryApi": {
+                    "title": "Intégration API de Livraison",
+                    "description": "Suivi en temps réel et génération d'étiquettes en masse."
+                },
+                "teamDashboard": {
+                    "title": "Tableau de Bord d'Équipe",
+                    "description": "Attribuez, suivez et gérez les commandes facilement."
+                }
+            }
         },
         "popular": "Le Plus Populaire",
         "priceNote": "Paiement unique",
