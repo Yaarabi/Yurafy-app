@@ -985,7 +985,8 @@
             "products": "Products",
             "orders": "Orders",
             "automation": "Automation",
-            "ai-agent": "AI Agent"
+            "ai-agent": "AI Agent",
+            "services": "Services"
         },
         "watchNow": "Watch Now",
         "close": "Close",

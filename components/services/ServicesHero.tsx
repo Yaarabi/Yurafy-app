@@ -65,8 +65,8 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                             <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl group-hover:bg-white/30 transition-all"></div>
                             <div className="relative w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md p-3 group-hover:scale-110 transition-transform duration-300 border border-white/20">
                                 <Image
-                                    src="/logo.png"
-                                    alt="Yurafy"
+                                    src="/favi.png"
+                                    alt="Yurafy logo"
                                     width={64}
                                     height={64}
                                     className="w-full h-full object-contain"

@@ -6,6 +6,7 @@ import ServiceCard from './ServiceCard';
 import ServicesCTA from './ServicesCTA';
 import ServicesConversion from './ServicesConversion';
 import ServiceForm from './ServiceForm';
+import ServicesVideo from './ServicesVideo';
 
 export interface Service {
     id: string;
@@ -47,6 +48,9 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800" dir={isArabic ? 'rtl' : 'ltr'}>
             <ServicesHero locale={locale} />
+
+            {/* Services Video Section (below hero) */}
+            <ServicesVideo />
 
             <section id="services" className="max-w-7xl mx-auto px-4 py-16 scroll-mt-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

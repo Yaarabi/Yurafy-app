@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IGuide extends Document {
-    category: 'overview' | 'products' | 'orders' | 'automation' | 'ai-agent';
+    category: 'overview' | 'products' | 'orders' | 'automation' | 'ai-agent' | 'services';
     title: string;
     description: string;
     videoUrl: string;
@@ -15,7 +15,7 @@ const GuideSchema = new Schema<IGuide>(
     {
         category: {
             type: String,
-            enum: ['overview', 'products', 'orders', 'automation', 'ai-agent'],
+            enum: ['overview', 'products', 'orders', 'automation', 'ai-agent', 'services'],
             required: true,
         },
         title: {

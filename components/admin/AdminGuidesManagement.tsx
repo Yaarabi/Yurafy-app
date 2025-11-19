@@ -15,7 +15,7 @@ interface Guide {
     isActive: boolean;
 }
 
-const categories = ["overview", "products", "orders", "automation", "ai-agent"];
+const categories = ["overview", "products", "orders", "automation", "ai-agent", "services"];
 
 export default function AdminGuidesManagement() {
     const [guides, setGuides] = useState<Guide[]>([]);

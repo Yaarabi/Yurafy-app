@@ -391,60 +391,219 @@ function EditUserModal({
     onClose: () => void; 
     onSave: (data: Partial<User>) => void;
 }) {
+    const [mode, setMode] = useState<'update' | 'upgrade'>('update');
     const [formData, setFormData] = useState({
-        username: user.username,
-        email: user.email,
-        role: user.role,
+        planKey: user.plan || 'free',
+        durationDays: 30,
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         active: user.active,
     });
+    const [currentPlan, setCurrentPlan] = useState<any>(null);
+    const [planTemplates, setPlanTemplates] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [loadingPlan, setLoadingPlan] = useState(true);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        // Fetch available plan templates and current plan
+        const fetchData = async () => {
+            try {
+                // Fetch plan templates
+                const plansRes = await fetch('/api/plan');
+                if (plansRes.ok) {
+                    const plansData = await plansRes.json();
+                    const plans = plansData.planTemplates || [];
+                    setPlanTemplates(plans.map((p: any) => p.planKey));
+                } else {
+                    // Fallback to common plans
+                    setPlanTemplates(['free', 'Starter', 'WhatsApp Automation', 'AI WhatsApp Agent', 'Pro Seller', 'Visionary']);
+                }
+
+                // Fetch user's current plan
+                const planRes = await fetch(`/api/users/${user.id}/plan`);
+                if (planRes.ok) {
+                    const planData = await planRes.json();
+                    if (planData.plan) {
+                        setCurrentPlan(planData.plan);
+                        // Pre-fill form with current plan data
+                        const start = new Date(planData.plan.startDate);
+                        const end = new Date(planData.plan.endDate);
+                        const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+                        setFormData({
+                            planKey: planData.plan.planKey,
+                            durationDays: duration,
+                            startDate: start.toISOString().split('T')[0],
+                            endDate: end.toISOString().split('T')[0],
+                            active: user.active,
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch data:', err);
+                setPlanTemplates(['free', 'Starter', 'WhatsApp Automation', 'AI WhatsApp Agent', 'Pro Seller', 'Visionary']);
+            } finally {
+                setLoadingPlan(false);
+            }
+        };
+        fetchData();
+    }, [user.id, user.active]);
+
+    const handleDurationChange = (days: number) => {
+        const start = new Date(formData.startDate);
+        const end = new Date(start.getTime() + days * 24 * 60 * 60 * 1000);
+        setFormData({
+            ...formData,
+            durationDays: days,
+            endDate: end.toISOString().split('T')[0],
+        });
+    };
+
+    const handleStartDateChange = (date: string) => {
+        const start = new Date(date);
+        const end = new Date(start.getTime() + formData.durationDays * 24 * 60 * 60 * 1000);
+        setFormData({
+            ...formData,
+            startDate: date,
+            endDate: end.toISOString().split('T')[0],
+        });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(formData);
+        setLoading(true);
+        try {
+            // Update user's plan via API
+            const response = await fetch(`/api/users/${user.id}/plan`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, mode }),
+            });
+            if (!response.ok) throw new Error('Failed to update plan');
+            toast.success(mode === 'update' ? 'Plan updated successfully' : 'Plan upgraded successfully');
+            onSave({ active: formData.active });
+        } catch (error) {
+            console.error('Error updating plan:', error);
+            toast.error('Failed to update user plan');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={onClose}>
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transition-colors duration-200"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full p-6 transition-colors duration-200"
+                onClick={(e) => e.stopPropagation()}
             >
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Edit User</h3>
+                <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Edit User Plan</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">User: <span className="font-medium text-gray-900 dark:text-white">{user.username}</span> ({user.email})</p>
+                    {currentPlan && (
+                        <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-xs text-blue-800 dark:text-blue-200">
+                            Current: {currentPlan.planKey} (Expires: {new Date(currentPlan.endDate).toLocaleDateString()})
+                        </div>
+                    )}
+                </div>
+
+                {/* Mode Selector */}
+                {!loadingPlan && (
+                    <div className="mb-4 flex gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <button
+                            type="button"
+                            onClick={() => setMode('update')}
+                            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                mode === 'update'
+                                    ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            Update Existing Plan
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setMode('upgrade')}
+                            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                mode === 'upgrade'
+                                    ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            Upgrade/Change Plan
+                        </button>
+                    </div>
+                )}
+
+                {loadingPlan ? (
+                    <div className="flex items-center justify-center py-8">
+                        <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
+                    </div>
+                ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
-                        <input
-                            type="text"
-                            value={formData.username}
-                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                            <Package className="w-4 h-4" />
+                            Plan Type
+                        </label>
                         <select
-                            value={formData.role}
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                            value={formData.planKey}
+                            onChange={(e) => setFormData({ ...formData, planKey: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            required
                         >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
+                            {planTemplates.length > 0 ? (
+                                planTemplates.map(plan => (
+                                    <option key={plan} value={plan}>{plan}</option>
+                                ))
+                            ) : (
+                                <option value={user.plan}>{user.plan}</option>
+                            )}
                         </select>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            Duration (Days)
+                        </label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="3650"
+                            value={formData.durationDays}
+                            onChange={(e) => handleDurationChange(parseInt(e.target.value) || 1)}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            required
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Common: 30 (month), 90 (quarter), 365 (year)</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                            <input
+                                type="date"
+                                value={formData.startDate}
+                                onChange={(e) => handleStartDateChange(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                            <input
+                                type="date"
+                                value={formData.endDate}
+                                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2">
                         <input
                             type="checkbox"
                             id="active"
@@ -452,24 +611,38 @@ function EditUserModal({
                             onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                             className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                         />
-                        <label htmlFor="active" className="text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
+                        <label htmlFor="active" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                            {formData.active ? <CheckCircle className="w-4 h-4 text-green-600" /> : <XCircle className="w-4 h-4 text-red-600" />}
+                            User Account Active
+                        </label>
                     </div>
-                    <div className="flex gap-3 pt-4">
+
+                    <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            disabled={loading}
+                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                            disabled={loading}
+                            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                            Save Changes
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Updating...
+                                </>
+                            ) : (
+                                'Update Plan'
+                            )}
                         </button>
                     </div>
                 </form>
+                )}
             </motion.div>
         </div>
     );

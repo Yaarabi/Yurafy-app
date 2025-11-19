@@ -961,7 +961,8 @@
             "products": "المنتجات",
             "orders": "الطلبات",
             "automation": "الأتمتة",
-            "ai-agent": "الوكيل الذكي"
+            "ai-agent": "الوكيل الذكي",
+            "services": "الخدمات"
         },
         "watchNow": "شاهد الآن",
         "close": "إغلاق",

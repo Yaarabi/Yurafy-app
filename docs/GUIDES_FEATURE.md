@@ -7,7 +7,7 @@ The Guides feature provides a comprehensive video tutorial system where users ca
 - ✅ **User-facing Guides Page**: Video grid with category filtering and modal player
 - ✅ **Admin Management Interface**: Full CRUD operations for managing guides
 - ✅ **Multi-language Support**: Translations for English, French, and Arabic
-- ✅ **Category System**: Organized by topic (Overview, Products, Orders, Automation, AI Agent)
+- ✅ **Category System**: Organized by topic (Overview, Products, Orders, Automation, AI Agent, Services)
 - ✅ **Responsive Design**: Mobile-friendly with adaptive layouts
 - ✅ **Dark Mode Support**: Full theme integration
 - ✅ **Available for All Plans**: No feature gating
@@ -19,7 +19,7 @@ The Guides feature provides a comprehensive video tutorial system where users ca
 - **Schema**:
   ```typescript
   {
-    category: enum ['overview', 'products', 'orders', 'automation', 'ai-agent'],
+    category: enum ['overview', 'products', 'orders', 'automation', 'ai-agent', 'services'],
     title: string (required),
     description: string (required),
     videoUrl: string (required),
@@ -42,7 +42,7 @@ The Guides feature provides a comprehensive video tutorial system where users ca
 1. **User Guides Page**
    - **Path**: `app/[locale]/dashboard/guides/page.tsx`
    - **Features**:
-     - Category filter with icons (All, Overview, Products, Orders, Automation, AI Agent)
+    - Category filter with icons (All, Overview, Products, Orders, Automation, AI Agent, Services)
      - Video grid with YouTube thumbnails
      - Click-to-play modal with iframe embed
      - Loading and empty states
@@ -129,6 +129,7 @@ The system extracts video IDs from various YouTube URL formats:
 - **Orders**: ShoppingCart icon
 - **Automation**: Zap icon
 - **AI Agent**: Bot icon
+- **Services**: Wrench icon
 
 ### Security
 - Admin routes protected by session authentication
