@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Wrench, MessageCircle } from "lucide-react";
+import { Sparkles, Wrench } from "lucide-react";
 
 import ConnectionTab from "@/components/dashboard/whatsapp/tabs/ConnectionTab";
 import AutomationTab from "@/components/dashboard/whatsapp/automation/AutomationTab";
@@ -48,22 +48,8 @@ export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppInt
     const templates = data?.templates ?? [];
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
-            <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-                {/* Header Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-3"
-                >
-                    <div className="p-2 bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20 rounded-lg">
-                        <MessageCircle className="w-6 h-6 text-[var(--brand-blue)]" />
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-                        WhatsApp Automation
-                    </h2>
-                </motion.div>
-
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <TabNavigation 
                     activeTab={activeTab} 
                     tabs={TABS} 

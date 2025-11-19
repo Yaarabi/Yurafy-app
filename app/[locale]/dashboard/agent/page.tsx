@@ -74,23 +74,18 @@ export default function ChatWithAgentPage() {
   };
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <div className="w-full flex-1 flex flex-col">
-        {/* Chat Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-900 dark:bg-gray-950 overflow-hidden flex flex-col flex-1 min-h-0"
-        >
-          <ChatHeader onClear={clearChat} />
-          <div className="flex-1 overflow-hidden min-h-0 p-2 sm:p-4">
-            <ChatMessages messages={messages} typing={typing} />
-          </div>
-          <div className="p-2 sm:p-4">
-            <ChatInput input={input} setInput={setInput} loading={loading} onSend={sendMessage} />
-          </div>
-        </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="h-screen dark:bg-gray-950 overflow-hidden flex flex-col"
+    >
+      <ChatHeader onClear={clearChat} />
+      <div className="flex-1 overflow-hidden min-h-0 p-2 sm:p-4">
+        <ChatMessages messages={messages} typing={typing} />
       </div>
-    </div>
+      <div className="p-2 sm:p-4">
+        <ChatInput input={input} setInput={setInput} loading={loading} onSend={sendMessage} />
+      </div>
+    </motion.div>
   );
 }

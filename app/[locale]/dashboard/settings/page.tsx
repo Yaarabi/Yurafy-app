@@ -30,13 +30,13 @@ export default function SettingsPage() {
     const [copiedVerifyToken, setCopiedVerifyToken] = useState(false);
     
          // Update local state when features data is loaded (ONLY on initial load)
-     useEffect(() => {
-         if (featuresData && !isInitialized) {
-             setUser(featuresData.user);
-             setWhatsApp(featuresData.features.whatsapp);
-             setStore(featuresData.features.store);
-             setIsInitialized(true);
-         }
+        useEffect(() => {
+            if (featuresData && !isInitialized) {
+                setUser(featuresData.user);
+                setWhatsApp(featuresData.features.whatsapp);
+                setStore(featuresData.features.store);
+                setIsInitialized(true);
+            }
          // eslint-disable-next-line react-hooks/exhaustive-deps
      }, [featuresData?.user?.id, featuresData?.features?.store?._id, featuresData?.features?.whatsapp?._id, isInitialized]); // Only depend on IDs to prevent unnecessary re-runs
 

@@ -48,7 +48,7 @@ export default function ChatInput({ input, setInput, loading, onSend }: Props) {
                     disabled={loading || !input.trim()}
                     whileHover={!loading && input.trim() ? { scale: 1.05 } : {}}
                     whileTap={!loading && input.trim() ? { scale: 0.95 } : {}}
-                    className="px-5 sm:px-7 py-3.5 bg-gradient-to-r from-[var(--brand-blue)] to-[var(--brand-blue)]/90 rounded-xl hover:from-[var(--brand-blue)]/90 hover:to-[var(--brand-blue)]/80 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-lg hover:shadow-xl flex items-center justify-center gap-2 border border-[var(--brand-blue)]/20 font-medium"
+                    className="px-5 sm:px-7 py-3.5 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-medium"
                 >
                     {loading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
