@@ -11,8 +11,6 @@ async function getServicesData(locale: string) {
             id: 'basic-store',
             type: t('basicStore.type'),
             description: t('basicStore.description'),
-            priceMin: 1500,
-            priceMax: 3500,
             features: [
                 t('basicStore.features.catalog'),
                 t('basicStore.features.checkout'),
@@ -27,8 +25,6 @@ async function getServicesData(locale: string) {
             id: 'whatsapp-auto',
             type: t('whatsappAuto.type'),
             description: t('whatsappAuto.description'),
-            priceMin: 3500,
-            priceMax: 6000,
             features: [
                 t('whatsappAuto.features.basic'),
                 t('whatsappAuto.features.api'),
@@ -43,8 +39,6 @@ async function getServicesData(locale: string) {
             id: 'delivery-api',
             type: t('deliveryApi.type'),
             description: t('deliveryApi.description'),
-            priceMin: 3500,
-            priceMax: 6000,
             features: [
                 t('deliveryApi.features.basic'),
                 t('deliveryApi.features.integration'),
@@ -59,8 +53,6 @@ async function getServicesData(locale: string) {
             id: 'full-cod',
             type: t('fullCod.type'),
             description: t('fullCod.description'),
-            priceMin: 6000,
-            priceMax: 8000,
             features: [
                 t('fullCod.features.complete'),
                 t('fullCod.features.whatsapp'),
@@ -78,8 +70,6 @@ async function getServicesData(locale: string) {
             id: 'ai-agent',
             type: t('aiAgent.type'),
             description: t('aiAgent.description'),
-            priceMin: 7000,
-            priceMax: 10000,
             features: [
                 t('aiAgent.features.fullCod'),
                 t('aiAgent.features.chatbot'),

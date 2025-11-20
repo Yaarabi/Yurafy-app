@@ -55,11 +55,6 @@ export default function ServiceCard({ service, index, isArabic, onGetStarted }: 
                     <p className="text-white/90 text-sm">{service.description}</p>
                 </div>
                 <div className="p-6">
-                    <div className="mb-6">
-                        <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                            {service.priceMin.toLocaleString()} - {service.priceMax.toLocaleString()} MAD
-                        </div>
-                    </div>
                     <ul className="space-y-3 mb-6">
                         {service.features.map((feature, idx) => (
                             <li key={idx} className={`flex items-start gap-2 text-gray-700 dark:text-gray-300 ${isArabic ? 'text-right' : ''}`}>
