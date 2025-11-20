@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import ServicesHero from './ServicesHero';
 import ServiceCard from './ServiceCard';
 import ServicesCTA from './ServicesCTA';
@@ -12,8 +13,6 @@ export interface Service {
     id: string;
     type: string;
     description: string;
-    priceMin: number;
-    priceMax: number;
     features: string[];
     icon: string;
     color: string;
@@ -26,6 +25,7 @@ interface ServicesClientProps {
 }
 
 export default function ServicesClient({ locale, services }: ServicesClientProps) {
+    const t = useTranslations('services');
     const isArabic = locale === 'ar';
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedServiceType, setSelectedServiceType] = useState<string>('');
@@ -53,6 +53,9 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
             <ServicesVideo />
 
             <section id="services" className="max-w-7xl mx-auto px-4 py-16 scroll-mt-20">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+                    {t('servicesTitle')}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {services.map((service, index) => (
                         <ServiceCard

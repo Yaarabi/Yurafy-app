@@ -18,8 +18,6 @@ interface ServiceCardProps {
         id: string;
         type: string;
         description: string;
-        priceMin: number;
-        priceMax: number;
         features: string[];
         icon: string;
         color: string;

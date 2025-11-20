@@ -1105,8 +1105,8 @@
                     "description": "Auto-confirm orders and notify customers."
                 },
                 "deliveryApi": {
-                    "title": "Delivery API Integration",
-                    "description": "Real-time tracking and bulk label generation."
+                    "title": "Link Delivery Company",
+                    "description": "Real-time tracking and Auto fill order info."
                 },
                 "teamDashboard": {
                     "title": "Team Dashboard",
@@ -1117,6 +1117,8 @@
         "popular": "Most Popular",
         "priceNote": "One-time payment",
         "getStarted": "Get Started",
+        "videoTitle": "See How It Works",
+        "servicesTitle": "Our Service Packages",
         "basicStore": {
             "type": "Basic Store",
             "description": "Product listing, COD checkout form, dashboard (no automation)",

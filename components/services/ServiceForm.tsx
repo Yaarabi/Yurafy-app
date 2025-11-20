@@ -12,8 +12,6 @@ interface ServiceFormProps {
     services: Array<{
         id: string;
         type: string;
-        priceMin: number;
-        priceMax: number;
     }>;
     initialServiceType?: string;
 }
@@ -238,7 +236,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                         <option value="">{t('form.selectService')}</option>
                                         {services.map((service) => (
                                             <option key={service.id} value={service.type}>
-                                                {service.type} ({service.priceMin.toLocaleString()} - {service.priceMax.toLocaleString()} MAD)
+                                                {service.type}
                                             </option>
                                         ))}
                                         <option value="Other">{t('form.otherOption')}</option>

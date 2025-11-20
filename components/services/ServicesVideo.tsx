@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from 'next-intl';
 
 export default function ServicesVideo() {
+    const t = useTranslations('services');
     const [guide, setGuide] = useState<{ title: string; description: string; videoUrl: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -33,6 +35,9 @@ export default function ServicesVideo() {
 
     return (
         <section id="video" className="max-w-5xl mx-auto px-4 pt-6 scroll-mt-20">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+                {t('videoTitle')}
+            </h2>
             <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <div className="aspect-video">
                     <iframe

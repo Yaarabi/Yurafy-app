@@ -1,9 +1,9 @@
-import ServicesClient from '@/components/services/ServicesClient';
+import ServicesClient, { Service } from '@/components/services/ServicesClient';
 import Footer from '@/components/home/Footer';
 import { getTranslations } from 'next-intl/server';
 
 // Helper to get translated services
-async function getServicesData(locale: string) {
+async function getServicesData(locale: string): Promise<Service[]> {
     const t = await getTranslations({ locale, namespace: 'services' });
     
     return [

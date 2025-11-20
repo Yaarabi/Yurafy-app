@@ -1111,8 +1111,8 @@
                     "description": "Confirmez automatiquement les commandes et notifiez les clients."
                 },
                 "deliveryApi": {
-                    "title": "Intégration API de Livraison",
-                    "description": "Suivi en temps réel et génération d'étiquettes en masse."
+                    "title": "Lien Société de Livraison",
+                    "description": "Suivi en temps réel et remplissage automatique des informations de commande."
                 },
                 "teamDashboard": {
                     "title": "Tableau de Bord d'Équipe",
@@ -1123,6 +1123,8 @@
         "popular": "Le Plus Populaire",
         "priceNote": "Paiement unique",
         "getStarted": "Commencer",
+        "videoTitle": "Découvrez Comment Ça Marche",
+        "servicesTitle": "Nos Forfaits de Services",
         "basicStore": {
             "type": "Boutique Basique",
             "description": "Liste de produits, formulaire COD, tableau de bord (sans automatisation)",
