@@ -16,7 +16,7 @@ const NAV_ITEMS = {
     orders: { href: "dashboard/orders", icon: <MdShoppingCart size={20} />, key: "nav.orders" },
     products: { href: "dashboard/products", icon: <MdInventory2 size={20} />, key: "nav.products" },
     customers: { href: "dashboard/customers", icon: <MdSupervisorAccount size={20} />, key: "nav.customers" },
-    whatsapp: { href: "dashboard/whatsapp", icon: <MdWhatsapp size={20} />, key: "nav.whatsapp" },
+    automation: { href: "dashboard/automation", icon: <MdWhatsapp size={20} />, key: "nav.automation" },
     agent: { href: "dashboard/agent", icon: <Bot size={20} />, key: "nav.agent" },
     conversations: { href: "dashboard/conversations", icon: <MdMessage size={20} />, key: "nav.conversations" },
     guides: { href: "dashboard/guides", icon: <BookOpen size={20} />, key: "nav.guides" },
@@ -26,10 +26,10 @@ const NAV_ITEMS = {
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
     "Starter": ["dashboard", "products", "orders", "customers", "guides", "settings", "support"],
-    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "whatsapp", "guides", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "whatsapp", "guides", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "whatsapp", "guides", "settings", "support"],
-    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "whatsapp", "guides", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "automation", "guides", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "automation", "guides", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "automation", "guides", "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "automation", "guides", "settings", "support"],
     "free": ["dashboard", "products", "orders", "guides", "settings", "support"],
 };
 

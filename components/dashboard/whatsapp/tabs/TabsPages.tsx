@@ -5,6 +5,7 @@ import { Sparkles, Wrench, MessageCircle } from "lucide-react";
 
 import ConnectionTab from "@/components/dashboard/whatsapp/tabs/ConnectionTab";
 import AutomationTab from "@/components/dashboard/whatsapp/automation/AutomationTab";
+import OrdersTriggersTab from "@/components/dashboard/whatsapp/ordersTriggers/OrdersTriggersTab";
 import TemplatesTab from "@/components/dashboard/whatsapp/tabs/TemplatesTab";
 import TestPanelTab from "@/components/dashboard/whatsapp/tabs/TestPanelTab";
 import ToolsTab from "@/components/dashboard/whatsapp/tabs/ToolsTab";
@@ -23,6 +24,7 @@ const TABS = [
     'aiAgent',
     'tools',
     'automation',
+    'ordersTriggers',
     'templates',
     'testPanel',
 ];
@@ -113,6 +115,7 @@ export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppInt
                             )}
 
                             {activeTab === "automation" && <AutomationTab />}
+                            {activeTab === "ordersTriggers" && <OrdersTriggersTab />}
                             {activeTab === "templates" && <TemplatesTab />}
                             {activeTab === "testPanel" && <TestPanelTab />}
                         </div>

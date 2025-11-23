@@ -5,7 +5,7 @@ import WhatsAppIntegrationPage from "@/components/dashboard/whatsapp/tabs/TabsPa
 import { useTranslations } from "next-intl";
 
 export default function WhatsAppSettingsPage() {
-    const t = useTranslations("WhatsAppPage");
+    const t = useTranslations("whatsappPage");
     const [isLoading, setIsLoading] = useState(true);
 
     const handleLoadingChange = useCallback((loading: boolean) => {

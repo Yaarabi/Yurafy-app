@@ -1,6 +1,6 @@
 'use client';
 import { motion } from "framer-motion";
-import { Plug, Bot, Wrench, Settings, FileText, TestTube } from "lucide-react";
+import { Plug, Bot, Wrench, Settings, FileText, TestTube, MessageSquare } from "lucide-react";
 import { useTranslations } from 'next-intl';
 
 interface TabNavigationProps {
@@ -14,6 +14,7 @@ const tabIcons: Record<string, any> = {
     aiAgent: Bot,
     tools: Wrench,
     automation: Settings,
+    ordersTriggers: MessageSquare,
     templates: FileText,
     testPanel: TestTube,
 };
