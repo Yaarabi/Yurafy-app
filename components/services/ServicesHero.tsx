@@ -1,12 +1,11 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Globe2, ArrowRight, ShoppingCart, MessageCircle, Truck, Users } from 'lucide-react';
+import { Globe2, ArrowRight, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import LocaleSwitcher from '@/components/home/LocaleSwitcher';
-import FeatureCard from './FeatureCard';
 
 interface ServicesHeroProps {
     locale: string;
@@ -16,114 +15,176 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
     const t = useTranslations('services');
 
     return (
-        <section className="relative overflow-hidden py-24 px-4 min-h-[80vh] flex items-center" style={{ background: 'linear-gradient(135deg, var(--brand-blue) 0%, #1e40af 50%, #1e3a8a 100%)' }}>
-            {/* Modern Geometric Decorations */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Animated gradient orbs */}
-                <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-20 -right-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <section className="relative overflow-hidden py-20 px-4 min-h-[90vh] flex items-center bg-gradient-to-br from-gray-900 via-blue-950 to-slate-900">
+            {/* Background Image Slideshow */}
+            <div className="absolute inset-0 overflow-hidden">
+                <motion.div
+                    className="absolute inset-0"
+                    animate={{
+                        opacity: [1, 1, 0, 0, 0, 0, 1, 1]
+                    }}
+                    transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <Image
+                        src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80"
+                        alt="Smart webstore workspace"
+                        fill
+                        className="object-cover opacity-50 dark:opacity-40 scale-105"
+                        priority
+                    />
+                </motion.div>
                 
-                {/* Modern grid pattern */}
-                <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+                <motion.div
+                    className="absolute inset-0"
+                    animate={{
+                        opacity: [0, 0, 1, 1, 0, 0, 0, 0]
+                    }}
+                    transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <Image
+                        src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&q=80"
+                        alt="E-commerce dashboard"
+                        fill
+                        className="object-cover opacity-50 dark:opacity-40 scale-105"
+                    />
+                </motion.div>
+                
+                <motion.div
+                    className="absolute inset-0"
+                    animate={{
+                        opacity: [0, 0, 0, 0, 1, 1, 0, 0]
+                    }}
+                    transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <Image
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80"
+                        alt="Digital commerce analytics"
+                        fill
+                        className="object-cover opacity-50 dark:opacity-40 scale-105"
+                    />
+                </motion.div>
+                
+                {/* Enhanced gradient overlay with brand colors */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand-blue)]/40 via-blue-900/30 to-slate-900/50" />
+                
+                {/* Noise texture overlay for premium feel */}
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JhaW4iIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSByPSIxIiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFpbikiLz48L3N2Zz4=')]" />
+            </div>
+
+            {/* Enhanced Modern Geometric Decorations */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {/* Animated brand color orbs */}
+                <motion.div 
+                    className="absolute top-20 -left-20 w-96 h-96 bg-[var(--brand-blue)]/20 rounded-full blur-3xl"
+                    animate={{ 
+                        scale: [1, 1.2, 1],
+                        opacity: [0.2, 0.3, 0.2]
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div 
+                    className="absolute bottom-20 -right-20 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl"
+                    animate={{ 
+                        scale: [1.2, 1, 1.2],
+                        opacity: [0.15, 0.25, 0.15]
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                />
+                
+                {/* Premium grid pattern */}
+                <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <pattern id="modern-grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                            <circle cx="25" cy="25" r="1" fill="white" opacity="0.5"/>
-                            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3"/>
+                        <pattern id="premium-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                            <circle cx="30" cy="30" r="1.5" fill="white" opacity="0.8"/>
+                            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="0.5" opacity="0.4"/>
+                            <circle cx="0" cy="0" r="0.5" fill="white" opacity="0.6"/>
+                            <circle cx="60" cy="60" r="0.5" fill="white" opacity="0.6"/>
                         </pattern>
                     </defs>
-                    <rect width="100%" height="100%" fill="url(#modern-grid)" />
+                    <rect width="100%" height="100%" fill="url(#premium-grid)" />
                 </svg>
 
-                {/* Large floating hexagons */}
+                {/* Floating brand hexagons with glow */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 0.25, scale: 1, rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-20 right-10 w-40 h-40"
-                >
-                    <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
-                    </svg>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 0.3, scale: 1, rotate: [360, 0] }}
+                    animate={{ 
+                        opacity: [0.2, 0.4, 0.2], 
+                        scale: [1, 1.1, 1], 
+                        rotate: [0, 360] 
+                    }}
                     transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-20 left-10 w-36 h-36"
+                    className="absolute top-20 right-10 w-32 h-32"
                 >
-                    <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
+                    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
+                        <polygon 
+                            points="50,5 95,25 95,75 50,95 5,75 5,25" 
+                            fill="url(#hexGradient)" 
+                            opacity="0.6" 
+                        />
+                        <defs>
+                            <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="var(--brand-blue)" />
+                                <stop offset="100%" stopColor="#0ea5e9" />
+                            </linearGradient>
+                        </defs>
                     </svg>
                 </motion.div>
+                
                 <motion.div
                     initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 0.2, scale: 1, rotate: [0, -360] }}
+                    animate={{ 
+                        opacity: [0.15, 0.35, 0.15], 
+                        scale: [1, 1.2, 1], 
+                        rotate: [360, 0] 
+                    }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/2 left-1/4 w-28 h-28"
+                    className="absolute bottom-20 left-10 w-28 h-28"
                 >
-                    <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.25" />
+                    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                        <polygon 
+                            points="50,5 95,25 95,75 50,95 5,75 5,25" 
+                            fill="url(#hexGradient2)" 
+                            opacity="0.7" 
+                        />
+                        <defs>
+                            <linearGradient id="hexGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#0ea5e9" />
+                                <stop offset="100%" stopColor="var(--brand-blue)" />
+                            </linearGradient>
+                        </defs>
                     </svg>
                 </motion.div>
-                
-                {/* Medium hexagons */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 0.2, scale: 1, rotate: [360, 0] }}
-                    transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/3 right-1/3 w-24 h-24"
-                >
-                    <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
-                    </svg>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 0.18, scale: 1, rotate: [0, 360] }}
-                    transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-1/3 left-1/3 w-20 h-20"
-                >
-                    <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="white" opacity="0.3" />
-                    </svg>
-                </motion.div>
-                
-                {/* Circuit pattern nodes */}
-                <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
-                <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-3 h-3 bg-white/60 rounded-full"></div>
-                <div className="absolute bottom-1/3 left-1/3 w-4 h-4 bg-white/60 rounded-full"></div>
-                <div className="absolute top-1/5 right-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
-                <div className="absolute bottom-1/5 left-1/5 w-2.5 h-2.5 bg-white/50 rounded-full"></div>
-                <div className="absolute top-1/2 left-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
-                <div className="absolute top-1/2 right-1/6 w-2 h-2 bg-white/50 rounded-full"></div>
-                
-                {/* Connection lines */}
-                <svg className="absolute inset-0 w-full h-full opacity-30">
-                    <line x1="25%" y1="25%" x2="33%" y2="33%" stroke="white" strokeWidth="1.5" />
-                    <line x1="67%" y1="33%" x2="75%" y2="25%" stroke="white" strokeWidth="1.5" />
-                    <line x1="75%" y1="75%" x2="67%" y2="67%" stroke="white" strokeWidth="1.5" />
-                    <line x1="33%" y1="67%" x2="25%" y2="75%" stroke="white" strokeWidth="1.5" />
-                    <line x1="16%" y1="50%" x2="25%" y2="50%" stroke="white" strokeWidth="1" />
-                    <line x1="75%" y1="50%" x2="84%" y2="50%" stroke="white" strokeWidth="1" />
-                </svg>
 
-                {/* Floating rectangles */}
+                {/* Premium floating elements */}
                 <motion.div
                     animate={{ 
-                        y: [0, -20, 0],
-                        rotate: [0, 5, 0]
+                        y: [0, -30, 0],
+                        rotate: [0, 10, 0],
+                        scale: [1, 1.05, 1]
                     }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-32 right-20 w-24 h-24 border-2 border-white/20 rounded-2xl backdrop-blur-sm"
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-32 right-20 w-20 h-20 border border-white/20 rounded-2xl backdrop-blur-sm bg-white/5 shadow-2xl"
                 />
                 <motion.div
                     animate={{ 
-                        y: [0, 20, 0],
-                        rotate: [0, -5, 0]
+                        y: [0, 25, 0],
+                        rotate: [0, -8, 0],
+                        scale: [1, 1.08, 1]
                     }}
-                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute bottom-32 left-20 w-32 h-32 border-2 border-white/20 rounded-full backdrop-blur-sm"
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute bottom-32 left-20 w-24 h-24 border border-sky-400/30 rounded-full backdrop-blur-sm bg-sky-400/10 shadow-xl"
                 />
             </div>
 
@@ -180,12 +241,14 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                         transition={{ duration: 0.7, delay: 0.3 }}
                     >
                         {/* Main Title */}
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight px-4" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
-                            {t('hero.title')}
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-[1.1] px-4 tracking-tight" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
+                            <span className="bg-gradient-to-r from-white via-sky-100 to-sky-200 bg-clip-text text-transparent">
+                                {t('hero.title')}
+                            </span>
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed font-semibold px-4" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
+                        <p className="text-lg sm:text-xl md:text-2xl text-blue-100/90 mb-12 max-w-4xl mx-auto leading-relaxed font-medium px-4" style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
                             {t('hero.subtitle')}
                         </p>
 
@@ -194,75 +257,34 @@ export default function ServicesHero({ locale }: ServicesHeroProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, delay: 0.5 }}
-                            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 px-4"
+                            className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 px-4"
                         >
-                            <a
+                            <motion.a
                                 href="#video"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[var(--brand-blue)] rounded-xl font-bold text-base sm:text-lg hover:bg-blue-50 transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 group"
+                                className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-[var(--brand-blue)] rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-2xl hover:shadow-white/30 overflow-hidden"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
                             >
-                                Learn More
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </a>
-                            <a
+                                <div className="absolute inset-0 bg-gradient-to-r from-sky-50 to-sky-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                <span className="relative z-10">Learn More</span>
+                                <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </motion.a>
+                            
+                            <motion.a
                                 href="https://wa.me/+212716413605"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md text-white rounded-xl font-bold text-base sm:text-lg hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50 hover:scale-105 group"
+                                className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white/10 backdrop-blur-xl text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 border border-white/20 hover:border-white/40 overflow-hidden"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
                             >
-                                <MessageCircle className="w-5 h-5" />
-                                {t('hero.ctaSecondary')}
-                            </a>
+                                <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-blue)]/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                <MessageCircle className="relative z-10 w-5 h-5" />
+                                <span className="relative z-10">{t('hero.ctaSecondary')}</span>
+                            </motion.a>
                         </motion.div>
-
-                        {/* Feature Highlights - 4 Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-4">
-                            <FeatureCard
-                                icon={ShoppingCart}
-                                title={t('hero.features.codCheckout.title')}
-                                description={t('hero.features.codCheckout.description')}
-                                index={0}
-                            />
-                            <FeatureCard
-                                icon={MessageCircle}
-                                title={t('hero.features.whatsappAuto.title')}
-                                description={t('hero.features.whatsappAuto.description')}
-                                index={1}
-                            />
-                            <FeatureCard
-                                icon={Truck}
-                                title={t('hero.features.deliveryApi.title')}
-                                description={t('hero.features.deliveryApi.description')}
-                                index={2}
-                            />
-                            <FeatureCard
-                                icon={Users}
-                                title={t('hero.features.teamDashboard.title')}
-                                description={t('hero.features.teamDashboard.description')}
-                                index={3}
-                            />
-                        </div>
                     </motion.div>
                 </div>
-
-                {/* Stats Bar */}
-                {/* <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: 1 }}
-                    className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
-                >
-                    {[
-                        { value: '60+', label: 'Projects' },
-                        { value: '98%', label: 'Satisfaction' },
-                        { value: '24/7', label: 'Support' },
-                        { value: '50+', label: 'Clients' },
-                    ].map((stat, index) => (
-                        <div key={index} className="text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.value}</div>
-                            <div className="text-sm text-blue-100/80">{stat.label}</div>
-                        </div>
-                    ))}
-                </motion.div> */}
             </div>
         </section>
     );

@@ -150,7 +150,7 @@ export default async function ServicesLayout({
     // Schema.org structured data
     const structuredData = {
         '@context': 'https://schema.org',
-        '@type': 'WebPage',
+        '@type': 'WebPage', 
         '@id': `${baseUrl}/${locale}/services#webpage`,
         url: `${baseUrl}/${locale}/services`,
         name: locale === 'en' ? 'Web Development Services - Yurafy' : locale === 'fr' ? 'Services de Développement Web - Yurafy' : 'خدمات تطوير الويب - Yurafy',

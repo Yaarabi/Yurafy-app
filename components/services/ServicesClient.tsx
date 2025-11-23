@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import ServicesHero from './ServicesHero';
+import HeroFeatureCards from './HeroFeatureCards';
 import ServiceCard from './ServiceCard';
 import ServicesCTA from './ServicesCTA';
 import ServicesConversion from './ServicesConversion';
@@ -48,6 +49,9 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
     return (
         <div className="min-h-screen" dir={isArabic ? 'rtl' : 'ltr'}>
             <ServicesHero locale={locale} />
+
+            {/* Hero Feature Cards */}
+            <HeroFeatureCards />
 
             {/* Services Video Section (below hero) */}
             <ServicesVideo />
