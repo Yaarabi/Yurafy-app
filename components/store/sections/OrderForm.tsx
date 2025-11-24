@@ -79,28 +79,21 @@ const OrderForm: React.FC = () => {
             },
         };
 
-        // In a real app, you'd replace this with your actual API endpoint base URL
-        const url = ''; 
-
+        // Use relative path for API endpoint
         try {
-            const res = await fetch(`${url}/api/orders/guest`, {
+            const res = await fetch('/api/orders/guest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData),
             });
-            
-            // This is a mock response since we don't have a live API
-            // In a real scenario, you'd check res.ok
-            const mockSuccess = true; 
-
-            if (mockSuccess) { // Replace with res.ok
+            if (res.ok) {
                 setSubmissionState({ status: 'success', message: 'Order submitted successfully ✅' });
                 setFormData({
                     fullName: '',
                     phone: '',
                     address: '',
                 });
-                 console.log('Simulating order submission:', orderData);
+                console.log('Order submitted:', orderData);
             } else {
                 setSubmissionState({ status: 'error', message: 'An error occurred, please try again.' });
             }
