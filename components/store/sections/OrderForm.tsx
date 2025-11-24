@@ -83,7 +83,7 @@ const OrderForm: React.FC = () => {
         const url = ''; 
 
         try {
-            const res = await fetch(`${url}/api/orders`, {
+            const res = await fetch(`${url}/api/orders/guest`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData),

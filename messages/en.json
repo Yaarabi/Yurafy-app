@@ -651,14 +651,11 @@
             "disabledSuccess": "Trigger disabled",
             "toggleError": "Failed to toggle trigger",
             "status": {
-                "pending": "Pending",
+                "new": "New",
                 "confirmed": "Confirmed",
-                "processing": "Processing",
                 "shipped": "Shipped",
                 "delivered": "Delivered",
-                "cancelled": "Cancelled",
-                "refunded": "Refunded",
-                "returned": "Returned"
+                "cancelled": "Cancelled"
             },
             "form": {
                 "triggerName": "Trigger Name",
@@ -671,6 +668,9 @@
                 "selectTemplate": "Select a template",
                 "templatePlaceholder": "Enter the message to send when order status changes...",
                 "templateHint": "Use variables like '{customerName}', '{orderNumber}', '{status}' in your message",
+                "timing": "Delay (seconds)",
+                "timingPlaceholder": "e.g. 60",
+                "timingHint": "Time to wait before sending the message (in seconds). 0 for immediate.",
                 "enableAuto": "Enable automatic sending",
                 "autoHint": "When enabled, messages will be sent automatically when status changes",
                 "enableActive": "Enable Trigger",

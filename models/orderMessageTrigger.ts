@@ -8,6 +8,7 @@ export interface IOrderMessageTrigger extends Document {
     template: string;
     active: boolean;
     auto: boolean;
+    timing: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -34,14 +35,11 @@ const orderMessageTriggerSchema = new Schema<IOrderMessageTrigger>(
         type: String,
         required: [true, 'Order status is required'],
         enum: [
-            'pending',
+            'new',
             'confirmed',
-            'processing',
             'shipped',
             'delivered',
-            'cancelled',
-            'refunded',
-            'returned'
+            'cancelled'
         ],
         index: true,
         },
@@ -59,6 +57,11 @@ const orderMessageTriggerSchema = new Schema<IOrderMessageTrigger>(
         type: Boolean,
         required: true,
         default: false,
+        },
+        timing: {
+        type: Number,
+        default: 0,
+        min: 0,
         },
     },
     {

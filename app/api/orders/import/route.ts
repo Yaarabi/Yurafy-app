@@ -21,24 +21,74 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: "No orders provided" }, { status: 400 });
         }
 
-        // Validate and attach owner
-        const preparedOrders: Partial<IOrder>[] = ordersFromCSV.map((order) => ({
-        ...order,
-        owner: session.user.id, // force owner from session
-        status: order.status || "new",
-        createdAt: order.createdAt ? new Date(order.createdAt) : new Date(),
-        updatedAt: new Date(),
-        products: order.products?.map((p) => ({
-            product: p.product,
-            name: p.name || "Unnamed product",
-            quantity: Number(p.quantity),
-            price: Number(p.price),
-            color: p.color,
-            size: p.size,
-        })) || [],
-        }));
+        const userId = session.user.id;
 
-        const insertedOrders = await Order.insertMany(preparedOrders);
+        // ✅ FIXED: Use transaction for atomic limit check + creation
+        const mongoose = (await import('mongoose')).default;
+        const mongoSession = await mongoose.startSession();
+        
+        let insertedOrders: any[] = [];
+
+        try {
+            await mongoSession.withTransaction(async () => {
+                // Check plan limits
+                const { checkPlanLimit, canPerformAction } = await import('@/lib/utils/planLimits');
+                
+                // First check if feature is enabled
+                const canCreate = await canPerformAction(userId, 'create_order', mongoSession);
+                if (!canCreate.allowed) {
+                    throw new Error(canCreate.reason || "Plan limit reached");
+                }
+
+                // Check if bulk import fits within limit
+                const limitCheck = await checkPlanLimit(userId, 'orders', mongoSession);
+                if (limitCheck.limit !== null) {
+                    if (limitCheck.currentUsage + ordersFromCSV.length > limitCheck.limit) {
+                         throw new Error(`Importing ${ordersFromCSV.length} orders would exceed your plan limit of ${limitCheck.limit}. You have ${limitCheck.limit - limitCheck.currentUsage} remaining.`);
+                    }
+                }
+
+                // Validate and attach owner
+                const preparedOrders: Partial<IOrder>[] = ordersFromCSV.map((order) => ({
+                    ...order,
+                    owner: userId, // force owner from session
+                    status: order.status || "new",
+                    createdAt: order.createdAt ? new Date(order.createdAt) : new Date(),
+                    updatedAt: new Date(),
+                    products: order.products?.map((p) => ({
+                        product: p.product,
+                        name: p.name || "Unnamed product",
+                        quantity: Number(p.quantity),
+                        price: Number(p.price),
+                        color: p.color,
+                        size: p.size,
+                    })) || [],
+                }));
+
+                insertedOrders = await Order.insertMany(preparedOrders, { session: mongoSession });
+            });
+        } catch (error: any) {
+            await mongoSession.endSession();
+            if (error.message?.includes('limit') || error.message?.includes('plan')) {
+                return NextResponse.json({ 
+                    message: error.message || "Plan limit reached" 
+                }, { status: 403 });
+            }
+            throw error;
+        } finally {
+            await mongoSession.endSession();
+        }
+
+        // Trigger WhatsApp automation for each order (async)
+        if (insertedOrders.length > 0) {
+            insertedOrders.forEach(order => {
+                 fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order })
+                }).catch(err => console.error('Trigger API call failed:', err));
+            });
+        }
 
         return NextResponse.json({ message: "Orders imported successfully", orders: insertedOrders }, { status: 201 });
 

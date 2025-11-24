@@ -19,6 +19,7 @@ interface OrderMessageTrigger {
     template: string;
     active: boolean;
     auto: boolean;
+    timing?: number;
 }
 
 interface EditTriggerModalProps {
@@ -29,14 +30,11 @@ interface EditTriggerModalProps {
 }
 
 const ORDER_STATUSES = [
-    'pending',
-    'confirmed', 
-    'processing',
+    'new',
+    'confirmed',
     'shipped',
     'delivered',
-    'cancelled',
-    'refunded',
-    'returned'
+    'cancelled'
 ];
 
 export default function EditTriggerModal({ trigger, onClose, onUpdate, templates }: EditTriggerModalProps) {
@@ -46,7 +44,8 @@ export default function EditTriggerModal({ trigger, onClose, onUpdate, templates
         orderStatus: trigger.orderStatus || '',
         template: trigger.template || '',
         active: trigger.active || false,
-        auto: trigger.auto || false
+        auto: trigger.auto || false,
+        timing: trigger.timing || 0
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -160,6 +159,24 @@ export default function EditTriggerModal({ trigger, onClose, onUpdate, templates
                     </select>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {t('form.templateHint')}
+                    </p>
+                </div>
+
+                {/* Timing */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t('form.timing')}
+                    </label>
+                    <input
+                    type="number"
+                    min="0"
+                    value={formData.timing}
+                    onChange={(e) => setFormData({ ...formData, timing: parseInt(e.target.value) || 0 })}
+                    placeholder={t('form.timingPlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {t('form.timingHint')}
                     </p>
                 </div>
 

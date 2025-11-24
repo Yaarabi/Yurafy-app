@@ -11,6 +11,7 @@ interface OrderMessageTrigger {
     template: string;
     active: boolean;
     auto: boolean;
+    timing?: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -27,16 +28,13 @@ export default function TriggerItem({ trigger, onToggleAuto, onEdit, onDelete }:
 
     const getStatusBadgeColor = (status: string) => {
         const colors: Record<string, string> = {
-        pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+        new: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
         confirmed: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-        processing: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
         shipped: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
         delivered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
         cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-        refunded: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-        returned: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
         };
-        return colors[status] || colors.pending;
+        return colors[status] || colors.new;
     };
 
     return (
@@ -61,6 +59,11 @@ export default function TriggerItem({ trigger, onToggleAuto, onEdit, onDelete }:
                              {trigger.auto && (
                                 <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                                     Auto
+                                </span>
+                            )}
+                            {trigger.timing && trigger.timing > 0 && (
+                                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
+                                    {trigger.timing}s delay
                                 </span>
                             )}
                         </div>

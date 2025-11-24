@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const whatsappAccountId = searchParams.get('whatsappAccountId');
     const orderStatus = searchParams.get('orderStatus');
     const active = searchParams.get('active');
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { name, orderStatus, template, active = true, auto = false, whatsappAccountId: providedWhatsappAccountId } = body;
+    const { name, orderStatus, template, active = true, auto = false, timing = 0, whatsappAccountId: providedWhatsappAccountId } = body;
 
     // Validate required fields
     if (!name || !orderStatus || !template) {
@@ -152,7 +152,8 @@ export async function POST(request: NextRequest) {
       orderStatus,
       template,
       active,
-      auto
+      auto,
+      timing
     });
 
     await trigger.save();
@@ -195,7 +196,7 @@ export async function PUT(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { id, name, orderStatus, template, active, auto } = body;
+    const { id, name, orderStatus, template, active, auto, timing } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -244,7 +245,8 @@ export async function PUT(request: NextRequest) {
         ...(orderStatus && { orderStatus }),
         ...(template && { template }),
         ...(active !== undefined && { active }),
-        ...(auto !== undefined && { auto })
+        ...(auto !== undefined && { auto }),
+        ...(timing !== undefined && { timing })
       },
       { new: true, runValidators: true }
     );
@@ -286,7 +288,7 @@ export async function DELETE(request: NextRequest) {
 
     await connectDB();
 
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
 
     if (!id) {

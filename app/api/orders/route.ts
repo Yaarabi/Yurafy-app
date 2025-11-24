@@ -120,105 +120,13 @@ export async function POST(req: Request) {
             // Don't fail order creation if notification fails
         }
 
+        // Trigger WhatsApp automation (async)
         if (order) {
-            // ✅ Added: Auto-send order confirmation for Pro/Visionary plans
-            try {
-                // Check if owner has Pro or Visionary plan
-                const Plan = (await import('@/models/plan')).default;
-                const activePlan = await Plan.findOne({
-                    userId: userId,
-                    status: 'active',
-                    planKey: { $in: ['pro', 'visionary'] }
-                });
-
-                if (activePlan) {
-                    // Check if WhatsApp account exists and order confirmation is enabled
-                    const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
-                    const waAccount = await WhatsAppAccount.findOne({
-                        owner: userId,
-                        status: 'connected',
-                        'settings.orderConfirmation': true
-                    });
-
-                    if (waAccount && waAccount.preferredTemplates?.orderConfirmation) {
-                        // Import template and send confirmation
-                        const Template = (await import('@/models/templates')).default;
-                        const template = await Template.findOne({
-                            owner: userId,
-                            name: waAccount.preferredTemplates.orderConfirmation,
-                            status: 'APPROVED'
-                        });
-
-                        if (template) {
-                            // Send confirmation asynchronously (don't block order creation)
-                            const { decryptToken } = await import('@/app/api/whatsapp/webhook/route');
-                            const { sendTemplateMessage } = await import('@/lib/whatsapp/sendTemplate');
-                            const token = decryptToken(waAccount.waTokenEncrypted);
-
-                            // Extract variable values from order
-                            const variableValues: string[] = [];
-                            if (template.variables && template.variables.length > 0) {
-                                for (const varName of template.variables) {
-                                    let value = "";
-                                    switch (varName.toLowerCase()) {
-                                        case "fullname":
-                                            value = order.shippingAddress.fullName || "";
-                                            break;
-                                        case "email":
-                                            value = order.shippingAddress.email || "";
-                                            break;
-                                        case "phone":
-                                            value = order.shippingAddress.phone || "";
-                                            break;
-                                        case "address":
-                                            value = order.shippingAddress.address || "";
-                                            break;
-                                        case "city":
-                                            value = order.shippingAddress.city || "";
-                                            break;
-                                        case "country":
-                                            value = order.shippingAddress.country || "";
-                                            break;
-                                        case "totalamount":
-                                            value = String(order.totalAmount || "");
-                                            break;
-                                        case "product.name":
-                                            value = order.products[0]?.name || "";
-                                            break;
-                                        case "product.quantity":
-                                            value = String(order.products[0]?.quantity || "");
-                                            break;
-                                        case "product.price":
-                                            value = String(order.products[0]?.price || "");
-                                            break;
-                                        default:
-                                            value = "";
-                                    }
-                                    variableValues.push(value);
-                                }
-                            }
-
-                            // Normalize phone number before sending
-                            const normalizedPhone = normalizePhoneNumber(order.shippingAddress.phone);
-                            
-                            // Send confirmation message (async, don't wait)
-                            sendTemplateMessage(
-                                waAccount,
-                                normalizedPhone,
-                                template,
-                                variableValues,
-                                token
-                            ).catch((err) => {
-                                console.error(`[Order Confirmation] Failed to send confirmation:`, err);
-                                // Don't fail the order creation if confirmation fails
-                            });
-                        }
-                    }
-                }
-            } catch (confirmationError: any) {
-                // Log but don't fail order creation if confirmation fails
-                console.error("[Order Confirmation] Error during auto-confirmation:", confirmationError);
-            }
+            fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order })
+            }).catch(err => console.error('Trigger API call failed:', err));
         }
 
         return NextResponse.json({ message: "Order created successfully", order }, { status: 201 });
@@ -271,6 +179,13 @@ export async function PUT(req: Request) {
         { new: true }
         );
         if (!result) return NextResponse.json({ message: "Order not found" }, { status: 404 });
+
+        // Trigger WhatsApp automation (async)
+        fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order: result })
+        }).catch(err => console.error('Trigger API call failed:', err));
 
         return NextResponse.json({ message: "Order updated", order: result });
     } catch (error) {

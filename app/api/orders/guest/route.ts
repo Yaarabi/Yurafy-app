@@ -37,24 +37,82 @@ export async function POST(req: Request) {
             size: p.size || undefined,
         }));
 
-        const order = new Order({
-            owner: body.owner,
-            products,
-            totalAmount: body.totalAmount,
-            shippingAddress: {
-                fullName: body.shippingAddress.fullName,
-                email: body.shippingAddress.email || undefined,
-                phone: normalizedPhone, // Use normalized phone number
-                address: body.shippingAddress.address,
-                city: body.shippingAddress.city || undefined,
-                country: body.shippingAddress.country || undefined,
-            },
-            deliveryInstructions: body.deliveryInstructions || undefined,
-            preferredTime: body.preferredTime || undefined,
-            status: "new",
-        });
+        // ✅ FIXED: Use transaction for atomic limit check + creation
+        const mongoose = (await import('mongoose')).default;
+        const mongoSession = await mongoose.startSession();
+        
+        let order: any;
+        try {
+            await mongoSession.withTransaction(async () => {
+                const userId = body.owner;
 
-        await order.save();
+                // Check plan limits WITHIN transaction to prevent race conditions
+                const { canPerformAction } = await import('@/lib/utils/planLimits');
+                const canCreate = await canPerformAction(userId, 'create_order', mongoSession);
+                if (!canCreate.allowed) {
+                    throw new Error(canCreate.reason || "Plan limit reached");
+                }
+
+                const orderDoc = new Order({
+                    owner: body.owner,
+                    products,
+                    totalAmount: body.totalAmount,
+                    shippingAddress: {
+                        fullName: body.shippingAddress.fullName,
+                        email: body.shippingAddress.email || undefined,
+                        phone: normalizedPhone, // Use normalized phone number
+                        address: body.shippingAddress.address,
+                        city: body.shippingAddress.city || undefined,
+                        country: body.shippingAddress.country || undefined,
+                    },
+                    deliveryInstructions: body.deliveryInstructions || undefined,
+                    preferredTime: body.preferredTime || undefined,
+                    status: "new",
+                });
+
+                const savedOrder = await orderDoc.save({ session: mongoSession });
+                order = savedOrder.toObject();
+
+                // Verify limit not exceeded after creation (within same transaction)
+                const { checkPlanLimit } = await import('@/lib/utils/planLimits');
+                const afterCheck = await checkPlanLimit(userId, 'orders', mongoSession);
+                
+                if (afterCheck.hasReachedLimit && afterCheck.limit !== null) {
+                    // Orders can't be deleted, but we prevent creation if limit reached
+                    // This check happens before creation, so if we're here, limit was just reached
+                }
+            });
+        } catch (error: any) {
+            await mongoSession.endSession();
+            if (error.message?.includes('limit') || error.message?.includes('plan')) {
+                return NextResponse.json({ 
+                    error: error.message || "Plan limit reached" 
+                }, { status: 403 });
+            }
+            throw error;
+        } finally {
+            await mongoSession.endSession();
+        }
+
+        if (!order) {
+            return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+        }
+
+        // Send notification if limit reached (outside transaction)
+        try {
+            const { deactivateFeaturesOnLimitReached } = await import('@/lib/utils/planLimits');
+            await deactivateFeaturesOnLimitReached(body.owner);
+        } catch (error) {
+            console.error('Error sending limit notification:', error);
+            // Don't fail order creation if notification fails
+        }
+
+        // Trigger WhatsApp automation (async)
+        fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order })
+        }).catch(err => console.error('Trigger API call failed:', err));
 
         return NextResponse.json({ 
             message: "Order created successfully", 

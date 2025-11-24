@@ -18,14 +18,11 @@ interface AddTriggerModalProps {
 }
 
 const ORDER_STATUSES = [
-  'pending',
-  'confirmed', 
-  'processing',
+  'new',
+  'confirmed',
   'shipped',
   'delivered',
-  'cancelled',
-  'refunded',
-  'returned'
+  'cancelled'
 ];
 
 export default function AddTriggerModal({ onClose, onAdd, templates }: AddTriggerModalProps) {
@@ -35,7 +32,8 @@ export default function AddTriggerModal({ onClose, onAdd, templates }: AddTrigge
     orderStatus: '',
     template: '',
     active: true,
-    auto: false
+    auto: false,
+    timing: 0
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -150,6 +148,24 @@ export default function AddTriggerModal({ onClose, onAdd, templates }: AddTrigge
                 </select>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {t('form.templateHint')}
+                </p>
+              </div>
+
+              {/* Timing */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('form.timing')}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.timing}
+                  onChange={(e) => setFormData({ ...formData, timing: parseInt(e.target.value) || 0 })}
+                  placeholder={t('form.timingPlaceholder')}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[var(--brand-blue)] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {t('form.timingHint')}
                 </p>
               </div>
 
