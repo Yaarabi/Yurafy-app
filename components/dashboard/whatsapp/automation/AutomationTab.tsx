@@ -8,7 +8,6 @@ import AutomationGrid from './WorkflowGrid';
 
 interface Settings {
     autoReply: boolean;
-    orderConfirmation: boolean;
     ad: boolean;
 }
 
@@ -18,7 +17,6 @@ interface AccountResponse {
         detectionRules: DetectionRule[];
         preferredTemplates?: {
             greeting?: string;
-            orderConfirmation?: string;
             ad?: string;
         };
     };
@@ -36,9 +34,9 @@ interface PatchResponse {
 export default function AutomationTab() {
     const [fetching, setFetching] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [settings, setSettings] = useState<Settings>({ autoReply: false, orderConfirmation: false, ad: false });
+    const [settings, setSettings] = useState<Settings>({ autoReply: false, ad: false });
     const [templates, setTemplates] = useState<ITemplate[]>([]);
-    const [selectedTemplates, setSelectedTemplates] = useState({ greeting: '', orderConfirmation: '', ad: '' });
+    const [selectedTemplates, setSelectedTemplates] = useState({ greeting: '', ad: '' });
     const [rules, setRules] = useState<DetectionRule[]>([]);
 
     useEffect(() => {
@@ -55,11 +53,10 @@ export default function AutomationTab() {
                 const tpl = (await templatesRes.json()) as TemplatesResponse;
 
                 setTemplates(tpl.templates ?? []);
-                setSettings(acc.account.settings ?? { autoReply: false, orderConfirmation: false, ad: false });
+                setSettings(acc.account.settings ?? { autoReply: false, ad: false });
                 setRules(acc.account.detectionRules ?? []);
                 setSelectedTemplates({
                     greeting: acc.account.preferredTemplates?.greeting ?? '',
-                    orderConfirmation: acc.account.preferredTemplates?.orderConfirmation ?? '',
                     ad: acc.account.preferredTemplates?.ad ?? '',
                 });
             } catch (err) {
@@ -91,7 +88,7 @@ export default function AutomationTab() {
         }
     };
 
-    // Handle toggling workflows (autoReply, orderConfirmation, ad)
+    // Handle toggling workflows (autoReply, ad)
     const handleSettingChange = (field: string, value: boolean) => {
         if (field === 'autoReply' && value && rules.some(r => r.active)) {
             toast.error('Cannot enable Auto Reply while some detection rules are active.');

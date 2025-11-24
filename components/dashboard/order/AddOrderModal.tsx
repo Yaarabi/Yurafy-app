@@ -28,6 +28,7 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [status, setStatus] = useState<IOrder['status']>('new');
     const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [loading, setLoading] = useState(false);
 
     if (!show) return null;
 
@@ -54,15 +55,19 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
     };
 
     const handleSubmit = async () => {
+        if (loading) return;
+        setLoading(true);
         // Validate phone number - must be more than just country code
         const phoneDigits = phone.replace(/\D/g, ''); // Remove all non-digits
         if (!phone || phone.trim() === '' || phoneDigits.length < 10) {
             toast.error('Phone number is required. Please enter a complete phone number (not just country code).');
+            setLoading(false);
             return;
         }
 
         if (!fullName || !address || products.length === 0 || products.some(p => !p.name)) {
             toast.error('Please fill all required fields and add at least one product with a name.');
+            setLoading(false);
             return;
         }
 
@@ -89,6 +94,28 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
             const data = await res.json();
 
             if (res.ok) {
+                // WhatsApp trigger logic (frontend)
+                const waRes = await fetch('/api/whatsapp/trigger/manually', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: data.order._id, owner: data.order.owner })
+                });
+                const waData = await waRes.json();
+                if (!waRes.ok || waData.error) {
+                    toast.error(waData.error || 'WhatsApp trigger failed');
+                } else if (waData.confirmationRequired) {
+                    if (window.confirm(waData.message || 'Do you want to send the WhatsApp template?')) {
+                        const waConfirmRes = await fetch('/api/whatsapp/trigger/manually', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ orderId: data.order._id, owner: data.order.owner, confirmed: true })
+                        });
+                        const waConfirmData = await waConfirmRes.json();
+                        if (!waConfirmRes.ok || waConfirmData.error) {
+                            toast.error(waConfirmData.error || 'WhatsApp trigger failed');
+                        }
+                    }
+                }
                 onAddOrder(data.order);
                 toast.success('Order added successfully!');
                 onClose();
@@ -101,6 +128,7 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
             console.error(err);
             toast.error(err?.message || 'Server error while adding order');
         }
+        setLoading(false);
     };
 
     return (
@@ -151,7 +179,7 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
                 {/* Action Buttons */}
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
                     <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500 transition text-sm sm:text-base">Cancel</button>
-                    <button onClick={handleSubmit} className="px-4 py-2 rounded bg-green-600 hover:bg-green-500 text-white transition text-sm sm:text-base">Add Order</button>
+                    <button onClick={handleSubmit} disabled={loading} className={`px-4 py-2 rounded bg-green-600 hover:bg-green-500 text-white transition text-sm sm:text-base flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>{loading ? <span className="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>Loading...</span> : 'Add Order'}</button>
                 </div>
             </div>
         </div>

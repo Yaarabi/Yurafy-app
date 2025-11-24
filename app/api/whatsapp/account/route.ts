@@ -93,7 +93,6 @@ export async function POST(req: NextRequest) {
         // Default settings and templates
         const defaultSettings = {
             autoReply: false,
-            orderConfirmation: false,
             ad: false,
             aiAgent: false,
             ...settings,
@@ -101,7 +100,6 @@ export async function POST(req: NextRequest) {
 
         const defaultTemplates = {
             greeting: null,
-            orderConfirmation: null,
             ad: null,
             ...preferredTemplates,
         };

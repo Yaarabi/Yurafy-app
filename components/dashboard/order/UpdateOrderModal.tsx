@@ -33,6 +33,7 @@ export default function UpdateOrderModal({
     const [products, setProducts] = useState<ProductItem[]>(order.products);
     const [status, setStatus] = useState<IOrder['status']>(order.status);
     const [totalAmount, setTotalAmount] = useState(order.totalAmount);
+    const [loading, setLoading] = useState(false);
 
     if (!show) return null;
 
@@ -68,15 +69,19 @@ export default function UpdateOrderModal({
     };
 
     const handleUpdate = async () => {
+        if (loading) return;
+        setLoading(true);
         // Validate phone number - must be more than just country code
         const phoneDigits = phone.replace(/\D/g, ''); // Remove all non-digits
         if (!phone || phone.trim() === '' || phoneDigits.length < 10) {
             toast.error('Phone number is required. Please enter a complete phone number (not just country code).');
+            setLoading(false);
             return;
         }
 
         if (!fullName || !address || products.length === 0) {
             toast.error('Please fill all required fields and add at least one product.');
+            setLoading(false);
             return;
         }
 
@@ -84,6 +89,7 @@ export default function UpdateOrderModal({
         const missingName = products.find(p => !p.name || p.name.trim() === '');
         if (missingName) {
             toast.error('Please provide a name for all products.');
+            setLoading(false);
             return;
         }
 
@@ -112,6 +118,28 @@ export default function UpdateOrderModal({
             const data = await res.json();
 
             if (res.ok) {
+                // WhatsApp trigger logic (frontend)
+                const waRes = await fetch('/api/whatsapp/trigger/manually', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: data.order._id, owner: data.order.owner })
+                });
+                const waData = await waRes.json();
+                if (!waRes.ok || waData.error) {
+                    toast.error(waData.error || 'WhatsApp trigger failed');
+                } else if (waData.confirmationRequired) {
+                    if (window.confirm(waData.message || 'Do you want to send the WhatsApp template?')) {
+                        const waConfirmRes = await fetch('/api/whatsapp/trigger/manually', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ orderId: data.order._id, owner: data.order.owner, confirmed: true })
+                        });
+                        const waConfirmData = await waConfirmRes.json();
+                        if (!waConfirmRes.ok || waConfirmData.error) {
+                            toast.error(waConfirmData.error || 'WhatsApp trigger failed');
+                        }
+                    }
+                }
                 onUpdateOrder(data.order);
                 toast.success('Order updated successfully!');
                 onClose();
@@ -122,6 +150,7 @@ export default function UpdateOrderModal({
             console.error(err);
             toast.error(err?.message || 'Server error while updating order');
         }
+        setLoading(false);
     };
 
     return (
@@ -251,9 +280,10 @@ export default function UpdateOrderModal({
                     </button>
                     <button
                         onClick={handleUpdate}
-                        className="px-4 py-2 rounded bg-yellow-600 hover:bg-yellow-500 text-white transition text-sm sm:text-base"
+                        disabled={loading}
+                        className={`px-4 py-2 rounded bg-yellow-600 hover:bg-yellow-500 text-white transition text-sm sm:text-base flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
-                        Update Order
+                        {loading ? <span className="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>Loading...</span> : 'Update Order'}
                     </button>
                 </div>
             </div>

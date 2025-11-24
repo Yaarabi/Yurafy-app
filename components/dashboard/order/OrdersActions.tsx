@@ -60,6 +60,7 @@ const productMap: Record<string, string> = {
 export default function OrdersActions({ orders, setOrders, setShowAddModal }: OrdersActionsProps) {
     const { data: session } = useSession();
     const [showCSVMenu, setShowCSVMenu] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const getColumnValue = (row: CSVRow, possibleKeys: string[]) => {
         for (const key of possibleKeys) {
@@ -76,8 +77,10 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
     };
 
     const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (loading) return;
+        setLoading(true);
         const file = e.target.files?.[0];
-        if (!file) return;
+        if (!file) { setLoading(false); return; }
 
         Papa.parse<CSVRow>(file, {
             header: true,
@@ -130,6 +133,31 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
 
                     const data = await res.json();
 
+                    // WhatsApp trigger logic (frontend)
+                    for (const order of data.orders) {
+                        const waRes = await fetch('/api/whatsapp/trigger/manually', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ orderId: order._id, owner: order.owner })
+                        });
+                        const waData = await waRes.json();
+                        if (!waRes.ok || waData.error) {
+                            toast.error(waData.error || 'WhatsApp trigger failed');
+                        } else if (waData.confirmationRequired) {
+                            if (window.confirm(waData.message || 'Do you want to send the WhatsApp template for imported orders?')) {
+                                const waConfirmRes = await fetch('/api/whatsapp/trigger/manually', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ orderId: order._id, owner: order.owner, confirmed: true })
+                                });
+                                const waConfirmData = await waConfirmRes.json();
+                                if (!waConfirmRes.ok || waConfirmData.error) {
+                                    toast.error(waConfirmData.error || 'WhatsApp trigger failed');
+                                }
+                            }
+                        }
+                    }
+
                     if (res.ok) {
                         setOrders((prev) => [...prev, ...data.orders]);
                         toast.success(`✅ ${data.message || 'Orders uploaded successfully!'}`);
@@ -140,6 +168,7 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
                     console.error('CSV Upload Error:', err);
                     toast.error('⚠️ Server error while uploading orders');
                 }
+                setLoading(false);
             },
         });
     };
@@ -152,7 +181,8 @@ export default function OrdersActions({ orders, setOrders, setShowAddModal }: Or
                 <label className="flex items-center justify-center gap-2 cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm transition-all text-sm sm:text-base h-10">
                     <FaFileUpload className="w-4 h-4" />
                     <span>Upload CSV</span>
-                    <input type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} />
+                    {loading && <span className="ml-2"><svg xmlns="http://www.w3.org/2000/svg" className="animate-spin h-5 w-5 text-[var(--brand-blue)]" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg></span>}
+                    <input type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} disabled={loading} />
                 </label>
 
                 {/* Export CSV */}

@@ -13,13 +13,11 @@ export interface IWhatsAppAccount{
     status: "connected" | "disconnected";
     settings: {
         autoReply: boolean;
-        orderConfirmation: boolean;
         ad:boolean;
         aiAgent: boolean;
     };
     preferredTemplates?: {
         greeting?: string;
-        orderConfirmation?: string;
         ad?: string;
     };
     detectionRules?: [
@@ -55,13 +53,11 @@ const WhatsAppAccountSchema = new Schema(
         },
         settings: {
         autoReply: { type: Boolean, default: false },
-        orderConfirmation: { type: Boolean, default: false },
         ad: { type: Boolean, default: false },
         aiAgent: { type: Boolean, default: false },
         },
         preferredTemplates: {
         greeting: { type: String, default: null },
-        orderConfirmation: { type: String, default: null },
         ad: { type: String, default: null },
         },
         detectionRules: [

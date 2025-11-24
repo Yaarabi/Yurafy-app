@@ -56,11 +56,9 @@ export default function TriggerItem({ trigger, onToggleAuto, onEdit, onDelete }:
                             <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(trigger.orderStatus)}`}>
                                 {t(`status.${trigger.orderStatus}`)}
                             </span>
-                             {trigger.auto && (
-                                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                    Auto
-                                </span>
-                            )}
+                            <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${trigger.auto ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400'}`}>
+                                {trigger.auto ? 'Automatic Execution' : 'Manual Execution'}
+                            </span>
                             {trigger.timing && trigger.timing > 0 && (
                                 <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
                                     {trigger.timing}s delay

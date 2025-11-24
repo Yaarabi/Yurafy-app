@@ -120,14 +120,7 @@ export async function POST(req: Request) {
             // Don't fail order creation if notification fails
         }
 
-        // Trigger WhatsApp automation (async)
-        if (order) {
-            fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ order })
-            }).catch(err => console.error('Trigger API call failed:', err));
-        }
+        // WhatsApp trigger will be handled in the frontend after order creation
 
         return NextResponse.json({ message: "Order created successfully", order }, { status: 201 });
     } catch (err: any) {
@@ -180,12 +173,7 @@ export async function PUT(req: Request) {
         );
         if (!result) return NextResponse.json({ message: "Order not found" }, { status: 404 });
 
-        // Trigger WhatsApp automation (async)
-        fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/trigger`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ order: result })
-        }).catch(err => console.error('Trigger API call failed:', err));
+        // WhatsApp trigger will be handled in the frontend after order update
 
         return NextResponse.json({ message: "Order updated", order: result });
     } catch (error) {

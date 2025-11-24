@@ -99,12 +99,6 @@ export default function ConversationList({
                                                 <span className="hidden sm:inline">{t('tracking.auto')}</span>
                                             </span>
                                         )}
-                                        {conv.metadata?.orderConfirmationSent && (
-                                            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300" title={t('tracking.orderConfirm')}>
-                                                <CheckCircle2 className="w-3 h-3" />
-                                                <span className="hidden sm:inline">{t('tracking.order')}</span>
-                                            </span>
-                                        )}
                                         {conv.metadata?.adTemplateSent && (
                                             <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" title={t('tracking.adTemplate')}>
                                                 <Megaphone className="w-3 h-3" />

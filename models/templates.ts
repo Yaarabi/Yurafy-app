@@ -4,7 +4,9 @@ export interface ITemplate {
     _id: string;
     owner: mongoose.Types.ObjectId;
     name: string;
+    metaName: string;
     type: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
+    category: "UTILITY" | "MARKETING";
     content?: string; // for TEXT templates
     variables?: string[]; // e.g. ["customerName", "orderId"]
     link?: string; // for media templates
@@ -18,11 +20,17 @@ export interface ITemplate {
 const TemplateSchema = new Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        name: { type: String, required: true },
+        name: { type: String, required: true, unique: true },
+        metaName: { type: String, required: true, unique: true },
         type: {
             type: String,
             enum: ["TEXT", "IMAGE", "AUDIO", "VIDEO", "DOCUMENT"],
             default: "TEXT",
+        },
+        category: {
+            type: String,
+            enum: ["UTILITY", "MARKETING"],
+            required: true,
         },
         content: { type: String }, 
         variables: [{ type: String }],

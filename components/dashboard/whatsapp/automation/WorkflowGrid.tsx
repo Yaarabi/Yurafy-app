@@ -8,13 +8,11 @@ import { JSX } from 'react';
 interface AutomationGridProps {
     settings: {
         autoReply: boolean;
-        orderConfirmation: boolean;
         ad: boolean;
     };
     templates: ITemplate[];
     selectedTemplates: {
         greeting: string;
-        orderConfirmation: string;
         ad: string;
     };
     loading: boolean;
@@ -53,17 +51,6 @@ export default function AutomationGrid({
             disabled={loading || rulesActive}
             onToggle={v => onSettingChange('autoReply', v)}
             onTemplateChange={v => onTemplateChange('greeting', v)}
-        />,
-        <WorkflowCard
-            key="orderConfirmation"
-            label="Order Confirmation"
-            enabled={settings.orderConfirmation}
-            templateLabel="Order Confirmation Template"
-            template={selectedTemplates.orderConfirmation}
-            templates={templates}
-            disabled={loading}
-            onToggle={v => onSettingChange('orderConfirmation', v)}
-            onTemplateChange={v => onTemplateChange('orderConfirmation', v)}
         />,
         <WorkflowCard
             key="ad"

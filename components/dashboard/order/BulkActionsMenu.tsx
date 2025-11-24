@@ -69,14 +69,6 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
             <span className="text-sm text-gray-600 dark:text-gray-300">{selectedOrders.length} selected</span>
 
             <button
-                onClick={() => sendInBatches(selectedOrders, '/api/whatsapp/send-confirmations')}
-                disabled={isSending}
-                className="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"
-            >
-                <FaPaperPlane /> Send Confirmation
-            </button>
-
-            <button
                 onClick={() => sendInBatches(selectedOrders, '/api/whatsapp/send-ad-template')}
                 disabled={isSending}
                 className="bg-[var(--brand-blue)] hover:opacity-90 text-white px-3 py-2 rounded flex items-center gap-2 disabled:opacity-50"

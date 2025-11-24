@@ -21,7 +21,7 @@ export default function LogsTab() {
     const [sortBy, setSortBy] = useState<SortOption>('newest');
     const [filters, setFilters] = useState({
         autoReply: false,
-        orderConfirm: false,
+        adTemplate: false,
         adTemplate: false,
         agentReply: false,
         unread: false,
@@ -94,8 +94,6 @@ export default function LogsTab() {
                     switch (filterName) {
                         case 'autoReply':
                             return conv.metadata?.autoReplySent === true;
-                        case 'orderConfirm':
-                            return conv.metadata?.orderConfirmationSent === true;
                         case 'adTemplate':
                             return conv.metadata?.adTemplateSent === true;
                         case 'agentReply':
@@ -137,7 +135,6 @@ export default function LogsTab() {
     const clearAllFilters = () => {
         setFilters({
             autoReply: false,
-            orderConfirm: false,
             adTemplate: false,
             agentReply: false,
             unread: false,
@@ -199,17 +196,6 @@ export default function LogsTab() {
                     title={t('filterButtons.autoReply') || 'Show conversations with auto reply sent'}
                 >
                     {t('filterButtons.autoReply') || 'Auto Reply'}
-                </button>
-                <button
-                    onClick={() => toggleFilter('orderConfirm')}
-                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
-                        filters.orderConfirm
-                            ? 'bg-[var(--brand-blue)] text-white'
-                            : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
-                    title={t('filterButtons.orderConfirm') || 'Show conversations with order confirmation sent'}
-                >
-                    {t('filterButtons.orderConfirm') || 'Order Confirm'}
                 </button>
                 <button
                     onClick={() => toggleFilter('adTemplate')}

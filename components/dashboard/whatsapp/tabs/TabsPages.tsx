@@ -94,7 +94,7 @@ export default function WhatsAppIntegrationPage({ onLoadingChange }: WhatsAppInt
                             )}
 
                             {activeTab === "aiAgent" && hasAIAgentAccess && agent && (
-                                <AIAgentSettings agent={agent} onUpdate={updateAgent} />
+                                <AIAgentSettings agent={agent} updateAgent={updateAgent} />
                             )}
 
                             {activeTab === "tools" && !hasAIAgentAccess && (

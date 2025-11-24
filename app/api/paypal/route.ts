@@ -258,7 +258,6 @@ export async function POST(req: Request) {
                         status: "disconnected",
                         settings: {
                             autoReply: features.ai?.agent || false,
-                            orderConfirmation: false,
                             ad: false,
                             aiAgent: features.ai?.agent || false,
                         },
@@ -267,7 +266,6 @@ export async function POST(req: Request) {
                         },
                         preferredTemplates: {
                             greeting: null,
-                            orderConfirmation: null,
                             ad: null,
                         },
                         active: true,
@@ -309,12 +307,11 @@ export async function POST(req: Request) {
                                 status: "disconnected",
                                 settings: {
                                     autoReply: false,
-                                    orderConfirmation: false,
                                     ad: false,
                                     aiAgent: true,
                                 },
                                 aiConfig: { personality: "friendly assistant" },
-                                preferredTemplates: { greeting: null, orderConfirmation: null, ad: null },
+                                preferredTemplates: { greeting: null, ad: null },
                                 active: true,
                             });
                             await waAccount.save({ session: mongoSession });
