@@ -80,6 +80,7 @@ const OrderForm: React.FC = () => {
         };
 
         // Use relative path for API endpoint
+        console.log('Order payload:', orderData);
         try {
             const res = await fetch('/api/orders/guest', {
                 method: 'POST',
@@ -95,7 +96,20 @@ const OrderForm: React.FC = () => {
                 });
                 console.log('Order submitted:', orderData);
             } else {
-                setSubmissionState({ status: 'error', message: 'An error occurred, please try again.' });
+                let errorMsg = 'An error occurred, please try again.';
+                try {
+                    const errorData = await res.json();
+                    if (errorData.error) {
+                        errorMsg = errorData.error;
+                    }
+                    if (errorData.errors) {
+                        errorMsg += ': ' + Object.values(errorData.errors).join(', ');
+                    }
+                    if (errorData.message && !errorMsg.includes(errorData.message)) {
+                        errorMsg += ': ' + errorData.message;
+                    }
+                } catch {}
+                setSubmissionState({ status: 'error', message: errorMsg });
             }
         } catch (error) {
             setSubmissionState({ status: 'error', message: 'Network error, please try again.' });

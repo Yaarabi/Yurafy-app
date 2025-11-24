@@ -28,7 +28,7 @@ function serializeProductWithStore(product: any, store?: any): {
     const serializedProduct: IProduct = {
         ...product,
         _id: serializeId(product._id),
-        owner: undefined,
+        owner: serializeId(product.owner),
         createdAt: product.createdAt?.toISOString(),
         updatedAt: product.updatedAt?.toISOString(),
         images: product.images?.map((img: any) => img) || [],
