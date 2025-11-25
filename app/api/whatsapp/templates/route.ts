@@ -155,8 +155,28 @@ export async function POST(req: NextRequest) {
         // ------------------------------------------
         // 🔥 STEP 3: REAL EXAMPLE VALUES
         // ------------------------------------------
+        // Map variable keys to realistic example values
+        const exampleMap: Record<string, string> = {
+            fullName: "John Doe",
+            email: "john@example.com",
+            phone: "+123456789",
+            address: "123 Main St",
+            city: "New York",
+            country: "USA",
+            totalAmount: "99.99",
+            status: "confirmed",
+            productName: "Product Name",
+            productQuantity: "2",
+            productPrice: "49.99",
+            productColor: "Red",
+            productSize: "M",
+            deliveryInstructions: "Leave at door",
+            preferredTime: "Afternoon",
+            createdAt: "2025-11-25",
+            updatedAt: "2025-11-25"
+        };
         const exampleValues = variables?.length
-            ? variables.map((v: string, i: number) => `Example ${i + 1}`)
+            ? variables.map((v: string) => exampleMap[v] || `Example for ${v}`)
             : [];
 
         // ------------------------------------------

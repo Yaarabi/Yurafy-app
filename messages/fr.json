@@ -313,6 +313,7 @@
         "logout": "Se déconnecter",
         "buttons": {
             "back": "Retour"
+            ,"connect": "Connecter"
         }
     },
     "nav": {
@@ -321,6 +322,7 @@
         "products": "Produits",
         "customers": "Clients",
         "settings": "Paramètres",
+        "integrations": "Intégrations",
         "whatsapp": "WhatsApp",
         "automation": "Automatisation",
         "agent": "Agent IA",
@@ -404,6 +406,36 @@
                 "label": "Nombre de ventes",
                 "noData": "Aucune donnée de produit disponible",
                 "unnamedProduct": "Produit sans nom"
+            }
+        },
+        "integrations": {
+            "title": "Intégrations",
+            "subtitle": "Connectez et gérez vos intégrations de boutique et de livraison",
+            "categories": {
+                "stores": {
+                    "title": "Boutiques",
+                    "description": "Ajoutez et gérez les boutiques connectées (Shopify, WooCommerce, ...)",
+                    "manage": "Gérer les boutiques"
+                },
+                "delivery": {
+                    "title": "Sociétés de livraison",
+                    "description": "Connectez les partenaires de livraison et gérez les paramètres d'expédition",
+                    "manage": "Gérer les livraisons"
+                }
+            },
+            "providers": {
+                "shopify": {
+                    "name": "Shopify",
+                    "description": "Synchronisez les commandes et gérez le traitement via Shopify."
+                },
+                "woocommerce": {
+                    "name": "WooCommerce",
+                    "description": "Connectez via l'API REST pour synchroniser les commandes et leur traitement."
+                },
+                "youcan": {
+                    "name": "YouCan",
+                    "description": "Connectez YouCan pour importer les commandes et gérer leur traitement."
+                }
             }
         }
     },

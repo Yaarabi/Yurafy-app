@@ -32,6 +32,7 @@
         "logout": "Logout",
         "buttons": {
             "back": "Back"
+            ,"connect": "Connect"
         }
     },
     "nav": {
@@ -40,6 +41,7 @@
         "products": "Products",
         "customers": "Customers",
         "settings": "Settings",
+        "integrations": "Integrations",
         "whatsapp": "WhatsApp",
         "automation": "Automation",
         "agent": "AI Agent",
@@ -403,6 +405,36 @@
                 "noData": "No products data available",
                 "unnamedProduct": "Unnamed Product"
             }
+        },
+        "integrations": {
+            "title": "Integrations",
+            "subtitle": "Connect and manage your store and delivery integrations",
+            "categories": {
+                "stores": {
+                    "title": "Stores",
+                    "description": "Add and manage connected stores (Shopify, WooCommerce, etc.)",
+                    "manage": "Manage Stores"
+                },
+                "delivery": {
+                    "title": "Delivery Companies",
+                    "description": "Connect delivery partners and manage shipping integration settings",
+                    "manage": "Manage Delivery Companies"
+                }
+            },
+            "providers": {
+                "shopify": {
+                    "name": "Shopify",
+                    "description": "Sync orders and manage fulfillment via Shopify."
+                },
+                "woocommerce": {
+                    "name": "WooCommerce",
+                    "description": "Connect via REST API to synchronize orders and fulfillment."
+                },
+                "youcan": {
+                    "name": "YouCan",
+                    "description": "Connect YouCan to import orders and handle fulfillment."
+                }
+            }
         }
     },
     "themes": {
@@ -671,8 +703,6 @@
                 "timing": "Delay (seconds)",
                 "timingPlaceholder": "e.g. 60",
                 "timingHint": "Time to wait before sending the message (in seconds). 0 for immediate.",
-                "enableAuto": "Enable automatic sending",
-                "autoHint": "When enabled, messages will be sent automatically when status changes",
                 "enableActive": "Enable Trigger",
                 "activeHint": "When enabled, this trigger will be active",
                 "enableAuto": "Enable Automatic Execution",

@@ -14,8 +14,6 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
     const [loading, setLoading] = useState(false);
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-    // ...existing code...
-
     const [template, setTemplate] = useState({
         name: "",
         type: "TEXT" as "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT",
@@ -24,6 +22,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
         link: "",
         variables: [] as string[],
     });
+    const [variableSpans, setVariableSpans] = useState<Array<{ key: string, seq: number }>>([]);
 
     // 🧠 Upload file and delete previous if needed
     const handleFileChange = async (file: File) => {
@@ -52,7 +51,72 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
         }
     };
 
-    // ...existing code...
+    // Insert variable at cursor position as {{seq}} and add colored span
+    function handleInsertVariable(varKey: string) {
+        // Prevent duplicate variable
+        if (variableSpans.some(v => v.key === varKey)) return;
+        const seq = variableSpans.length + 1;
+        const textarea = document.querySelector('textarea');
+        let pos = textarea && textarea.selectionStart ? textarea.selectionStart : template.content.length;
+        // Only insert the placeholder
+        const newContent = template.content.slice(0, pos) + `{{${seq}}}` + template.content.slice(pos);
+        setTemplate(t => ({
+            ...t,
+            content: newContent,
+            variables: [...t.variables, varKey]
+        }));
+        setVariableSpans([...variableSpans, { key: varKey, seq }]);
+    }
+
+    // Remove variable and renumber
+    function handleRemoveVar(seq: number) {
+        const idx = variableSpans.findIndex(v => v.seq === seq);
+        if (idx === -1) return;
+        const newSpans = variableSpans.filter(v => v.seq !== seq);
+        const newVars = template.variables.filter((_, i) => i !== idx);
+        let newContent = template.content.replace(new RegExp(`{{${seq}}}`, 'g'), '');
+        newSpans.forEach((v, i) => {
+            const oldSeq = v.seq;
+            const newSeq = i + 1;
+            newContent = newContent.replace(new RegExp(`{{${oldSeq}}}`, 'g'), `{{${newSeq}}}`);
+            v.seq = newSeq;
+        });
+        setTemplate(t => ({ ...t, content: newContent, variables: newVars }));
+        setVariableSpans(newSpans);
+    }
+
+    // Handle manual content change (renumber spans if needed)
+    function handleContentChange(val: string) {
+        let newSpans = [...variableSpans];
+        let newVars = [...template.variables];
+        newSpans.forEach((v, i) => {
+            if (!val.includes(`{{${v.seq}}}`)) {
+                newSpans = newSpans.filter((_, idx) => idx !== i);
+                newVars = newVars.filter((_, idx) => idx !== i);
+            }
+        });
+        setTemplate(t => ({ ...t, content: val, variables: newVars }));
+        setVariableSpans(newSpans);
+    }
+
+    // Render content with variable spans
+    function renderContentWithSpans(content: string, spans: Array<{ key: string, seq: number }>, onRemove: (seq: number) => void) {
+        const parts = content.split(/({{\d+}})/g);
+        return parts.map((part, i) => {
+            const match = part.match(/{{(\d+)}}/);
+            if (match) {
+                const seq = Number(match[1]);
+                const span = spans.find(s => s.seq === seq);
+                if (!span) return null;
+                return (
+                    <span key={i} style={{ background: '#e0f7fa', color: '#00796b', borderRadius: '4px', padding: '2px 6px', margin: '0 2px', display: 'inline-flex', alignItems: 'center' }}>
+                        {span.key} <button style={{ marginLeft: 4, color: '#d32f2f', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => onRemove(seq)}>×</button>
+                    </span>
+                );
+            }
+            return part;
+        });
+    }
 
     // 🧠 Create Template
     const handleCreate = async () => {
@@ -140,26 +204,26 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
 
             <div className="flex gap-2 mt-2 sm:mt-0">
             <VariableDropdown
-                onSelect={(v) =>
-                setTemplate({
-                    ...template,
-                    content: template.content + v,
-                    variables: [...new Set([...template.variables, v])],
-                })
-                }
+                onSelect={handleInsertVariable}
             />
             </div>
         </div>
 
         {/* Content or Media */}
         {template.type === "TEXT" ? (
-            <textarea
-            placeholder="Template Content (use variables like {{fullName}})"
-            className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
-            rows={4}
-            value={template.content}
-            onChange={(e) => setTemplate({ ...template, content: e.target.value })}
-            />
+            <div className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 min-h-[100px]">
+                {/* Preview: Render content with variable spans above the textarea */}
+                <div className="mb-2">
+                    {renderContentWithSpans(template.content, variableSpans, handleRemoveVar)}
+                </div>
+                <textarea
+                    placeholder="Type your template and insert variables"
+                    className="w-full bg-transparent outline-none resize-none"
+                    rows={4}
+                    value={template.content}
+                    onChange={e => handleContentChange(e.target.value)}
+                />
+            </div>
         ) : (
             <div className="space-y-3">
                 <div>

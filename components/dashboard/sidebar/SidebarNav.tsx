@@ -7,6 +7,7 @@ import {
     MdWhatsapp,
     MdMessage,
     MdSupervisorAccount,
+    MdExtension,
 } from "react-icons/md";
 import { BookOpen, Bot } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -22,15 +23,16 @@ const NAV_ITEMS = {
     guides: { href: "dashboard/guides", icon: <BookOpen size={20} />, key: "nav.guides" },
     settings: { href: "dashboard/settings", icon: <MdSettings size={20} />, key: "nav.settings" },
     support: { href: "dashboard/support", icon: <MdSupportAgent size={20} />, key: "nav.support" },
+    integrations: { href: "dashboard/integrations", icon: <MdExtension size={20} />, key: "nav.integrations" },
 };
 
 const PLAN_NAV_MAP: Record<string, (keyof typeof NAV_ITEMS)[]> = {
     "Starter": ["dashboard", "products", "orders", "customers", "guides", "settings", "support"],
-    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "automation", "guides", "settings", "support"],
-    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "automation", "guides", "settings", "support"],
-    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "automation", "guides", "settings", "support"],
-    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "automation", "guides", "settings", "support"],
-    "free": ["dashboard", "products", "orders", "guides", "settings", "support"],
+    "WhatsApp Automation": ["dashboard", "orders", "customers", "conversations", "automation", "integrations", "guides", "settings", "support"],
+    "AI WhatsApp Agent": ["dashboard", "orders", "customers", "agent", "conversations", "automation", "integrations", "guides", "settings", "support"],
+    "Pro Seller": ["dashboard", "orders", "customers", "products", "conversations", "automation", "integrations", "guides", "settings", "support"],
+    "Visionary": ["dashboard", "orders", "products", "customers", "agent", "conversations", "automation", "integrations", "guides", "settings", "support"],
+    "free": ["dashboard", "products", "orders", "integrations", "guides", "settings", "support"],
 };
 
 export default function SidebarNav({
