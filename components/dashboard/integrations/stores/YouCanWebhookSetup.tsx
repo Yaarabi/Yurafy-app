@@ -77,6 +77,9 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [showInstructions, setShowInstructions] = useState(false);
+    const [clientIdInput, setClientIdInput] = useState('');
+    const [clientSecretInput, setClientSecretInput] = useState('');
+    const [showSecret, setShowSecret] = useState(false);
 
     useEffect(() => {
         let mounted = true;
@@ -84,7 +87,12 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
         fetch('/api/webhooks/youcan/store')
             .then(async (res) => {
                 if (!res.ok) { if (mounted) setStore(null); return; }
-                const data = await res.json(); if (mounted) setStore(data.store || null);
+                const data = await res.json(); if (mounted) {
+                    const s = data.store || null;
+                    setStore(s);
+                    setClientIdInput(s?.clientId ?? '');
+                    setClientSecretInput(s?.clientSecret ?? '');
+                }
             })
             .catch((err) => setError(String(err)))
             .finally(() => setLoading(false));
@@ -94,9 +102,14 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
     async function handleGenerate() {
         setLoading(true); setError(null);
         try {
-            const res = await fetch('/api/webhooks/youcan/store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-            const data = await res.json(); if (!res.ok) throw new Error(data?.error || 'Failed to create store');
+            const body: any = { clientId: clientIdInput?.trim(), clientSecret: clientSecretInput?.trim() };
+            // include connect if store existed
+            if (store?.connect) body.connect = store.connect;
+            const res = await fetch('/api/webhooks/youcan/store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json(); if (!res.ok) throw new Error(data?.error || 'Failed to create/update store');
             setStore(data.store || data);
+            setClientIdInput((data.store || data)?.clientId || clientIdInput);
+            setClientSecretInput((data.store || data)?.clientSecret || clientSecretInput);
             setSuccess('Webhook token generated');
         } catch (err: any) { setError(err.message || String(err)); } finally { setLoading(false); }
     }
@@ -117,19 +130,15 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => onClose && onClose()} />
             <div className="relative max-w-xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 p-6">
-                <div className="flex items-center justify-between -mt-6 mb-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-16 h-16 rounded-lg flex items-center justify-center shadow-sm" style={{ background: 'linear-gradient(180deg,#fff7ed 0%, #fffbf0 100%)' }}>
-                            <img src="https://khamsat.hsoubcdn.com/images/services/2777808/df2fd04728e150af95fbc868ac35135d.jpg" alt="YouCan" className="w-9 h-9 object-contain" />
-                        </div>
-                        <div className="text-left">
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Connecting YouCan Webhooks</h2>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Follow these steps to add the webhook to your YouCan store.</p>
-                        </div>
+                <div className="flex justify-center -mt-6 mb-3">
+                    <div className="w-16 h-16 rounded-lg flex items-center justify-center shadow-sm" style={{ background: 'linear-gradient(180deg,#fff7ed 0%, #fffbf0 100%)' }}>
+                        <img src="https://khamsat.hsoubcdn.com/images/services/2777808/df2fd04728e150af95fbc868ac35135d.jpg" alt="YouCan" className="w-9 h-9 object-contain" />
                     </div>
-                    <div>
-                        <StatusBadge connected={!!store?.connect} />
-                    </div>
+                </div>
+
+                <div className="text-center mb-3">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Connecting YouCan Webhooks</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Follow these steps to add the webhook to your YouCan store.</p>
                 </div>
 
                 {error && <div className="mb-3"><Alert type="error" message={error} onClose={() => setError(null)} /></div>}
@@ -144,34 +153,44 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                     <p className="text-xs text-gray-500 mt-1">Use this URL when creating the webhook in YouCan. The token is unique to your account.</p>
                 </div>
 
+                {store?.token && (
+                    <div className="mt-3">
+                        <label className="block text-xs text-gray-500 dark:text-gray-400">Webhook token</label>
+                        <div className="mt-2 flex gap-2 items-center">
+                            <input readOnly value={store.token} aria-label="YouCan webhook token" className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
+                            <CopyButton value={store.token} label="Copy webhook token" />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Copy the token if you need to paste it into the YouCan portal directly.</p>
+                    </div>
+                )}
+
                 {/* Credentials */}
                 <div className="mt-4 grid grid-cols-1 gap-3">
                     <div>
                         <label className="block text-xs text-gray-500 dark:text-gray-400">Client ID</label>
                         <div className="mt-2 flex gap-2 items-center">
-                            <input readOnly value={store?.clientId ?? ''} aria-label="YouCan client id" className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
-                            <CopyButton value={store?.clientId} label="Copy client id" />
+                            <input value={clientIdInput} onChange={(e) => setClientIdInput(e.target.value)} aria-label="YouCan client id" placeholder="Enter Client ID" className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
                         </div>
                     </div>
 
                     <div>
                         <label className="block text-xs text-gray-500 dark:text-gray-400">Client Secret</label>
                         <div className="mt-2 flex gap-2 items-center">
-                            <input readOnly value={store?.clientSecret ?? ''} aria-label="YouCan client secret" className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
-                            <CopyButton value={store?.clientSecret} label="Copy client secret" />
+                            <input value={clientSecretInput} onChange={(e) => setClientSecretInput(e.target.value)} aria-label="YouCan client secret" placeholder="Enter Client Secret" type={showSecret ? 'text' : 'password'} className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
+                            <button onClick={() => setShowSecret(s => !s)} className="px-2 py-1 text-sm border rounded-md">{showSecret ? 'Hide' : 'Show'}</button>
                         </div>
                         <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">Keep this secret safe: do not share your client secret publicly.</p>
                     </div>
                 </div>
 
                 <div className="mt-4 flex gap-2">
-                    {!store && (
-                        <button className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-md inline-flex items-center" onClick={handleGenerate} disabled={loading} aria-label="Generate webhook">
-                            {loading ? <><Spinner />Generating...</> : 'Generate webhook'}
+                    {(!store || !store.token) && (
+                        <button className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-md inline-flex items-center" onClick={handleGenerate} disabled={loading || !clientIdInput || !clientSecretInput} aria-label="Save credentials">
+                            {loading ? <><Spinner />Saving...</> : 'Save credentials'}
                         </button>
                     )}
 
-                    {store && (
+                    {store?.token && (
                         <>
                             <button className="px-4 py-2 bg-green-600 text-white rounded-md inline-flex items-center" onClick={handleDone} disabled={loading} aria-label="Mark as connected">
                                 {loading ? <><Spinner />Working...</> : 'Done'}

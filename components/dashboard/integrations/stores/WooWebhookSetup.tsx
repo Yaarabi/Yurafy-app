@@ -49,6 +49,7 @@ export default function WooWebhookSetup({ onClose }: { onClose?: () => void }) {
     const [store, setStore] = useState<Store | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showInstructions, setShowInstructions] = useState(false);
 
     useEffect(() => {
         let mounted = true;
@@ -113,19 +114,24 @@ export default function WooWebhookSetup({ onClose }: { onClose?: () => void }) {
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Follow these steps to add the webhook to your WooCommerce store.</p>
                 </div>
 
-                        <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
-                            <div>
-                                <strong>Steps to Install script</strong>
-                            </div>
+                        <div className="mt-4">
+                            <button aria-expanded={showInstructions} aria-controls="woo-instructions" onClick={() => setShowInstructions(s => !s)} className="text-sm text-[var(--brand-blue)] underline focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]">{showInstructions ? 'Hide instructions' : 'Show instructions'}</button>
+                            {showInstructions && (
+                                <div id="woo-instructions" className="mt-3 space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                                    <div>
+                                        <strong>Steps to Install script</strong>
+                                    </div>
 
-                            <ol className="list-decimal list-inside space-y-2 ml-3">
-                                <li>Copy the Webhook URL from Yurafy.</li>
-                                <li>Log in to your WooCommerce/WordPress admin.</li>
-                                <li>Navigate to WooCommerce &gt; Settings &gt; Advanced &gt; Webhooks.</li>
-                                <li>Click Add webhook.</li>
-                                <li>Set Topic to Order created. Paste the copied URL into the Delivery URL field and choose the API version.</li>
-                                <li>Return to Yurafy and click the Done button.</li>
-                            </ol>
+                                    <ol className="list-decimal list-inside space-y-2 ml-3">
+                                        <li>Copy the Webhook URL from Yurafy.</li>
+                                        <li>Log in to your WooCommerce/WordPress admin.</li>
+                                        <li>Navigate to WooCommerce &gt; Settings &gt; Advanced &gt; Webhooks.</li>
+                                        <li>Click Add webhook.</li>
+                                        <li>Set Topic to Order created. Paste the copied URL into the Delivery URL field and choose the API version.</li>
+                                        <li>Return to Yurafy and click the Done button.</li>
+                                    </ol>
+                                </div>
+                            )}
                         </div>
 
                         <div className="mt-4">
