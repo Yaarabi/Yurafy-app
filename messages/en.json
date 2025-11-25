@@ -424,15 +424,15 @@
             "providers": {
                 "shopify": {
                     "name": "Shopify",
-                    "description": "Sync orders and manage fulfillment via Shopify."
+                    "description": "connect your Store to get real time order"
                 },
                 "woocommerce": {
                     "name": "WooCommerce",
-                    "description": "Connect via REST API to synchronize orders and fulfillment."
+                    "description": "connect your Store to get real time order"
                 },
                 "youcan": {
                     "name": "YouCan",
-                    "description": "Connect YouCan to import orders and handle fulfillment."
+                    "description": "connect your Store to get real time order"
                 }
             }
         }

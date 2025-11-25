@@ -23,6 +23,10 @@ export interface IOrder {
   };
   deliveryInstructions?: string;
   preferredTime?: string;
+  source?: {
+    store: string; // e.g. 'yurafy' | 'shopify' | 'woocommerce' | 'youcan'
+    id?: string | null; // original order id from the external source
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -66,6 +70,10 @@ const OrderSchema = new Schema(
     },
     deliveryInstructions: { type: String },
     preferredTime: { type: String },
+    source: {
+      store: { type: String, default: 'yurafy' },
+      id: { type: String, default: null },
+    },
   },
   { timestamps: true }
 );

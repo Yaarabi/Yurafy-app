@@ -426,15 +426,15 @@
             "providers": {
                 "shopify": {
                     "name": "Shopify",
-                    "description": "Synchronisez les commandes et gérez le traitement via Shopify."
+                    "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
                 },
                 "woocommerce": {
                     "name": "WooCommerce",
-                    "description": "Connectez via l'API REST pour synchroniser les commandes et leur traitement."
+                    "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
                 },
                 "youcan": {
                     "name": "YouCan",
-                    "description": "Connectez YouCan pour importer les commandes et gérer leur traitement."
+                    "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
                 }
             }
         }
