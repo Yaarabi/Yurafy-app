@@ -77,7 +77,6 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [showInstructions, setShowInstructions] = useState(false);
-    const [showSecret, setShowSecret] = useState(false);
 
     useEffect(() => {
         let mounted = true;
@@ -95,23 +94,36 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
         return () => { mounted = false };
     }, []);
 
-    // Start OAuth connect flow (opens /api/youcan/connect)
+    // Start OAuth connect flow (redirects to /api/youcan/connect)
     function handleConnect() {
-        // Redirect the browser to the connect endpoint
         window.location.href = '/api/youcan/connect';
     }
 
-    async function handleDone() {
+    async function handleDisconnect() {
         if (!store) return; setLoading(true);
         try {
-            const res = await fetch('/api/webhooks/youcan/store', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connect: true }) });
-            if (!res.ok) throw new Error('Failed to mark as connected');
-            const data = await res.json(); setStore(data.store || store); if (onClose) onClose();
-            setSuccess('Marked as connected');
-        } catch (err: any) { setError(err.message || String(err)); } finally { setLoading(false); }
+            const res = await fetch('/api/webhooks/youcan/store', { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to disconnect');
+            setStore(null);
+            setSuccess('Disconnected');
+        } catch (err: any) {
+            setError(err.message || String(err));
+        } finally {
+            setLoading(false);
+        }
     }
 
-    const webhookUrl = store?.token ? `${typeof window !== 'undefined' ? window.location.origin : ''}/api/webhooks/youcan/new-order/${store.token}` : '';
+    async function handleRefresh() {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/webhooks/youcan/store');
+            if (!res.ok) { setStore(null); return; }
+            const data = await res.json(); setStore(data.store || null);
+        } catch (err: any) {
+            setError(String(err));
+        } finally { setLoading(false); }
+    }
+
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -124,21 +136,17 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                 </div>
 
                 <div className="text-center mb-3">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Connecting YouCan Webhooks</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Follow these steps to add the webhook to your YouCan store.</p>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">YouCan Integration</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Connect your YouCan store so Yurafy can register webhooks and import orders.</p>
+                    <div className="mt-2">
+                        <StatusBadge connected={!!store?.connect} />
+                    </div>
                 </div>
 
                 {error && <div className="mb-3"><Alert type="error" message={error} onClose={() => setError(null)} /></div>}
                 {success && <div className="mb-3"><Alert type="success" message={success} onClose={() => setSuccess(null)} /></div>}
 
-                <div className="mt-4">
-                    <label className="block text-xs text-gray-500 dark:text-gray-400">Webhook URL</label>
-                    <div className="mt-2 flex gap-2 items-center">
-                        <input readOnly value={webhookUrl} aria-label="YouCan webhook URL" className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
-                        <CopyButton value={webhookUrl} label="Copy webhook URL" />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Use this URL when creating the webhook in YouCan. The token is unique to your account.</p>
-                </div>
+                {/* Webhook URL input removed — webhooks are registered automatically via OAuth. */}
 
                 {store?.token && (
                     <div className="mt-3">
@@ -151,23 +159,34 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                     </div>
                 )}
 
+                {store?.subscriptionId && (
+                    <div className="mt-3">
+                        <label className="block text-xs text-gray-500 dark:text-gray-400">Subscription ID</label>
+                        <div className="mt-2 flex gap-2 items-center">
+                            <input readOnly value={store.subscriptionId} aria-label="YouCan subscription id" className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
+                            <CopyButton value={store.subscriptionId} label="Copy subscription id" />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">This ID identifies the RESThook subscription in YouCan.</p>
+                    </div>
+                )}
+
                 <div className="mt-4">
                     <p className="text-sm text-gray-600 dark:text-gray-300">Connect your YouCan store via OAuth so Yurafy can create the webhook and read orders. Click Connect to begin.</p>
                 </div>
 
                 <div className="mt-4 flex gap-2">
-                    {!store?.token && (
+                    {!store?.connect && (
                         <button className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-md inline-flex items-center" onClick={handleConnect} disabled={loading} aria-label="Connect YouCan">
                             {loading ? <><Spinner />Connecting...</> : 'Connect YouCan'}
                         </button>
                     )}
 
-                    {store?.token && (
+                    {store?.connect && (
                         <>
-                            <button className="px-4 py-2 bg-green-600 text-white rounded-md inline-flex items-center" onClick={handleDone} disabled={loading} aria-label="Mark as connected">
-                                {loading ? <><Spinner />Working...</> : 'Done'}
+                            <button className="px-4 py-2 bg-red-600 text-white rounded-md inline-flex items-center" onClick={handleDisconnect} disabled={loading} aria-label="Disconnect YouCan">
+                                {loading ? <><Spinner />Disconnecting...</> : 'Disconnect'}
                             </button>
-                            <CopyButton value={webhookUrl} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-md" label="Copy webhook URL" />
+                            <button className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-md" onClick={handleRefresh} aria-label="Refresh status">Refresh</button>
                         </>
                     )}
 
@@ -180,9 +199,9 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                         <div id="youcan-instructions" className="mt-3 text-sm text-gray-600 dark:text-gray-300">
                             <ol className="list-decimal list-inside space-y-2">
                                 <li><strong>Open</strong> the YouCan Developer Portal and navigate to Webhooks.</li>
-                                <li><strong>Create</strong> a new webhook and paste the <em>Webhook URL</em> from above.</li>
-                                <li><strong>Copy</strong> the <em>Client ID</em> and <em>Client Secret</em> into the appropriate fields in the portal.</li>
-                                <li><strong>Enable</strong> order.created events (or the event you want to receive) and save.</li>
+                                    <li><strong>Click</strong> Connect above to authorize Yurafy to manage webhooks for your store.</li>
+                                    <li><strong>Yurafy</strong> will automatically register the webhook and create the subscription; you can copy the <em>Webhook token</em> below if you need it.</li>
+                                    <li><strong>Ensure</strong> order.created events are enabled in your store if required.</li>
                             </ol>
                             <p className="mt-2 text-xs text-gray-500">If you rotate the client secret, update it here and re-save the webhook in YouCan.</p>
                         </div>

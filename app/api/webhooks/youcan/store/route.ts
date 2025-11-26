@@ -15,6 +15,15 @@ function generate6CharToken(): string {
     return token;
 }
 
+function sanitizeStore(store: any) {
+    if (!store) return null;
+    const s = typeof store.toObject === 'function' ? store.toObject() : JSON.parse(JSON.stringify(store));
+    // Remove sensitive secrets before sending to clients
+    if ('accessToken' in s) delete s.accessToken;
+    if ('refreshToken' in s) delete s.refreshToken;
+    return s;
+}
+
 // Note: clientId and clientSecret are expected to be provided by the user.
 // We do NOT auto-generate credentials here. Token (webhook) will only be
 // generated once both credentials are present.
@@ -27,7 +36,7 @@ export async function GET(req: NextRequest) {
     const store = await YouCanStore.findOne({ owner: session.user.id });
     if (!store) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json({ store });
+    return NextResponse.json({ store: sanitizeStore(store) });
 }
 
 export async function POST(req: NextRequest) {
@@ -94,7 +103,7 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        return NextResponse.json({ success: true, store });
+        return NextResponse.json({ success: true, store: sanitizeStore(store) });
     } catch (err: any) {
         console.error("Error in youcan store POST:", err);
         return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
@@ -142,7 +151,7 @@ export async function PUT(req: NextRequest) {
             }
         }
 
-        return NextResponse.json({ success: true, store });
+        return NextResponse.json({ success: true, store: sanitizeStore(store) });
     } catch (err: any) {
         console.error("Error in youcan store PUT:", err);
         return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
