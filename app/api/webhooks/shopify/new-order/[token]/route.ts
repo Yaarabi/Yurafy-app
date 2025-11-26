@@ -6,23 +6,22 @@ import ShopifyStore from "@/models/shopifyStore";
 function mapShopifyToOrderPayload(shopifyOrder: any, ownerId: string) {
     const customer = shopifyOrder.customer || {};
     const shipping = shopifyOrder.shipping_address || {};
-
-    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || shipping.name || shopifyOrder.name || '';
+    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || shipping.name || shopifyOrder.name || 'Guest';
     const phone = customer.phone || shipping.phone || '';
 
     const products = Array.isArray(shopifyOrder.line_items)
-            ? shopifyOrder.line_items.map((li: any) => ({
-                product: undefined,
-                name: li.title,
-                quantity: li.quantity,
-                price: li.price || '0',
-                sku: li.sku,
-                variantId: li.variant_id || li.variantId || undefined,
-            }))
+        ? shopifyOrder.line_items.map((li: any) => ({
+            product: undefined,
+            name: li.title || li.name || '',
+            quantity: Number(li.quantity) || 1,
+            price: Number(li.price ?? li.price_amount ?? 0) || 0,
+            color: li.properties?.color || undefined,
+            size: li.properties?.size || undefined,
+        }))
         : [];
 
     const shippingAddress = {
-        fullName: fullName || 'Guest',
+        fullName,
         phone: phone || '',
         email: customer.email || undefined,
         address: shipping.address1 || shipping.address || '',
@@ -30,7 +29,7 @@ function mapShopifyToOrderPayload(shopifyOrder: any, ownerId: string) {
         country: shipping.country || undefined,
     };
 
-    const totalAmount = parseFloat(shopifyOrder.total_price || shopifyOrder.subtotal_price || '0');
+    const totalAmount = Number(shopifyOrder.total_price ?? shopifyOrder.subtotal_price ?? 0) || 0;
 
     return {
         owner: ownerId,
@@ -39,20 +38,34 @@ function mapShopifyToOrderPayload(shopifyOrder: any, ownerId: string) {
         totalAmount,
         deliveryInstructions: shopifyOrder.note || undefined,
         preferredTime: undefined,
-        metadata: {
-            source: 'shopify_webhook',
-            shopifyOrderId: shopifyOrder.id,
-            shopifyName: shopifyOrder.name,
-            financial_status: shopifyOrder.financial_status,
-            fulfillment_status: shopifyOrder.fulfillment_status,
+        source: {
+            store: 'shopify',
+            id: shopifyOrder.id != null ? String(shopifyOrder.id) : null,
         },
     };
 }
 
-export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
+type MaybeAsyncParams = { params: { token: string } } | { params: Promise<{ token: string }> };
+
+function isPromiseParams(v: unknown): v is Promise<{ token: string }> {
+    return !!v && typeof (v as any).then === 'function';
+}
+
+export async function POST(req: NextRequest, context: MaybeAsyncParams) {
     await connectDB();
 
-    const token = params?.token;
+    const params = context?.params;
+    let token: string | undefined;
+    if (isPromiseParams(params)) {
+        try {
+            const resolved = await params;
+            token = resolved?.token;
+        } catch (e) {
+            // ignore resolution errors and handle below
+        }
+    } else {
+        token = params?.token;
+    }
     if (!token) return NextResponse.json({ error: 'Missing token' }, { status: 400 });
 
     // Find shopify store by token to get owner id

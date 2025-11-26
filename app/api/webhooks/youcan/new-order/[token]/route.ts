@@ -48,10 +48,27 @@ function mapYouCanToOrderDoc(youcanOrder: any, ownerId: string) {
     };
 }
 
-export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
+type MaybeAsyncParams = { params: { token: string } } | { params: Promise<{ token: string }> };
+
+function isPromiseParams(v: unknown): v is Promise<{ token: string }> {
+    return !!v && typeof (v as any).then === 'function';
+}
+
+export async function POST(req: NextRequest, context: MaybeAsyncParams) {
     await connectDB();
 
-    const token = params?.token;
+    const params = context?.params;
+    let token: string | undefined;
+    if (isPromiseParams(params)) {
+        try {
+            const resolved = await params;
+            token = resolved?.token;
+        } catch (e) {
+            // ignore resolution errors and handle below
+        }
+    } else {
+        token = params?.token;
+    }
     if (!token) return NextResponse.json({ error: 'Missing token' }, { status: 400 });
 
     const store = await YouCanStore.findOne({ token }).lean() as any;

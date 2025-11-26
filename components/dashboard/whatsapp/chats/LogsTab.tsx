@@ -22,7 +22,6 @@ export default function LogsTab() {
     const [filters, setFilters] = useState({
         autoReply: false,
         adTemplate: false,
-        adTemplate: false,
         agentReply: false,
         unread: false,
     });

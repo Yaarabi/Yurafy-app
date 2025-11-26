@@ -5,23 +5,22 @@ import WooStore from "@/models/wooStore";
 function mapWooToOrderPayload(wooOrder: any, ownerId: string) {
     const customer = wooOrder.customer || wooOrder.billing || {};
     const shipping = wooOrder.shipping || wooOrder.shipping_address || {};
-
-    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || shipping.name || wooOrder.number || '';
+    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || shipping.name || wooOrder.number || 'Guest';
     const phone = customer.phone || shipping.phone || '';
 
     const products = Array.isArray(wooOrder.line_items)
         ? wooOrder.line_items.map((li: any) => ({
               product: undefined,
-              name: li.name || li.title,
-              quantity: li.quantity,
-              price: li.price || li.total || '0',
-              sku: li.sku,
-              variantId: li.variation_id || li.variant_id || undefined,
+              name: li.name || li.title || '',
+              quantity: Number(li.quantity) || 1,
+              price: Number(li.price ?? li.total ?? 0) || 0,
+              color: li.meta?.color || li.properties?.color || undefined,
+              size: li.meta?.size || li.properties?.size || undefined,
           }))
         : [];
 
     const shippingAddress = {
-        fullName: fullName || 'Guest',
+        fullName,
         phone: phone || '',
         email: customer.email || undefined,
         address: shipping.address_1 || shipping.address1 || shipping.address || '',
@@ -29,7 +28,7 @@ function mapWooToOrderPayload(wooOrder: any, ownerId: string) {
         country: shipping.country || undefined,
     };
 
-    const totalAmount = parseFloat(wooOrder.total || wooOrder.total_price || '0');
+    const totalAmount = Number(wooOrder.total ?? wooOrder.total_price ?? 0) || 0;
 
     return {
         owner: ownerId,
@@ -38,18 +37,34 @@ function mapWooToOrderPayload(wooOrder: any, ownerId: string) {
         totalAmount,
         deliveryInstructions: wooOrder.customer_note || wooOrder.note || undefined,
         preferredTime: undefined,
-        metadata: {
-            source: 'woocommerce_webhook',
-            wooOrderId: wooOrder.id || wooOrder.order_number || undefined,
-            financial_status: wooOrder.status || undefined,
+        source: {
+            store: 'woocommerce',
+            id: wooOrder.id != null ? String(wooOrder.id) : null,
         },
     };
 }
 
-export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
+type MaybeAsyncParams = { params: { token: string } } | { params: Promise<{ token: string }> };
+
+function isPromiseParams(v: unknown): v is Promise<{ token: string }> {
+    return !!v && typeof (v as any).then === 'function';
+}
+
+export async function POST(req: NextRequest, context: MaybeAsyncParams) {
     await connectDB();
 
-    const token = params?.token;
+    const params = context?.params;
+    let token: string | undefined;
+    if (isPromiseParams(params)) {
+        try {
+            const resolved = await params;
+            token = resolved?.token;
+        } catch (e) {
+            // ignore resolution errors and handle below
+        }
+    } else {
+        token = params?.token;
+    }
     if (!token) return NextResponse.json({ error: 'Missing token' }, { status: 400 });
 
     const store = await WooStore.findOne({ token }).lean() as any;
