@@ -4,8 +4,10 @@ export interface IYouCanStore extends Document {
     _id: string;
     owner: mongoose.Types.ObjectId;
     token: string;
-    clientId: string;
-    clientSecret: string;
+    accessToken?: string;
+    refreshToken?: string;
+    expiresAt?: Date;
+    subscriptionId?: string;
     connect: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -25,15 +27,25 @@ const youcanStoreSchema = new Schema<IYouCanStore>(
             trim: true,
             index: true,
         },
-        clientId: {
+        accessToken: {
             type: String,
-            required: true,
+            required: false,
             trim: true,
         },
-        clientSecret: {
+        refreshToken: {
             type: String,
-            required: true,
+            required: false,
             trim: true,
+        },
+        expiresAt: {
+            type: Date,
+            required: false,
+        },
+        subscriptionId: {
+            type: String,
+            required: false,
+            trim: true,
+            index: true,
         },
         connect: {
             type: Boolean,

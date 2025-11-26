@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-type Store = { _id: string; owner: string; token: string; connect: boolean; clientId?: string; clientSecret?: string };
+type Store = { _id: string; owner: string; token: string; connect: boolean; accessToken?: string; subscriptionId?: string };
 
 function CopyButton({ value, label, className }: { value?: string; label?: string; className?: string }) {
     const [copied, setCopied] = useState(false);
@@ -77,8 +77,6 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [showInstructions, setShowInstructions] = useState(false);
-    const [clientIdInput, setClientIdInput] = useState('');
-    const [clientSecretInput, setClientSecretInput] = useState('');
     const [showSecret, setShowSecret] = useState(false);
 
     useEffect(() => {
@@ -90,8 +88,6 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                 const data = await res.json(); if (mounted) {
                     const s = data.store || null;
                     setStore(s);
-                    setClientIdInput(s?.clientId ?? '');
-                    setClientSecretInput(s?.clientSecret ?? '');
                 }
             })
             .catch((err) => setError(String(err)))
@@ -99,19 +95,10 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
         return () => { mounted = false };
     }, []);
 
-    async function handleGenerate() {
-        setLoading(true); setError(null);
-        try {
-            const body: any = { clientId: clientIdInput?.trim(), clientSecret: clientSecretInput?.trim() };
-            // include connect if store existed
-            if (store?.connect) body.connect = store.connect;
-            const res = await fetch('/api/webhooks/youcan/store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-            const data = await res.json(); if (!res.ok) throw new Error(data?.error || 'Failed to create/update store');
-            setStore(data.store || data);
-            setClientIdInput((data.store || data)?.clientId || clientIdInput);
-            setClientSecretInput((data.store || data)?.clientSecret || clientSecretInput);
-            setSuccess('Webhook token generated');
-        } catch (err: any) { setError(err.message || String(err)); } finally { setLoading(false); }
+    // Start OAuth connect flow (opens /api/youcan/connect)
+    function handleConnect() {
+        // Redirect the browser to the connect endpoint
+        window.location.href = '/api/youcan/connect';
     }
 
     async function handleDone() {
@@ -164,29 +151,14 @@ export default function YouCanWebhookSetup({ onClose }: { onClose?: () => void }
                     </div>
                 )}
 
-                {/* Credentials */}
-                <div className="mt-4 grid grid-cols-1 gap-3">
-                    <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400">Client ID</label>
-                        <div className="mt-2 flex gap-2 items-center">
-                            <input value={clientIdInput} onChange={(e) => setClientIdInput(e.target.value)} aria-label="YouCan client id" placeholder="Enter Client ID" className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400">Client Secret</label>
-                        <div className="mt-2 flex gap-2 items-center">
-                            <input value={clientSecretInput} onChange={(e) => setClientSecretInput(e.target.value)} aria-label="YouCan client secret" placeholder="Enter Client Secret" type={showSecret ? 'text' : 'password'} className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--brand-blue)]" />
-                            <button onClick={() => setShowSecret(s => !s)} className="px-2 py-1 text-sm border rounded-md">{showSecret ? 'Hide' : 'Show'}</button>
-                        </div>
-                        <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">Keep this secret safe: do not share your client secret publicly.</p>
-                    </div>
+                <div className="mt-4">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Connect your YouCan store via OAuth so Yurafy can create the webhook and read orders. Click Connect to begin.</p>
                 </div>
 
                 <div className="mt-4 flex gap-2">
-                    {(!store || !store.token) && (
-                        <button className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-md inline-flex items-center" onClick={handleGenerate} disabled={loading || !clientIdInput || !clientSecretInput} aria-label="Save credentials">
-                            {loading ? <><Spinner />Saving...</> : 'Save credentials'}
+                    {!store?.token && (
+                        <button className="px-4 py-2 bg-[var(--brand-blue)] text-white rounded-md inline-flex items-center" onClick={handleConnect} disabled={loading} aria-label="Connect YouCan">
+                            {loading ? <><Spinner />Connecting...</> : 'Connect YouCan'}
                         </button>
                     )}
 

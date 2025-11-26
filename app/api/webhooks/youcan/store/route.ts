@@ -4,35 +4,7 @@ import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import YouCanStore from "@/models/youcanStore";
 import crypto from "crypto";
-
-async function registerWebhook(clientId: string, clientSecret: string, token: string) {
-    const base = process.env.NEXTAUTH_URL;
-    if (!base) throw new Error('NEXTAUTH_URL not configured');
-    const targetUrl = `${base.replace(/\/$/, '')}/api/webhooks/youcan/new-order/${token}`;
-
-    const url = 'https://api.youcan.shop/resthooks/subscribe';
-    const body = { event: 'order.create', target_url: targetUrl };
-
-    const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${clientId}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-    });
-
-    let text: string | object = '';
-    try { text = await res.text(); text = text ? JSON.parse(String(text)) : {}; } catch (e) { /* keep raw text */ }
-
-    if (!res.ok) {
-        const details = typeof text === 'string' ? text : JSON.stringify(text);
-        throw new Error(`YouCan subscription failed: ${res.status} ${res.statusText} - ${details}`);
-    }
-
-    return text;
-}
-
+import { registerWebhook, unregisterWebhook } from '@/lib/youcan/resthooks';
 function generate6CharToken(): string {
     const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const bytes = crypto.randomBytes(8);
@@ -65,25 +37,28 @@ export async function POST(req: NextRequest) {
 
     try {
         const payload = await req.json();
-        const { token, connect, clientId, clientSecret } = payload || {};
+        const { token, connect, accessToken, refreshToken, expiresAt } = payload || {};
 
         let store = await YouCanStore.findOne({ owner: session.user.id });
         if (store) {
             // Update provided fields
             if (typeof connect === "boolean") store.connect = connect;
-            if (clientId) store.clientId = clientId;
-            if (clientSecret) store.clientSecret = clientSecret;
+            if (accessToken) store.accessToken = accessToken;
+            if (refreshToken) store.refreshToken = refreshToken;
+            if (expiresAt) store.expiresAt = new Date(expiresAt);
 
-            // Only generate a token if it's missing AND both credentials are present
-            if (!store.token && store.clientId && store.clientSecret) {
+            // Only generate a token if it's missing AND accessToken is present
+            if (!store.token && store.accessToken) {
                 store.token = token || generate6CharToken();
             }
 
             await store.save();
-            // If we have full credentials and a token, attempt to register webhook with YouCan
-            if (store.clientId && store.clientSecret && store.token) {
+            // If we have access token and a token, attempt to register webhook with YouCan
+            if (store.accessToken && store.token) {
                 try {
-                    await registerWebhook(store.clientId, store.clientSecret, store.token);
+                    const res = await registerWebhook(store.accessToken, store.token);
+                    const subId = res?.id || (res && res.id) || null;
+                    if (subId) store.subscriptionId = subId;
                     store.connect = true;
                     await store.save();
                 } catch (err: any) {
@@ -94,18 +69,20 @@ export async function POST(req: NextRequest) {
                 }
             }
         } else {
-            // Creating a new store requires clientId and clientSecret supplied by the user
-            if (!clientId || !clientSecret) {
-                return NextResponse.json({ error: 'clientId and clientSecret are required to create a YouCan store' }, { status: 400 });
+            // Creating a new store requires accessToken supplied by the user (or via OAuth)
+            if (!accessToken) {
+                return NextResponse.json({ error: 'accessToken is required to create a YouCan store' }, { status: 400 });
             }
 
             const generatedToken = token || generate6CharToken();
-            store = await YouCanStore.create({ owner: session.user.id, token: generatedToken, connect: typeof connect === "boolean" ? connect : false, clientId, clientSecret });
+            store = await YouCanStore.create({ owner: session.user.id, token: generatedToken, connect: typeof connect === "boolean" ? connect : false, accessToken, refreshToken, expiresAt: expiresAt ? new Date(expiresAt) : undefined });
 
             // Try to register webhook immediately after creating the store
-            if (store.clientId && store.clientSecret && store.token) {
+            if (store.accessToken && store.token) {
                 try {
-                    await registerWebhook(store.clientId, store.clientSecret, store.token);
+                    const res = await registerWebhook(store.accessToken, store.token);
+                    const subId = res?.id || (res && res.id) || null;
+                    if (subId) store.subscriptionId = subId;
                     store.connect = true;
                     await store.save();
                 } catch (err: any) {
@@ -138,20 +115,23 @@ export async function PUT(req: NextRequest) {
 
         if (updates.token) store.token = updates.token;
         if (typeof updates.connect === "boolean") store.connect = updates.connect;
-        if (typeof updates.clientId === 'string' && updates.clientId.trim()) store.clientId = updates.clientId.trim();
-        if (typeof updates.clientSecret === 'string' && updates.clientSecret.trim()) store.clientSecret = updates.clientSecret.trim();
+        if (typeof updates.accessToken === 'string' && updates.accessToken.trim()) store.accessToken = updates.accessToken.trim();
+        if (typeof updates.refreshToken === 'string' && updates.refreshToken.trim()) store.refreshToken = updates.refreshToken.trim();
+        if (typeof updates.expiresAt === 'string' && updates.expiresAt.trim()) store.expiresAt = new Date(updates.expiresAt.trim());
 
-        // Only generate a token if it's missing AND both credentials are present
-        if (!store.token && store.clientId && store.clientSecret) {
+        // Only generate a token if it's missing AND accessToken is present
+        if (!store.token && store.accessToken) {
             store.token = generate6CharToken();
         }
 
         await store.save();
 
-        // If we now have full credentials and a token, attempt to register webhook with YouCan
-        if (store.clientId && store.clientSecret && store.token) {
+        // If we now have accessToken and a token, attempt to register webhook with YouCan
+        if (store.accessToken && store.token) {
             try {
-                await registerWebhook(store.clientId, store.clientSecret, store.token);
+                const res = await registerWebhook(store.accessToken, store.token);
+                const subId = res?.id || (res && res.id) || null;
+                if (subId) store.subscriptionId = subId;
                 store.connect = true;
                 await store.save();
             } catch (err: any) {
@@ -175,6 +155,19 @@ export async function DELETE(req: NextRequest) {
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
+        const store = await YouCanStore.findOne({ owner: session.user.id });
+        if (!store) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+        // If we have a subscription, try to unsubscribe first
+        if (store.subscriptionId && store.accessToken) {
+            try {
+                await unregisterWebhook(store.subscriptionId, store.accessToken);
+            } catch (err: any) {
+                console.error('[YouCan] failed to unregister webhook on DELETE:', err);
+                // continue to delete local record anyway
+            }
+        }
+
         const deleted = await YouCanStore.findOneAndDelete({ owner: session.user.id });
         if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
         return NextResponse.json({ success: true });

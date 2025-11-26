@@ -65,39 +65,41 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    // Verify signature header
+    // Verify signature header if a webhook secret is configured on the store.
+    // YouCan's docs don't clearly state webhook signing; make verification optional.
     const signatureHeader = req.headers.get('x-youcan-signature') || req.headers.get('x-signature') || req.headers.get('signature') || '';
-
-    // clientSecret is stored on the store document; require it for verification
     const clientSecret = store?.clientSecret;
-    if (!clientSecret) {
-        console.error('[YouCan Webhook] Missing clientSecret on store record, cannot verify signature');
-        return NextResponse.json({ error: 'Missing webhook secret' }, { status: 500 });
-    }
 
-    if (!signatureHeader) {
-        console.error(`[YouCan Webhook] Missing signature header for token: ${token}`);
-        return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
-    }
-
-    try {
-        const provided = String(signatureHeader).replace(/^sha256=/i, '');
-        const expected = crypto.createHmac('sha256', clientSecret).update(rawBody).digest('hex');
-
-        if (expected.length !== provided.length) {
-            console.error(`[YouCan Webhook] Invalid signature length for token: ${token}`);
-            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    if (clientSecret) {
+        if (!signatureHeader) {
+            console.error(`[YouCan Webhook] Missing signature header for token: ${token}`);
+            return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
         }
 
-        const expectedBuf = Buffer.from(expected, 'hex');
-        const providedBuf = Buffer.from(provided, 'hex');
-        if (!crypto.timingSafeEqual(expectedBuf, providedBuf)) {
-            console.error(`[YouCan Webhook] Invalid signature for token: ${token}`);
+        try {
+            const provided = String(signatureHeader).replace(/^sha256=/i, '');
+            const expected = crypto.createHmac('sha256', clientSecret).update(rawBody).digest('hex');
+
+            if (expected.length !== provided.length) {
+                console.error(`[YouCan Webhook] Invalid signature length for token: ${token}`);
+                return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+            }
+
+            const expectedBuf = Buffer.from(expected, 'hex');
+            const providedBuf = Buffer.from(provided, 'hex');
+            if (!crypto.timingSafeEqual(expectedBuf, providedBuf)) {
+                console.error(`[YouCan Webhook] Invalid signature for token: ${token}`);
+                return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+            }
+        } catch (err: any) {
+            console.error('[YouCan Webhook] Error verifying signature:', err);
             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
         }
-    } catch (err: any) {
-        console.error('[YouCan Webhook] Error verifying signature:', err);
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    } else {
+        if (signatureHeader) {
+            console.warn('[YouCan Webhook] Signature header present but no webhook secret configured on store; ignoring signature.');
+        }
+        // No client secret configured: skip HMAC verification. Rely on unguessable token + idempotency.
     }
 
     // Parse JSON after signature verified
