@@ -9,6 +9,8 @@ import ServicesCTA from './ServicesCTA';
 import ServicesConversion from './ServicesConversion';
 import ServiceForm from './ServiceForm';
 import ServicesVideo from './ServicesVideo';
+import DifferentIdea from './DifferentIdea';
+import SupportChat from './SupportChat';
 
 export interface Service {
     id: string;
@@ -77,6 +79,10 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
             <ServicesConversion onRequest={handleRequestQuote} />
 
             <ServicesCTA onRequestQuote={handleRequestQuote} />
+
+            <DifferentIdea onRequest={handleRequestQuote} />
+
+            <SupportChat />
 
             <ServiceForm
                 isOpen={isFormOpen}

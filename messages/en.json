@@ -1307,6 +1307,12 @@
                 "submit": "Failed to submit request. Please try again."
             }
         },
+        "differentIdea": {
+            "badge": "Different Idea 💡",
+            "title": "Want something different?",
+            "description": "Don't see exactly what you need? Tell us about a custom app or feature and we'll build it for you.",
+            "cta": "Tell us your idea"
+        },
         "conversion": {
             "heading": "Not sure which plan fits your needs?",
             "subtext": "Whether you're just starting or scaling fast, we’ve got flexible options for every merchant.",

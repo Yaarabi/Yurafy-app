@@ -19,7 +19,7 @@ export default function SupportPage() {
             title: t("chat.title"),
             description: t("chat.description"),
             action: t("chat.action"),
-            link: `/${locale}/dashboard/support`,
+            link: `#`,
             color: "from-blue-500 to-cyan-500",
         },
         {
@@ -27,7 +27,7 @@ export default function SupportPage() {
             title: t("email.title"),
             description: t("email.description"),
             action: t("email.action"),
-            link: "mailto:support@yurafy.com",
+            link: "mailto:aarabiiyoussef@gmail.com",
             color: "from-blue-500 to-blue-600",
         },
         {
@@ -35,7 +35,7 @@ export default function SupportPage() {
             title: t("phone.title"),
             description: t("phone.description"),
             action: t("phone.action"),
-            link: "tel:+212716413605",
+            link: "https://wa.me/+212716413605",
             color: "from-green-500 to-emerald-500",
         },
     ];

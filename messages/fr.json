@@ -1315,6 +1315,12 @@
                 "submit": "Échec de la soumission de la demande. Veuillez réessayer."
             }
         },
+        "differentIdea": {
+            "badge": "Idée Différente 💡",
+            "title": "Vous voulez quelque chose de différent ?",
+            "description": "Vous ne trouvez pas exactement ce dont vous avez besoin ? Parlez-nous d'une application ou d'une fonctionnalité personnalisée et nous la construirons pour vous.",
+            "cta": "Dites-nous votre idée"
+        },
         "conversion": {
             "heading": "Vous n'êtes pas sûr du plan adapté à vos besoins ?",
             "subtext": "Que vous démarriez ou que vous passiez à l'échelle, nous avons des options flexibles pour chaque marchand.",
