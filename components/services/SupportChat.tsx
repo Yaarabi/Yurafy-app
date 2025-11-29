@@ -118,7 +118,7 @@ export default function SupportChat() {
             aria-expanded={open}
             aria-controls="support-chat-panel"
             onClick={() => setOpen((o) => !o)}
-            className="fixed right-4 bottom-4 z-50 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 sm:p-3 shadow-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            className="fixed right-4 bottom-4 z-[99999] bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 sm:p-3 shadow-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-300"
         >
             {open ? "✕" : "💬"}
         </button>
@@ -130,7 +130,7 @@ export default function SupportChat() {
             id="support-chat-panel"
             role="dialog"
             aria-label={t("title") || "Support Chat"}
-            className="fixed z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-t-lg sm:rounded-lg shadow-lg flex flex-col p-3
+            className="fixed z-[99999] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-t-lg sm:rounded-lg shadow-lg flex flex-col p-3
                 inset-x-0 bottom-0 sm:inset-auto sm:right-4 sm:bottom-16 sm:w-80 md:w-96 w-full max-h-[70vh] sm:max-h-[60vh]"
             >
             {/* Header */}
