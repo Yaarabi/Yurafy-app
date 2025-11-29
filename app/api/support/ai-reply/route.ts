@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db/mongoDB'
 import SupportAgent from '@/models/supportAgent'
-import SupportMessage from '@/models/support'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/auth'
 
@@ -82,8 +81,8 @@ export async function POST(req: NextRequest) {
         // Generate bot reply (stub)
         const botText = await generateBotReply(prompt, text)
 
-        // Save bot message
-        const botMsg = await SupportMessage.create({ owner: session.user.id, role: 'bot', text: botText })
+        // Do not persist bot messages to the database (keep visitor privacy / local only)
+        const botMsg = { role: 'bot', text: botText }
 
         // Optionally add a note to support agent notes using the notes API so it appears in admin.
         try {

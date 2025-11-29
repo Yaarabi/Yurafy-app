@@ -13,6 +13,7 @@ import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminPlanMonitoring from "@/components/admin/AdminPlanMonitoring";
 import AdminPlanManagement from "@/components/admin/AdminPlanManagement";
 import AdminSupportChat from "@/components/admin/AdminSupportChat";
+import AdminSupportAgent from "@/components/admin/AdminSupportAgent";
 import AdminStoresManagement from "@/components/admin/AdminStoresManagement";
 import AdminAccountsManagement from "@/components/admin/AdminAccountsManagement";
 import AdminAgentsManagement from "@/components/admin/AdminAgentsManagement";
@@ -40,7 +41,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'plan-templates' | 'resources' | 'support' | 'uploads' | 'guides' | 'services'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'plan-templates' | 'resources' | 'support' | 'support-agent' | 'uploads' | 'guides' | 'services'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -190,6 +191,17 @@ export default function AdminPage() {
                         >
                             <MessageSquare className="w-4 h-4 inline mr-1 sm:mr-2" />
                             Support
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('support-agent')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'support-agent'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Bot className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            Agent
                         </button>
                         <button
                             onClick={() => setActiveTab('uploads')}
@@ -353,6 +365,14 @@ export default function AdminPage() {
                         animate={{ opacity: 1 }}
                     >
                         <AdminSupportChat />
+                    </motion.div>
+                )}
+                {activeTab === 'support-agent' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminSupportAgent />
                     </motion.div>
                 )}
                 {activeTab === 'uploads' && (
