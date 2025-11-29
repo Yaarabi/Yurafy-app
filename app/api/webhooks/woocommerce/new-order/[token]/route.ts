@@ -1,34 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import WooStore from "@/models/wooStore";
+import crypto from 'crypto';
 
 function mapWooToOrderPayload(wooOrder: any, ownerId: string) {
-    const customer = wooOrder.customer || wooOrder.billing || {};
+    // WooCommerce v3 payloads: billing, shipping, line_items, customer_note
+    const billing = wooOrder.billing || wooOrder.customer || {};
     const shipping = wooOrder.shipping || wooOrder.shipping_address || {};
-    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || shipping.name || wooOrder.number || 'Guest';
-    const phone = customer.phone || shipping.phone || '';
+
+    const firstName = (billing.first_name || billing.firstname || '').toString();
+    const lastName = (billing.last_name || billing.lastname || '').toString();
+    const fullName = `${firstName} ${lastName}`.trim() || `${shipping.first_name || ''} ${shipping.last_name || ''}`.trim() || wooOrder.number || 'Guest';
+    const phone = (billing.phone || shipping.phone || billing.phone_number || '').toString();
 
     const products = Array.isArray(wooOrder.line_items)
         ? wooOrder.line_items.map((li: any) => ({
-              product: undefined,
-              name: li.name || li.title || '',
-              quantity: Number(li.quantity) || 1,
-              price: Number(li.price ?? li.total ?? 0) || 0,
-              color: li.meta?.color || li.properties?.color || undefined,
-              size: li.meta?.size || li.properties?.size || undefined,
-          }))
+                product: undefined,
+                name: li.name || li.title || li.product_name || '',
+                quantity: Number(li.quantity ?? li.qty ?? 1) || 1,
+                price: parseFloat(String(li.price ?? li.total ?? li.subtotal ?? 0)) || 0,
+                color: li.meta?.color || li.properties?.color || undefined,
+                size: li.meta?.size || li.properties?.size || undefined,
+            }))
         : [];
 
     const shippingAddress = {
         fullName,
         phone: phone || '',
-        email: customer.email || undefined,
-        address: shipping.address_1 || shipping.address1 || shipping.address || '',
-        city: shipping.city || undefined,
-        country: shipping.country || undefined,
+        email: billing.email || undefined,
+        address: shipping.address_1 || shipping.address1 || shipping.address || billing.address_1 || '',
+        city: shipping.city || billing.city || undefined,
+        country: shipping.country || billing.country || undefined,
     };
 
-    const totalAmount = Number(wooOrder.total ?? wooOrder.total_price ?? 0) || 0;
+    const totalAmount = parseFloat(String(wooOrder.total ?? wooOrder.total_price ?? wooOrder.total_paid ?? 0)) || 0;
 
     return {
         owner: ownerId,
@@ -70,8 +75,46 @@ export async function POST(req: NextRequest, context: MaybeAsyncParams) {
     const store = await WooStore.findOne({ token }).lean() as any;
     if (!store) return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
 
+    // Read raw body for signature verification first
+    let rawBody: string;
+    try {
+        rawBody = await req.text();
+    } catch (err) {
+        return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+
+    // Verify WooCommerce HMAC signature if header present
+    const sigHeader = req.headers.get('x-wc-webhook-signature') || req.headers.get('X-WC-Webhook-Signature') || req.headers.get('X-WC-Webhook-Signature'.toLowerCase());
+    const secret = store?.token; // token is used as secret key in the setup UI
+
+    if (sigHeader) {
+        if (!secret) {
+            console.error('[WooCommerce Webhook] Signature header present but no secret configured for token:', token);
+            return NextResponse.json({ error: 'Signature present but no secret configured' }, { status: 401 });
+        }
+
+        try {
+            // WooCommerce uses HMAC-SHA256 and base64-encodes the result
+            const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('base64');
+            const provided = (sigHeader || '').trim();
+
+            const expectedBuf = Buffer.from(expected, 'utf8');
+            const providedBuf = Buffer.from(provided, 'utf8');
+
+            // Use timingSafeEqual when buffers are same length
+            if (expectedBuf.length !== providedBuf.length || !crypto.timingSafeEqual(expectedBuf, providedBuf)) {
+                console.error('[WooCommerce Webhook] Invalid signature for token:', token, 'provided:', provided, 'expected:', expected);
+                return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+            }
+        } catch (err: any) {
+            console.error('[WooCommerce Webhook] Error verifying signature:', err);
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+        }
+    }
+
+    // Parse JSON after signature verification
     let body: any;
-    try { body = await req.json(); } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }); }
+    try { body = rawBody ? JSON.parse(rawBody) : {}; } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }); }
 
     const ownerId = store.owner ? store.owner.toString?.() ?? String(store.owner) : undefined;
     if (!ownerId) return NextResponse.json({ error: 'Store owner not found' }, { status: 500 });

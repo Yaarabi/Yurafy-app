@@ -1,11 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
 import LogoLoader from "@/components/themePreview/loadder";
 import { useUserFeatures } from "@/hooks/useUserFeatures";
 import { useTranslations } from "next-intl";
 import { Truck, ChevronLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import AmeexCard from '@/components/dashboard/integrations/delivery/AmeexCard';
 
 export default function DeliveryIntegrationsPage() {
     const { data, loading, error } = useUserFeatures();
@@ -36,10 +36,13 @@ export default function DeliveryIntegrationsPage() {
 
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("integrations.categories.delivery.description")}</p>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-                    <p className="text-gray-700 dark:text-gray-300">This page will show delivery partners (Ameex, Ozon, etc.) and allow configuring shipping integrations.</p>
+                {/* Ameex card */}
+                <div className="mt-6">
+                    {/* lazy-loadable client component */}
+                    <AmeexCard />
                 </div>
             </div>
         </div>
     );
 }
+

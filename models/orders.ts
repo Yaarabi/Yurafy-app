@@ -23,6 +23,7 @@ export interface IOrder {
   };
   deliveryInstructions?: string;
   preferredTime?: string;
+  deliveryCompany?: string;
   source?: {
     store: string; // e.g. 'yurafy' | 'shopify' | 'woocommerce' | 'youcan'
     id?: string | null; // original order id from the external source
@@ -70,6 +71,7 @@ const OrderSchema = new Schema(
     },
     deliveryInstructions: { type: String },
     preferredTime: { type: String },
+    deliveryCompany: { type: String },
     source: {
       store: { type: String, default: 'yurafy' },
       id: { type: String, default: null },
