@@ -11,14 +11,11 @@ import { MemorySaver } from "@langchain/langgraph";
 import { z } from "zod";
 
 /**
- * Agent rules:
- * 1. Detect service or custom idea interest.
- * 2. First guide user to fill the quote form (https://yurafy.com/services).
- * 3. If they confirm they want YOU to proceed, ask for name + contact.
- * 4. Only after collecting both → call “save_support_note” tool.
- * 5. Tool ALWAYS stores visitor name + contact + note summary.
- * 6. Never call the tool without confirmation.
+ * GLOBAL memory saver (shared across all requests)
+ * Works as long as the server process stays alive.
  */
+const saver = new MemorySaver();
+
 async function generateBotReply(systemPrompt: string, userMessage: string) {
     await connectDB();
 
@@ -64,19 +61,23 @@ Always include: { guestName, contact, note }.
     );
 
     /**
-     * Strict system prompt that forces the agent behavior.
+     * Agent with GLOBAL memory
      */
-    
     const agent = await createReactAgent({
         llm: model,
         tools: [saveNoteTool],
-        checkpointSaver: new MemorySaver(),
+        checkpointSaver: saver, // <— reused
         prompt: systemPrompt,
     });
 
     const res = await agent.invoke(
         { messages: [{ role: "user", content: userMessage }] },
-        { configurable: { thread_id: "support-session", recursionLimit: 6 } }
+        {
+            configurable: {
+                thread_id: "thread-5",
+                recursionLimit: 5,
+            },
+        }
     );
 
     return res.messages?.at(-1)?.content || "No reply generated.";
@@ -84,6 +85,7 @@ Always include: { guestName, contact, note }.
 
 export async function POST(req: NextRequest) {
     await connectDB();
+
     try {
         const session = await getServerSession(authOptions);
 
@@ -96,11 +98,13 @@ export async function POST(req: NextRequest) {
 
         const body = await req.json();
         const { text } = body;
-        if (!text)
+
+        if (!text) {
             return NextResponse.json(
                 { error: "Missing text" },
                 { status: 400 }
             );
+        }
 
         const cfg = await SupportAgent.findOne();
         const prompt = cfg?.prompt || "Be helpful.";
