@@ -17,31 +17,15 @@
  * normalizePhoneNumber("+212612345678") // Returns "+212612345678"
  * normalizePhoneNumber("(212) 6123-45678") // Returns "+212612345678"
  */
-export function normalizePhoneNumber(phoneNumber: string): string {
-    if (!phoneNumber || typeof phoneNumber !== 'string') {
-        return phoneNumber || '';
+export function normalizePhoneNumber(phoneNumber: string, defaultCountryCode = "212"): string {
+    const digitsOnly = phoneNumber.replace(/\D/g, "");
+    if (digitsOnly.startsWith("0")) {
+        return `+${defaultCountryCode}${digitsOnly.slice(1)}`;
     }
-    
-    // Trim whitespace
-    const trimmed = phoneNumber.trim();
-    
-    // If empty after trimming, return empty string
-    if (!trimmed) {
-        return '';
+    if (!digitsOnly.startsWith(defaultCountryCode)) {
+        return `+${defaultCountryCode}${digitsOnly}`;
     }
-    
-    // Remove all non-digit characters (keeps only digits)
-    // This removes +, spaces, dashes, parentheses, etc.
-    const digitsOnly = trimmed.replace(/\D/g, "");
-    
-    // If empty after removing non-digits, return empty string
-    if (!digitsOnly) {
-        return '';
-    }
-    
-    // Add + prefix (E.164 format: +countrycode+number)
-    // E.164 format always starts with +
-    return "+" + digitsOnly;
+    return `+${digitsOnly}`;
 }
 
 /**

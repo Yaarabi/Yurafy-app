@@ -7,9 +7,10 @@ import { useState } from 'react';
 interface Props {
     selectedOrders: string[];
     onClear: () => void;
+    ordersData?: any[]; // Full order/customer objects to extract phone numbers
 }
 
-export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
+export default function BulkActionsMenu({ selectedOrders, onClear, ordersData = [] }: Props) {
     const [isSending, setIsSending] = useState(false);
     const [cancelToken, setCancelToken] = useState({ canceled: false });
 
@@ -21,19 +22,34 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
         const batchSize = 5;
         const delayMs = 3000;
 
-        toast.loading(`Sending 0/${orders.length} messages...`, { id: 'sending' });
+        // Extract phone numbers from ordersData based on selected IDs
+        const selectedData = ordersData.filter((item: any) => 
+            orders.includes(item._id || item.customerId)
+        );
+        
+        const phones = selectedData
+            .map((item: any) => item.shippingAddress?.phone || item.phone)
+            .filter(Boolean);
+
+        if (!phones.length) {
+            toast.error('No phone numbers found for selected items');
+            setIsSending(false);
+            return;
+        }
+
+        toast.loading(`Sending 0/${phones.length} messages...`, { id: 'sending' });
 
         let sent = 0;
 
-        for (let i = 0; i < orders.length; i += batchSize) {
+        for (let i = 0; i < phones.length; i += batchSize) {
             if (cancelToken.canceled) break;
-            const batch = orders.slice(i, i + batchSize);
+            const batch = phones.slice(i, i + batchSize);
 
             try {
                 const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orders: batch }),
+                    body: JSON.stringify({ phones: batch }),
                     credentials: 'include',
                 });
 
@@ -43,7 +59,7 @@ export default function BulkActionsMenu({ selectedOrders, onClear }: Props) {
                 }
 
                 sent += batch.length;
-                toast.loading(`Sent ${sent}/${orders.length} messages...`, { id: 'sending' });
+                toast.loading(`Sent ${sent}/${phones.length} messages...`, { id: 'sending' });
             } catch (err: any) {
                 console.error(err);
                 toast.error(err.message || 'Error sending batch', { id: 'sending' });

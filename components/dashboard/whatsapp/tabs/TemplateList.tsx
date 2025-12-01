@@ -134,13 +134,25 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
         setLoading(true);
         try {
         const res = await fetch(`/api/whatsapp/templates?id=${id}`, { method: "DELETE" });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to delete template");
+        
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: "Unknown error" }));
+            const errorMsg = typeof data.error === 'string' 
+                ? data.error 
+                : data.error?.message || "Failed to delete template";
+            throw new Error(errorMsg);
+        }
 
-        toast.success("Template deleted");
-        fetchTemplates();
+        const data = await res.json();
+        
+        if (data.success) {
+            toast.success("Template deleted");
+            fetchTemplates();
+        } else {
+            throw new Error("Delete operation did not complete successfully");
+        }
         } catch (err: any) {
-        console.error(err);
+        console.error("Delete error:", err);
         toast.error(err.message || "Delete failed");
         } finally {
         setLoading(false);

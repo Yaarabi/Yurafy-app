@@ -237,7 +237,7 @@ export default function OrdersTableWhatPlan({ hasWhatsApp = false }: OrdersTable
             </div>
 
             {/* Bulk Actions Menu - Only show if WhatsApp is enabled */}
-            {selectedOrders.length > 0 && hasWhatsApp && <BulkActionsMenu selectedOrders={selectedOrders} onClear={() => setSelectedOrders([])} />}
+            {selectedOrders.length > 0 && hasWhatsApp && <BulkActionsMenu selectedOrders={selectedOrders} ordersData={filteredOrders} onClear={() => setSelectedOrders([])} />}
 
             {/* Add / Update Modals */}
             {showAddModal && (

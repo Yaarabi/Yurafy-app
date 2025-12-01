@@ -15,7 +15,7 @@ export async function sendTemplateMessage(
     await connectDB();
 
     const phone = normalizePhoneNumber(customerPhone);
-    const templateName = template.name.toLowerCase().replace(/\s+/g, "_");
+    const templateName = template.metaName;
 
     const components: any[] = [];
     if (template.variables && template.variables.length > 0 && variableValues.length > 0) {
@@ -44,7 +44,7 @@ export async function sendTemplateMessage(
             type: "template",
             template: {
             name: templateName,
-            language: { code: "en_US" },
+            language: { code: template.languageCode || "en_US" },
             components: components.length > 0 ? components : undefined
             }
         },

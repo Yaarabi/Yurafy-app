@@ -137,6 +137,7 @@ export type CustomerStat = {
                 {selected.length > 0 && hasWhatsApp && (
                     <BulkActionsMenu
                         selectedOrders={selected}
+                        ordersData={filteredData}
                         onClear={() => setSelected([])}
                     />
                 )}

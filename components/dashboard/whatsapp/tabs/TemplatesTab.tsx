@@ -49,24 +49,17 @@ export default function TemplatesTab() {
 
         {/* Absolute AddTemplate overlay */}
         {showAdd && (
-            <div className="absolute inset-0 flex items-start justify-center z-50">
-                <div className="relative w-full max-w-lg mt-10">
-                    <AddTemplate 
-                        onSuccess={async () => {
-                            // Refresh templates list after successful creation
-                            if (templateListRef.current) {
-                                await templateListRef.current.refresh();
-                            }
-                        }}
-                        onClose={() => setShowAdd(false)}
-                    />
-                    <button
-                    onClick={() => setShowAdd(false)}
-                    className="absolute -top-3 -right-3 bg-red-600 hover:bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow"
-                    >
-                    ✕
-                    </button>
-                </div>
+            <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-start justify-center z-[9998] overflow-y-auto py-6">
+                <AddTemplate 
+                    onSuccess={async () => {
+                        // Refresh templates list after successful creation
+                        if (templateListRef.current) {
+                            await templateListRef.current.refresh();
+                        }
+                        setShowAdd(false);
+                    }}
+                    onClose={() => setShowAdd(false)}
+                />
             </div>
         )}
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaTimes, FaPlus, FaTrash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { IOrder } from '@/models/orders';
@@ -13,6 +13,19 @@ interface ProductItem {
     price: number;
     color?: string;
     size?: string;
+}
+
+interface OwnerProduct {
+    _id: string;
+    name: string;
+    price: number;
+    colors?: string[];
+    sizes?: string[];
+    variants?: Array<{
+        color?: string;
+        size?: string;
+        price?: number;
+    }>;
 }
 
 interface AddOrderModalProps {
@@ -29,11 +42,73 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
     const [status, setStatus] = useState<IOrder['status']>('new');
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [loading, setLoading] = useState(false);
+    const [ownerProducts, setOwnerProducts] = useState<OwnerProduct[]>([]);
+    const [loadingProducts, setLoadingProducts] = useState(false);
+
+    // Fetch owner's products
+    useEffect(() => {
+        if (!show) return;
+        
+        async function fetchProducts() {
+            setLoadingProducts(true);
+            try {
+                const res = await fetch('/api/products/user');
+                if (res.ok) {
+                    const data = await res.json();
+                    setOwnerProducts(data.products || []);
+                }
+            } catch (err) {
+                console.error('Failed to fetch products:', err);
+            } finally {
+                setLoadingProducts(false);
+            }
+        }
+        
+        fetchProducts();
+    }, [show]);
 
     if (!show) return null;
 
     const addProduct = () =>
-        setProducts([...products, { product: undefined, name: '', quantity: 1, price: 0 }]);
+        setProducts([...products, { product: '', name: '', quantity: 1, price: 0 }]);
+
+    const handleProductSelect = (index: number, productId: string) => {
+        const selectedProduct = ownerProducts.find(p => p._id === productId);
+        if (!selectedProduct) return;
+
+        const updated = [...products];
+        updated[index] = {
+            product: selectedProduct._id,
+            name: selectedProduct.name,
+            quantity: 1,
+            price: selectedProduct.price,
+            color: '',
+            size: ''
+        };
+        setProducts(updated);
+
+        // Update total
+        const total = updated.reduce((sum, p) => sum + p.price * p.quantity, 0);
+        setTotalAmount(total);
+    };
+
+    const handleVariantSelect = (index: number, variantIndex: number) => {
+        const updated = [...products];
+        const selectedProduct = ownerProducts.find(p => p._id === updated[index].product);
+        if (!selectedProduct || !selectedProduct.variants) return;
+
+        const variant = selectedProduct.variants[variantIndex];
+        if (variant) {
+            updated[index].color = variant.color || '';
+            updated[index].size = variant.size || '';
+            updated[index].price = variant.price || selectedProduct.price;
+        }
+        setProducts(updated);
+
+        // Update total
+        const total = updated.reduce((sum, p) => sum + p.price * p.quantity, 0);
+        setTotalAmount(total);
+    };
 
     const updateProduct = (index: number, field: keyof ProductItem, value: string | number) => {
         const updated = [...products];
@@ -151,17 +226,149 @@ export default function AddOrderModal({ show, onClose, onAddOrder }: AddOrderMod
                         <button onClick={addProduct} className="flex items-center gap-1 px-3 py-1 rounded bg-[var(--brand-blue)] hover:opacity-90 transition text-white"><FaPlus /> Add Product</button>
                     </div>
 
-                    {products.map((p, i) => (
-                        <div key={i} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 mb-2 items-start">
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Product ID" value={p.product || ''} onChange={e => updateProduct(i, 'product', e.target.value)} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm sm:col-span-2" placeholder="Product Name *" value={p.name} onChange={e => updateProduct(i, 'name', e.target.value)} />
-                            <input type="text" className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Quantity (e.g., 1, 2, 5)" value={p.quantity} onChange={e => updateProduct(i, 'quantity', Number(e.target.value) || 0)} />
-                            <input type="text" className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Price (e.g., 99.99)" value={p.price} onChange={e => updateProduct(i, 'price', Number(e.target.value) || 0)} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Color" value={p.color || ''} onChange={e => updateProduct(i, 'color', e.target.value)} />
-                            <input className="p-2 rounded bg-gray-700 border border-gray-600 text-sm" placeholder="Size" value={p.size || ''} onChange={e => updateProduct(i, 'size', e.target.value)} />
-                            <button onClick={() => removeProduct(i)} className="text-red-500 hover:text-red-400 p-2 flex items-center justify-center"><FaTrash className="w-4 h-4" /></button>
-                        </div>
-                    ))}
+                    {loadingProducts ? (
+                        <div className="text-center text-gray-400 py-4">Loading products...</div>
+                    ) : ownerProducts.length === 0 ? (
+                        <div className="text-center text-gray-400 py-4">No products found. Please add products first.</div>
+                    ) : (
+                        products.map((p, i) => {
+                            const selectedProduct = ownerProducts.find(prod => prod._id === p.product);
+                            const hasVariants = selectedProduct?.variants && selectedProduct.variants.length > 0;
+                            const hasColors = selectedProduct?.colors && selectedProduct.colors.length > 0;
+                            const hasSizes = selectedProduct?.sizes && selectedProduct.sizes.length > 0;
+
+                            return (
+                                <div key={i} className="border border-gray-600 rounded-lg p-3 mb-3 bg-gray-750">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
+                                        {/* Product Select */}
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs text-gray-400 mb-1">Select Product *</label>
+                                            <select 
+                                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-sm"
+                                                value={p.product || ''}
+                                                onChange={(e) => handleProductSelect(i, e.target.value)}
+                                            >
+                                                <option value="">-- Select Product --</option>
+                                                {ownerProducts.map(prod => (
+                                                    <option key={prod._id} value={prod._id}>
+                                                        {prod.name} - ${prod.price}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Quantity */}
+                                        <div>
+                                            <label className="block text-xs text-gray-400 mb-1">Quantity *</label>
+                                            <input 
+                                                type="number" 
+                                                min="1"
+                                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-sm" 
+                                                value={p.quantity} 
+                                                onChange={e => updateProduct(i, 'quantity', Number(e.target.value) || 1)} 
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Color and Size Selection - Show if product has these options */}
+                                    {p.product && (hasColors || hasSizes) && (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                            {/* Color Select */}
+                                            {hasColors && (
+                                                <div>
+                                                    <label className="block text-xs text-gray-400 mb-1">Color</label>
+                                                    <select 
+                                                        className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-sm"
+                                                        value={p.color || ''}
+                                                        onChange={(e) => updateProduct(i, 'color', e.target.value)}
+                                                    >
+                                                        <option value="">-- Select Color --</option>
+                                                        {selectedProduct!.colors!.map(color => (
+                                                            <option key={color} value={color}>
+                                                                {color}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Size Select */}
+                                            {hasSizes && (
+                                                <div>
+                                                    <label className="block text-xs text-gray-400 mb-1">Size</label>
+                                                    <select 
+                                                        className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-sm"
+                                                        value={p.size || ''}
+                                                        onChange={(e) => updateProduct(i, 'size', e.target.value)}
+                                                    >
+                                                        <option value="">-- Select Size --</option>
+                                                        {selectedProduct!.sizes!.map(size => (
+                                                            <option key={size} value={size}>
+                                                                {size}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Variant Selection - Show only if product has variants */}
+                                    {hasVariants && selectedProduct && (
+                                        <div className="mb-2">
+                                            <label className="block text-xs text-gray-400 mb-1">Select Variant (Optional)</label>
+                                            <select 
+                                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-sm"
+                                                onChange={(e) => handleVariantSelect(i, Number(e.target.value))}
+                                            >
+                                                <option value="">-- Default (No Variant) --</option>
+                                                {selectedProduct.variants!.map((variant, vIdx) => (
+                                                    <option key={vIdx} value={vIdx}>
+                                                        {variant.color && `Color: ${variant.color}`}
+                                                        {variant.color && variant.size && ' | '}
+                                                        {variant.size && `Size: ${variant.size}`}
+                                                        {variant.price && ` - $${variant.price}`}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {/* Display selected variant info */}
+                                    {p.product && (
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                            <div>
+                                                <span className="text-gray-400">Color:</span>
+                                                <span className="ml-1 text-gray-200">{p.color || 'N/A'}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Size:</span>
+                                                <span className="ml-1 text-gray-200">{p.size || 'N/A'}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Price:</span>
+                                                <span className="ml-1 text-gray-200">${p.price}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Subtotal:</span>
+                                                <span className="ml-1 text-gray-200">${(p.price * p.quantity).toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Remove Button */}
+                                    <div className="mt-2 flex justify-end">
+                                        <button 
+                                            onClick={() => removeProduct(i)} 
+                                            className="text-red-500 hover:text-red-400 px-3 py-1 rounded bg-gray-700 hover:bg-gray-600 transition text-xs flex items-center gap-1"
+                                        >
+                                            <FaTrash className="w-3 h-3" /> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
                 </div>
 
                 {/* Total & Status */}

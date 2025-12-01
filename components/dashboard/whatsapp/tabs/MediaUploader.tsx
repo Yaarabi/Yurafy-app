@@ -1,59 +1,47 @@
 "use client";
 
-import { FaFileUpload } from "react-icons/fa";
-
-interface MediaButtonProps {
-    files: File[];
-    setFiles: (files: File[]) => void;
+interface MediaUploaderProps {
+    type: "AUDIO" | "IMAGE" | "VIDEO" | "DOCUMENT";
+    mediaFile: File | null;
+    uploadedUrl: string | null;
+    onSelect: (file: File) => void;
+    onClear: () => Promise<void> | void;
 }
 
-export default function MediaButton({ files, setFiles }: MediaButtonProps) {
-    const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return;
-        setFiles([...files, ...Array.from(e.target.files)]);
-    };
-
-    const handleRemove = (index: number) =>
-        setFiles(files.filter((_, i) => i !== index));
-
+export default function MediaUploader({ type, mediaFile, uploadedUrl, onSelect, onClear }: MediaUploaderProps) {
     return (
-        <div className="relative">
-        {/* Icon upload button */}
-        <label
-            className="flex items-center justify-center w-10 h-10 bg-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/90 rounded cursor-pointer text-white transition"
-            title="Add Media"
-        >
-            <FaFileUpload />
+        <div className="space-y-3">
             <input
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleFiles}
-            accept="image/*,audio/*,video/*,application/pdf"
+                type="file"
+                accept={
+                    type === "AUDIO"
+                        ? "audio/*"
+                        : type === "IMAGE"
+                        ? "image/*"
+                        : type === "VIDEO"
+                        ? "video/*"
+                        : "application/pdf"
+                }
+                onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onSelect(f);
+                }}
             />
-        </label>
 
-        {/* Selected files dropdown */}
-        {files.length > 0 && (
-            <ul className="absolute mt-2 max-h-40 w-56 overflow-auto bg-white dark:bg-gray-800 rounded shadow-md p-2 space-y-1 z-10 border border-gray-200 dark:border-gray-700">
-            {files.map((file, i) => (
-                <li
-                key={i}
-                className="flex justify-between items-center text-gray-800 dark:text-gray-100 text-sm"
-                >
-                <span className="truncate">{file.name}</span>
-                <button
-                    type="button"
-                    onClick={() => handleRemove(i)}
-                    className="text-red-500 hover:text-red-400 ml-2 transition"
-                    title="Remove"
-                >
-                    ✕
-                </button>
-                </li>
-            ))}
-            </ul>
-        )}
+            {mediaFile && uploadedUrl && (
+                <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                    <span className="truncate">{mediaFile.name}</span>
+                    <button
+                        onClick={() => void onClear()}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 transition"
+                        title="Remove file"
+                        aria-label="Remove file"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
+

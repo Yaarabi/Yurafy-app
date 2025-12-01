@@ -125,6 +125,33 @@ export async function POST(req: NextRequest) {
                     }, { status: 400 });
                 }
             }
+
+            // Validate that variables array matches the number of placeholders
+            if (!variables || variables.length !== numbers.length) {
+                return NextResponse.json({
+                    error: `Found ${numbers.length} variable placeholder(s) but received ${variables?.length || 0} variable key(s). Please use the + button to add variables.`
+                }, { status: 400 });
+            }
+        }
+
+        // Validate content quality (basic checks)
+        const contentToValidate = type === "TEXT" ? content : (caption || "");
+        if (contentToValidate) {
+            // Check for common spelling mistakes that Meta rejects
+            const commonIssues = [
+                { pattern: /\bplz\b/i, message: "Use 'please' instead of 'plz'" },
+                { pattern: /\bu\b(?!\w)/i, message: "Use 'you' instead of 'u'" },
+                { pattern: /\bpls\b/i, message: "Use 'please' instead of 'pls'" },
+                { pattern: /\bthnx\b/i, message: "Use 'thanks' instead of 'thnx'" },
+            ];
+
+            for (const issue of commonIssues) {
+                if (issue.pattern.test(contentToValidate)) {
+                    return NextResponse.json({
+                        error: `Template quality issue: ${issue.message}. Meta may reject informal language.`
+                    }, { status: 400 });
+                }
+            }
         }
 
         const account = await WhatsAppAccount.findOne({ owner: userId });
@@ -157,23 +184,35 @@ export async function POST(req: NextRequest) {
         // ------------------------------------------
         // Map variable keys to realistic example values
         const exampleMap: Record<string, string> = {
+            // Customer Information
             fullName: "John Doe",
             email: "john@example.com",
-            phone: "+123456789",
-            address: "123 Main St",
+            phone: "+1234567890",
+            address: "123 Main Street, Apt 4B",
             city: "New York",
             country: "USA",
-            totalAmount: "99.99",
+            
+            // Order Information
+            totalAmount: "149.99",
             status: "confirmed",
-            productName: "Product Name",
+            deliveryInstructions: "Please ring the doorbell",
+            preferredTime: "2:00 PM - 4:00 PM",
+            deliveryCompany: "Express Delivery",
+            
+            // Product Information (first product)
+            productName: "Premium T-Shirt",
             productQuantity: "2",
             productPrice: "49.99",
-            productColor: "Red",
-            productSize: "M",
-            deliveryInstructions: "Leave at door",
-            preferredTime: "Afternoon",
-            createdAt: "2025-11-25",
-            updatedAt: "2025-11-25"
+            productColor: "Blue",
+            productSize: "Large",
+            
+            // Product Lists
+            productsList: "1. Premium T-Shirt (Blue, Large) x2 - $49.99\n2. Cotton Jeans (Black, 32) x1 - $59.99",
+            totalItems: "3",
+            
+            // Legacy/fallback
+            createdAt: "2025-12-01",
+            updatedAt: "2025-12-01"
         };
         const exampleValues = variables?.length
             ? variables.map((v: string) => exampleMap[v] || `Example for ${v}`)
@@ -345,6 +384,38 @@ export async function PUT(req: NextRequest) {
             // Build components according to Meta WhatsApp Business API policies
             const components: any[] = [];
 
+            // Example values map for variables (used in PUT as well)
+            const exampleMap: Record<string, string> = {
+                // Customer Information
+                fullName: "John Doe",
+                email: "john@example.com",
+                phone: "+1234567890",
+                address: "123 Main Street, Apt 4B",
+                city: "New York",
+                country: "USA",
+                
+                // Order Information
+                totalAmount: "149.99",
+                status: "confirmed",
+                deliveryInstructions: "Please ring the doorbell",
+                preferredTime: "2:00 PM - 4:00 PM",
+                deliveryCompany: "Express Delivery",
+                
+                // Product Information (first product)
+                productName: "Premium T-Shirt",
+                productQuantity: "2",
+                productPrice: "49.99",
+                productColor: "Blue",
+                productSize: "Large",
+                
+                // Product Lists
+                productsList: "1. Premium T-Shirt (Blue, Large) x2 - $49.99\n2. Cotton Jeans (Black, 32) x1 - $59.99",
+                totalItems: "3",
+            };
+            const exampleValues: string[] = Array.isArray(variables)
+                ? (variables as string[]).map((v) => exampleMap[v] || `Example for ${v}`)
+                : [];
+
             if (type === "TEXT") {
                 // Text templates only need BODY component
                 const bodyComponent: any = {
@@ -353,8 +424,9 @@ export async function PUT(req: NextRequest) {
                 };
                 // Add variables if provided
                 if (variables && variables.length > 0) {
+                    // Meta expects an array of arrays of strings: [["val1", "val2"]]
                     bodyComponent.example = {
-                        body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
+                        body_text: [exampleValues],
                     };
                 }
                 components.push(bodyComponent);
@@ -406,7 +478,7 @@ export async function PUT(req: NextRequest) {
                     };
                     if (variables && variables.length > 0) {
                         bodyComponent.example = {
-                            body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
+                            body_text: [exampleValues],
                         };
                     }
                     components.push(bodyComponent);
@@ -416,7 +488,7 @@ export async function PUT(req: NextRequest) {
                         text: " ",
                     };
                         bodyComponent.example = {
-                            body_text: [variables.map((v: string, i: number) => `{{${i + 1}}}`).join(" ")],
+                            body_text: [exampleValues],
                         };
                     components.push(bodyComponent);
                 }
@@ -509,6 +581,12 @@ export async function DELETE(req: NextRequest) {
         const template = await Template.findOne({ _id: id, owner: userId });
         if (!template) {
             return NextResponse.json({ error: "Template not found" }, { status: 404 });
+        }
+
+        // If template is REJECTED, delete directly from DB without checking Meta
+        if (template.status === "REJECTED") {
+            await template.deleteOne();
+            return NextResponse.json({ success: true });
         }
 
         // Fetch WhatsApp account for Meta credentials

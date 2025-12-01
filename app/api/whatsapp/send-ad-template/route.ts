@@ -1,7 +1,6 @@
 // app/api/whatsapp/send-ads/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Order from "@/models/orders";
 import Template from "@/models/templates";
 import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";   
 import WhatsAppConversation from "@/models/whatsappMessage";
@@ -13,9 +12,13 @@ import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 export async function POST(req: Request) {
     try {
-        const { orders: orderIds } = await req.json();
-        if (!orderIds?.length) {
-            return NextResponse.json({ error: "No orders provided" }, { status: 400 });
+        // Accept either a single `phone` or an array `phones` in the request body.
+        const body = await req.json();
+        const rawPhones: string[] = [];
+        if (body.phone) rawPhones.push(body.phone);
+        if (Array.isArray(body.phones)) rawPhones.push(...body.phones);
+        if (!rawPhones.length) {
+            return NextResponse.json({ error: "No phone numbers provided" }, { status: 400 });
         }
 
         const session = await getServerSession(authOptions);
@@ -30,12 +33,6 @@ export async function POST(req: Request) {
         const { ensureFeatureEnabled } = await import('@/lib/utils/planEnforcer');
         const featureCheck = await ensureFeatureEnabled(ownerId, 'whatsapp');
         if (featureCheck) return featureCheck;
-
-        // Fetch orders
-        const orderDocs = await Order.find({ _id: { $in: orderIds }, owner: ownerId });                                                                         
-        if (!orderDocs.length) {
-            return NextResponse.json({ error: "Orders not found" }, { status: 404 });                                                                           
-        }
 
         // Fetch WhatsApp account
         const waAccount: IWhatsAppAccount | null = await WhatsAppAccount.findOne({ owner: ownerId });                                                           
@@ -74,12 +71,11 @@ export async function POST(req: Request) {
 
         const token = decryptToken(waAccount.waTokenEncrypted);
 
-        // Send ad message for each order
-        const results = [];
-        for (const order of orderDocs) {
-            const rawPhone = order.shippingAddress.phone;
+        // Send ad message for each provided phone number
+        const results: any[] = [];
+        for (const rawPhone of rawPhones) {
             if (!rawPhone) {
-                results.push({ orderId: order._id, phone: null, status: "skipped", reason: "No phone number" });
+                results.push({ phone: null, status: "skipped", reason: "No phone number" });
                 continue;
             }
 
@@ -90,73 +86,29 @@ export async function POST(req: Request) {
                 // Check opt-in status before sending promotional messages
                 const conversation = await WhatsAppConversation.findOne({
                     owner: ownerId,
-                    "customer.phone": phone
+                    "customer.phone": phone,
                 });
 
                 if (!conversation || conversation.optInStatus !== "opted_in") {
                     console.log(`[send-ad-template] Skipping ${phone}: User has not opted in (status: ${conversation?.optInStatus || "unknown"})`);
-                    results.push({ 
-                        orderId: order._id, 
-                        phone: phone, 
-                        status: "skipped", 
-                        reason: `User not opted in (status: ${conversation?.optInStatus || "unknown"})` 
-                    });
+                    results.push({ phone, status: "skipped", reason: `User not opted in (status: ${conversation?.optInStatus || "unknown"})` });
                     continue;
                 }
 
-                // Extract variable values from order
+                // Extract variable values: we only have phone-level data, so fill phone where requested
                 const variableValues: string[] = [];
                 if (template.variables && template.variables.length > 0) {
                     for (const varName of template.variables) {
+                        const key = varName.toLowerCase();
                         let value = "";
-                        
-                        // Map template variable names to order fields
-                        switch (varName.toLowerCase()) {
-                            case "fullname":
-                                value = order.shippingAddress.fullName || "";
-                                break;
-                            case "email":
-                                value = order.shippingAddress.email || "";
-                                break;
-                            case "phone":
-                                value = order.shippingAddress.phone || "";
-                                break;
-                            case "address":
-                                value = order.shippingAddress.address || "";
-                                break;
-                            case "city":
-                                value = order.shippingAddress.city || "";
-                                break;
-                            case "country":
-                                value = order.shippingAddress.country || "";
-                                break;
-                            case "totalamount":
-                                value = String(order.totalAmount || "");
-                                break;
-                            case "product.name":
-                                value = order.products[0]?.name || "";
-                                break;
-                            case "product.quantity":
-                                value = String(order.products[0]?.quantity || "");
-                                break;
-                            case "product.price":
-                                value = String(order.products[0]?.price || "");
-                                break;
-                            default:
-                                value = "";
-                        }
+                        if (key === "phone") value = phone || "";
+                        // other variables cannot be derived without order data
                         variableValues.push(value);
                     }
                 }
 
-                // Send as template message (works outside 24h window and for promotional messages)
-                await sendTemplateMessage(
-                    waAccount,
-                    phone,
-                    template,
-                    variableValues,
-                    token
-                );
+                // Send as template message
+                await sendTemplateMessage(waAccount, phone, template, variableValues, token);
 
                 // Track ad template sent
                 await WhatsAppConversation.findOneAndUpdate(
@@ -170,18 +122,13 @@ export async function POST(req: Request) {
                     { upsert: true }
                 );
 
-                results.push({ orderId: order._id, phone: phone, status: "sent" });
+                results.push({ phone, status: "sent" });
 
                 // Delay between messages
-                await new Promise((r) => setTimeout(r, 700 + Math.random() * 600)); 
+                await new Promise((r) => setTimeout(r, 700 + Math.random() * 600));
             } catch (err: any) {
                 console.error(`[send-ad-template] Error sending to ${phone}:`, err);
-                results.push({ 
-                    orderId: order._id, 
-                    phone: phone, 
-                    status: "failed", 
-                    error: err.message 
-                });
+                results.push({ phone, status: "failed", error: err.message });
             }
         }
 

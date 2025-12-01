@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import toast from "react-hot-toast";
-import VariableDropdown from "./TemplateEditor";
-import { Mic, Square, Play, Pause } from "lucide-react";
+import { FaTimes } from "react-icons/fa";
+import NameTypeRow from "./NameTypeRow";
+import ActiveVariables from "./ActiveVariables";
+import MediaUploader from "./MediaUploader";
 
 interface AddTemplateProps {
     onSuccess?: () => void;
@@ -14,6 +16,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
     const [loading, setLoading] = useState(false);
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+
     const [template, setTemplate] = useState({
         name: "",
         type: "TEXT" as "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT",
@@ -22,270 +25,302 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
         link: "",
         variables: [] as string[],
     });
-    const [variableSpans, setVariableSpans] = useState<Array<{ key: string, seq: number }>>([]);
 
-    // 🧠 Upload file and delete previous if needed
+    const [variableSpans, setVariableSpans] = useState<
+        Array<{ key: string; seq: number }>
+    >([]);
+
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    /* ----------------------------------------------------
+     🔵 File Upload
+    ----------------------------------------------------- */
     const handleFileChange = async (file: File) => {
         try {
-        if (uploadedUrl) {
-            await fetch("/api/upload", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ urls: [uploadedUrl] }),
-            });
-        }
+            // Remove previous upload
+            if (uploadedUrl) {
+                await fetch("/api/upload", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ urls: [uploadedUrl] }),
+                });
+            }
 
-        const { uploadFile } = await import('@/lib/utils/upload');
-        const result = await uploadFile(file);
+            const { uploadFile } = await import("@/lib/utils/upload");
+            const result = await uploadFile(file);
 
-        if (!result.success) {
-            throw new Error(result.error.message || "Upload failed");
-        }
+            if (!result.success) throw new Error(result.error.message);
 
-        setUploadedUrl(result.data.url);
-        setTemplate((prev) => ({ ...prev, link: result.data.url }));
-        setMediaFile(file);
+            setUploadedUrl(result.data.url);
+            setTemplate((t) => ({ ...t, link: result.data.url }));
+            setMediaFile(file);
         } catch (err: any) {
-        console.error(err);
-        toast.error(err.message || "Upload failed");
+            toast.error(err.message || "Upload failed");
         }
     };
 
-    // Insert variable at cursor position as {{seq}} and add colored span
-    function handleInsertVariable(varKey: string) {
-        // Prevent duplicate variable
-        if (variableSpans.some(v => v.key === varKey)) return;
+    /* ----------------------------------------------------
+     🔵 Insert Variable
+    ----------------------------------------------------- */
+    const handleInsertVariable = (varKey: string) => {
+        if (variableSpans.some((v) => v.key === varKey)) {
+            return toast.error("This variable is already added");
+        }
+
         const seq = variableSpans.length + 1;
-        const textarea = document.querySelector('textarea');
-        let pos = textarea && textarea.selectionStart ? textarea.selectionStart : template.content.length;
-        // Only insert the placeholder
-        const newContent = template.content.slice(0, pos) + `{{${seq}}}` + template.content.slice(pos);
-        setTemplate(t => ({
-            ...t,
-            content: newContent,
-            variables: [...t.variables, varKey]
-        }));
-        setVariableSpans([...variableSpans, { key: varKey, seq }]);
-    }
+        const placeholder = `{{${seq}}}`;
 
-    // Remove variable and renumber
-    function handleRemoveVar(seq: number) {
-        const idx = variableSpans.findIndex(v => v.seq === seq);
-        if (idx === -1) return;
-        const newSpans = variableSpans.filter(v => v.seq !== seq);
-        const newVars = template.variables.filter((_, i) => i !== idx);
-        let newContent = template.content.replace(new RegExp(`{{${seq}}}`, 'g'), '');
-        newSpans.forEach((v, i) => {
-            const oldSeq = v.seq;
+        // Insert into TEXT content
+        if (template.type === "TEXT") {
+            const textarea = textareaRef.current;
+            const cursor = textarea ? textarea.selectionStart : template.content.length;
+
+            const newContent =
+                template.content.slice(0, cursor) +
+                placeholder +
+                template.content.slice(cursor);
+
+            setTemplate((t) => ({
+                ...t,
+                content: newContent,
+                variables: [...t.variables, varKey],
+            }));
+
+            requestAnimationFrame(() => textarea?.focus());
+        }
+
+        // Insert into MEDIA caption
+        else {
+            const newCaption = template.caption
+                ? `${template.caption} ${placeholder}`
+                : placeholder;
+
+            setTemplate((t) => ({
+                ...t,
+                caption: newCaption,
+                variables: [...t.variables, varKey],
+            }));
+        }
+
+        setVariableSpans((prev) => [...prev, { key: varKey, seq }]);
+    };
+
+    /* ----------------------------------------------------
+     🔵 Remove Variable
+    ----------------------------------------------------- */
+    const handleRemoveVar = (seq: number) => {
+        const index = variableSpans.findIndex((v) => v.seq === seq);
+        if (index === -1) return;
+
+        let newContent = template.content.replace(new RegExp(`{{${seq}}}`, "g"), "");
+
+        // Remove the variable
+        const newSpans = variableSpans.filter((v) => v.seq !== seq);
+        const newVars = template.variables.filter((_, i) => i !== index);
+
+        // Renumber placeholders
+        newSpans.forEach((span, i) => {
             const newSeq = i + 1;
-            newContent = newContent.replace(new RegExp(`{{${oldSeq}}}`, 'g'), `{{${newSeq}}}`);
-            v.seq = newSeq;
+            newContent = newContent.replace(
+                new RegExp(`{{${span.seq}}}`, "g"),
+                `{{${newSeq}}}`
+            );
+            span.seq = newSeq;
         });
-        setTemplate(t => ({ ...t, content: newContent, variables: newVars }));
+
+        setTemplate((t) => ({ ...t, content: newContent, variables: newVars }));
         setVariableSpans(newSpans);
-    }
+    };
 
-    // Handle manual content change (renumber spans if needed)
-    function handleContentChange(val: string) {
-        let newSpans = [...variableSpans];
-        let newVars = [...template.variables];
-        newSpans.forEach((v, i) => {
-            if (!val.includes(`{{${v.seq}}}`)) {
-                newSpans = newSpans.filter((_, idx) => idx !== i);
-                newVars = newVars.filter((_, idx) => idx !== i);
-            }
+    /* ----------------------------------------------------
+     🔵 Sync Variables When User Types
+    ----------------------------------------------------- */
+    const handleContentChange = (val: string) => {
+        const matches = Array.from(val.matchAll(/{{(\d+)}}/g)).map((m) => Number(m[1]));
+
+        const newSpans = variableSpans.filter((s) => matches.includes(s.seq));
+        const newVars = newSpans.map((s) => {
+            const index = variableSpans.findIndex((v) => v.seq === s.seq);
+            return template.variables[index];
         });
-        setTemplate(t => ({ ...t, content: val, variables: newVars }));
+
+        setTemplate((t) => ({ ...t, content: val, variables: newVars }));
         setVariableSpans(newSpans);
-    }
+    };
 
-    // Render content with variable spans
-    function renderContentWithSpans(content: string, spans: Array<{ key: string, seq: number }>, onRemove: (seq: number) => void) {
-        const parts = content.split(/({{\d+}})/g);
-        return parts.map((part, i) => {
-            const match = part.match(/{{(\d+)}}/);
-            if (match) {
-                const seq = Number(match[1]);
-                const span = spans.find(s => s.seq === seq);
-                if (!span) return null;
-                return (
-                    <span key={i} style={{ background: '#e0f7fa', color: '#00796b', borderRadius: '4px', padding: '2px 6px', margin: '0 2px', display: 'inline-flex', alignItems: 'center' }}>
-                        {span.key} <button style={{ marginLeft: 4, color: '#d32f2f', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => onRemove(seq)}>×</button>
-                    </span>
-                );
-            }
-            return part;
-        });
-    }
+    /* ----------------------------------------------------
+     🔵 RTL Detection
+    ----------------------------------------------------- */
+    const isArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
+    const contentDir = useMemo(
+        () => (isArabic(template.content) ? "rtl" : "ltr"),
+        [template.content]
+    );
+    const captionDir = useMemo(
+        () => (isArabic(template.caption) ? "rtl" : "ltr"),
+        [template.caption]
+    );
 
-    // 🧠 Create Template
+    /* ----------------------------------------------------
+     🔵 Submit Template
+    ----------------------------------------------------- */
     const handleCreate = async () => {
-        if (!template.name.trim()) {
-        toast.error("Template name is required");
-        return;
-        }
-
-        if (template.type === "TEXT" && !template.content.trim()) {
-        toast.error("Content is required for text templates");
-        return;
-        }
-
-        if (template.type !== "TEXT" && !uploadedUrl && !template.link.trim()) {
-        toast.error("Please upload a file or provide a media URL");
-        return;
-        }
+        if (!template.name.trim()) return toast.error("Template name required");
+        if (template.type === "TEXT" && !template.content.trim())
+            return toast.error("Content required");
+        if (template.type !== "TEXT" && !uploadedUrl)
+            return toast.error("Upload media first");
 
         setLoading(true);
+
         try {
-        const res = await fetch("/api/whatsapp/templates", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...template }),
-        });
+            const res = await fetch("/api/whatsapp/templates", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(template),
+            });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to create template");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
 
-        toast.success("Template created successfully");
+            toast.success("Template created");
 
-        setTemplate({
-            name: "",
-            type: "TEXT",
-            content: "",
-            caption: "",
-            link: "",
-            variables: [],
-        });
-        setMediaFile(null);
-        setUploadedUrl(null);
-        
-        // Trigger refresh and close modal
-        if (onSuccess) onSuccess();
-        if (onClose) onClose();
-        } catch (err: any) {
-        console.error(err);
-        toast.error(err.message || "Save failed");
-        } finally {
-        setLoading(false);
-        }
-    };
-
-    return (
-        <div className="space-y-4 bg-white dark:bg-gray-800 p-4 rounded shadow-md border border-gray-200 dark:border-gray-700">
-        {/* Name + Type + Variables */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-            <input
-            type="text"
-            placeholder="Template Name"
-            className="flex-1 p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
-            value={template.name}
-            onChange={(e) => setTemplate({ ...template, name: e.target.value })}
-            />
-
-            <select
-            value={template.type}
-            onChange={(e) =>
-                setTemplate({
-                ...template,
-                type: e.target.value as any,
+            // Reset UI
+            setTemplate({
+                name: "",
+                type: "TEXT",
                 content: "",
                 caption: "",
                 link: "",
-                })
-            }
-            className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded focus:ring-2 focus:ring-[var(--brand-blue)] border border-gray-200 dark:border-gray-600"
-            >
-            <option value="TEXT">Text</option>
-            <option value="IMAGE">Image</option>
-            <option value="VIDEO">Video</option>
-            <option value="AUDIO">Audio</option>
-            <option value="DOCUMENT">Document</option>
-            </select>
+                variables: [],
+            });
 
-            <div className="flex gap-2 mt-2 sm:mt-0">
-            <VariableDropdown
-                onSelect={handleInsertVariable}
-            />
-            </div>
-        </div>
+            setMediaFile(null);
+            setUploadedUrl(null);
 
-        {/* Content or Media */}
-        {template.type === "TEXT" ? (
-            <div className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 min-h-[100px]">
-                {/* Preview: Render content with variable spans above the textarea */}
-                <div className="mb-2">
-                    {renderContentWithSpans(template.content, variableSpans, handleRemoveVar)}
-                </div>
-                <textarea
-                    placeholder="Type your template and insert variables"
-                    className="w-full bg-transparent outline-none resize-none"
-                    rows={4}
-                    value={template.content}
-                    onChange={e => handleContentChange(e.target.value)}
-                />
-            </div>
-        ) : (
-            <div className="space-y-3">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {template.type === "AUDIO" ? "Upload Audio File" : "Upload Media"}
-                    </label>
-                    <input
-                        type="file"
-                        accept={template.type === "AUDIO" ? "audio/*" : template.type === "IMAGE" ? "image/*" : template.type === "VIDEO" ? "video/*" : "application/pdf"}
-                        onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                                handleFileChange(file);
-                            }
-                        }}
-                        className="block w-full text-sm text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[var(--brand-blue)] file:text-white hover:file:bg-[var(--brand-blue)]/90 transition"
-                    />
-                </div>
+            onSuccess?.();
+            onClose?.();
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                {/* Uploaded file preview */}
-                {mediaFile && uploadedUrl && (
-                    <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 rounded px-3 py-2 text-sm text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600">
-                        <span className="truncate">{mediaFile.name}</span>
+    /* ----------------------------------------------------
+     🔵 UI Layout
+    ----------------------------------------------------- */
+    return (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] overflow-x-hidden">
+            <div className="flex flex-col bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 max-h-[85vh]">
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 pb-0">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Add WhatsApp Template
+                    </h3>
+                    {onClose && (
                         <button
-                            type="button"
-                            onClick={async () => {
-                                await fetch("/api/upload", {
-                                    method: "DELETE",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ urls: [uploadedUrl] }),
-                                });
+                            onClick={onClose}
+                            className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
+                            aria-label="Close"
+                            title="Close"
+                        >
+                            <FaTimes className="text-lg" />
+                        </button>
+                    )}
+                </div>
+
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto px-4 space-y-5 py-4">
+
+                {/* Name + Type + Variable Button */}
+                <NameTypeRow
+                    name={template.name}
+                    type={template.type}
+                    onNameChange={(v) => setTemplate({ ...template, name: v })}
+                    onTypeChange={(v) =>
+                        setTemplate({
+                            ...template,
+                            type: v as any,
+                            content: "",
+                            caption: "",
+                            link: "",
+                        })
+                    }
+                    onInsertVariable={handleInsertVariable}
+                />
+
+                {/* Active Variables */}
+                <ActiveVariables
+                    variableSpans={variableSpans}
+                    onRemove={handleRemoveVar}
+                />
+
+                {/* TEXT TEMPLATE */}
+                {template.type === "TEXT" ? (
+                    <div className="p-3 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                        <textarea
+                            ref={textareaRef}
+                            placeholder="Write your message…"
+                            className={`w-full bg-transparent resize-none outline-none text-gray-900 dark:text-white ${
+                                contentDir === "rtl" ? "text-right" : "text-left"
+                            }`}
+                            dir={contentDir}
+                            rows={4}
+                            value={template.content}
+                            onChange={(e) => handleContentChange(e.target.value)}
+                        />
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        <MediaUploader
+                            type={template.type}
+                            mediaFile={mediaFile}
+                            uploadedUrl={uploadedUrl}
+                            onSelect={(file) => void handleFileChange(file)}
+                            onClear={async () => {
+                                if (uploadedUrl) {
+                                    await fetch("/api/upload", {
+                                        method: "DELETE",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ urls: [uploadedUrl] }),
+                                    });
+                                }
                                 setMediaFile(null);
                                 setUploadedUrl(null);
-                                setTemplate((prev) => ({ ...prev, link: "" }));
+                                setTemplate((t) => ({ ...t, link: "" }));
                             }}
-                            className="text-red-500 hover:text-red-400 ml-2 transition"
-                            title="Remove"
-                        >
-                            ✕
-                        </button>
+                        />
+
+                        <textarea
+                            placeholder="Optional caption"
+                            className={`w-full p-3 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white ${
+                                captionDir === "rtl" ? "text-right" : "text-left"
+                            }`}
+                            dir={captionDir}
+                            rows={2}
+                            value={template.caption}
+                            onChange={(e) =>
+                                setTemplate({ ...template, caption: e.target.value })
+                            }
+                        />
                     </div>
                 )}
 
-                {/* Optional caption */}
-                <input
-                    type="text"
-                    placeholder="Optional caption"
-                    className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[var(--brand-blue)] outline-none transition border border-gray-200 dark:border-gray-600"
-                    value={template.caption}
-                    onChange={(e) => setTemplate({ ...template, caption: e.target.value })}
-                />
-            </div>
-        )}
+                </div>
 
-        {/* Submit */}
-        <button
-            onClick={handleCreate}
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-white font-medium transition"
-        >
-            {loading ? "Saving..." : "Add Template"}
-        </button>
+                {/* Submit - Fixed at bottom */}
+                <div className="p-4 pt-2">
+                    <button
+                        onClick={handleCreate}
+                        disabled={loading}
+                        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white p-2 rounded transition"
+                    >
+                        {loading ? "Saving…" : "Add Template"}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

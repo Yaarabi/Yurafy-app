@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import Products from "@/models/products";
 
-// ✅ GET Orders (all or by id, but scoped to logged-in user)
+// ✅ GET Products (all or by id, but scoped to logged-in user)
 export async function GET(req: Request) {
     await connectDB();
     const session = await getServerSession(authOptions);
@@ -23,16 +23,16 @@ export async function GET(req: Request) {
 
     try {
         if (id) {
-        const order = await Products.findOne({ _id: id, owner: userId });
-        if (!order) {
-            return NextResponse.json({ message: "Order not found" }, { status: 404 });
+        const product = await Products.findOne({ _id: id, owner: userId });
+        if (!product) {
+            return NextResponse.json({ message: "Product not found" }, { status: 404 });
         }
-        return NextResponse.json({ message: "Order retrieved", order });
+        return NextResponse.json({ message: "Product retrieved", product });
         }
 
-        // Return all orders for this user
-        const orders = await Products.find({ owner: userId });
-        return NextResponse.json({ message: "User orders retrieved", orders });
+        // Return all products for this user
+        const products = await Products.find({ owner: userId });
+        return NextResponse.json({ message: "User products retrieved", products });
     } catch (error) {
         return NextResponse.json({ message: "Server error", error }, { status: 500 });
     }

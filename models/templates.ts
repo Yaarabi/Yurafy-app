@@ -12,6 +12,7 @@ export interface ITemplate {
     link?: string; // for media templates
     caption?: string; // optional caption for media
     status: "PENDING" | "APPROVED" | "REJECTED";
+    languageCode?: string;
     rejectionReason?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -32,6 +33,7 @@ const TemplateSchema = new Schema(
             enum: ["UTILITY", "MARKETING"],
             required: true,
         },
+        languageCode: { type: String, default: "en_US" },
         content: { type: String }, 
         variables: [{ type: String }],
         link: { type: String }, 

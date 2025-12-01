@@ -7,7 +7,7 @@ import OrderMessageTrigger from "@/models/orderMessageTrigger";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "../webhook/route";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
-import { fillTemplateVariables } from "@/lib/whatsapp/templateUtils";
+import { fillTemplateVariables, validateTemplatePlaceholders } from "@/lib/whatsapp/templateUtils";
 
 export async function POST(req: Request) {
     try {
@@ -63,7 +63,11 @@ export async function POST(req: Request) {
         const customerPhone = normalizePhoneNumber(rawPhone);
         const token = decryptToken(waAccount.waTokenEncrypted);
 
-        // 6. Fill variables
+        // 6. Validate placeholders and fill variables
+        const isValid = validateTemplatePlaceholders(template);
+        if (!isValid) {
+            return NextResponse.json({ error: "Template placeholders must be sequential ({{1}}, {{2}}, ...) and present in content/caption." }, { status: 400 });
+        }
         const variableValues = fillTemplateVariables(template, orderDoc);
 
         // 7. Send Message (Handle timing if needed)
@@ -72,14 +76,16 @@ export async function POST(req: Request) {
             // Wait for timingSeconds before sending
             await new Promise(resolve => setTimeout(resolve, timingSeconds * 1000));
         }
-        await sendTemplateMessage(
+        const sendResult = await sendTemplateMessage(
             waAccount,
             customerPhone,
             template,
             variableValues,
             token
         );
-
+        if ((sendResult as any)?.success === false) {
+            return NextResponse.json({ error: (sendResult as any).error || "Failed to send template" }, { status: 502 });
+        }
         return NextResponse.json({ success: true, trigger: trigger.name, template: template.name, timing: timingSeconds });
 
     } catch (error: any) {
