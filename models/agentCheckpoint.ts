@@ -14,7 +14,7 @@ const AgentCheckpointSchema = new Schema(
     {
         threadId: { type: String, required: true, unique: true, index: true },
         checkpoint: { type: String, required: true }, // JSON stringified checkpoint
-        owner: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+        owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
         customerPhone: { type: String, index: true },
         lastAccessed: { type: Date, default: Date.now },
     },

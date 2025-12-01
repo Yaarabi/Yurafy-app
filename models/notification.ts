@@ -14,7 +14,7 @@ export interface INotification extends Document {
 
 const NotificationSchema = new Schema<INotification>(
     {
-        owner: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+        owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         type: {
             type: String,
             enum: ['support_reply', 'order_update', 'plan_expiry', 'plan_warning', 'plan_limit_reached', 'plan_subscription', 'welcome', 'system', 'admin_message'],
