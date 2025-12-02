@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import WhatsAppAccount from "@/models/whatsappAccount";
 import WhatsAppConversation from "@/models/whatsappMessage";
+import Template from "@/models/templates";
 import { decryptToken, getTemplate } from "../webhook/route";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import { generateCustomerAIResponse } from "@/lib/agent/agent";
@@ -37,7 +38,6 @@ export async function POST(req: NextRequest) {
 
         // 🧩 1️⃣ AI Agent (Customer)
         if (account.settings.aiAgent) {
-            console.log("AI active")
             try {
                 // Ensure owner has AI agent feature
                 const aiCheck = await ensureFeatureEnabled(String(account.owner), 'ai.agent');
@@ -70,24 +70,49 @@ export async function POST(req: NextRequest) {
             );
 
             if (matched) {
-            const templateContent = await getTemplate(account.owner, rule.template);
-            if (templateContent) {
-                await sendWhatsAppMessage(account, normalizedFrom, templateContent, decryptedToken);
-                return NextResponse.json({ type: "adDetection", success: true });
-            }
+                // Fetch full template with buttons
+                const template = await Template.findOne({
+                    owner: account.owner,
+                    name: rule.template,
+                    // status: "APPROVED"
+                });
+                
+                if (template) {
+                    const templateContent = template.content || "";
+                    await sendWhatsAppMessage(
+                        account, 
+                        normalizedFrom, 
+                        templateContent, 
+                        decryptedToken,
+                        { buttons: template.buttons }
+                    );
+                    return NextResponse.json({ type: "detectionRule", success: true });
+                }
             }
         }
         }
 
         // 🧩 3️⃣ AutoReply (optional) 
         if (account.settings.autoReply && account.preferredTemplates?.greeting) {
-            console.log("Auto repla active")
-            const greetingTemplate = await getTemplate(
-                account.owner,
-                account.preferredTemplates.greeting
-            );
-            if (greetingTemplate) {
-                await sendWhatsAppMessage(account, normalizedFrom, greetingTemplate, decryptedToken);
+
+            
+            // Fetch full template with buttons
+            const template: any = await Template.findOne({
+                owner: account.owner,
+                name: account.preferredTemplates.greeting,
+            }).lean();
+            
+
+            if (template) {
+                const templateContent = template.content || "";
+                
+                await sendWhatsAppMessage(
+                    account, 
+                    normalizedFrom, 
+                    templateContent, 
+                    decryptedToken,
+                    { buttons: template.buttons }
+                );
                 
                 // Track auto reply sent
                 await WhatsAppConversation.findOneAndUpdate(

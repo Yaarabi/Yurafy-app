@@ -7,7 +7,7 @@ import OrderMessageTrigger from "@/models/orderMessageTrigger";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "../webhook/route";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
-import { fillTemplateVariables, validateTemplatePlaceholders } from "@/lib/whatsapp/templateUtils";
+import { fillTemplateVariables, validateTemplatePlaceholders, buildButtonUrlParameters } from "@/lib/whatsapp/templateUtils";
 
 export async function POST(req: Request) {
     try {
@@ -76,12 +76,14 @@ export async function POST(req: Request) {
             // Wait for timingSeconds before sending
             await new Promise(resolve => setTimeout(resolve, timingSeconds * 1000));
         }
+        const buttonParamSets = buildButtonUrlParameters(template, orderDoc, customerPhone);
         const sendResult = await sendTemplateMessage(
             waAccount,
             customerPhone,
             template,
             variableValues,
-            token
+            token,
+            buttonParamSets
         );
         if ((sendResult as any)?.success === false) {
             return NextResponse.json({ error: (sendResult as any).error || "Failed to send template" }, { status: 502 });

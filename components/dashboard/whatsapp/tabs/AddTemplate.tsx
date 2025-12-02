@@ -24,6 +24,13 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
         caption: "",
         link: "",
         variables: [] as string[],
+        buttons: [] as Array<{
+            type: "QUICK_REPLY" | "URL" | "PHONE";
+            text: string;
+            payload?: "order_confirmation" | "cancel_order" | "edit_order";
+            url?: string;
+            phoneNumber?: string;
+        }>,
     });
 
     const [variableSpans, setVariableSpans] = useState<
@@ -193,6 +200,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                 caption: "",
                 link: "",
                 variables: [],
+                buttons: [],
             });
 
             setMediaFile(null);
@@ -246,6 +254,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                             content: "",
                             caption: "",
                             link: "",
+                            buttons: template.buttons, // keep buttons when switching type
                         })
                     }
                     onInsertVariable={handleInsertVariable}
@@ -307,6 +316,130 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                         />
                     </div>
                 )}
+
+                {/* Buttons Editor */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Buttons (optional)</h4>
+                        <button
+                            type="button"
+                            className="px-2 py-1 text-sm rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                            onClick={() =>
+                                setTemplate((t) => ({
+                                    ...t,
+                                    buttons: [
+                                        ...t.buttons,
+                                        { type: "QUICK_REPLY", text: "", payload: "order_confirmation" },
+                                    ],
+                                }))
+                            }
+                        >
+                            + Add Button
+                        </button>
+                    </div>
+                    {template.buttons.length > 0 && (
+                        <div className="space-y-2">
+                            {template.buttons.map((b, idx) => (
+                                <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+                                    <select
+                                        className="col-span-3 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                        value={b.type}
+                                        onChange={(e) => {
+                                            const type = e.target.value as "QUICK_REPLY" | "URL" | "PHONE";
+                                            setTemplate((t) => {
+                                                const arr = [...t.buttons];
+                                                const updated: any = { ...arr[idx], type };
+                                                if (type === "QUICK_REPLY") {
+                                                    delete updated.url; delete updated.phoneNumber;
+                                                    if (!updated.payload) updated.payload = "order_confirmation";
+                                                } else if (type === "URL") {
+                                                    delete updated.payload; delete updated.phoneNumber;
+                                                } else if (type === "PHONE") {
+                                                    delete updated.payload; delete updated.url;
+                                                }
+                                                arr[idx] = updated;
+                                                return { ...t, buttons: arr };
+                                            });
+                                        }}
+                                    >
+                                        <option value="QUICK_REPLY">Quick Reply</option>
+                                        <option value="URL">URL</option>
+                                        <option value="PHONE">Phone</option>
+                                    </select>
+                                    <input
+                                        className="col-span-3 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                        placeholder="Button text"
+                                        value={b.text}
+                                        onChange={(e) =>
+                                            setTemplate((t) => {
+                                                const arr = [...t.buttons];
+                                                arr[idx] = { ...arr[idx], text: e.target.value } as any;
+                                                return { ...t, buttons: arr };
+                                            })
+                                        }
+                                    />
+                                    {b.type === "QUICK_REPLY" && (
+                                        <select
+                                            className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                            value={b.payload || "order_confirmation"}
+                                            onChange={(e) =>
+                                                setTemplate((t) => {
+                                                    const arr = [...t.buttons];
+                                                    arr[idx] = { ...arr[idx], payload: e.target.value as any } as any;
+                                                    return { ...t, buttons: arr };
+                                                })
+                                            }
+                                        >
+                                            <option value="order_confirmation">order_confirmation</option>
+                                            <option value="cancel_order">cancel_order</option>
+                                            <option value="edit_order">edit_order</option>
+                                        </select>
+                                    )}
+                                    {b.type === "URL" && (
+                                        <input
+                                            className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                            placeholder="https://... (can include {{1}})"
+                                            value={b.url || ""}
+                                            onChange={(e) =>
+                                                setTemplate((t) => {
+                                                    const arr = [...t.buttons];
+                                                    arr[idx] = { ...arr[idx], url: e.target.value } as any;
+                                                    return { ...t, buttons: arr };
+                                                })
+                                            }
+                                        />
+                                    )}
+                                    {b.type === "PHONE" && (
+                                        <input
+                                            className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                            placeholder="Phone number (E.164)"
+                                            value={b.phoneNumber || ""}
+                                            onChange={(e) =>
+                                                setTemplate((t) => {
+                                                    const arr = [...t.buttons];
+                                                    arr[idx] = { ...arr[idx], phoneNumber: e.target.value } as any;
+                                                    return { ...t, buttons: arr };
+                                                })
+                                            }
+                                        />
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="col-span-2 px-2 py-1 text-sm rounded bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-100 hover:opacity-90"
+                                        onClick={() =>
+                                            setTemplate((t) => ({
+                                                ...t,
+                                                buttons: t.buttons.filter((_, i) => i !== idx),
+                                            }))
+                                        }
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 </div>
 

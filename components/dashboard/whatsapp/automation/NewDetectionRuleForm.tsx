@@ -49,20 +49,12 @@ export default function AddDetectionRuleModal({ templates, autoReplyActive, onAd
         return;
         }
 
-        const ruleToSave = {
-        ...newRule,
-        active: autoReplyActive ? false : newRule.active,
-        };
-
-        onAdd(ruleToSave);
+        // Allow creating active rules regardless of autoReply state
+        onAdd(newRule);
         setNewRule({ keywords: [], template: '', active: true });
         setOpen(false);
 
-        toast.success(
-        autoReplyActive
-            ? 'Rule created but set inactive (Auto-Reply is active)'
-            : 'Rule added successfully!'
-        );
+        toast.success('Rule added successfully!');
     };
 
     return (

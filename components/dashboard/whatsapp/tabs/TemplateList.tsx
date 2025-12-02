@@ -13,6 +13,13 @@ interface Template {
     link?: string;
     caption?: string;
     variables?: string[];
+    buttons?: Array<{
+        type: "QUICK_REPLY" | "URL" | "PHONE";
+        text: string;
+        payload?: "order_confirmation" | "cancel_order" | "edit_order";
+        url?: string;
+        phoneNumber?: string;
+    }>;
 }
 
 export interface TemplateListRef {
@@ -32,6 +39,7 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
         caption?: string;
         variables?: string[];
         mediaFile?: File;
+        buttons?: Template["buttons"];
     }>({
         name: "",
         content: "",
@@ -40,6 +48,7 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
         caption: "",
         variables: [],
         mediaFile: undefined,
+        buttons: [],
     });
 
     const fetchTemplates = async () => {
@@ -103,6 +112,7 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
             caption: editData.caption,
             variables: editData.variables,
             link,
+            buttons: editData.buttons || [],
             }),
         });
 
@@ -211,6 +221,125 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
                                     value={editData.caption}
                                     onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
                                 />
+                                {/* Buttons Editor (Edit) */}
+                                <div className="space-y-2 mt-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">Buttons</span>
+                                        <button
+                                            type="button"
+                                            className="px-2 py-1 text-sm rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                                            onClick={() =>
+                                                setEditData((d) => ({
+                                                    ...d,
+                                                    buttons: [
+                                                        ...(d.buttons || []),
+                                                        { type: "QUICK_REPLY", text: "", payload: "order_confirmation" },
+                                                    ],
+                                                }))
+                                            }
+                                        >
+                                            + Add Button
+                                        </button>
+                                    </div>
+                                    {(editData.buttons || []).map((b, idx) => (
+                                        <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+                                            <select
+                                                className="col-span-3 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                                value={b.type}
+                                                onChange={(e) => {
+                                                    const type = e.target.value as "QUICK_REPLY" | "URL" | "PHONE";
+                                                    setEditData((d) => {
+                                                        const arr = [ ...(d.buttons || []) ];
+                                                        const updated: any = { ...arr[idx], type };
+                                                        if (type === "QUICK_REPLY") {
+                                                            delete updated.url; delete updated.phoneNumber;
+                                                            if (!updated.payload) updated.payload = "order_confirmation";
+                                                        } else if (type === "URL") {
+                                                            delete updated.payload; delete updated.phoneNumber;
+                                                        } else if (type === "PHONE") {
+                                                            delete updated.payload; delete updated.url;
+                                                        }
+                                                        arr[idx] = updated;
+                                                        return { ...d, buttons: arr };
+                                                    });
+                                                }}
+                                            >
+                                                <option value="QUICK_REPLY">Quick Reply</option>
+                                                <option value="URL">URL</option>
+                                                <option value="PHONE">Phone</option>
+                                            </select>
+                                            <input
+                                                className="col-span-3 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                                placeholder="Button text"
+                                                value={b.text}
+                                                onChange={(e) =>
+                                                    setEditData((d) => {
+                                                        const arr = [ ...(d.buttons || []) ];
+                                                        arr[idx] = { ...(arr[idx] as any), text: e.target.value } as any;
+                                                        return { ...d, buttons: arr };
+                                                    })
+                                                }
+                                            />
+                                            {b.type === "QUICK_REPLY" && (
+                                                <select
+                                                    className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                                    value={b.payload || "order_confirmation"}
+                                                    onChange={(e) =>
+                                                        setEditData((d) => {
+                                                            const arr = [ ...(d.buttons || []) ];
+                                                            arr[idx] = { ...(arr[idx] as any), payload: e.target.value as any } as any;
+                                                            return { ...d, buttons: arr };
+                                                        })
+                                                    }
+                                                >
+                                                    <option value="order_confirmation">order_confirmation</option>
+                                                    <option value="cancel_order">cancel_order</option>
+                                                    <option value="edit_order">edit_order</option>
+                                                </select>
+                                            )}
+                                            {b.type === "URL" && (
+                                                <input
+                                                    className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                                    placeholder="https://... (can include {{1}})"
+                                                    value={b.url || ""}
+                                                    onChange={(e) =>
+                                                        setEditData((d) => {
+                                                            const arr = [ ...(d.buttons || []) ];
+                                                            arr[idx] = { ...(arr[idx] as any), url: e.target.value } as any;
+                                                            return { ...d, buttons: arr };
+                                                        })
+                                                    }
+                                                />
+                                            )}
+                                            {b.type === "PHONE" && (
+                                                <input
+                                                    className="col-span-4 p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                                                    placeholder="Phone number (E.164)"
+                                                    value={b.phoneNumber || ""}
+                                                    onChange={(e) =>
+                                                        setEditData((d) => {
+                                                            const arr = [ ...(d.buttons || []) ];
+                                                            arr[idx] = { ...(arr[idx] as any), phoneNumber: e.target.value } as any;
+                                                            return { ...d, buttons: arr };
+                                                        })
+                                                    }
+                                                />
+                                            )}
+                                            <button
+                                                type="button"
+                                                className="col-span-2 px-2 py-1 text-sm rounded bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-100 hover:opacity-90"
+                                                onClick={() =>
+                                                    setEditData((d) => ({
+                                                        ...d,
+                                                        buttons: (d.buttons || []).filter((_, i) => i !== idx),
+                                                    }))
+                                                }
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleUpdate(tpl._id)}
@@ -238,6 +367,11 @@ const TemplateList = forwardRef<TemplateListRef>((props, ref) => {
                                         {renderStatusBadge(tpl.status, tpl.rejectionReason)}
                                     </p>
                                     <p className="text-sm text-gray-600 dark:text-gray-300">{tpl.content || tpl.link}</p>
+                                    {Array.isArray(tpl.buttons) && tpl.buttons.length > 0 && (
+                                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-300">
+                                            Buttons: {tpl.buttons.map((b) => b.text).join(", ")}
+                                        </div>
+                                    )}
                                     {tpl.status === "REJECTED" && tpl.rejectionReason && (
                                         <p className="text-xs text-red-400 mt-1">Reason: {tpl.rejectionReason}</p>
                                     )}

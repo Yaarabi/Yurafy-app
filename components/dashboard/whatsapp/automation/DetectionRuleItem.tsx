@@ -25,17 +25,13 @@ export default function DetectionRuleItem({
     onRemove,
     onEdit,
     onTemplateChange,
-    autoReplyActive,
 }: DetectionRuleItemProps) {
     const [editing, setEditing] = useState(false);
     const [keywordInput, setKeywordInput] = useState('');
     const [keywords, setKeywords] = useState(rule.keywords || []);
 
     const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (autoReplyActive) {
-            toast.error('Detection rules cannot be activated while Auto Reply is enabled.');
-            return;
-        }
+        // Allow toggling regardless of Auto Reply state
         onToggle(index, e.target.checked);
     };
 
@@ -115,12 +111,11 @@ export default function DetectionRuleItem({
                             className="sr-only peer"
                             checked={rule.active}
                             onChange={handleToggle}
-                            disabled={autoReplyActive}
                         />
                         <div
                             className={`w-14 h-7 rounded-full transition-colors ${
                                 rule.active ? 'bg-green-600' : 'bg-gray-600'
-                            } ${autoReplyActive ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            }`}
                         ></div>
                         <div
                             className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform ${
@@ -128,11 +123,6 @@ export default function DetectionRuleItem({
                             }`}
                         ></div>
                     </label>
-                    {autoReplyActive && (
-                        <span className="absolute -top-8 right-0 bg-gray-900 text-gray-200 text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap">
-                            Disabled while Auto Reply is active
-                        </span>
-                    )}
                 </div>
             </div>
 

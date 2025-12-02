@@ -108,3 +108,38 @@ export function validateTemplatePlaceholders(template: ITemplate): boolean {
     }
     return true;
 }
+
+/**
+ * Build URL button parameter sets for sending template messages.
+ * Returns an array where each entry corresponds to one URL button's parameters.
+ * Each set is ordered according to the count of placeholders found in the button's URL (e.g., {{1}}, {{2}} ...).
+ * Priority for filling values:
+ *  - First placeholder: external order id (order.source.id) or order._id or phone
+ *  - Second placeholder: phone (E.164)
+ *  - Remaining: empty strings
+ */
+export function buildButtonUrlParameters(
+    template: ITemplate,
+    order?: IOrder,
+    phone?: string
+): string[][] {
+    const result: string[][] = [];
+    const buttons = Array.isArray(template.buttons) ? template.buttons : [];
+    for (const b of buttons) {
+        if (b.type !== "URL" || !b.url) continue;
+        const count = (b.url.match(/{{\d+}}/g) || []).length;
+        if (count === 0) continue;
+        const params: string[] = [];
+        for (let i = 0; i < count; i++) {
+            if (i === 0) {
+                params.push(order?.source?.id || (order as any)?._id || phone || "");
+            } else if (i === 1) {
+                params.push(phone || "");
+            } else {
+                params.push("");
+            }
+        }
+        result.push(params);
+    }
+    return result;
+}

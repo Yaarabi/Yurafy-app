@@ -90,10 +90,7 @@ export default function AutomationTab() {
 
     // Handle toggling workflows (autoReply, ad)
     const handleSettingChange = (field: string, value: boolean) => {
-        if (field === 'autoReply' && value && rules.some(r => r.active)) {
-            toast.error('Cannot enable Auto Reply while some detection rules are active.');
-            return;
-        }
+        // Allow enabling autoReply regardless of detection rules state
         const updated = { ...settings, [field]: value };
         setSettings(updated);
         patchAccount({ settings: updated });
@@ -114,10 +111,7 @@ export default function AutomationTab() {
     const handleAddRule = (rule: DetectionRule) => updateRules([...rules, rule]);
 
     const handleToggleRule = (index: number, value: boolean) => {
-        if (settings.autoReply && value) {
-            toast.error('Cannot activate a detection rule while Auto Reply is enabled.');
-            return;
-        }
+        // Allow activating detection rules even when autoReply is enabled
         const updated = rules.map((r, i) => (i === index ? { ...r, active: value } : r));
         updateRules(updated);
     };
@@ -145,7 +139,6 @@ export default function AutomationTab() {
                 selectedTemplates={selectedTemplates}
                 loading={loading}
                 rules={rules}
-                rulesActive={rules.some(r => r.active)}
                 onSettingChange={handleSettingChange}
                 onTemplateChange={handleTemplateChange}
                 onRuleToggle={handleToggleRule}

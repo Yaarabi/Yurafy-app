@@ -7,7 +7,7 @@ import OrderMessageTrigger from "@/models/orderMessageTrigger";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "../../webhook/route";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
-import { fillTemplateVariables } from "@/lib/whatsapp/templateUtils";
+import { fillTemplateVariables, buildButtonUrlParameters } from "@/lib/whatsapp/templateUtils";
 
 export async function POST(req: Request) {
     try {
@@ -80,12 +80,14 @@ export async function POST(req: Request) {
         }
 
         // 8. Send Message
+        const buttonParamSets = buildButtonUrlParameters(template, orderDoc, customerPhone);
         const result = await sendTemplateMessage(
         waAccount,
         customerPhone,
         template,
         variableValues,
-        token
+        token,
+        buttonParamSets
         );
 
         if (!result.success) {

@@ -17,7 +17,6 @@ interface AutomationGridProps {
     };
     loading: boolean;
     rules: DetectionRule[];
-    rulesActive: boolean;
     onSettingChange: (field: string, value: boolean) => void;
     onTemplateChange: (field: string, value: string) => void;
     onRuleToggle: (index: number, value: boolean) => void;
@@ -32,7 +31,6 @@ export default function AutomationGrid({
     selectedTemplates,
     loading,
     rules,
-    rulesActive,
     onSettingChange,
     onTemplateChange,
     onRuleToggle,
@@ -48,7 +46,7 @@ export default function AutomationGrid({
             templateLabel="Greeting Template"
             template={selectedTemplates.greeting}
             templates={templates}
-            disabled={loading || rulesActive}
+            disabled={loading}
             onToggle={v => onSettingChange('autoReply', v)}
             onTemplateChange={v => onTemplateChange('greeting', v)}
         />,

@@ -10,7 +10,8 @@ export async function sendTemplateMessage(
     customerPhone: string,
     template: ITemplate,
     variableValues: string[] = [],
-    token: string
+    token: string,
+    buttonUrlParamSets?: string[][]
     ) {
     await connectDB();
 
@@ -32,6 +33,26 @@ export async function sendTemplateMessage(
             parameters: bodyParameters
         });
         }
+    }
+
+    // Add URL button components if parameters provided and template defines URL buttons
+    if (Array.isArray(buttonUrlParamSets) && buttonUrlParamSets.length > 0) {
+        const buttons = Array.isArray(template.buttons) ? template.buttons : [];
+        // Build map of URL button indices (position within template buttons)
+        const urlButtonIndices: number[] = [];
+        buttons.forEach((b, idx) => { if (b.type === "URL") urlButtonIndices.push(idx); });
+        // For each URL button, add a button component with parameters
+        buttonUrlParamSets.forEach((params, i) => {
+            const buttonIndex = urlButtonIndices[i];
+            if (buttonIndex === undefined) return;
+            const paramObjects = (params || []).map(v => ({ type: "text", text: String(v || "") }));
+            components.push({
+                type: "button",
+                sub_type: "url",
+                index: String(buttonIndex),
+                parameters: paramObjects
+            });
+        });
     }
 
     try {

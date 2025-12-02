@@ -272,6 +272,37 @@ export async function POST(req: NextRequest) {
         // regardless of opt-in/opt-out status
         const normalizedPhone = normalizePhoneNumber(from);
 
+
+        // 🔘 Check for button click before processing other automation
+        // Interactive buttons come in message.interactive.button_reply
+        const buttonPayload = message.interactive?.button_reply?.id || message.button?.payload;
+        if (buttonPayload) {
+            // Allowed button payloads
+            const allowedPayloads = ['order_confirmation', 'cancel_order', 'edit_order'];
+            
+            if (allowedPayloads.includes(buttonPayload)) {
+                console.log(`[Webhook] Button clicked: ${buttonPayload} from ${normalizedPhone}`);
+                
+                // Call button handler
+                try {
+                    await fetch(`${process.env.NEXTAUTH_URL}/api/whatsapp/btns-handler`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            accountId: account._id,
+                            customerPhone: normalizedPhone,
+                            buttonPayload,
+                        }),
+                    });
+                } catch (btnErr) {
+                    console.error("[Webhook] Button handler error:", btnErr);
+                }
+                
+                // Return early - button clicks are handled separately
+                return NextResponse.json({ success: true, action: "button_handled" });
+            }
+        }
+
         // Check for opt-out keywords (STOP, UNSUBSCRIBE, etc.)
         const optOutKeywords = ['stop', 'unsubscribe', 'optout', 'opt-out', 'cancel'];
         const isOptOutMessage = optOutKeywords.some(keyword => 

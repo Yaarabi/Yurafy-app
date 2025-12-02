@@ -55,17 +55,18 @@ export async function GET(req: NextRequest) {
                                 const normalizedStatus: string = metaStatus.toUpperCase();
                                 const validStatus = normalizedStatus === "APPROVED" || normalizedStatus === "REJECTED" || normalizedStatus === "PENDING";
                                 if (validStatus) {
-                                template.status = normalizedStatus;
+                                // Use updateOne to avoid version conflict with existing documents
+                                const updateData: any = { status: normalizedStatus };
                                 
                                 // Update rejection reason if rejected
                                 if (normalizedStatus === "REJECTED") {
-                                    template.rejectionReason = metaTemplate.rejection_reason || metaTemplate.reason || "Template rejected by Meta";
+                                    updateData.rejectionReason = metaTemplate.rejection_reason || metaTemplate.reason || "Template rejected by Meta";
                                 } else {
                                     // Clear rejection reason if approved
-                                    template.rejectionReason = undefined;
+                                    updateData.rejectionReason = undefined;
                                 }
                                 
-                                await template.save();
+                                await Template.updateOne({ _id: template._id }, { $set: updateData });
                             }
                         }
                     }
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
         if (check) return check;
 
         const body = await req.json();
-        const { name, type, content, link, caption, variables } = body;
+        const { name, type, content, link, caption, variables, buttons } = body;
 
         if (!name?.trim())
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -116,6 +117,30 @@ export async function POST(req: NextRequest) {
             numbers.push(Number(match[1]));
         }
 
+        // Validate buttons (if provided)
+        const allowedPayloads = ["order_confirmation", "cancel_order", "edit_order"]; 
+        if (Array.isArray(buttons)) {
+            for (const b of buttons) {
+                if (!b || !b.type || !b.text) {
+                    return NextResponse.json({ error: "Each button requires type and text" }, { status: 400 });
+                }
+                if (!["QUICK_REPLY", "URL", "PHONE"].includes(b.type)) {
+                    return NextResponse.json({ error: "Invalid button type" }, { status: 400 });
+                }
+                if (b.type === "QUICK_REPLY") {
+                    if (!b.payload || !allowedPayloads.includes(b.payload)) {
+                        return NextResponse.json({ error: "Invalid QUICK_REPLY payload. Allowed: order_confirmation, cancel_order, edit_order" }, { status: 400 });
+                    }
+                }
+                if (b.type === "URL" && !b.url) {
+                    return NextResponse.json({ error: "URL button requires url" }, { status: 400 });
+                }
+                if (b.type === "PHONE" && !b.phoneNumber) {
+                    return NextResponse.json({ error: "PHONE button requires phoneNumber" }, { status: 400 });
+                }
+            }
+        }
+
         if (numbers.length > 0) {
             const sorted = [...numbers].sort((a, b) => a - b);
             for (let i = 0; i < sorted.length; i++) {
@@ -134,25 +159,6 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Validate content quality (basic checks)
-        const contentToValidate = type === "TEXT" ? content : (caption || "");
-        if (contentToValidate) {
-            // Check for common spelling mistakes that Meta rejects
-            const commonIssues = [
-                { pattern: /\bplz\b/i, message: "Use 'please' instead of 'plz'" },
-                { pattern: /\bu\b(?!\w)/i, message: "Use 'you' instead of 'u'" },
-                { pattern: /\bpls\b/i, message: "Use 'please' instead of 'pls'" },
-                { pattern: /\bthnx\b/i, message: "Use 'thanks' instead of 'thnx'" },
-            ];
-
-            for (const issue of commonIssues) {
-                if (issue.pattern.test(contentToValidate)) {
-                    return NextResponse.json({
-                        error: `Template quality issue: ${issue.message}. Meta may reject informal language.`
-                    }, { status: 400 });
-                }
-            }
-        }
 
         const account = await WhatsAppAccount.findOne({ owner: userId });
         if (!account)
@@ -232,9 +238,10 @@ export async function POST(req: NextRequest) {
                         headers: {
                             Authorization: `Bearer ${rawToken}`
                         },
-                        body: JSON.stringify({
+                        body: new URLSearchParams({
                             messaging_product: "whatsapp",
-                            file: link
+                            type: type.toLowerCase(), // "image", "video", "audio", "document"
+                            link: link
                         })
                     }
                 );
@@ -284,6 +291,38 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        // Append BUTTONS component if buttons provided
+        if (Array.isArray(buttons) && buttons.length > 0) {
+            const urlExamples: string[][] = [];
+            const buttonItems = buttons
+                .map((b: any) => {
+                    if (b.type === "QUICK_REPLY") {
+                        return { type: "QUICK_REPLY", text: b.text };
+                    }
+                    if (b.type === "URL") {
+                        const item: any = { type: "URL", text: b.text, url: b.url };
+                        const placeholderCount = (b.url?.match(/{{\d+}}/g) || []).length;
+                        if (placeholderCount > 0) {
+                            urlExamples.push(Array(placeholderCount).fill("12345"));
+                        }
+                        return item;
+                    }
+                    if (b.type === "PHONE") {
+                        return { type: "PHONE_NUMBER", text: b.text, phone_number: b.phoneNumber };
+                    }
+                    return null;
+                })
+                .filter(Boolean);
+
+            if (buttonItems.length > 0) {
+                const buttonsComponent: any = { type: "BUTTONS", buttons: buttonItems };
+                if (urlExamples.length > 0) {
+                    buttonsComponent.example = { button_url: urlExamples };
+                }
+                components.push(buttonsComponent);
+            }
+        }
+
         // ------------------------------------------
         // 🔥 STEP 6: Check for unique name and metaName
         // ------------------------------------------
@@ -304,6 +343,7 @@ export async function POST(req: NextRequest) {
             link,
             caption,
             variables,
+            buttons,
             status: "PENDING",
             category: type === "TEXT" ? "UTILITY" : "MARKETING",
             language
@@ -357,7 +397,7 @@ export async function PUT(req: NextRequest) {
     try {
         await connectDB();
         const userId = await getUserId(req);
-        const { id, name, type, content, link, caption, variables } = await req.json();
+        const { id, name, type, content, link, caption, variables, buttons } = await req.json();
 
         if (!id || !name?.trim()) {
         return NextResponse.json({ error: "ID and name are required" }, { status: 400 });
@@ -367,6 +407,30 @@ export async function PUT(req: NextRequest) {
         if (!template) {
             return NextResponse.json({ error: "Template not found" }, { status: 404 });
         }
+        // Validate buttons (if provided)
+        const allowedPayloads = ["order_confirmation", "cancel_order", "edit_order"]; 
+        if (Array.isArray(buttons)) {
+            for (const b of buttons) {
+                if (!b || !b.type || !b.text) {
+                    return NextResponse.json({ error: "Each button requires type and text" }, { status: 400 });
+                }
+                if (!["QUICK_REPLY", "URL", "PHONE"].includes(b.type)) {
+                    return NextResponse.json({ error: "Invalid button type" }, { status: 400 });
+                }
+                if (b.type === "QUICK_REPLY") {
+                    if (!b.payload || !allowedPayloads.includes(b.payload)) {
+                        return NextResponse.json({ error: "Invalid QUICK_REPLY payload. Allowed: order_confirmation, cancel_order, edit_order" }, { status: 400 });
+                    }
+                }
+                if (b.type === "URL" && !b.url) {
+                    return NextResponse.json({ error: "URL button requires url" }, { status: 400 });
+                }
+                if (b.type === "PHONE" && !b.phoneNumber) {
+                    return NextResponse.json({ error: "PHONE button requires phoneNumber" }, { status: 400 });
+                }
+            }
+        }
+
         // Update fields safely (do NOT change category)
         template.name = name.trim();
         template.type = type || template.type;
@@ -374,6 +438,7 @@ export async function PUT(req: NextRequest) {
         template.link = link?.trim();
         template.caption = caption?.trim();
         template.variables = variables || [];
+        template.buttons = Array.isArray(buttons) ? buttons : [];
         template.status = "PENDING";
         template.rejectionReason = undefined;
 
@@ -491,6 +556,38 @@ export async function PUT(req: NextRequest) {
                             body_text: [exampleValues],
                         };
                     components.push(bodyComponent);
+                }
+            }
+
+            // Append BUTTONS component if buttons provided
+            if (Array.isArray(buttons) && buttons.length > 0) {
+                const urlExamples: string[][] = [];
+                const buttonItems = buttons
+                    .map((b: any) => {
+                        if (b.type === "QUICK_REPLY") {
+                            return { type: "QUICK_REPLY", text: b.text };
+                        }
+                        if (b.type === "URL") {
+                            const item: any = { type: "URL", text: b.text, url: b.url };
+                            const placeholderCount = (b.url?.match(/{{\d+}}/g) || []).length;
+                            if (placeholderCount > 0) {
+                                urlExamples.push(Array(placeholderCount).fill("12345"));
+                            }
+                            return item;
+                        }
+                        if (b.type === "PHONE") {
+                            return { type: "PHONE_NUMBER", text: b.text, phone_number: b.phoneNumber };
+                        }
+                        return null;
+                    })
+                    .filter(Boolean);
+
+                if (buttonItems.length > 0) {
+                    const buttonsComponent: any = { type: "BUTTONS", buttons: buttonItems };
+                    if (urlExamples.length > 0) {
+                        buttonsComponent.example = { button_url: urlExamples };
+                    }
+                    components.push(buttonsComponent);
                 }
             }
 

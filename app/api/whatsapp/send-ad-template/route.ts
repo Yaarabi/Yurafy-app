@@ -5,6 +5,7 @@ import Template from "@/models/templates";
 import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";   
 import WhatsAppConversation from "@/models/whatsappMessage";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
+import { buildButtonUrlParameters } from "@/lib/whatsapp/templateUtils";
 import { decryptToken } from "../webhook/route";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
@@ -108,7 +109,8 @@ export async function POST(req: Request) {
                 }
 
                 // Send as template message
-                await sendTemplateMessage(waAccount, phone, template, variableValues, token);
+                const buttonParamSets = buildButtonUrlParameters(template, undefined, phone);
+                await sendTemplateMessage(waAccount, phone, template, variableValues, token, buttonParamSets);
 
                 // Track ad template sent
                 await WhatsAppConversation.findOneAndUpdate(

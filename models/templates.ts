@@ -11,6 +11,13 @@ export interface ITemplate {
     variables?: string[]; // e.g. ["customerName", "orderId"]
     link?: string; // for media templates
     caption?: string; // optional caption for media
+    buttons?: Array<{
+        type: "QUICK_REPLY" | "URL" | "PHONE";
+        text: string;
+        payload?: "order_confirmation" | "cancel_order" | "edit_order";
+        url?: string;
+        phoneNumber?: string;
+    }>;
     status: "PENDING" | "APPROVED" | "REJECTED";
     languageCode?: string;
     rejectionReason?: string;
@@ -38,6 +45,20 @@ const TemplateSchema = new Schema(
         variables: [{ type: String }],
         link: { type: String }, 
         caption: { type: String },
+        buttons: [
+            {
+                type: new Schema(
+                    {
+                        type: { type: String, enum: ["QUICK_REPLY", "URL", "PHONE"], required: true },
+                        text: { type: String, required: true },
+                        payload: { type: String, enum: ["order_confirmation", "cancel_order", "edit_order"] },
+                        url: { type: String },
+                        phoneNumber: { type: String },
+                    },
+                    { _id: false }
+                ),
+            },
+        ],
         status: {
             type: String,
             enum: ["PENDING", "APPROVED", "REJECTED"],
