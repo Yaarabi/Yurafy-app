@@ -5,6 +5,7 @@ import WhatsAppAccount from "@/models/whatsappAccount";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { decryptToken } from "../webhook/route";
+import { del } from "@vercel/blob";
 
 async function getUserId(req: NextRequest) {
     const session = await getServerSession(authOptions);
@@ -94,7 +95,10 @@ export async function POST(req: NextRequest) {
         if (check) return check;
 
         const body = await req.json();
-        const { name, type, content, link, caption, variables, buttons } = body;
+        const { name, type, content, link, caption, variables, buttons, category: requestCategory } = body;
+        
+        // Use provided category or default based on type
+        const category = ["MARKETING", "UTILITY"].includes(requestCategory) ? requestCategory : "MARKETING";
 
         if (!name?.trim())
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -169,10 +173,11 @@ export async function POST(req: NextRequest) {
         // ------------------------------------------
         // 🔥 STEP 1: Detect Language Automatically
         // ------------------------------------------
+        // Meta supported language codes: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages
         function detectLanguage(text: string) {
-            if (/[\u0600-\u06FF]/.test(text)) return "ar_AR";
-            if (/[éàèçùâêîôûëï]/i.test(text)) return "fr_FR";
-            return "en_US";
+            if (/[\u0600-\u06FF]/.test(text)) return "ar"; // Arabic
+            if (/[éàèçùâêîôûëï]/i.test(text)) return "fr"; // French
+            return "en_US"; // English (US)
         }
 
         const language = detectLanguage(content || caption || name);
@@ -225,36 +230,95 @@ export async function POST(req: NextRequest) {
             : [];
 
         // ------------------------------------------
-        // 🔥 STEP 4: Upload Media (FAST APPROVAL)
+        // 🔥 STEP 4: Upload Media via Resumable Upload API (for media templates)
         // ------------------------------------------
+        // Meta requires header_handle from Resumable Upload API for media templates
+        // Docs: https://developers.facebook.com/docs/graph-api/guides/upload
         let mediaHandle: string | undefined = undefined;
 
         if (type !== "TEXT") {
             try {
-                const mediaRes = await fetch(
-                    `https://graph.facebook.com/v20.0/${account.waBusinessId}/media`,
+                // Step 4.1: Download file from Vercel Blob to get its content
+                const fileResponse = await fetch(link);
+                if (!fileResponse.ok) {
+                    throw new Error("Failed to download media file from storage");
+                }
+                
+                const fileBuffer = await fileResponse.arrayBuffer();
+                const fileLength = fileBuffer.byteLength;
+                const fileName = link.split('/').pop() || 'media';
+                
+                // Map file type to MIME type
+                // Meta only supports: IMAGE (jpeg, jpg, png), VIDEO (mp4), DOCUMENT (pdf)
+                const mimeTypeMap: Record<string, string> = {
+                    'IMAGE': 'image/png',
+                    'VIDEO': 'video/mp4',
+                    'DOCUMENT': 'application/pdf'
+                };
+                
+                // Detect MIME from file extension if possible
+                const ext = fileName.split('.').pop()?.toLowerCase();
+                let fileType = mimeTypeMap[type] || 'image/png';
+                if (ext === 'jpg' || ext === 'jpeg') fileType = 'image/jpeg';
+                else if (ext === 'png') fileType = 'image/png';
+                else if (ext === 'mp4') fileType = 'video/mp4';
+                else if (ext === 'pdf') fileType = 'application/pdf';
+                
+                // Step 4.2: Start upload session
+                // POST /<APP_ID>/uploads?file_name=...&file_length=...&file_type=...
+                const appId = account.metaAppId;
+                if (!appId) {
+                    throw new Error("Meta App ID is required for media uploads. Please add it in Settings > WhatsApp.");
+                }
+                
+                const sessionRes = await fetch(
+                    `https://graph.facebook.com/v20.0/${appId}/uploads?file_name=${encodeURIComponent(fileName)}&file_length=${fileLength}&file_type=${encodeURIComponent(fileType)}`,
                     {
                         method: "POST",
                         headers: {
                             Authorization: `Bearer ${rawToken}`
-                        },
-                        body: new URLSearchParams({
-                            messaging_product: "whatsapp",
-                            type: type.toLowerCase(), // "image", "video", "audio", "document"
-                            link: link
-                        })
+                        }
                     }
                 );
-
-                const mediaData = await mediaRes.json();
-
-                if (!mediaRes.ok) {
-                    console.error("Media upload error:", mediaData);
-                } else {
-                    mediaHandle = mediaData.id;
+                
+                const sessionData = await sessionRes.json();
+                console.log("Upload session response:", sessionData);
+                
+                if (!sessionRes.ok || !sessionData.id) {
+                    throw new Error(sessionData.error?.message || "Failed to start upload session");
                 }
-            } catch (err) {
+                
+                const uploadSessionId = sessionData.id; // "upload:<SESSION_ID>"
+                
+                // Step 4.3: Upload the file binary
+                // POST /upload:<SESSION_ID> with binary data
+                const uploadRes = await fetch(
+                    `https://graph.facebook.com/v20.0/${uploadSessionId}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `OAuth ${rawToken}`,
+                            file_offset: "0"
+                        },
+                        body: Buffer.from(fileBuffer)
+                    }
+                );
+                
+                const uploadData = await uploadRes.json();
+                
+                if (!uploadRes.ok || !uploadData.h) {
+                    throw new Error(uploadData.error?.message || "Failed to upload file");
+                }
+                
+                // Meta returns the handle in uploadData.h
+                // Clean the handle: remove any newlines, carriage returns, or extra whitespace
+                const rawHandle = String(uploadData.h);
+                // Split by newline and take only the first handle, then clean it
+                const firstHandle = rawHandle.split(/[\r\n]+/)[0];
+                mediaHandle = firstHandle.replace(/\s+/g, '').trim();
+            } catch (err: any) {
                 console.error("Media upload error:", err);
+                throw new Error(err.message || "Failed to upload media to Meta");
             }
         }
 
@@ -272,23 +336,37 @@ export async function POST(req: NextRequest) {
                     : undefined
             });
         } else {
-            let format = type === "AUDIO" ? "DOCUMENT" : type;
+            // Media templates: HEADER + BODY
+            // Meta supports: IMAGE, VIDEO, DOCUMENT for template headers
+            const format = type;
 
+            // Verify we have media handle from Resumable Upload
+            if (!mediaHandle) {
+                throw new Error("Media upload failed - cannot create template without media handle");
+            }
+
+            // Use header_handle from Resumable Upload API
             components.push({
                 type: "HEADER",
                 format,
-                example: mediaHandle
-                    ? { header_handle: [mediaHandle] }
-                    : { header_link: [link] }
+                example: { header_handle: [mediaHandle] }
             });
 
-            components.push({
+            // BODY component is REQUIRED for media templates by Meta
+            // Use caption if provided, otherwise use a minimal placeholder text
+            // Note: Meta rejects empty or whitespace-only body text
+            const bodyText = (caption && caption.trim()) ? caption.trim() : "Check out this content!";
+            const bodyComponent: any = {
                 type: "BODY",
-                text: caption || " ",
-                example: exampleValues.length
-                    ? { body_text: [exampleValues] }
-                    : undefined
-            });
+                text: bodyText
+            };
+            
+            // Only add example if there are variables
+            if (exampleValues.length > 0) {
+                bodyComponent.example = { body_text: [exampleValues] };
+            }
+            
+            components.push(bodyComponent);
         }
 
         // Append BUTTONS component if buttons provided
@@ -334,6 +412,29 @@ export async function POST(req: NextRequest) {
         if (existingMeta) {
             return NextResponse.json({ error: "Internal error: metaName collision, try again" }, { status: 500 });
         }
+
+        // ------------------------------------------
+        // 🔥 AUDIO templates: Store locally only (Meta doesn't support audio in templates)
+        // ------------------------------------------
+        if (type === "AUDIO") {
+            const newTemplate = await Template.create({
+                owner: userId,
+                name: name.trim(),
+                metaName,
+                type,
+                content,
+                link,
+                caption,
+                variables,
+                buttons,
+                status: "AUDIO", // Special status for audio templates
+                category,
+                language
+            });
+            
+            return NextResponse.json({ template: newTemplate });
+        }
+
         const newTemplate = await Template.create({
             owner: userId,
             name: name.trim(),
@@ -345,13 +446,20 @@ export async function POST(req: NextRequest) {
             variables,
             buttons,
             status: "PENDING",
-            category: type === "TEXT" ? "UTILITY" : "MARKETING",
+            category,
             language
         });
 
         // ------------------------------------------
         // 🔥 STEP 7: SEND TEMPLATE TO META
         // ------------------------------------------
+        const templatePayload = {
+            name: metaName,
+            language,
+            category,
+            components
+        };
+        
         const metaRes = await fetch(
             `https://graph.facebook.com/v20.0/${account.waBusinessId}/message_templates`,
             {
@@ -360,17 +468,12 @@ export async function POST(req: NextRequest) {
                     Authorization: `Bearer ${rawToken}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    name: metaName,
-                    language,
-                    category: type === "TEXT" ? "UTILITY" : "MARKETING",
-                    components
-                })
+                body: JSON.stringify(templatePayload)
             }
         );
 
         const metaData = await metaRes.json();
-        console.log("Meta template creation:", metaData);
+        console.log("Meta template creation response:", metaData);
 
         if (metaData.error) {
             newTemplate.status = "REJECTED";
@@ -680,8 +783,22 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: "Template not found" }, { status: 404 });
         }
 
-        // If template is REJECTED, delete directly from DB without checking Meta
-        if (template.status === "REJECTED") {
+        // Delete media file if exists (for IMAGE, VIDEO, AUDIO, DOCUMENT templates)
+        if (template.link && template.type !== "TEXT") {
+            try {
+                // Verify the file belongs to this user before deleting
+                if (template.link.includes(`/uploads/${userId}/`)) {
+                    await del(template.link);
+                    console.log(`Deleted media file: ${template.link}`);
+                }
+            } catch (err) {
+                console.warn("Failed to delete media file:", err);
+                // Continue with template deletion even if media deletion fails
+            }
+        }
+
+        // If template is REJECTED or AUDIO, delete directly from DB without checking Meta
+        if (template.status === "REJECTED" || template.status === "AUDIO") {
             await template.deleteOne();
             return NextResponse.json({ success: true });
         }

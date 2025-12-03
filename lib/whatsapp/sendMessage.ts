@@ -14,7 +14,7 @@ import { encryptMessage } from "./messageEncryption";
  * @param to Recipient phone number in international format (will be normalized)
  * @param text Message body
  * @param token Decrypted access token
- * @param options Additional options like isAIResponse and buttons
+ * @param options Additional options like isAIResponse, buttons, and media
  */
 export async function sendWhatsAppMessage(
     account: any,
@@ -30,6 +30,8 @@ export async function sendWhatsAppMessage(
             url?: string;
             phoneNumber?: string;
         }>;
+        mediaType?: "IMAGE" | "VIDEO" | "AUDIO" | "DOCUMENT";
+        mediaUrl?: string;
     } = {}
 ) {
     await connectDB();
@@ -46,10 +48,27 @@ export async function sendWhatsAppMessage(
         // Convert text to string format
         const messageText = typeof text === "string" ? text : JSON.stringify(text);
         
-        // Build message payload based on whether buttons are provided
+        // Build message payload based on message type
         let messagePayload: any;
         
-        if (options.buttons && options.buttons.length > 0) {
+        // Check if this is a media message
+        if (options.mediaType && options.mediaUrl) {
+            const mediaTypeLower = options.mediaType.toLowerCase();
+            
+            // For AUDIO type, WhatsApp API uses "audio" as the type
+            const waMediaType = mediaTypeLower === "document" ? "document" : mediaTypeLower;
+            
+            messagePayload = {
+                messaging_product: "whatsapp",
+                recipient_type: "individual",
+                to: normalizedPhone,
+                type: waMediaType,
+                [waMediaType]: {
+                    link: options.mediaUrl,
+                    ...(messageText && waMediaType !== "audio" ? { caption: messageText } : {}),
+                },
+            };
+        } else if (options.buttons && options.buttons.length > 0) {
             // Interactive message with buttons (max 3 reply buttons)
             // Note: WhatsApp API only supports QUICK_REPLY buttons in interactive messages
             // URL and PHONE buttons are only supported in template messages
@@ -152,17 +171,25 @@ export async function sendWhatsAppMessage(
         // Encrypt message text before saving
         const encryptedText = encryptMessage(messageText);
         
+        // Determine message type for storage
+        const storedType = options.mediaType ? options.mediaType.toLowerCase() : "text";
+        
         // Prepare message object for conversation (with encrypted text)
-        const newMessage = {
+        const newMessage: any = {
             from: account.waNumber,
             to: normalizedPhone,
-            type: "text",
+            type: storedType,
             text: encryptedText, // Store encrypted
             direction: "outgoing",
             status: "sent",
             timestamp: Date.now(),
             isAIResponse: options.isAIResponse || false,
         };
+        
+        // Add media URL if present
+        if (options.mediaUrl) {
+            newMessage.mediaUrl = options.mediaUrl;
+        }
 
         // Add message to conversation or create new conversation if not exists
         await WhatsAppConversation.findOneAndUpdate(

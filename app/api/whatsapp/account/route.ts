@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
             waNumberId,
             waNumber,
             waToken,
+            metaAppId,
             webhookSecret,
             settings,
             aiConfig,
@@ -125,6 +126,7 @@ export async function POST(req: NextRequest) {
             account.waNumberId = waNumberId;
             account.waNumber = waNumber;
             account.waTokenEncrypted = waTokenEncrypted;
+            if (metaAppId !== undefined) account.metaAppId = metaAppId;
             
             // Update webhook secret if provided (webhookVerifyToken is auto-generated and cannot be changed)
             if (webhookSecretEncrypted !== undefined) {
@@ -159,6 +161,7 @@ export async function POST(req: NextRequest) {
                 waNumberId,
                 waNumber,
                 waTokenEncrypted,
+                metaAppId: metaAppId || null,
                 webhookVerifyToken: generatedVerifyToken, // Auto-generated for new accounts
                 webhookSecretEncrypted: webhookSecretEncrypted || null,
                 verified: false,
@@ -214,6 +217,7 @@ export async function PUT(req: NextRequest) {
             waNumberId,
             waNumber,
             waToken,
+            metaAppId,
             webhookSecret,
             verified,
             status,
@@ -244,6 +248,7 @@ export async function PUT(req: NextRequest) {
         if (waNumberId) account.waNumberId = waNumberId;
         if (waNumber) account.waNumber = waNumber;
         if (waToken) account.waTokenEncrypted = encryptToken(waToken);
+        if (metaAppId !== undefined) account.metaAppId = metaAppId;
         
         // Update webhook secret if provided (webhookVerifyToken is auto-generated and cannot be changed)
         if (webhookSecret !== undefined) {

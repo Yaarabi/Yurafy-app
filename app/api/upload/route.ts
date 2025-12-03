@@ -14,6 +14,7 @@ export const config = {
     },
 };
 
+
 // Route segment config for body size limits
 export const maxDuration = 60; // Max duration in seconds
 
@@ -46,7 +47,12 @@ export const POST = withRateLimit(async (req: NextRequest) => {
                 "video/webm",
                 "audio/mpeg",
                 "audio/mp3",
+                "audio/mp4",
+                "audio/m4a",
                 "audio/wav",
+                "audio/webm",
+                "audio/ogg",
+                "audio/aac",
             ],
         });
 

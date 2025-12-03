@@ -13,7 +13,7 @@ export interface FileValidationOptions {
 const DEFAULT_MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/ogg"];
-const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg"];
+const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3", "audio/mp4", "audio/m4a", "audio/wav", "audio/ogg", "audio/webm", "audio/aac"];
 
 /**
  * Validate file MIME type

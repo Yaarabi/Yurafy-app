@@ -29,8 +29,11 @@ export function decryptMessage(encrypted: string): string {
     
     try {
         const [ivHex, encryptedText] = encrypted.split(":");
-        if (!ivHex || !encryptedText) {
-            // If not in encrypted format, return as-is (backward compatibility)
+        
+        // Validate format: IV must be exactly 32 hex chars (16 bytes)
+        // and encrypted text must exist and be valid hex
+        if (!ivHex || !encryptedText || ivHex.length !== 32 || !/^[0-9a-fA-F]+$/.test(ivHex)) {
+            // Not in encrypted format, return as-is (backward compatibility)
             return encrypted;
         }
         
@@ -48,7 +51,6 @@ export function decryptMessage(encrypted: string): string {
         
         return decrypted;
     } catch (err) {
-        console.error("Error decrypting message:", err);
         // Return original if decryption fails (backward compatibility)
         return encrypted;
     }

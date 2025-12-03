@@ -4,7 +4,7 @@ import VariableDropdown from "./TemplateEditor";
 
 interface NameTypeRowProps {
     name: string;
-    type: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
+    type: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT" | "AUDIO";
     onNameChange: (value: string) => void;
     onTypeChange: (value: NameTypeRowProps["type"]) => void;
     onInsertVariable: (key: string) => void;
@@ -27,10 +27,10 @@ export default function NameTypeRow({ name, type, onNameChange, onTypeChange, on
                 className="p-2 bg-gray-100 dark:bg-gray-700 rounded"
             >
                 <option value="TEXT">Text</option>
-                <option value="IMAGE">Image</option>
-                <option value="VIDEO">Video</option>
-                <option value="AUDIO">Audio</option>
-                <option value="DOCUMENT">Document</option>
+                <option value="IMAGE">Image (JPG, PNG)</option>
+                <option value="VIDEO">Video (MP4)</option>
+                <option value="DOCUMENT">Document (PDF)</option>
+                <option value="AUDIO">Audio (MP3)</option>
             </select>
 
             <VariableDropdown onSelect={onInsertVariable} />

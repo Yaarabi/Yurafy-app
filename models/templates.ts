@@ -18,7 +18,7 @@ export interface ITemplate {
         url?: string;
         phoneNumber?: string;
     }>;
-    status: "PENDING" | "APPROVED" | "REJECTED";
+    status: "PENDING" | "APPROVED" | "REJECTED" | "AUDIO";
     languageCode?: string;
     rejectionReason?: string;
     createdAt: Date;
@@ -61,7 +61,7 @@ const TemplateSchema = new Schema(
         ],
         status: {
             type: String,
-            enum: ["PENDING", "APPROVED", "REJECTED"],
+            enum: ["PENDING", "APPROVED", "REJECTED", "AUDIO"],
             default: "PENDING",
         },
         rejectionReason: { type: String },

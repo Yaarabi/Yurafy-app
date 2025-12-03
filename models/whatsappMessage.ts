@@ -4,11 +4,11 @@ export interface IWhatsAppMessage {
     waMessageId?: string;
     from: string;
     to: string;
-    type: "text" | "image" | "document" | "audio" | "video" | "location" | "unknown";
+    type: "text" | "image" | "document" | "audio" | "video" | "location" | "button" | "interactive" | "reaction" | "sticker" | "contacts" | "unknown";
     text?: string;
     mediaUrl?: string;
     direction: "incoming" | "outgoing";
-    status: "sent" | "delivered" | "read" | "failed";
+    status: "sent" | "delivered" | "read" | "failed" | "received";
     isAIResponse?: boolean;
     timestamp: number;
 }
@@ -53,7 +53,7 @@ const WhatsAppMessageSchema = new Schema<IWhatsAppMessage>(
         to: String,
         type: {
             type: String,
-            enum: ["text", "image", "document", "audio", "video", "location", "unknown"],
+            enum: ["text", "image", "document", "audio", "video", "location", "button", "interactive", "reaction", "sticker", "contacts", "unknown"],
             default: "text",
         },
         text: String,
@@ -65,7 +65,7 @@ const WhatsAppMessageSchema = new Schema<IWhatsAppMessage>(
         },
         status: {
             type: String,
-            enum: ["sent", "delivered", "read", "failed"],
+            enum: ["sent", "delivered", "read", "failed", "received"],
             default: "sent",
         },
         isAIResponse: { type: Boolean, default: false },

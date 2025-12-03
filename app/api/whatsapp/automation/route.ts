@@ -78,14 +78,30 @@ export async function POST(req: NextRequest) {
                 });
                 
                 if (template) {
-                    const templateContent = template.content || "";
-                    await sendWhatsAppMessage(
-                        account, 
-                        normalizedFrom, 
-                        templateContent, 
-                        decryptedToken,
-                        { buttons: template.buttons }
-                    );
+                    // Handle both TEXT and media templates
+                    if (template.type === "TEXT") {
+                        const templateContent = template.content || "";
+                        await sendWhatsAppMessage(
+                            account, 
+                            normalizedFrom, 
+                            templateContent, 
+                            decryptedToken,
+                            { buttons: template.buttons }
+                        );
+                    } else {
+                        // Media template (IMAGE, VIDEO, AUDIO, DOCUMENT)
+                        await sendWhatsAppMessage(
+                            account,
+                            normalizedFrom,
+                            template.caption || "",
+                            decryptedToken,
+                            { 
+                                buttons: template.buttons,
+                                mediaType: template.type,
+                                mediaUrl: template.link
+                            }
+                        );
+                    }
                     return NextResponse.json({ type: "detectionRule", success: true });
                 }
             }
@@ -104,15 +120,30 @@ export async function POST(req: NextRequest) {
             
 
             if (template) {
-                const templateContent = template.content || "";
-                
-                await sendWhatsAppMessage(
-                    account, 
-                    normalizedFrom, 
-                    templateContent, 
-                    decryptedToken,
-                    { buttons: template.buttons }
-                );
+                // Handle both TEXT and media templates
+                if (template.type === "TEXT") {
+                    const templateContent = template.content || "";
+                    await sendWhatsAppMessage(
+                        account, 
+                        normalizedFrom, 
+                        templateContent, 
+                        decryptedToken,
+                        { buttons: template.buttons }
+                    );
+                } else {
+                    // Media template (IMAGE, VIDEO, AUDIO, DOCUMENT)
+                    await sendWhatsAppMessage(
+                        account,
+                        normalizedFrom,
+                        template.caption || "",
+                        decryptedToken,
+                        { 
+                            buttons: template.buttons,
+                            mediaType: template.type,
+                            mediaUrl: template.link
+                        }
+                    );
+                }
                 
                 // Track auto reply sent
                 await WhatsAppConversation.findOneAndUpdate(

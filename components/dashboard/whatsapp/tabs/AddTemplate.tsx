@@ -19,7 +19,8 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
 
     const [template, setTemplate] = useState({
         name: "",
-        type: "TEXT" as "TEXT" | "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT",
+        type: "TEXT" as "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT" | "AUDIO",
+        category: "MARKETING" as "MARKETING" | "UTILITY",
         content: "",
         caption: "",
         link: "",
@@ -196,6 +197,7 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
             setTemplate({
                 name: "",
                 type: "TEXT",
+                category: "MARKETING",
                 content: "",
                 caption: "",
                 link: "",
@@ -259,6 +261,22 @@ export default function AddTemplate({ onSuccess, onClose }: AddTemplateProps) {
                     }
                     onInsertVariable={handleInsertVariable}
                 />
+
+                {/* Category Selector */}
+                <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                    <select
+                        className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white"
+                        value={template.category}
+                        onChange={(e) => setTemplate({ ...template, category: e.target.value as "MARKETING" | "UTILITY" })}
+                    >
+                        <option value="MARKETING">Marketing</option>
+                        <option value="UTILITY">Utility</option>
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Marketing: promotions, offers. Utility: order updates, confirmations.
+                    </p>
+                </div>
 
                 {/* Active Variables */}
                 <ActiveVariables

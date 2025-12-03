@@ -7,6 +7,7 @@ export interface IWhatsAppAccount{
     waNumberId: string;
     waNumber: string;
     waTokenEncrypted: string;
+    metaAppId?: string; // Meta App ID for Resumable Upload API (media templates)
     webhookVerifyToken?: string; // Per-user verify token for GET webhook
     webhookSecretEncrypted?: string; // Encrypted webhook secret for POST signature verification
     verified: boolean;
@@ -43,6 +44,7 @@ const WhatsAppAccountSchema = new Schema(
         waNumberId: { type: String, required: true },
         waNumber: { type: String, required: true },
         waTokenEncrypted: { type: String, required: true },
+        metaAppId: { type: String }, // Meta App ID for Resumable Upload API (media templates)
         webhookVerifyToken: { type: String }, // Per-user verify token for GET webhook
         webhookSecretEncrypted: { type: String }, // Encrypted webhook secret for POST signature verification
         verified: { type: Boolean, default: false },

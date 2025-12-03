@@ -9,6 +9,7 @@ interface WhatsAppSettingsProps {
         waBusinessId?: string;
         waNumberId?: string;
         waNumber?: string;
+        metaAppId?: string;
         webhookSecretEncrypted?: boolean;
         webhookVerifyToken?: string;
     };
@@ -41,6 +42,10 @@ export default function WhatsAppSettings({ whatsapp, onUpdate }: WhatsAppSetting
             <EditableField label="Phone Number ID" value={whatsapp.waNumberId || ''} onSave={(val) => onUpdate('waNumberId', val)} />
             <EditableField label="Phone Number" value={whatsapp.waNumber || ''} onSave={(val) => onUpdate('waNumber', val)} />
             <EditableField label="Access Token" value="••••••••••••••••" onSave={(val) => onUpdate('waToken', val)} />
+            <EditableField label="Meta App ID" value={whatsapp.metaAppId || ''} onSave={(val) => onUpdate('metaAppId', val)} />
+            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2 ml-1">
+                Required for media templates (image, video, document). Find it in your Meta App Dashboard.
+            </p>
 
             {/* Webhook Configuration Section */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">

@@ -93,7 +93,7 @@ export default function ChatWindow({
 
                         return (
                             <div 
-                                key={msg.waMessageId || `msg-${idx}-${msg.timestamp}`} 
+                                key={`${msg.waMessageId || msg.timestamp}-${idx}`} 
                                 className={`flex ${outgoing ? "justify-end" : "justify-start"} items-start gap-2 mb-2`}
                             >
                                 {/* Avatar/Icon for incoming messages */}
