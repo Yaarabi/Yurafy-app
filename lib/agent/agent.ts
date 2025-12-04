@@ -4,7 +4,7 @@ import { MemorySaver } from "@langchain/langgraph";
 import AIAgent, { IAIAgent } from "@/models/ai-agent";
 import { connectDB } from "../db/mongoDB";
 import { orderTools } from "./tools/orderTools";
-import { searchProductTool } from "./tools/productTools";
+import { searchProductTool, listProductsTool } from "./tools/productTools";
 import { memoryTools } from "./tools/memory";
 import { brandInfoRetrievalTool } from "./tools/ragTool";
 import { templateGuideTool, sendTemplateTool } from "./tools/templateTool";
@@ -12,7 +12,7 @@ import { templateGuideTool, sendTemplateTool } from "./tools/templateTool";
 // ------------------------------
 // Global AI model and tools
 // ------------------------------
-const allTools = [...orderTools, searchProductTool, ...memoryTools, brandInfoRetrievalTool, templateGuideTool, sendTemplateTool];
+const allTools = [...orderTools, searchProductTool, listProductsTool, ...memoryTools, brandInfoRetrievalTool, templateGuideTool, sendTemplateTool];
 
 const model = new ChatMistralAI({
     model: "mistral-large-latest",

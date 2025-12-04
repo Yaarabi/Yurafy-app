@@ -56,6 +56,4 @@ const youcanStoreSchema = new Schema<IYouCanStore>(
     { timestamps: true }
 );
 
-youcanStoreSchema.index({ owner: 1 });
-
 export default mongoose.models.YouCanStore || mongoose.model<IYouCanStore>("YouCanStore", youcanStoreSchema);

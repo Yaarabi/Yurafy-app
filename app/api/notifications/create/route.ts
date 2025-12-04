@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Validate type
-        const validTypes = ['support_reply', 'order_update', 'plan_expiry', 'plan_warning', 'plan_limit_reached', 'plan_subscription', 'welcome', 'system', 'admin_message'];
+        const validTypes = ['support_reply', 'order_update', 'plan_expiry', 'plan_warning', 'plan_limit_reached', 'plan_subscription', 'welcome', 'system', 'admin_message', 'agent'];
         if (!validTypes.includes(type)) {
             return NextResponse.json({ error: 'Invalid notification type' }, { status: 400 });
         }

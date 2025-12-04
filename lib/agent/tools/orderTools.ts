@@ -2,6 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
 import Order, { IOrder } from "@/models/orders";
+import Notification from "@/models/notification";
 import { connectDB } from "@/lib/db/mongoDB";
 
 /**
@@ -32,14 +33,13 @@ export const searchOrderTool = tool(
 
         if (!orders.length) return "No orders found matching that query.";
 
-        return orders.map((o) => ({
-        id: o._id?.toString(),
-        customer: o.shippingAddress?.fullName,
-        phone: o.shippingAddress?.phone,
-        total: o.totalAmount,
-        status: o.status,
-        createdAt: o.createdAt,
-        }));
+        // Return as formatted string for Mistral AI compatibility
+        const orderList = orders.map((o) => {
+            const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A';
+            return `• Order #${o._id?.toString()} - ${o.shippingAddress?.fullName} (${o.shippingAddress?.phone}) - Total: ${o.totalAmount} - Status: ${o.status} - Date: ${date}`;
+        }).join('\n');
+        
+        return `Found ${orders.length} order(s):\n${orderList}`;
     },
     {
         name: "search_order",
@@ -69,6 +69,16 @@ export const updateOrderStatusTool = tool(
         ).lean()) as IOrder | null;
 
         if (!order) return "Order not found.";
+
+        // Create notification for agent action
+        await Notification.create({
+            owner: ownerId,
+            type: 'agent',
+            title: 'AI Agent Updated Order',
+            message: `Order #${order._id} status changed to "${order.status}" for customer ${order.shippingAddress?.fullName || 'Unknown'}.`,
+            link: `/dashboard/orders?id=${order._id}`,
+            metadata: { orderId: order._id, action: 'update_status', newStatus: order.status },
+        });
 
         return `✅ Order ${order._id} status updated to "${order.status}".`;
     },
@@ -104,6 +114,16 @@ export const createOrderTool = tool(
         products,
         totalAmount,
         shippingAddress: customer,
+        });
+
+        // Create notification for agent action
+        await Notification.create({
+            owner: ownerId,
+            type: 'agent',
+            title: 'AI Agent Created Order',
+            message: `New order created for ${customer.fullName} (${customer.phone}) with total ${totalAmount}.`,
+            link: `/dashboard/orders?id=${order._id}`,
+            metadata: { orderId: order._id, action: 'create_order', customerName: customer.fullName },
         });
 
         return `🆕 New order created for ${customer.fullName} (total: ${totalAmount}). Order ID: ${order._id}`;

@@ -41,7 +41,7 @@ async function convertToMp3(audioBlob: Blob): Promise<Blob> {
     
     // Create MP3 encoder (128kbps)
     const mp3Encoder = new Mp3Encoder(numChannels > 1 ? 2 : 1, sampleRate, 128);
-    const mp3Data: Int8Array[] = [];
+    const mp3Data: Uint8Array[] = [];
     
     // Encode in chunks
     const chunkSize = 1152;
@@ -57,20 +57,28 @@ async function convertToMp3(audioBlob: Blob): Promise<Blob> {
         }
         
         if (mp3buf.length > 0) {
-            mp3Data.push(mp3buf);
+            mp3Data.push(new Uint8Array(mp3buf));
         }
     }
     
     // Flush remaining data
     const mp3End = mp3Encoder.flush();
     if (mp3End.length > 0) {
-        mp3Data.push(mp3End);
+        mp3Data.push(new Uint8Array(mp3End));
     }
     
     await audioContext.close();
     
-    // Combine all chunks into a single Blob
-    return new Blob(mp3Data, { type: "audio/mpeg" });
+    // Combine all chunks into a single Uint8Array, then create Blob
+    const totalLength = mp3Data.reduce((acc, chunk) => acc + chunk.length, 0);
+    const combined = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const chunk of mp3Data) {
+        combined.set(chunk, offset);
+        offset += chunk.length;
+    }
+    
+    return new Blob([combined.buffer], { type: "audio/mpeg" });
 }
 
 export default function MediaUploader({ type, mediaFile, uploadedUrl, onSelect, onClear }: MediaUploaderProps) {

@@ -8,6 +8,7 @@ import { connectDB } from "@/lib/db/mongoDB";
 import AIAgent, { IAIAgent } from "@/models/ai-agent";
 import Template, { ITemplate } from "@/models/templates";
 import WhatsAppAccount from "@/models/whatsappAccount";
+import Notification from "@/models/notification";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "@/app/api/whatsapp/webhook/route";
 
@@ -133,9 +134,41 @@ export const sendTemplateTool = tool(
                 token
             );
 
+            // Create success notification
+            await Notification.create({
+                owner: agentOwnerId,
+                type: 'agent',
+                title: 'AI Agent Sent Template',
+                message: `Template "${templateName}" sent successfully to ${phone}.`,
+                link: '/dashboard/whatsapp',
+                metadata: { 
+                    action: 'send_template', 
+                    templateName, 
+                    customerPhone: phone,
+                    success: true 
+                },
+            });
+
             return `Successfully sent template "${templateName}" to ${phone}.`;
         } catch (err: any) {
             console.error("Send template tool error:", err);
+
+            // Create failure notification
+            await Notification.create({
+                owner: agentOwnerId,
+                type: 'agent',
+                title: 'AI Agent Template Failed',
+                message: `Failed to send template "${templateName}" to ${customerPhone}: ${err.message || "Unknown error"}`,
+                link: '/dashboard/whatsapp',
+                metadata: { 
+                    action: 'send_template', 
+                    templateName, 
+                    customerPhone,
+                    success: false,
+                    error: err.message 
+                },
+            });
+
             return `Error sending template: ${err.message || "Unknown error"}`;
         }
     },

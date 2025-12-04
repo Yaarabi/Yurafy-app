@@ -604,6 +604,10 @@
                     "name": "Search Product",
                     "description": "Search for products by name, category, brand, or slug"
                 },
+                "list_products": {
+                    "name": "List Products",
+                    "description": "Retrieve a list of products with optional filters like category or brand"
+                },
                 "store_agent_action": {
                     "name": "Store Agent Action",
                     "description": "Store or update what the AI agent did or observed about a customer"

@@ -105,6 +105,9 @@ const WhatsAppConversationSchema = new Schema(
                 type: String,
                 enum: ["read", "delivered", "sent"],
             },
+            // Pending order for button responses (stores orderId waiting for confirmation)
+            pendingOrderId: { type: Schema.Types.ObjectId, ref: "Order" },
+            pendingOrderSentAt: Date,
         },
         aiEnabled: { type: Boolean, default: false },
         optInStatus: {

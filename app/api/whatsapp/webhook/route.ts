@@ -276,11 +276,15 @@ export async function POST(req: NextRequest) {
         // 🔘 Check for button click before processing other automation
         // Interactive buttons come in message.interactive.button_reply
         const buttonPayload = message.interactive?.button_reply?.id || message.button?.payload;
+        
+        console.log(`[Webhook] Message type: ${message.type}, buttonPayload: ${buttonPayload || 'none'}, text: ${messageText?.substring(0, 50) || 'none'}`);
+        
         if (buttonPayload) {
-            // Allowed button payloads
-            const allowedPayloads = ['order_confirmation', 'cancel_order', 'edit_order'];
+            // Allowed button action prefixes (payload can be "action" or "action|orderId")
+            const allowedActions = ['order_confirmation', 'cancel_order', 'edit_order'];
+            const action = buttonPayload.split('|')[0]; // Get action part before any pipe
             
-            if (allowedPayloads.includes(buttonPayload)) {
+            if (allowedActions.includes(action)) {
                 console.log(`[Webhook] Button clicked: ${buttonPayload} from ${normalizedPhone}`);
                 
                 // Call button handler

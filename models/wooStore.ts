@@ -32,6 +32,4 @@ const wooStoreSchema = new Schema<IWooStore>(
     { timestamps: true }
 );
 
-wooStoreSchema.index({ owner: 1 });
-
 export default mongoose.models.WooStore || mongoose.model<IWooStore>("WooStore", wooStoreSchema);

@@ -17,7 +17,7 @@ export interface IAmeexAccount extends Document {
 
 const ameexSchema = new Schema<IAmeexAccount>(
     {
-        owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
         apiIdEncrypted: { type: String, required: true },
         apiKeyEncrypted: { type: String, required: true },
         businessId: { type: String },
@@ -33,7 +33,5 @@ const ameexSchema = new Schema<IAmeexAccount>(
     },
     { timestamps: true }
 );
-
-ameexSchema.index({ owner: 1 });
 
 export default mongoose.models.AmeexAccount || mongoose.model<IAmeexAccount>('AmeexAccount', ameexSchema);

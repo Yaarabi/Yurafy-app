@@ -11,37 +11,38 @@ export const searchProductTool = tool(
     async ({ ownerId, query }) => {
         await connectDB();
 
-        const products = await Product.find<IProduct>({
-        owner: new mongoose.Types.ObjectId(ownerId),
-        $or: [
-            { name: new RegExp(query, "i") },
-            { category: new RegExp(query, "i") },
-            { brand: new RegExp(query, "i") },
-            { slug: new RegExp(query, "i") },
-        ],
+        console.log(`[searchProductTool] Searching for "${query}" with ownerId: ${ownerId}`);
+
+        const products = await Product.find({
+            owner: new mongoose.Types.ObjectId(ownerId),
+            $or: [
+                { name: new RegExp(query, "i") },
+                { category: new RegExp(query, "i") },
+                { brand: new RegExp(query, "i") },
+                { slug: new RegExp(query, "i") },
+            ],
         })
         .limit(10)
         .lean<IProduct[]>(); 
 
-        if (!products.length) return "No products found for that query.";
+        console.log(`[searchProductTool] Found ${products.length} products`);
 
-        return products.map((p) => ({
-        id: p._id?.toString(),
-        name: p.name,
-        price: p.price,
-        discount: p.discount,
-        category: p.category,
-        stock: p.stock,
-        brand: p.brand,
-        }));
+        if (!products.length) return `No products found matching "${query}".`;
+
+        // Return as formatted string for Mistral AI compatibility
+        const productList = products.map((p) => 
+            `• ${p.name} (ID: ${p._id?.toString()}) - Price: ${p.price}${p.discount ? ` (${p.discount}% off)` : ''}, Stock: ${p.stock}, Category: ${p.category}${p.brand ? `, Brand: ${p.brand}` : ''}`
+        ).join('\n');
+        
+        return `Found ${products.length} product(s):\n${productList}`;
     },
     {
         name: "search_product",
-        description: "Search for products by name, category, brand, or slug.",
+        description: "Search for products by name or slug.",
         schema: z.object({
         ownerId: z.string().describe("The ID of the business owner"),
         query: z.string().describe(
-            "Search keyword (e.g., name, brand, or category)"
+            "Search keyword (e.g., name, slug, brand, or category)"
         ),
         }),
     }
@@ -107,6 +108,34 @@ export const createProductTool = tool(
         images: z.array(z.string()).optional(),
         sizes: z.array(z.string()).optional(),
         colors: z.array(z.string()).optional(),
+        }),
+    }
+);
+
+/**
+ * 📋 List all products (name and slug only)
+ */
+export const listProductsTool = tool(
+    async ({ ownerId }) => {
+        await connectDB();
+
+        const products = await Product.find({ 
+            owner: new mongoose.Types.ObjectId(ownerId) 
+        })
+        .select("name slug")
+        .lean<{ name: string; slug: string }[]>();
+
+        if (!products.length) return "No products found for this owner.";
+
+        // Return as formatted string for Mistral AI compatibility
+        const productList = products.map((p) => `• ${p.name} (slug: ${p.slug})`).join('\n');
+        return `Available products (${products.length} total):\n${productList}`;
+    },
+    {
+        name: "list_products",
+        description: "Get a list of all products with their names and slugs. Use this to see what products are available.",
+        schema: z.object({
+            ownerId: z.string().describe("The ID of the business owner"),
         }),
     }
 );

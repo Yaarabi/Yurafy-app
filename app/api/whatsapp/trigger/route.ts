@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/db/mongoDB";
 import Order from "@/models/orders";
 import Template from "@/models/templates";
 import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";
+import WhatsAppConversation from "@/models/whatsappMessage";
 import OrderMessageTrigger from "@/models/orderMessageTrigger";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { decryptToken } from "../webhook/route";
@@ -88,6 +89,23 @@ export async function POST(req: Request) {
         if ((sendResult as any)?.success === false) {
             return NextResponse.json({ error: (sendResult as any).error || "Failed to send template" }, { status: 502 });
         }
+
+        // Store pending order ID if template has QUICK_REPLY buttons (for button response handling)
+        const hasQuickReplyButtons = template.buttons?.some((b: any) => b.type === "QUICK_REPLY");
+        if (hasQuickReplyButtons) {
+            const updateResult = await WhatsAppConversation.findOneAndUpdate(
+                { owner: ownerId, "customer.phone": customerPhone },
+                {
+                    $set: {
+                        "metadata.pendingOrderId": orderDoc._id,
+                        "metadata.pendingOrderSentAt": new Date()
+                    }
+                },
+                { upsert: true, new: true }
+            );
+            console.log(`[trigger] Stored pendingOrderId ${orderDoc._id} for ${customerPhone}, updated: ${!!updateResult}`);
+        }
+
         return NextResponse.json({ success: true, trigger: trigger.name, template: template.name, timing: timingSeconds });
 
     } catch (error: any) {

@@ -32,6 +32,4 @@ const shopifyStoreSchema = new Schema<IShopifyStore>(
     { timestamps: true }
 );
 
-shopifyStoreSchema.index({ owner: 1 });
-
 export default mongoose.models.ShopifyStore || mongoose.model<IShopifyStore>("ShopifyStore", shopifyStoreSchema);

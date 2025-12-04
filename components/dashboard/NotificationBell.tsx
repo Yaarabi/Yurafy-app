@@ -1,18 +1,32 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react';
+import { Bell, Check, CheckCheck, Trash2, X, ExternalLink, Bot, Package, CreditCard, AlertTriangle, MessageSquare, UserCog, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+
+interface NotificationMetadata {
+    action?: string;
+    orderId?: string;
+    customerPhone?: string;
+    customerName?: string;
+    newStatus?: string;
+    templateName?: string;
+    success?: boolean;
+    error?: string;
+    [key: string]: any;
+}
 
 interface Notification {
     _id: string;
-    type: 'support_reply' | 'order_update' | 'plan_expiry' | 'plan_warning' | 'system' | 'admin_message';
+    type: 'support_reply' | 'order_update' | 'plan_expiry' | 'plan_warning' | 'plan_limit_reached' | 'plan_subscription' | 'welcome' | 'system' | 'admin_message' | 'agent';
     title: string;
     message: string;
     read: boolean;
     link?: string;
+    metadata?: NotificationMetadata;
     createdAt: string;
 }
 
@@ -21,8 +35,10 @@ export default function NotificationBell() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const t = useTranslations('dashboard.notifications');
+    const router = useRouter();
 
     useEffect(() => {
         fetchNotifications();
@@ -162,8 +178,12 @@ export default function NotificationBell() {
             order_update: '📦',
             plan_expiry: '⚠️',
             plan_warning: '⚠️',
+            plan_limit_reached: '🚫',
+            plan_subscription: '💳',
+            welcome: '👋',
             system: '🔔',
             admin_message: '👤',
+            agent: '🤖',
         };
         return icons[type] || '🔔';
     };
@@ -171,13 +191,65 @@ export default function NotificationBell() {
     const getNotificationColor = (type: string) => {
         const colors: Record<string, string> = {
             support_reply: 'bg-[var(--brand-blue)]/10 text-[var(--brand-blue)]',
-            order_update: 'bg-green-100 text-green-800',
-            plan_expiry: 'bg-red-100 text-red-800',
-            plan_warning: 'bg-yellow-100 text-yellow-800',
-            system: 'bg-gray-100 text-gray-800',
-            admin_message: 'bg-purple-100 text-purple-800',
+            order_update: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+            plan_expiry: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+            plan_warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+            plan_limit_reached: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+            plan_subscription: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+            welcome: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+            system: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+            admin_message: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+            agent: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
         };
         return colors[type] || 'bg-gray-100 text-gray-800';
+    };
+
+    const getActionBadge = (action?: string, newStatus?: string) => {
+        if (!action) return null;
+        
+        const badges: Record<string, { label: string; color: string }> = {
+            'order_confirmation': { label: 'Confirmed', color: 'bg-green-500' },
+            'cancel_order': { label: 'Cancelled', color: 'bg-red-500' },
+            'edit_order': { label: 'Edit Request', color: 'bg-yellow-500' },
+            'create_order': { label: 'Created', color: 'bg-blue-500' },
+            'update_status': { label: newStatus || 'Updated', color: 'bg-purple-500' },
+            'send_template': { label: 'Template Sent', color: 'bg-indigo-500' },
+        };
+        
+        const badge = badges[action];
+        if (!badge) return null;
+        
+        return (
+            <span className={`${badge.color} text-white text-[10px] px-1.5 py-0.5 rounded-full font-medium`}>
+                {badge.label}
+            </span>
+        );
+    };
+
+    const handleNotificationClick = (notification: Notification) => {
+        // Mark as read
+        if (!notification.read) {
+            markAsRead(notification._id);
+        }
+        
+        // Navigate to link if available
+        if (notification.link) {
+            setIsOpen(false);
+            router.push(notification.link);
+        } else {
+            // Toggle expanded view for metadata
+            setExpandedId(expandedId === notification._id ? null : notification._id);
+        }
+    };
+
+    const formatMetadataValue = (key: string, value: any): string => {
+        if (value === null || value === undefined) return '-';
+        if (typeof value === 'boolean') return value ? '✓ Yes' : '✗ No';
+        if (key.toLowerCase().includes('phone')) return value;
+        if (key.toLowerCase().includes('date') || key.toLowerCase().includes('at')) {
+            return new Date(value).toLocaleString();
+        }
+        return String(value);
     };
 
     return (
@@ -248,35 +320,124 @@ export default function NotificationBell() {
                                             key={notification._id}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                                                !notification.read ? 'bg-[var(--brand-blue)]/10 dark:bg-[var(--brand-blue)]/20' : ''
+                                            className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
+                                                !notification.read ? 'bg-[var(--brand-blue)]/5 dark:bg-[var(--brand-blue)]/10' : ''
                                             }`}
+                                            onClick={() => handleNotificationClick(notification)}
                                         >
                                             <div className="flex items-start gap-3">
-                                                <div className={`text-xl ${!notification.read ? 'animate-pulse' : ''}`}>
+                                                <div className={`text-xl flex-shrink-0 ${!notification.read ? 'animate-pulse' : ''}`}>
                                                     {getNotificationIcon(notification.type)}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-start justify-between gap-2 mb-1">
-                                                        <h4 className={`font-medium text-sm ${
-                                                            !notification.read
-                                                                ? 'text-gray-900 dark:text-white font-semibold'
-                                                                : 'text-gray-700 dark:text-gray-300'
-                                                        }`}>
-                                                            {notification.title}
-                                                        </h4>
-                                                        {!notification.read && (
-                                                            <div className="w-2 h-2 bg-[var(--brand-blue)] rounded-full flex-shrink-0 mt-1.5"></div>
-                                                        )}
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <h4 className={`font-medium text-sm ${
+                                                                !notification.read
+                                                                    ? 'text-gray-900 dark:text-white font-semibold'
+                                                                    : 'text-gray-700 dark:text-gray-300'
+                                                            }`}>
+                                                                {notification.title}
+                                                            </h4>
+                                                            {getActionBadge(notification.metadata?.action, notification.metadata?.newStatus)}
+                                                        </div>
+                                                        <div className="flex items-center gap-1 flex-shrink-0">
+                                                            {!notification.read && (
+                                                                <div className="w-2 h-2 bg-[var(--brand-blue)] rounded-full"></div>
+                                                            )}
+                                                            {notification.link && (
+                                                                <ExternalLink className="w-3 h-3 text-gray-400" />
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                                                         {notification.message}
                                                     </p>
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-xs text-gray-500 dark:text-gray-500">
+                                                    
+                                                    {/* Metadata display for agent notifications */}
+                                                    {notification.metadata && notification.type === 'agent' && (
+                                                        <div className={`mt-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-xs ${
+                                                            expandedId === notification._id ? '' : 'hidden'
+                                                        }`}>
+                                                            <div className="grid grid-cols-2 gap-1">
+                                                                {notification.metadata.customerName && (
+                                                                    <div>
+                                                                        <span className="text-gray-500 dark:text-gray-500">Customer:</span>
+                                                                        <span className="ml-1 text-gray-700 dark:text-gray-300 font-medium">
+                                                                            {notification.metadata.customerName}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.customerPhone && (
+                                                                    <div>
+                                                                        <span className="text-gray-500 dark:text-gray-500">Phone:</span>
+                                                                        <span className="ml-1 text-gray-700 dark:text-gray-300 font-mono">
+                                                                            {notification.metadata.customerPhone}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.orderId && (
+                                                                    <div>
+                                                                        <span className="text-gray-500 dark:text-gray-500">Order:</span>
+                                                                        <span className="ml-1 text-gray-700 dark:text-gray-300 font-mono text-[10px]">
+                                                                            {notification.metadata.orderId.slice(-8)}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.newStatus && (
+                                                                    <div>
+                                                                        <span className="text-gray-500 dark:text-gray-500">Status:</span>
+                                                                        <span className={`ml-1 font-medium capitalize ${
+                                                                            notification.metadata.newStatus === 'confirmed' ? 'text-green-600 dark:text-green-400' :
+                                                                            notification.metadata.newStatus === 'cancelled' ? 'text-red-600 dark:text-red-400' :
+                                                                            'text-gray-700 dark:text-gray-300'
+                                                                        }`}>
+                                                                            {notification.metadata.newStatus}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.templateName && (
+                                                                    <div className="col-span-2">
+                                                                        <span className="text-gray-500 dark:text-gray-500">Template:</span>
+                                                                        <span className="ml-1 text-gray-700 dark:text-gray-300">
+                                                                            {notification.metadata.templateName}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.success !== undefined && (
+                                                                    <div>
+                                                                        <span className="text-gray-500 dark:text-gray-500">Result:</span>
+                                                                        <span className={`ml-1 font-medium ${
+                                                                            notification.metadata.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                                                                        }`}>
+                                                                            {notification.metadata.success ? '✓ Success' : '✗ Failed'}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {notification.metadata.error && (
+                                                                    <div className="col-span-2">
+                                                                        <span className="text-red-500">Error:</span>
+                                                                        <span className="ml-1 text-red-600 dark:text-red-400">
+                                                                            {notification.metadata.error}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    {/* Show expand hint for agent notifications with metadata */}
+                                                    {notification.metadata && notification.type === 'agent' && expandedId !== notification._id && (
+                                                        <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
+                                                            Click to see details
+                                                        </p>
+                                                    )}
+                                                    
+                                                    <div className="flex items-center justify-between mt-2">
+                                                        <span className="text-[10px] text-gray-500 dark:text-gray-500">
                                                             {new Date(notification.createdAt).toLocaleDateString()} {new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
-                                                        <div className="flex items-center gap-1">
+                                                        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                                                             {!notification.read && (
                                                                 <button
                                                                     onClick={() => markAsRead(notification._id)}

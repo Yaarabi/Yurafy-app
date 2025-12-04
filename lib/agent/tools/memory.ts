@@ -2,87 +2,54 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db/mongoDB";
-import AgentMemory, { IAgentMemory } from "@/models/agentMemory";
+import WhatsAppConversation, { IWhatsAppMessage, IWhatsAppConversation } from "@/models/whatsappMessage";
 
 /**
- * 🧠 Store or update the memory of an AI agent about a specific customer.
- * - If no record exists for this (owner + customer), create one.
- * - If it exists, append the new summary to the previous one.
- */
-export const storeAgentActionTool = tool(
-    async ({ ownerId, customerPhone, customerName, summary }) => {
-        await connectDB();
-
-        const cleanSummary = summary.trim();
-        if (!cleanSummary) return "⚠️ Cannot store an empty summary.";
-
-        const timestamp = new Date().toISOString();
-        const entry = `🕒 ${timestamp}\n${cleanSummary}`;
-
-        const existing = await AgentMemory.findOne({
-        owner: new mongoose.Types.ObjectId(ownerId),
-        customerPhone,
-        });
-
-        if (existing) {
-        existing.summary = `${existing.summary}\n\n${entry}`;
-        if (customerName && !existing.customerName) {
-            existing.customerName = customerName;
-        }
-        await existing.save();
-
-        return `✅ Memory updated for ${existing.customerName || customerPhone}.`;
-        } else {
-        const memory = await AgentMemory.create({
-            owner: new mongoose.Types.ObjectId(ownerId),
-            customerPhone,
-            customerName,
-            summary: entry,
-        });
-
-        return `🧠 New memory created for ${customerName || customerPhone}.`;
-        }
-    },
-    {
-        name: "store_agent_action",
-        description:
-        "Store or update what the AI agent did or observed about a customer. If a memory exists, the new info is appended.",
-        schema: z.object({
-        ownerId: z.string().describe("The ID of your owner"),
-        customerPhone: z.string().describe("The customer's phone number"),
-        customerName: z.string().optional().describe("The customer's name, if known"),
-        summary: z
-            .string()
-            .describe("A summary of the agent's new action or the customer's situation"),
-        }),
-    }
-);
-
-/**
- * 🧠 Retrieve memory for a specific customer
+ * 🧠 Retrieve the conversation history (memory) for a specific customer
+ * Uses the WhatsApp messages as the memory source
  */
 export const getAgentMemoryTool = tool(
-    async ({ ownerId, customerPhone }) => {
+    async ({ ownerId, customerPhone, limit = 20 }) => {
         await connectDB();
 
-        const memory = await AgentMemory.findOne({
-        owner: new mongoose.Types.ObjectId(ownerId),
-        customerPhone,
-        }).lean<IAgentMemory>();
+        const conversation = await WhatsAppConversation.findOne({
+            owner: new mongoose.Types.ObjectId(ownerId),
+            "customer.phone": customerPhone,
+        }).lean<IWhatsAppConversation>();
 
-        if (!memory) return `❌ No memory found for ${customerPhone}.`;
+        if (!conversation) {
+            return `❌ No conversation found for ${customerPhone}.`;
+        }
 
-        return memory.summary;
+        // Get the latest messages (most recent first, then reverse for chronological order)
+        const messages = conversation.messages
+            .slice(-limit)
+            .map((msg: IWhatsAppMessage) => {
+                const direction = msg.direction === "incoming" ? "Customer" : "Agent";
+                const time = new Date(msg.timestamp).toLocaleString();
+                const content = msg.text || `[${msg.type}]`;
+                const aiTag = msg.isAIResponse ? " (AI)" : "";
+                return `[${time}] ${direction}${aiTag}: ${content}`;
+            })
+            .join("\n");
+
+        if (!messages) {
+            return `❌ No messages found for ${customerPhone}.`;
+        }
+
+        const customerName = conversation.customer?.name || customerPhone;
+        return `📝 Conversation history with ${customerName}:\n\n${messages}`;
     },
     {
         name: "get_agent_memory",
         description:
-        "Retrieve the stored summary of previous actions or customer situations for a specific customer.",
+            "Retrieve the conversation history with a specific customer. Returns the latest messages as context/memory.",
         schema: z.object({
-        ownerId: z.string().describe("The ID of your owner"),
-        customerPhone: z.string().describe("The customer's phone number"),
+            ownerId: z.string().describe("The ID of your owner"),
+            customerPhone: z.string().describe("The customer's phone number"),
+            limit: z.number().optional().default(20).describe("Number of recent messages to retrieve (default: 20)"),
         }),
     }
 );
 
-export const memoryTools = [storeAgentActionTool, getAgentMemoryTool];
+export const memoryTools = [getAgentMemoryTool];
