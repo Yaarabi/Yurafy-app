@@ -7,12 +7,12 @@ import { orderTools } from "./tools/orderTools";
 import { searchProductTool, listProductsTool } from "./tools/productTools";
 import { memoryTools } from "./tools/memory";
 import { brandInfoRetrievalTool } from "./tools/ragTool";
-import { templateGuideTool, sendTemplateTool } from "./tools/templateTool";
+import { notificationTools } from "./tools/notificationTool";
 
 // ------------------------------
 // Global AI model and tools
 // ------------------------------
-const allTools = [...orderTools, searchProductTool, listProductsTool, ...memoryTools, brandInfoRetrievalTool, templateGuideTool, sendTemplateTool];
+const allTools = [...orderTools, searchProductTool, listProductsTool, ...memoryTools, brandInfoRetrievalTool, ...notificationTools];
 
 const model = new ChatMistralAI({
     model: "mistral-large-latest",
@@ -165,7 +165,7 @@ export async function generateCustomerAIResponse(ownerId: string, customerPhone:
         llm: model,
         tools: enabledTools,
         checkpointSaver: customerCheckpointSaver,
-        prompt: `You are talking directly with a CUSTOMER of your owner with the phone number ${customerPhone}.
+        prompt: `You are talking directly with a CUSTOMER of your owner with the phone number ${customerPhone} on whatsapp.
             Base your replies on the owner system prompt: "${safePrompt}". Your owner id is ${agentData.owner}. Be polite, helpful, and concise.`,
         });
 

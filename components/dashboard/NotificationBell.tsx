@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bell, Check, CheckCheck, Trash2, X, ExternalLink, Bot, Package, CreditCard, AlertTriangle, MessageSquare, UserCog, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
 interface NotificationMetadata {
@@ -38,6 +38,7 @@ export default function NotificationBell() {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const t = useTranslations('dashboard.notifications');
+    const locale = useLocale();
     const router = useRouter();
 
     useEffect(() => {
@@ -235,7 +236,11 @@ export default function NotificationBell() {
         // Navigate to link if available
         if (notification.link) {
             setIsOpen(false);
-            router.push(notification.link);
+            // Add locale to the link if it doesn't already have it
+            const linkWithLocale = notification.link.startsWith('/') && !notification.link.startsWith(`/${locale}`)
+                ? `/${locale}${notification.link}`
+                : notification.link;
+            router.push(linkWithLocale);
         } else {
             // Toggle expanded view for metadata
             setExpandedId(expandedId === notification._id ? null : notification._id);

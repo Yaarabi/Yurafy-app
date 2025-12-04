@@ -31,7 +31,7 @@ export async function GET() {
             User.findById(userId).select('currentPlanId').lean(),
             WhatsAppAccount.findOne({ owner: userId }).lean(),
             AIAgent.findOne({ owner: userId }).lean(),
-            Template.find({ owner: userId, isActive: true }).lean()
+            Template.find({ owner: userId }).lean()
         ]);
 
         // Fetch current plan if user has one

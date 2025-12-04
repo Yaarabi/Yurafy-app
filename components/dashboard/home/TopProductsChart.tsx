@@ -22,7 +22,6 @@ export default function TopProductsChart({ products }: Props) {
     const isDark = theme.palette.mode === "dark";
 
     const top = [...products]
-        .filter(p => (p.salesCount || 0) > 0)
         .sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0))
         .slice(0, 5);
 

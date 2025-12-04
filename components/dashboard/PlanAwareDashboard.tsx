@@ -9,6 +9,7 @@ import RevenueChart from "@/components/dashboard/home/RevenueChart";
 import OrdersStatusChart from "@/components/dashboard/home/OrdersStatusChart";
 import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
 import CustomersChart from "@/components/dashboard/home/customers";
+import CODMetrics from "@/components/dashboard/home/CODMetrics";
 import Link from "next/link";
 import { IOrder } from "@/models/orders";
 import { IProduct } from "@/models/products";
@@ -287,6 +288,25 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                 </div>
             )}
 
+        {/* COD & E-Business Metrics */}
+            {hasOrders && orders.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                >
+                    <div className="mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                            {t('metrics.title')}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('metrics.subtitle')}
+                        </p>
+                    </div>
+                    <CODMetrics orders={orders} />
+                </motion.div>
+            )}
+
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Revenue Chart - Only for plans with orders */}
@@ -336,18 +356,6 @@ export default function PlanAwareDashboard({ orders, products, templatesCount = 
                 )}
             </div>
 
-            {/* WhatsApp Templates - Only for WhatsApp plans */}
-            {isWhatsAppPlan && (
-                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow border border-gray-200 dark:border-gray-700">
-                    <h2 className="font-semibold mb-2 text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5" />
-                        WhatsApp Templates
-                    </h2>
-                    <p className="text-gray-700 dark:text-gray-300">
-                        Total templates: {templatesCount}
-                    </p>
-                </div>
-            )}
 
             {/* Free Plan CTA */}
             {isFreePlan && (

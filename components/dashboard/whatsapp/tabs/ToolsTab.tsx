@@ -23,8 +23,7 @@ const AVAILABLE_TOOLS = [
     { name: "list_products", description: "Get a list of all products with their names and slugs", category: "Products" },
     { name: "get_agent_memory", description: "Retrieve the conversation history with a customer as context/memory", category: "Memory" },
     { name: "brand_info_retrieval", description: "Search through brand's uploaded knowledge (manuals, FAQs, documents)", category: "Brand Info" },
-    { name: "template_guide", description: "Suggests relevant templates to use when responding to customers", category: "Templates" },
-    { name: "send_template", description: "Send an approved WhatsApp template message to a customer", category: "Templates" },
+    { name: "send_owner_notification", description: "Send notification to owner when agent needs assistance or encounters issues it cannot handle", category: "Notifications" },
 ];
 
 export default function ToolsTab({ agent, availableTemplates, updateAgent }: ToolsTabProps) {
@@ -199,7 +198,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
         </SettingsSection>
 
         {/* Existing templates */}
-        <SettingsSection title={t('section.templates.title')}>
+        {/* <SettingsSection title={t('section.templates.title')}>
         <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             {t('section.templates.label')}
@@ -309,7 +308,7 @@ export default function ToolsTab({ agent, availableTemplates, updateAgent }: Too
             </>
             )}
         </div>
-        </SettingsSection>
+        {/* </SettingsSection> */} 
         </div>
     );
 }

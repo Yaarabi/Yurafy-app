@@ -406,6 +406,10 @@
                 "unnamedProduct": "Unnamed Product"
             }
         },
+        "metrics": {
+            "title": "COD & E-Business Metrics",
+            "subtitle": "Key performance indicators for your business"
+        },
         "integrations": {
             "title": "Integrations",
             "subtitle": "Connect and manage your store and delivery integrations",
