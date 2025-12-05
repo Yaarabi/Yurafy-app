@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IStore extends Document {
-    _id: string;
     owner: mongoose.Types.ObjectId;
     brandName: string;
     domain: string;

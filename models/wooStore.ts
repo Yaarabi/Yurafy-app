@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IWooStore extends Document {
-    _id: string;
     owner: mongoose.Types.ObjectId;
     token: string;
     connect: boolean;

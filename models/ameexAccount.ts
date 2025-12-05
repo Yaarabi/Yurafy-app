@@ -2,7 +2,6 @@ import mongoose, { Schema, Document } from 'mongoose';
 import crypto from 'crypto';
 
 export interface IAmeexAccount extends Document {
-    _id: string;
     owner: mongoose.Types.ObjectId;
     apiIdEncrypted: string;
     apiKeyEncrypted: string;
