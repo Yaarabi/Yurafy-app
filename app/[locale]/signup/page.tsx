@@ -1,6 +1,6 @@
 'use client';
 
-import BrandHeader from '@/components/login/brandHeader';
+import BrandHeader from "@/components/login/brandHeader";
 import Footer from '@/components/login/footer';
 // Temporarily disabled: Signup form under maintenance
 // import SignupForm from '@/components/login/signUpForm';

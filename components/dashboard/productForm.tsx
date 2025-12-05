@@ -85,7 +85,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         return { ...defaultState, ...initialValues };
     };
 
-    const PRODUCT_CATEGORIES = [
+    const DEFAULT_CATEGORIES = [
         'Fashion & Apparel',
         'Beauty & Personal Care',
         'Electronics & Gadgets',
@@ -103,6 +103,9 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         'Office & Business',
     ];
 
+    const [storeCategories, setStoreCategories] = useState<string[]>([]);
+    const [loadingCategories, setLoadingCategories] = useState(true);
+
     const [values, setValues] = useState<Partial<IProduct>>(getInitialState());
     const [showVariants, setShowVariants] = useState(false);
     const [showBundles, setShowBundles] = useState(false);
@@ -113,6 +116,34 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             setValues((prev) => ({ ...prev, owner: session.user.id as string }));
         }
     }, [session]);
+
+    // Fetch store categories
+    useEffect(() => {
+        async function fetchStoreCategories() {
+            try {
+                setLoadingCategories(true);
+                const res = await fetch('/api/store/owner');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.categories && Array.isArray(data.categories)) {
+                        const categoryNames = data.categories.map((cat: { name: string; img: string }) => cat.name);
+                        setStoreCategories(categoryNames);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch store categories:', err);
+            } finally {
+                setLoadingCategories(false);
+            }
+        }
+        fetchStoreCategories();
+    }, []);
+
+    // Combine default categories with store categories
+    const PRODUCT_CATEGORIES = [
+        ...storeCategories,
+        ...DEFAULT_CATEGORIES.filter(cat => !storeCategories.includes(cat)),
+    ];
 
     // Reset form function
     const resetForm = useCallback(() => {
@@ -206,6 +237,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                 Input={Input}
                 Textarea={Textarea}
                 PRODUCT_CATEGORIES={PRODUCT_CATEGORIES}
+                loadingCategories={loadingCategories}
             />
 
             <MediaUploads values={values} setValues={setValues} />

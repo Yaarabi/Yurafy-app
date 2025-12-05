@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import ServicesClient, { Service } from '@/components/services/ServicesClient';
 import Footer from '@/components/home/Footer';
 import { getTranslations } from 'next-intl/server';

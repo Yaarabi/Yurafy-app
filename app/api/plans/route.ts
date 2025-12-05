@@ -56,6 +56,10 @@ export async function GET(req: NextRequest) {
             plans: regularPlans,
             specialPlans: specialPlans,
             all: templatesWithFeatures
+        }, {
+            headers: {
+                "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+            },
         });
     } catch (error: any) {
         console.error('Error fetching plans:', error);

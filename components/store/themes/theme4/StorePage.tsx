@@ -5,6 +5,8 @@ import ProductGrid from './sections/ProductGrid';
 import Footer from './sections/Footer';
 import About from './sections/About';
 import Trust from './sections/Trust';
+import SpecialOffer from '../shared/SpecialOffer';
+import Categories from '../shared/Categories';
 import { useStore } from '../../hooks/useStore';
 
 const StorePage: React.FC = () => {
@@ -26,6 +28,8 @@ const StorePage: React.FC = () => {
         <main>
             {themeStructure.header && <Header />}
             {themeStructure.hero && <Hero />}
+            <SpecialOffer />
+            <Categories />
             {themeStructure.productGrid && <ProductGrid />}
             {themeStructure.about && <About />}
             {themeStructure.trust && <Trust />}

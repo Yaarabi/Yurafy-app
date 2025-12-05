@@ -18,5 +18,9 @@ export async function GET(req: NextRequest) {
 
     const globalVerifyToken = process.env.WHATSAPP_VERIFY_TOKEN || null;
 
-    return NextResponse.json({ globalVerifyToken });
+    return NextResponse.json({ globalVerifyToken }, {
+        headers: {
+            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        },
+    });
 }

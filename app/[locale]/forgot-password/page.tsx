@@ -1,6 +1,6 @@
 'use client';
 
-import BrandHeader from '@/components/login/brandHeader';
+import BrandHeader from "@/components/login/brandHeader";
 import Footer from '@/components/login/footer';
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm';
 import { motion } from 'framer-motion';

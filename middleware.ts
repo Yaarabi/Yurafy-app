@@ -64,8 +64,15 @@ export default function middleware(request: NextRequest) {
             return response;
         }
 
-        const response = NextResponse.next();
+        // No locale in path - add default locale with subdomain
+        const defaultLocale = 'en';
+        const rewrittenSegments = [defaultLocale, subdomain, ...segments];
+        const url = request.nextUrl.clone();
+        url.pathname = `/${rewrittenSegments.join('/')}`;
+
+        const response = NextResponse.rewrite(url);
         response.headers.set('x-subdomain', subdomain);
+        response.cookies.set('NEXT_LOCALE', defaultLocale);
         return response;
     }
 

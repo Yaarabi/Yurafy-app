@@ -43,6 +43,17 @@ const ProductGrid: React.FC = () => {
         }
     };
 
+    const handleViewAllProducts = () => {
+        if (disableNavigation) return;
+        const locale = (params as any)?.locale || "en";
+        const domain = (params as any)?.domain || selectedStore.domain;
+        const href = `/${locale}/${domain}/shop`;
+        router.push(href);
+    };
+
+    // Show only latest 4 products
+    const displayedProducts = products.slice(0, 4);
+
     return (
         <div id="products" className="relative py-24 overflow-hidden" style={{ background: surfaceGradient }}>
             {/* Organic Geometric Pattern */}
@@ -76,8 +87,9 @@ const ProductGrid: React.FC = () => {
                 {products.length === 0 ? (
                     <p className="text-center text-gray-400 text-xl font-light">No products available.</p>
                 ) : (
+                    <>
                     <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16"
+                        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-12 lg:gap-16"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.1 }}
@@ -89,7 +101,7 @@ const ProductGrid: React.FC = () => {
                             },
                         }}
                     >
-                        {products.map((product) => (
+                        {displayedProducts.map((product) => (
                             <motion.div
                                 key={product._id}
                                 variants={cardVariants}
@@ -166,6 +178,29 @@ const ProductGrid: React.FC = () => {
                             </motion.div>
                         ))}
                     </motion.div>
+                    {products.length > 4 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.5 }}
+                            className="text-center mt-12"
+                        >
+                            <button
+                                onClick={handleViewAllProducts}
+                                disabled={disableNavigation}
+                                className="px-8 py-4 border text-base font-light tracking-wide transition-all duration-300 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{ 
+                                    borderColor: primaryColor,
+                                    color: primaryColor,
+                                    backgroundColor: 'transparent'
+                                }}
+                            >
+                                {getStoreTranslation("viewAllProducts", storeLanguage) || "View All Products"}
+                            </button>
+                        </motion.div>
+                    )}
+                    </>
                 )}
             </div>
         </div>

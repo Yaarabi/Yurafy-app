@@ -237,7 +237,6 @@ export async function DELETE(req: NextRequest) {
         const Notification = (await import('@/models/notification')).default;
         const Support = (await import('@/models/support')).default;
         const Template = (await import('@/models/templates')).default;
-        const AgentMemory = (await import('@/models/agentMemory')).default;
         const AgentVector = (await import('@/models/agentVector')).default;
         const AgentCheckpoint = (await import('@/models/agentCheckpoint')).default;
         const WhatsAppMessage = (await import('@/models/whatsappMessage')).default;
@@ -253,7 +252,6 @@ export async function DELETE(req: NextRequest) {
             Notification.deleteMany({ owner: deletedUser._id }),
             Support.deleteMany({ owner: deletedUser._id }),
             Template.deleteMany({ owner: deletedUser._id }),
-            AgentMemory.deleteMany({ owner: deletedUser._id }),
             AgentVector.deleteMany({ owner: deletedUser._id }),
             AgentCheckpoint.deleteMany({ owner: deletedUser._id }), // ✅ Added: Delete agent checkpoints
             WhatsAppMessage.deleteMany({ owner: deletedUser._id }),

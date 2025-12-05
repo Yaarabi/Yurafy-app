@@ -1,5 +1,5 @@
+'use client';
 
-'use client'
 import OrdersTableWhatPlan from '@/components/dashboard/order/OrdersTableWhatPlan';
 import {useTranslations} from 'next-intl';
 import { useUserFeatures } from '@/hooks/useUserFeatures';

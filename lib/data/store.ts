@@ -60,6 +60,16 @@ export interface SerializedStore {
     paymentMethods?: string[];
     codEnabled?: boolean;
     shippingInfo?: any;
+    categories?: Array<{
+        name: string;
+        img: string;
+    }>;
+    specialOffer?: {
+        productId: string;
+        offerTimeEnd: string;
+        discount: number;
+        description: string;
+    };
 }
 
 
@@ -119,6 +129,16 @@ export function serializeStore(store: any): SerializedStore {
         paymentMethods: store.paymentMethods || undefined,
         codEnabled: store.codEnabled || undefined,
         shippingInfo: store.shippingInfo || undefined,
+        categories: store.categories ? store.categories.map((cat: any) => ({
+            name: cat.name || '',
+            img: cat.img || '',
+        })) : undefined,
+        specialOffer: store.specialOffer ? {
+            productId: store.specialOffer.productId?.toString() || '',
+            offerTimeEnd: store.specialOffer.offerTimeEnd?.toISOString() || '',
+            discount: store.specialOffer.discount || 0,
+            description: store.specialOffer.description || '',
+        } : undefined,
         createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
         updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };

@@ -12,7 +12,12 @@ export async function GET() {
     if (!cfg) {
       cfg = await SupportAgent.create({})
     }
-    return NextResponse.json(cfg, { status: 200 })
+    return NextResponse.json(cfg, { 
+      status: 200,
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
+    })
   } catch (err) {
     console.error(err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

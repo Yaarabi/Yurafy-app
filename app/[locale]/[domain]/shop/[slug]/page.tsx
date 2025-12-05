@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import ProductPageClientWrapper from '@/components/pages/productWraper';
 import { getProductWithStoreBySlug } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
@@ -76,5 +78,3 @@ export async function generateViewport({ params }: { params: Promise<{ domain?: 
     }
     return { themeColor: '#3B82F6' };
 }
-
-export const revalidate = 60;

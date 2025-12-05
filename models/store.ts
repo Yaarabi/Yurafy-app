@@ -38,6 +38,16 @@ export interface IStore extends Document {
     }>;
     logoUrl?: string;
     active?: boolean;
+    categories?: Array<{
+        name: string;
+        img: string;
+    }>;
+    specialOffer?: {
+        productId: mongoose.Types.ObjectId;
+        offerTimeEnd: Date;
+        discount: number;
+        description: string;
+    };
 }
 
 const storeSchema = new Schema<IStore>(
@@ -118,6 +128,21 @@ const storeSchema = new Schema<IStore>(
             type: Boolean, 
             default: false,
             index: true, // Index for filtering active stores
+        },
+        categories: [
+            {
+                name: { type: String, required: true, trim: true },
+                img: { type: String, required: true, trim: true },
+            }
+        ],
+        specialOffer: {
+            productId: { 
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: "Product",
+            },
+            offerTimeEnd: { type: Date },
+            discount: { type: Number, min: 0, max: 100 },
+            description: { type: String, trim: true },
         },
     },
     { timestamps: true }

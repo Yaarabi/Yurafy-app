@@ -20,11 +20,25 @@ export async function GET(req: NextRequest) {
         if (slug) {
             const store = await getStoreByDomain(slug);
             if (!store) return NextResponse.json({ error: "Store not found" }, { status: 404 });
-            return NextResponse.json({ store });
+            return NextResponse.json(
+                { store },
+                {
+                    headers: {
+                        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                    },
+                }
+            );
         }
 
         const stores = await getAllStores();
-        return NextResponse.json({ stores });
+        return NextResponse.json(
+            { stores },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to fetch stores" }, { status: 500 });
@@ -124,7 +138,15 @@ export async function POST(req: NextRequest) {
 
         // Return serialized store via getStoreByDomain for consistency
         const serialized = await getStoreByDomain(store.domain);
-        return NextResponse.json({ store: serialized }, { status: 201 });
+        return NextResponse.json(
+            { store: serialized },
+            {
+                status: 201,
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to create store" }, { status: 500 });
@@ -163,7 +185,14 @@ export async function PATCH(req: NextRequest) {
         await storeDoc.save();
 
         const serialized = await getStoreByDomain(storeDoc.domain);
-        return NextResponse.json({ store: serialized });
+        return NextResponse.json(
+            { store: serialized },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Failed to update store" }, { status: 500 });

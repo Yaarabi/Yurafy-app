@@ -46,7 +46,11 @@ export async function GET(req: NextRequest) {
 
         if (!account) return NextResponse.json({ error: "Account not found" }, { status: 404 });                                                                    
 
-    return NextResponse.json({ account });
+    return NextResponse.json({ account }, {
+        headers: {
+            "Cache-Control": "private, s-maxage=180, stale-while-revalidate=300",
+        },
+    });
 }
 
 // ------------------------

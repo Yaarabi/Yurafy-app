@@ -11,9 +11,10 @@ interface BasicInfoProps {
     Input: (props: any) => React.JSX.Element;
     Textarea: (props: any) => React.JSX.Element;
     PRODUCT_CATEGORIES: string[];
+    loadingCategories?: boolean;
 }
 
-export default function BasicInfo({ values, handleChange, errors, Input, Textarea, PRODUCT_CATEGORIES }: BasicInfoProps) {
+export default function BasicInfo({ values, handleChange, errors, Input, Textarea, PRODUCT_CATEGORIES, loadingCategories = false }: BasicInfoProps) {
     const t = useTranslations('products.form');
 
     return (
@@ -42,9 +43,12 @@ export default function BasicInfo({ values, handleChange, errors, Input, Textare
                         name="category"
                         value={values.category}
                         onChange={handleChange}
-                        className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition`}
+                        disabled={loadingCategories}
+                        className={`px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-blue transition disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                        <option value="" disabled>{t('selectCategory')}</option>
+                        <option value="" disabled>
+                            {loadingCategories ? 'Loading categories...' : t('selectCategory')}
+                        </option>
                         {PRODUCT_CATEGORIES.map((cat) => (
                             <option key={cat} value={cat}>{cat}</option>
                         ))}

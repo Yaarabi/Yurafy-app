@@ -1,4 +1,6 @@
 
+export const revalidate = 30;
+
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { getStoreByDomain } from '@/lib/data/store';

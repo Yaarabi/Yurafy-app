@@ -1,15 +1,16 @@
+export const revalidate = 3600;
+
 import { generateStoreMetadata } from "@/lib/metadata/storeMetadata";
 import { getStoreByDomain } from "@/lib/data/store";
 import { getProductsByOwner } from "@/lib/data/products"; 
 import ThemeInjector from "@/components/productPage/ThemeInjector";
-import StoreClientWrapper from "@/components/pages/storeWrapper";
-import NotFound from "./not-found";
+import ShopClientWrapper from "@/components/pages/shopWrapper";
+import NotFound from "../not-found";
 import { headers } from "next/headers";
 import { getSubdomainFromHeaders } from "@/lib/utils/subdomain";
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
     const { domain, locale = 'en' } = await params;
-    // Prefer subdomain if present in headers; otherwise use path domain
     const sub = await getSubdomainFromHeaders(headers, { mainDomains: ['www','app','admin','yurafy'] });
     const effectiveDomain = (sub || domain).toLowerCase().trim();
     return await generateStoreMetadata(effectiveDomain, locale);
@@ -24,10 +25,14 @@ export async function generateViewport({ params }: { params: Promise<{ domain: s
     return { themeColor: primary };
 }
 
-export const revalidate = 30;
 
-export default async function StorePage({ params }: { params: Promise<{ domain: string; locale?: string }> }) {
+
+export default async function ShopPage({ params, searchParams }: { 
+    params: Promise<{ domain: string; locale?: string }>;
+    searchParams: Promise<{ category?: string }>;
+}) {
     const { domain, locale = 'en' } = await params;
+    const { category } = await searchParams;
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
@@ -67,7 +72,13 @@ export default async function StorePage({ params }: { params: Promise<{ domain: 
     return (
         <>
             <ThemeInjector theme={store.theme} />
-            <StoreClientWrapper store={store} products={products} storeUrl={storeUrl} />
+            <ShopClientWrapper 
+                store={store} 
+                products={products} 
+                storeUrl={storeUrl}
+                selectedCategory={category}
+            />
         </>
     );
 }
+

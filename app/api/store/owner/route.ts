@@ -86,10 +86,25 @@ export async function GET(req: NextRequest) {
         const store = await Store.findOne({ owner: session.user.id });
 
         if (!store) {
-        return NextResponse.json({ message: "No store found for this user" }, { status: 404 });
+        return NextResponse.json(
+            { message: "No store found for this user" },
+            {
+                status: 404,
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
         }
 
-        return NextResponse.json(serializeStoreDoc(store));
+        return NextResponse.json(
+            serializeStoreDoc(store),
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error("Error fetching store by owner:", err);
         return NextResponse.json({ error: "Failed to fetch store" }, { status: 500 });
@@ -142,9 +157,24 @@ export async function PATCH(req: NextRequest) {
             return NextResponse.json({ error: "Store not found" }, { status: 404 });
         }
 
-        return NextResponse.json(serializeStoreDoc(store));
+        return NextResponse.json(
+            serializeStoreDoc(store),
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error("Error updating store by owner:", err);
-        return NextResponse.json({ error: "Failed to update store" }, { status: 500 });
+        return NextResponse.json(
+            { error: "Failed to update store" },
+            {
+                status: 500,
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     }
 }

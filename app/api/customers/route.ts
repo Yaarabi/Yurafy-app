@@ -167,15 +167,22 @@ export async function GET(req: NextRequest) {
         const countRes = await Order.aggregate(countPipeline);
         const totalCustomers = countRes[0]?.count ?? 0;
 
-        return NextResponse.json({
-        data,
-        meta: {
-            page,
-            limit,
-            totalCustomers,
-            totalPages: Math.ceil(totalCustomers / limit)
-        }
-        });
+        return NextResponse.json(
+            {
+                data,
+                meta: {
+                    page,
+                    limit,
+                    totalCustomers,
+                    totalPages: Math.ceil(totalCustomers / limit)
+                }
+            },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (err) {
         console.error("my-customers error:", err);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

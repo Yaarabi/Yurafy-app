@@ -24,6 +24,10 @@ export async function GET(req: NextRequest) {
         settings: account.settings,
         templates: account.templates,
         aiConfig: account.aiConfig,
+    }, {
+        headers: {
+            "Cache-Control": "private, s-maxage=180, stale-while-revalidate=300",
+        },
     });
 }
 

@@ -21,7 +21,11 @@ export async function GET(req: NextRequest) {
         const query = isAdmin ? {} : { isActive: true };
         const guides = await Guide.find(query).sort({ category: 1, order: 1 }).lean();
 
-        return NextResponse.json({ guides });
+        return NextResponse.json({ guides }, {
+            headers: {
+                "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+            },
+        });
     } catch (error) {
         console.error('GET /api/guides error:', error);
         return NextResponse.json({ error: 'Failed to fetch guides' }, { status: 500 });

@@ -29,7 +29,14 @@ export async function GET(req: NextRequest) {
             if (!product) {
                 return createErrorResponse("Product not found", 404, "NOT_FOUND");
             }
-            return NextResponse.json({ message: "Product retrieved", product });
+            return NextResponse.json(
+                { message: "Product retrieved", product },
+                {
+                    headers: {
+                        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                    },
+                }
+            );
         }
 
         // Build dynamic query
@@ -64,10 +71,17 @@ export async function GET(req: NextRequest) {
 
         const products = await Product.find(query).sort({ createdAt: -1 }).limit(20);
 
-        return NextResponse.json({
-            message: owner ? "Products retrieved" : category ? "Category products retrieved" : "All products retrieved",
-            products: products || [],
-        });
+        return NextResponse.json(
+            {
+                message: owner ? "Products retrieved" : category ? "Category products retrieved" : "All products retrieved",
+                products: products || [],
+            },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (error) {
         logger.error("GET /api/products error", error);
         return handleApiError(error);

@@ -28,12 +28,26 @@ export async function GET(req: Request) {
         if (!order) {
             return NextResponse.json({ message: "Order not found" }, { status: 404 });
         }
-        return NextResponse.json({ message: "Order retrieved", order });
+        return NextResponse.json(
+            { message: "Order retrieved", order },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
         }
 
         // Return all orders for this user
         const orders = await Order.find({ owner: userId });
-        return NextResponse.json({ message: "User orders retrieved", orders });
+        return NextResponse.json(
+            { message: "User orders retrieved", orders },
+            {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                },
+            }
+        );
     } catch (error) {
         return NextResponse.json({ message: "Server error", error }, { status: 500 });
     }

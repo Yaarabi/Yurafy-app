@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { motion } from "framer-motion"
 import { Sparkles, Crown } from "lucide-react"
 import { useParams } from "next/navigation"
