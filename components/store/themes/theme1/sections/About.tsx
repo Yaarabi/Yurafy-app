@@ -11,7 +11,6 @@ const About: React.FC = () => {
     const { about, brandName, whoWeAre } = selectedStore;
     const primaryColor = selectedStore.theme?.primaryColor || '#0ea5e9';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#f1f5f9';
-    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,
@@ -28,7 +27,7 @@ const About: React.FC = () => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="relative py-16 sm:py-20 md:py-24 overflow-hidden"
-            style={{ background: surfaceGradient }}
+            style={{ backgroundColor: surfaceColor }}
         >
             {/* Tech Circuit Pattern */}
             <GeometricDecorations type="circuit" color={primaryColor} className="opacity-5" />

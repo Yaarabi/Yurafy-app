@@ -17,7 +17,6 @@ const Trust: React.FC = () => {
     
     const primaryColor = selectedStore.theme?.primaryColor || '#0ea5e9';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#f1f5f9';
-    const surfaceGradient = `linear-gradient(160deg, ${surfaceColor} 0%, #ffffff 65%)`;
     const storeLanguage = selectedStore.language || 'en';
 
     const features = [
@@ -51,7 +50,7 @@ const Trust: React.FC = () => {
                 },
             }}
             className="relative py-16 sm:py-20 md:py-24 border-t border-b overflow-hidden"
-            style={{ borderColor: `${primaryColor}20`, background: surfaceGradient }}
+            style={{ borderColor: `${primaryColor}20`, backgroundColor: surfaceColor }}
         >
             {/* Tech Circuit Pattern */}
             <GeometricDecorations type="circuit" color={primaryColor} className="opacity-5" />

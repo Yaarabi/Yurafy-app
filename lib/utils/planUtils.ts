@@ -1,8 +1,15 @@
-import PlanTemplate, { IPlanTemplate } from "@/models/planTemplate";
 import { planFeatures } from "@/lib/config/planFeatures";
 import type { PlanFeatures, PlanKey } from "@/lib/config/planFeatures";
 
-
+// Default plan data configuration
+const defaultPlans: Record<string, { name: string; price: number; description: string; icon?: string; color?: string }> = {
+    'free': { name: 'Free', price: 0, description: 'Test all features with limited usage.', icon: 'zap', color: 'from-gray-400 to-gray-600' },
+    'Starter': { name: 'Starter', price: 11, description: 'Basic store setup with branding and domain.', icon: 'store', color: 'from-blue-400 to-blue-600' },
+    'WhatsApp Automation': { name: 'WhatsApp Automation', price: 11, description: 'Automate messaging with WhatsApp Cloud API.', icon: 'message-circle', color: 'from-green-400 to-green-600' },
+    'AI WhatsApp Agent': { name: 'AI WhatsApp Agent', price: 21, description: 'Automation + AI-powered WhatsApp assistant.', icon: 'bot', color: 'from-purple-400 to-purple-600' },
+    'Pro Seller': { name: 'Pro Seller', price: 25, description: 'Starter + WhatsApp Automation for serious sellers.', icon: 'crown', color: 'from-yellow-400 to-orange-600' },
+    'Visionary': { name: 'Visionary', price: 50, description: 'Pro Seller + AI Agent for full power scaling.', icon: 'sparkles', color: 'from-indigo-400 via-purple-500 to-pink-600' },
+};
 
 /**
  * Get plan features safely
@@ -24,49 +31,9 @@ export async function getPlanTemplate(planKey: string): Promise<{
     color?: string;
 } | null> {
     try {
-        // Try to get from database (custom/admin-created plans)
-        const template = await PlanTemplate.findOne({ 
-            planKey: planKey.toLowerCase(),
-            isActive: true 
-        }).lean<IPlanTemplate>();
-
-        if (template) {
-            // For special plans, get features from basePlanKey; otherwise use planKey
-            const featuresKey = template.isSpecial && template.basePlanKey 
-                ? template.basePlanKey 
-                : template.planKey;
-
-            const features = getPlanFeaturesByKey(featuresKey);
-            if (!features) {
-                console.error(`Features not found for plan key: ${featuresKey}`);
-                return null;
-            }
-
-            return {
-                planKey: template.planKey,
-                name: template.name,
-                description: template.description,
-                defaultPrice: template.defaultPrice,
-                defaultDurationDays: template.defaultDurationDays,
-                features,
-                icon: template.icon,
-                color: template.color,
-            };
-        }
-
-        // Fallback to default config
+        // Get default plan data from config
         const defaultFeatures = getPlanFeaturesByKey(planKey);
         if (defaultFeatures) {
-            // Get default plan data from config
-            const defaultPlans: Record<string, { name: string; price: number; description: string; icon?: string; color?: string }> = {
-                'free': { name: 'Free', price: 0, description: 'Test all features with limited usage.', icon: 'zap', color: 'from-gray-400 to-gray-600' },
-                'Starter': { name: 'Starter', price: 11, description: 'Basic store setup with branding and domain.', icon: 'store', color: 'from-blue-400 to-blue-600' },
-                'WhatsApp Automation': { name: 'WhatsApp Automation', price: 11, description: 'Automate messaging with WhatsApp Cloud API.', icon: 'message-circle', color: 'from-green-400 to-green-600' },
-                'AI WhatsApp Agent': { name: 'AI WhatsApp Agent', price: 21, description: 'Automation + AI-powered WhatsApp assistant.', icon: 'bot', color: 'from-purple-400 to-purple-600' },
-                'Pro Seller': { name: 'Pro Seller', price: 25, description: 'Starter + WhatsApp Automation for serious sellers.', icon: 'crown', color: 'from-yellow-400 to-orange-600' },
-                'Visionary': { name: 'Visionary', price: 50, description: 'Pro Seller + AI Agent for full power scaling.', icon: 'sparkles', color: 'from-indigo-400 via-purple-500 to-pink-600' },
-            };
-
             const normalizedKey = planKey.toLowerCase() === 'free' ? 'free' :
                 planKey.toLowerCase() === 'starter' ? 'Starter' :
                 planKey.toLowerCase() === 'whatsapp automation' || planKey.toLowerCase() === 'whatsapp' ? 'WhatsApp Automation' :
@@ -144,10 +111,24 @@ export function getStandardPlanKey(planKey: string): string {
  */
 export async function getAllActivePlanTemplates() {
     try {
-        const templates = await PlanTemplate.find({ isActive: true })
-            .sort({ displayOrder: 1, createdAt: 1 })
-            .lean();
-
+        const planKeys: PlanKey[] = ['free', 'Starter', 'WhatsApp Automation', 'AI WhatsApp Agent', 'Pro Seller', 'Visionary'];
+        const templates = planKeys.map((key, index) => {
+            const planData = defaultPlans[key];
+            return {
+                planKey: key.toLowerCase(),
+                name: planData.name,
+                description: planData.description,
+                defaultPrice: planData.price,
+                defaultDurationDays: 30,
+                icon: planData.icon,
+                color: planData.color,
+                isDefault: true,
+                isActive: true,
+                isCustom: false,
+                isSpecial: false,
+                displayOrder: index,
+            };
+        });
         return templates;
     } catch (error) {
         console.error('Error getting active plan templates:', error);

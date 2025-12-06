@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     keywords:
         'COD Morocco, WhatsApp automation, e-commerce Morocco, delivery integration, AI agent, COD platform, AI business tools, Yurafy',
 
-    icons: '/favi.png',
+    icons: '/yurafy.svg',
 
     openGraph: {
         type: 'website',

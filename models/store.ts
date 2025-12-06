@@ -13,6 +13,14 @@ export interface IStore extends Document {
         textColor?: string;
         surfaceColor?: string;
     };
+    themeStructure?: {
+        header?: boolean;
+        hero?: boolean;
+        about?: boolean;
+        trust?: boolean;
+        productGrid?: boolean;
+        footer?: boolean;
+    };
     hero: {
         title: string;
         subtitle: string;
@@ -46,6 +54,7 @@ export interface IStore extends Document {
         offerTimeEnd: Date;
         discount: number;
         description: string;
+        paused?: boolean;
     };
 }
 
@@ -91,6 +100,14 @@ const storeSchema = new Schema<IStore>(
             surfaceColor: { type: String, trim: true },
         },
 
+        themeStructure: {
+            header: { type: Boolean, default: true },
+            hero: { type: Boolean, default: true },
+            about: { type: Boolean, default: true },
+            trust: { type: Boolean, default: true },
+            productGrid: { type: Boolean, default: true },
+            footer: { type: Boolean, default: true },
+        },
 
         hero: {
         title: { type: String, required: true, trim: true },
@@ -142,6 +159,7 @@ const storeSchema = new Schema<IStore>(
             offerTimeEnd: { type: Date },
             discount: { type: Number, min: 0, max: 100 },
             description: { type: String, trim: true },
+            paused: { type: Boolean, default: false },
         },
     },
     { timestamps: true }

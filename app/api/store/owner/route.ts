@@ -19,6 +19,7 @@ function serializeStoreDoc(store: any) {
         brandName: store.brandName || '',
         domain: store.domain || '',
         description: store.description || '',
+        language: store.language || 'en',
         themeId: store.themeId || 1,
         theme: store.theme ? {
             primaryColor: store.theme.primaryColor,
@@ -58,6 +59,17 @@ function serializeStoreDoc(store: any) {
             label: link.label,
             href: link.href,
         })) : [],
+        categories: store.categories ? store.categories.map((cat: any) => ({
+            name: cat.name,
+            img: cat.img,
+        })) : [],
+        specialOffer: store.specialOffer ? {
+            productId: store.specialOffer.productId?.toString(),
+            offerTimeEnd: store.specialOffer.offerTimeEnd?.toISOString() || store.specialOffer.offerTimeEnd,
+            discount: store.specialOffer.discount,
+            description: store.specialOffer.description,
+            paused: store.specialOffer.paused || false,
+        } : undefined,
         createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
         updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),
     };

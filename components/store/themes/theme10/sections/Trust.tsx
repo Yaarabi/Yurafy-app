@@ -21,10 +21,6 @@ const toRgba = (hexColor: string, alpha = 1) => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const createLightGradient = (base: string, accent: string) => {
-    return `linear-gradient(145deg, ${toRgba(base, 0.18)} 0%, ${toRgba(accent, 0.12)} 60%, rgba(255,255,255,0.97) 100%)`;
-};
-
 const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
@@ -37,8 +33,8 @@ const Trust: React.FC = () => {
     if (!selectedStore) return null;
     
     const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
-    const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
     const surfaceColor = selectedStore.theme?.surfaceColor || primaryColor;
+    const surfaceGradient = surfaceColor
     const headingColor = '#0f172a';
     const copyColor = 'rgba(15, 23, 42, 0.72)';
     const rawLocale = params?.locale;
@@ -67,7 +63,7 @@ const Trust: React.FC = () => {
     ];
 
     const trustBackgroundStyle: CSSProperties = {
-        background: createLightGradient(surfaceColor, secondaryColor),
+        background: surfaceGradient,
         borderColor: toRgba(surfaceColor, 0.2),
     };
 

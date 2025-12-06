@@ -7,11 +7,12 @@ import {
     Users, Store, ShoppingCart, MessageSquare, TrendingUp, 
     Shield, UserCheck, XCircle, Clock, CheckCircle,
     AlertTriangle, Activity, BarChart3, Settings, Bot,
-    Building2, Upload, Package, BookOpen, Briefcase
+    Building2, Upload, BookOpen, Briefcase, Bell, Send
 } from "lucide-react";
 import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminPlanMonitoring from "@/components/admin/AdminPlanMonitoring";
-import AdminPlanManagement from "@/components/admin/AdminPlanManagement";
+import AdminNotificationsSender from "@/components/admin/AdminNotificationsSender";
+import AdminNotificationsArea from "@/components/admin/AdminNotificationsArea";
 import AdminSupportChat from "@/components/admin/AdminSupportChat";
 import AdminSupportAgent from "@/components/admin/AdminSupportAgent";
 import AdminStoresManagement from "@/components/admin/AdminStoresManagement";
@@ -30,6 +31,9 @@ interface OverviewData {
         orders: number;
         whatsappAccounts: number;
         supportMessages: number;
+        notifications: number;
+        newInquiries: number;
+        agentNotes: number;
     };
     recent: {
         users: any[];
@@ -41,7 +45,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'plan-templates' | 'resources' | 'support' | 'support-agent' | 'uploads' | 'guides' | 'services'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'notifications' | 'send-notifications' | 'resources' | 'support' | 'support-agent' | 'uploads' | 'guides' | 'services'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -159,16 +163,28 @@ export default function AdminPage() {
                             <span className="sm:hidden">Users</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('plan-templates')}
+                            onClick={() => setActiveTab('notifications')}
                             className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
-                                activeTab === 'plan-templates'
+                                activeTab === 'notifications'
                                     ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
                                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                         >
-                            <Package className="w-4 h-4 inline mr-1 sm:mr-2" />
-                            <span className="hidden sm:inline">Templates</span>
-                            <span className="sm:hidden">Plans</span>
+                            <Bell className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Notifications</span>
+                            <span className="sm:hidden">Notifs</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('send-notifications')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'send-notifications'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Send className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Send Messages</span>
+                            <span className="sm:hidden">Send</span>
                         </button>
                         <button
                             onClick={() => setActiveTab('resources')}
@@ -260,12 +276,13 @@ export default function AdminPage() {
                         className="space-y-6"
                     >
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6">
                             <StatCard title="Total Users" value={overview.counts.users} icon={Users} color="indigo" />
                             <StatCard title="Stores" value={overview.counts.stores} icon={Store} color="blue" />
                             <StatCard title="Orders" value={overview.counts.orders} icon={ShoppingCart} color="green" />
                             <StatCard title="WhatsApp Accounts" value={overview.counts.whatsappAccounts} icon={MessageSquare} color="purple" />
                             <StatCard title="Support Messages" value={overview.counts.supportMessages} icon={MessageSquare} color="yellow" />
+                            <StatCard title="Pending Notifications" value={overview.counts.notifications || 0} icon={Bell} color="red" />
                         </div>
 
                         {/* Recent Activity */}
@@ -341,12 +358,21 @@ export default function AdminPage() {
                     </motion.div>
                 )}
 
-                {activeTab === 'plan-templates' && (
+                {activeTab === 'notifications' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                     >
-                        <AdminPlanManagement />
+                        <AdminNotificationsArea />
+                    </motion.div>
+                )}
+
+                {activeTab === 'send-notifications' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminNotificationsSender />
                     </motion.div>
                 )}
 

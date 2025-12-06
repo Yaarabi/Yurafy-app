@@ -2,6 +2,8 @@
 
 import EditableField from '@/components/dashboard/setting/SettingsField';
 import LogoUploader from '@/components/dashboard/setting/LogoPreview';
+import { useRouter } from 'next/navigation';
+import { Palette } from 'lucide-react';
 
 interface StoreSettingsProps {
     store: any;
@@ -11,8 +13,29 @@ interface StoreSettingsProps {
 }
 
 export default function StoreSettings({ store, onUpdate, onUploadLogo, locale }: StoreSettingsProps) {
+    const router = useRouter();
+    const localeSlug = Array.isArray(locale) ? locale[0] : (locale || 'en');
+
+    const openThemePage = () => {
+        router.push(`/${localeSlug}/dashboard/settings/theme`);
+    };
+
     return (
         <div className="space-y-3 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-indigo-50 via-blue-50 to-white border border-indigo-100 rounded-xl">
+                <div>
+                    <p className="text-sm font-semibold text-indigo-800">Theme & Colors</p>
+                    <p className="text-xs text-indigo-700/80">Preview your live store and adjust theme colors with real data.</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={openThemePage}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 active:scale-95 transition-transform duration-150"
+                >
+                    <Palette className="w-4 h-4" />
+                    Preview theme
+                </button>
+            </div>
             <LogoUploader logoUrl={store.logoUrl || ''} onUpload={onUploadLogo} />
             <EditableField label="Brand Name" value={store.brandName || ''} onSave={(val) => onUpdate('brandName', val)} />
             <EditableField label="Domain" value={store.domain || ''} onSave={(val) => onUpdate('domain', val)} />

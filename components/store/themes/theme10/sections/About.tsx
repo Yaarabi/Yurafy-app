@@ -18,10 +18,6 @@ const toRgba = (hexColor: string, alpha = 1) => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const createLightGradient = (base: string, accent: string) => {
-    return `linear-gradient(140deg, ${toRgba(base, 0.18)} 0%, ${toRgba(accent, 0.12)} 55%, rgba(255,255,255,0.98) 100%)`;
-};
-
 const About: React.FC = () => {
     const { selectedStore } = useStore();
 
@@ -31,6 +27,7 @@ const About: React.FC = () => {
     const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
     const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
     const surfaceColor = selectedStore.theme?.surfaceColor || primaryColor;
+    const surfaceGradient = surfaceColor
     const headingColor = '#0f172a';
     const copyColor = 'rgba(15, 23, 42, 0.72)';
     
@@ -42,7 +39,7 @@ const About: React.FC = () => {
     if (!aboutData.description && !aboutData.title) return null;
 
     const aboutBackgroundStyle: CSSProperties = {
-        background: createLightGradient(surfaceColor, secondaryColor),
+        background: surfaceGradient,
     };
 
     const cardBackgroundStyle: CSSProperties = {

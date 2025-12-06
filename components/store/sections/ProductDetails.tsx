@@ -9,11 +9,12 @@ import { getStoreTranslation } from '../../store/utils/translations';
 const ProductDetails: React.FC = () => {
     const { selectedProduct, productOptions, setProductOptions, selectedStore } = useStore();
     const { addToCart, openCart } = useCart();
-    const [mainImage, setMainImage] = useState(selectedProduct?.mainImage || '');
+    const initialImage = selectedProduct?.mainImage || selectedProduct?.images?.[0] || null;
+    const [mainImage, setMainImage] = useState<string | null>(initialImage);
 
     useEffect(() => {
         if (selectedProduct) {
-            setMainImage(selectedProduct.mainImage);
+            setMainImage(selectedProduct.mainImage || selectedProduct.images?.[0] || null);
         }
     }, [selectedProduct]);
 
@@ -49,19 +50,25 @@ const ProductDetails: React.FC = () => {
             {/* Image Gallery */}
             <div>
                 <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-4 relative">
-                    <img src={mainImage} alt={selectedProduct.name} className="w-full h-full object-cover object-center" />
+                    {mainImage ? (
+                        <img src={mainImage} alt={selectedProduct.name} className="w-full h-full object-cover object-center" />
+                    ) : (
+                        <div className="w-full h-full bg-gray-200" aria-label={`${selectedProduct.name} placeholder`} />
+                    )}
                 </div>
                 <div className="flex space-x-2">
-                    {[selectedProduct.mainImage, ...(selectedProduct.images || [])].map((img, idx) => (
-                        <button 
-                            key={idx} 
-                            onClick={() => setMainImage(img)}
-                            className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
-                            title={`${selectedProduct.name} thumbnail ${idx + 1}`}
-                        >
-                            <img src={img} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
-                        </button>
-                    ))}
+                    {[selectedProduct.mainImage, ...(selectedProduct.images || [])]
+                        .filter(Boolean)
+                        .map((img, idx) => (
+                            <button 
+                                key={idx} 
+                                onClick={() => setMainImage(img as string)}
+                                className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
+                                title={`${selectedProduct.name} thumbnail ${idx + 1}`}
+                            >
+                                <img src={img as string} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
+                            </button>
+                        ))}
                 </div>
             </div>
 

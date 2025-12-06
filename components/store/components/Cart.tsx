@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useStore } from '../hooks/useStore';
@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
+import { getStoreTranslation } from '../utils/translations';
 
 const Cart: React.FC = () => {
     const { 
@@ -37,6 +38,7 @@ const Cart: React.FC = () => {
     const primaryColor = selectedStore?.theme?.primaryColor || '#0891b2';
     const storeLanguage = (selectedStore?.language || 'en').split('-')[0]?.toLowerCase() || 'en';
     const isRTL = storeLanguage === 'ar';
+    const t = useCallback((key: string) => getStoreTranslation(key, storeLanguage), [storeLanguage]);
 
     // Initialize itemVariants when items change
     useEffect(() => {
@@ -61,7 +63,7 @@ const Cart: React.FC = () => {
 
     const handleCheckout = () => {
         if (items.length === 0) {
-            toast.error('Your cart is empty');
+            toast.error(t('cartEmpty'));
             return;
         }
         setShowCheckout(true);
@@ -74,13 +76,13 @@ const Cart: React.FC = () => {
         // Validate phone number - must be more than just country code
         const phoneDigits = checkoutForm.phone.replace(/\D/g, ''); // Remove all non-digits
         if (!checkoutForm.phone || checkoutForm.phone.trim() === '' || phoneDigits.length < 10) {
-            toast.error('Phone number is required. Please enter a complete phone number (not just country code).');
+            toast.error(t('phoneRequired'));
             setIsSubmitting(false);
             return;
         }
 
         if (!selectedStore?.owner) {
-            toast.error('Store information is missing');
+            toast.error(t('storeMissing'));
             setIsSubmitting(false);
             return;
         }
@@ -118,7 +120,7 @@ const Cart: React.FC = () => {
             const data = await response.json();
 
             if (response.ok) {
-                toast.success('Order placed successfully! ✅');
+                toast.success(t('orderSuccess'));
                 clearCart();
                 setShowCheckout(false);
                 setCheckoutForm({
@@ -129,11 +131,11 @@ const Cart: React.FC = () => {
                 });
                 setItemVariants({});
             } else {
-                toast.error(data.error || 'Failed to place order');
+                toast.error(data.error || t('orderFailure'));
             }
         } catch (error) {
             console.error('Order submission error:', error);
-            toast.error('Network error. Please try again.');
+            toast.error(t('networkError'));
         } finally {
             setIsSubmitting(false);
         }
@@ -165,7 +167,7 @@ const Cart: React.FC = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: `${primaryColor}20` }}>
                             <h2 className={`text-xl font-bold ${isRTL ? 'text-right' : ''}`} style={{ color: primaryColor }}>
-                            Shopping Cart ({getTotalItems()})
+                            {t('shoppingCart')} ({getTotalItems()})
                         </h2>
                         <button
                             onClick={closeCart}
@@ -187,7 +189,7 @@ const Cart: React.FC = () => {
                                         <svg className="w-24 h-24 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                         </svg>
-                                        <p className="text-lg">Your cart is empty</p>
+                                        <p className="text-lg">{t('cartEmpty')}</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-4">
@@ -205,10 +207,10 @@ const Cart: React.FC = () => {
                                                 <div className="flex-1">
                                                     <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">{item.product.name}</h3>
                                                     {item.color && (
-                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>Color: {item.color}</p>
+                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>{t('color')}: {item.color}</p>
                                                     )}
                                                     {item.size && (
-                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>Size: {item.size}</p>
+                                                        <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>{t('size')}: {item.size}</p>
                                                     )}
                                                     <p className="text-sm font-bold mt-1" style={{ color: primaryColor }}>
                                                         ${item.price.toFixed(2)}
@@ -254,23 +256,23 @@ const Cart: React.FC = () => {
                                 <div className="border-t p-4 space-y-4" style={{ borderColor: `${primaryColor}20` }}>
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className={`${isRTL ? 'text-right' : ''}`}>Subtotal</span>
+                                            <span className={`${isRTL ? 'text-right' : ''}`}>{t('subtotal')}</span>
                                             <span className="font-semibold">${getSubtotal().toFixed(2)}</span>
                                         </div>
                                         {getShippingEstimate() > 0 && (
                                             <div className="flex justify-between text-sm">
-                                                <span className={`${isRTL ? 'text-right' : ''}`}>Shipping</span>
+                                                <span className={`${isRTL ? 'text-right' : ''}`}>{t('shipping')}</span>
                                                 <span className="font-semibold">${getShippingEstimate().toFixed(2)}</span>
                                             </div>
                                         )}
                                         {getShippingEstimate() === 0 && (
                                             <div className="flex justify-between text-sm text-green-600">
-                                                <span className={`${isRTL ? 'text-right' : ''}`}>Shipping</span>
-                                                <span className="font-semibold">FREE</span>
+                                                <span className={`${isRTL ? 'text-right' : ''}`}>{t('shipping')}</span>
+                                                <span className="font-semibold">{t('free')}</span>
                                             </div>
                                         )}
                                         <div className="flex justify-between text-lg font-bold pt-2 border-t" style={{ borderColor: `${primaryColor}20` }}>
-                                            <span className={`${isRTL ? 'text-right' : ''}`}>Total</span>
+                                            <span className={`${isRTL ? 'text-right' : ''}`}>{t('total')}</span>
                                             <span style={{ color: primaryColor }}>${getTotal().toFixed(2)}</span>
                                         </div>
                                     </div>
@@ -279,10 +281,10 @@ const Cart: React.FC = () => {
                                         className="w-full py-3 rounded-lg font-bold text-white transition-transform hover:scale-105"
                                         style={{ backgroundColor: primaryColor }}
                                     >
-                                        Proceed to Checkout
+                                        {t('proceedToCheckout')}
                                     </button>
                                     <p className="text-xs text-center text-gray-500">
-                                        Payment: Cash on Delivery (COD)
+                                        {`${t('payment')}: ${t('cashOnDelivery')} (COD)`}
                                     </p>
                                 </div>
                             )}
@@ -297,17 +299,17 @@ const Cart: React.FC = () => {
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
-                                Back to Cart
+                                {t('backToCart')}
                             </button>
 
                             <h3 className={`text-lg font-bold mb-4 ${isRTL ? 'text-right' : ''}`} style={{ color: primaryColor }}>
-                                Customer Details
+                                {t('customerDetails')}
                             </h3>
 
                             <form onSubmit={handleSubmitOrder} className="space-y-4">
                                 <div>
                                     <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                        Full Name *
+                                        {`${t('fullName')} *`}
                                     </label>
                                     <input
                                         type="text"
@@ -316,13 +318,13 @@ const Cart: React.FC = () => {
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, fullName: e.target.value })}
                                         className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
-                                        placeholder="Enter your full name"
+                                        placeholder={t('fullNamePlaceholder')}
                                     />
                                 </div>
 
                                 <div>
                                     <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                        Phone Number *
+                                        {`${t('phoneNumber')} *`}
                                     </label>
                                     <PhoneInput
                                         defaultCountry="ma"
@@ -336,7 +338,7 @@ const Cart: React.FC = () => {
 
                                 <div>
                                     <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                        Address *
+                                        {`${t('address')} *`}
                                     </label>
                                     <textarea
                                         required
@@ -345,13 +347,13 @@ const Cart: React.FC = () => {
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
                                         className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
-                                        placeholder="Enter your delivery address"
+                                        placeholder={t('addressPlaceholder')}
                                     />
                                 </div>
 
                                 <div>
                                     <label className={`block text-sm font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                        City
+                                        {t('city')}
                                     </label>
                                     <input
                                         type="text"
@@ -359,14 +361,14 @@ const Cart: React.FC = () => {
                                         onChange={(e) => setCheckoutForm({ ...checkoutForm, city: e.target.value })}
                                         className={`w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:outline-none placeholder-gray-400 ${isRTL ? 'text-right' : ''}`}
                                         style={{ outlineColor: primaryColor }}
-                                        placeholder="Enter your city (optional)"
+                                        placeholder={t('cityOptionalPlaceholder')}
                                     />
                                 </div>
 
                                 {/* Product Variants Selection */}
                                 {items.length > 0 && (
                                     <div className="border-t pt-4 mt-4" style={{ borderColor: `${primaryColor}20` }}>
-                                        <h4 className={`font-semibold mb-3 ${isRTL ? 'text-right' : ''}`}>Product Options</h4>
+                                        <h4 className={`font-semibold mb-3 ${isRTL ? 'text-right' : ''}`}>{t('productOptions')}</h4>
                                         <div className="space-y-4">
                                             {items.map((item) => {
                                                 const itemKey = `${item.productId}-${item.color || 'no-color'}-${item.size || 'no-size'}`;
@@ -380,7 +382,7 @@ const Cart: React.FC = () => {
                                                         {item.product.colors && item.product.colors.length > 0 && (
                                                             <div className="mb-2">
                                                                 <label className={`block text-xs font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                                                    Color
+                                                                    {t('color')}
                                                                 </label>
                                                                 <select
                                                                     value={variant.color || ''}
@@ -391,7 +393,7 @@ const Cart: React.FC = () => {
                                                                     className={`w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                                                                     style={{ outlineColor: primaryColor }}
                                                                 >
-                                                                    <option value="">Select a color</option>
+                                                                    <option value="">{t('selectColor')}</option>
                                                                     {item.product.colors.map((color: string) => (
                                                                         <option key={color} value={color}>{color}</option>
                                                                     ))}
@@ -403,7 +405,7 @@ const Cart: React.FC = () => {
                                                         {item.product.sizes && item.product.sizes.length > 0 && (
                                                             <div>
                                                                 <label className={`block text-xs font-medium text-gray-700 mb-1 ${isRTL ? 'text-right' : ''}`}>
-                                                                    Size
+                                                                    {t('size')}
                                                                 </label>
                                                                 <select
                                                                     value={variant.size || ''}
@@ -414,7 +416,7 @@ const Cart: React.FC = () => {
                                                                     className={`w-full px-3 py-2 text-sm border rounded-md bg-white text-gray-900 focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
                                                                     style={{ outlineColor: primaryColor }}
                                                                 >
-                                                                    <option value="">Select a size</option>
+                                                                    <option value="">{t('selectSize')}</option>
                                                                     {item.product.sizes.map((size: string) => (
                                                                         <option key={size} value={size}>{size}</option>
                                                                     ))}
@@ -430,18 +432,18 @@ const Cart: React.FC = () => {
 
                                 {/* Order Summary */}
                                 <div className="border-t pt-4 mt-4" style={{ borderColor: `${primaryColor}20` }}>
-                                    <h4 className="font-semibold mb-2">Order Summary</h4>
+                                    <h4 className="font-semibold mb-2">{t('orderSummary')}</h4>
                                     <div className="space-y-1 text-sm">
                                         <div className="flex justify-between">
-                                            <span>Items ({getTotalItems()})</span>
+                                            <span>{`${t('items')} (${getTotalItems()})`}</span>
                                             <span>${getSubtotal().toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span>Shipping</span>
-                                            <span>{getShippingEstimate() > 0 ? `$${getShippingEstimate().toFixed(2)}` : 'FREE'}</span>
+                                            <span>{t('shipping')}</span>
+                                            <span>{getShippingEstimate() > 0 ? `$${getShippingEstimate().toFixed(2)}` : t('free')}</span>
                                         </div>
                                         <div className="flex justify-between font-bold pt-2 border-t" style={{ borderColor: `${primaryColor}20` }}>
-                                            <span>Total</span>
+                                            <span>{t('total')}</span>
                                             <span style={{ color: primaryColor }}>${getTotal().toFixed(2)}</span>
                                         </div>
                                     </div>
@@ -453,7 +455,7 @@ const Cart: React.FC = () => {
                                     className="w-full py-3 rounded-lg font-bold text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{ backgroundColor: primaryColor }}
                                 >
-                                    {isSubmitting ? 'Placing Order...' : 'Confirm Order (COD)'}
+                                    {isSubmitting ? t('placingOrder') : t('placeOrder')}
                                 </button>
                             </form>
                         </div>

@@ -29,10 +29,6 @@ const toRgba = (hexColor: string, alpha = 1) => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const createLightGradient = (base: string, accent: string) => {
-    return `linear-gradient(140deg, ${toRgba(base, 0.18)} 0%, ${toRgba(accent, 0.12)} 55%, rgba(255,255,255,0.96) 100%)`;
-};
-
 const ProductGrid: React.FC = () => {
     const { selectedStore, products, disableNavigation } = useStore();
     const { addToCart, openCart } = useCart();
@@ -42,8 +38,8 @@ const ProductGrid: React.FC = () => {
     if (!selectedStore) return null;
 
     const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
-    const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
     const surfaceColor = selectedStore.theme?.surfaceColor || primaryColor;
+    const surfaceGradient = surfaceColor
     const headingColor = '#0f172a';
     const copyColor = 'rgba(15, 23, 42, 0.72)';
     const storeLanguage = selectedStore.language || 'en';
@@ -77,7 +73,7 @@ const ProductGrid: React.FC = () => {
     const displayedProducts = products.slice(0, 4);
 
     const productGridBackgroundStyle: CSSProperties = {
-        background: createLightGradient(surfaceColor, secondaryColor),
+        background: surfaceGradient,
     };
 
     return (
@@ -172,14 +168,14 @@ const ProductGrid: React.FC = () => {
                                                 className="flex-1 rounded-full border px-4 py-3 text-xs font-semibold uppercase tracking-[0.25em] transition-colors duration-300"
                                                 style={{ color: primaryColor, borderColor: toRgba(primaryColor, 0.25), backgroundColor: toRgba(primaryColor, 0.08) }}
                                             >
-                                                View
+                                                {getStoreTranslation('view', storeLanguage)}
                                             </button>
                                             <button
                                                 onClick={(event) => handleAddToCart(event, product)}
                                                 className="flex-1 rounded-full border px-4 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-white transition-colors duration-300"
                                                 style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                             >
-                                                Add to Cart
+                                                {getStoreTranslation('addToCart', storeLanguage)}
                                             </button>
                                         </div>
                                     </div>

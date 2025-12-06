@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { headers } from 'next/headers';
+import Script from 'next/script';
 
 async function getMessages(locale: string) {
     try {
@@ -38,6 +39,21 @@ export default async function Layout({
         ? `https://${subdomainFromHeader}.${domainPart}`
         : `https://${domainPart}/${locale}/${domain}`;
 
+    const currentYear = new Date().getFullYear();
+
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'Store',
+        name: domain,
+        url: storeUrl,
+        description: `Shop ${domain} on Yurafy – AI-powered COD & WhatsApp automation.`,
+        image: `${storeUrl}/logo.png`,
+        sameAs: [
+            `https://facebook.com/${domain}`,
+            `https://instagram.com/${domain}`
+        ]
+    };
+
     return (
         <html lang={locale}>
         <head>
@@ -45,33 +61,17 @@ export default async function Layout({
             <link rel="canonical" href={storeUrl} />
 
             {/* Structured Data for Store */}
-            <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                '@context': 'https://schema.org',
-                '@type': 'Store',
-                name: domain,
-                url: storeUrl,
-                description: `Shop ${domain} on Yurafy – AI-powered COD & WhatsApp automation.`,
-                image: `${storeUrl}/logo.png`,
-                sameAs: [
-                    `https://facebook.com/${domain}`,
-                    `https://instagram.com/${domain}`
-                ]
-                })
-            }}
+            <Script
+                id="store-ld-json"
+                type="application/ld+json"
+                strategy="beforeInteractive"
+                suppressHydrationWarning
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
         </head>
         <body>
             <NextIntlClientProvider locale={locale} messages={messages}>
-            <header>
-                {/* Store branding/navigation goes here */}
-            </header>
             <main className="min-h-screen">{children}</main>
-            <footer>
-                <p>© {new Date().getFullYear()} {domain} on Yurafy</p>
-            </footer>
             </NextIntlClientProvider>
         </body>
         </html>

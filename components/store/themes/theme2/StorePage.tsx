@@ -19,7 +19,7 @@ const StorePage: React.FC = () => {
         hero: Boolean(selectedStore.hero),
         trust: true,
         productGrid: true,
-        about: Boolean(selectedStore.whoWeAre),
+        about: Boolean((selectedStore as any).about || (selectedStore as any).whoWeAre),
         footer: true,
     };
 

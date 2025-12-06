@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Search, Calendar, Percent, FileText, AlertCircle, Pause } from 'lucide-react';
+import { X, Search, Calendar, Percent, FileText, AlertCircle, Pause, Trash2, Play } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { IProduct } from '@/models/products';
 import toast from 'react-hot-toast';
@@ -20,6 +20,7 @@ interface StoreData {
         offerTimeEnd: string;
         discount: number;
         description: string;
+        paused?: boolean;
     };
 }
 
@@ -28,6 +29,7 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
     const [products, setProducts] = useState<IProduct[]>([]);
     const [store, setStore] = useState<StoreData | null>(null);
     const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProductId, setSelectedProductId] = useState<string>('');
     const [discount, setDiscount] = useState<number>(0);
@@ -38,18 +40,30 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
 
     useEffect(() => {
         if (isOpen && session?.user?.id) {
-            fetchStore();
-            fetchProducts();
+            setFetching(true);
+            Promise.all([fetchStore(), fetchProducts()]).finally(() => {
+                setFetching(false);
+            });
         }
     }, [isOpen, session]);
 
     useEffect(() => {
         if (store?.specialOffer) {
-            setSelectedProductId(store.specialOffer.productId);
-            setDiscount(store.specialOffer.discount);
-            setDescription(store.specialOffer.description);
-            const endDate = new Date(store.specialOffer.offerTimeEnd);
-            setOfferTimeEnd(endDate.toISOString().slice(0, 16));
+            setSelectedProductId(store.specialOffer.productId || '');
+            setDiscount(store.specialOffer.discount || 0);
+            setDescription(store.specialOffer.description || '');
+            
+            // Validate and set offer end time
+            if (store.specialOffer.offerTimeEnd) {
+                const endDate = new Date(store.specialOffer.offerTimeEnd);
+                // Check if date is valid
+                if (!isNaN(endDate.getTime())) {
+                    setOfferTimeEnd(endDate.toISOString().slice(0, 16));
+                } else {
+                    console.warn('Invalid offer end date:', store.specialOffer.offerTimeEnd);
+                    setOfferTimeEnd('');
+                }
+            }
         }
     }, [store]);
 
@@ -58,9 +72,11 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
             const res = await fetch('/api/store/owner');
             if (!res.ok) throw new Error('Failed to fetch store');
             const data = await res.json();
+            console.log('Fetched store data:', data);
+            console.log('Special offer:', data.specialOffer);
             setStore(data);
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching store:', err);
             toast.error('Failed to load store data');
         }
     };
@@ -132,30 +148,55 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
     const handleRemove = async () => {
         setLoading(true);
         try {
+            let updatePayload;
+            
+            if (deleteAction === 'pause') {
+                // Pause: Keep offer but set paused flag
+                updatePayload = {
+                    specialOffer: {
+                        ...store?.specialOffer,
+                        paused: true,
+                    },
+                };
+            } else {
+                // Reset or Remove: Clear the special offer
+                updatePayload = {
+                    specialOffer: null,
+                };
+            }
+
             const res = await fetch('/api/store/owner', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    updates: {
-                        specialOffer: null,
-                    },
+                    updates: updatePayload,
                 }),
             });
 
-            if (!res.ok) throw new Error('Failed to remove special offer');
+            if (!res.ok) throw new Error(`Failed to ${deleteAction} special offer`);
 
             toast.success(getSuccessMessage());
-            setSelectedProductId('');
-            setDiscount(0);
-            setDescription('');
-            setOfferTimeEnd('');
+            
+            if (deleteAction !== 'pause') {
+                setSelectedProductId('');
+                setDiscount(0);
+                setDescription('');
+                setOfferTimeEnd('');
+            }
+            
             setShowDeleteConfirm(false);
             setDeleteAction(null);
             onSuccess?.();
-            onClose();
+            
+            if (deleteAction === 'pause') {
+                // Refresh data to show paused state
+                await fetchStore();
+            } else {
+                onClose();
+            }
         } catch (err: any) {
             console.error(err);
-            toast.error(err.message || 'Failed to remove special offer');
+            toast.error(err.message || `Failed to ${deleteAction} special offer`);
         } finally {
             setLoading(false);
         }
@@ -165,8 +206,6 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
         switch (deleteAction) {
             case 'pause':
                 return 'Special offer paused successfully';
-            case 'reset':
-                return 'Special offer reset successfully';
             case 'remove':
                 return 'Special offer removed successfully';
             default:
@@ -178,12 +217,39 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
         switch (deleteAction) {
             case 'pause':
                 return 'Pausing will temporarily disable the special offer. You can resume it later with a new end time.';
-            case 'reset':
-                return 'Resetting will clear all special offer settings and remove it from your store.';
             case 'remove':
                 return 'Removing will permanently delete the special offer from your store.';
             default:
                 return 'Are you sure you want to proceed?';
+        }
+    };
+
+    const handleResume = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/store/owner', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    updates: {
+                        specialOffer: {
+                            ...store?.specialOffer,
+                            paused: false,
+                        },
+                    },
+                }),
+            });
+
+            if (!res.ok) throw new Error('Failed to resume special offer');
+
+            toast.success('Special offer resumed successfully');
+            await fetchStore();
+            onSuccess?.();
+        } catch (err: any) {
+            console.error(err);
+            toast.error(err.message || 'Failed to resume special offer');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -205,28 +271,94 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
     if (!isOpen) return null;
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
-                >
+        <>
+            <AnimatePresence mode="wait">
+                {isOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <motion.div
+                            key="special-offer-modal"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+                        >
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                            Special Offer
-                        </h2>
-                        <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                        >
-                            <X className="w-5 h-5 text-gray-500" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                                Special Offer
+                            </h2>
+                            {store?.specialOffer && (
+                                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                    store.specialOffer.paused
+                                        ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                                        : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                                }`}>
+                                    {store.specialOffer.paused ? 'Paused' : 'Active'}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {store?.specialOffer && store.specialOffer.paused && (
+                                <button
+                                    type="button"
+                                    onClick={handleResume}
+                                    disabled={loading}
+                                    className="flex items-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    title="Resume special offer"
+                                >
+                                    <Play className="w-4 h-4" />
+                                    <span className="text-sm">Resume</span>
+                                </button>
+                            )}
+                            {store?.specialOffer && (
+                                <button
+                                    type="button"
+                                    onClick={() => openDeleteConfirm('remove')}
+                                    disabled={loading}
+                                    className="flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    title="Remove special offer"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    <span className="text-sm">Remove</span>
+                                </button>
+                            )}
+                            <button
+                                onClick={onClose}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                            >
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Content */}
+                    {fetching ? (
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                            {/* Loading Skeleton */}
+                            <div className="space-y-6 animate-pulse">
+                                <div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
+                                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                </div>
+                                <div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
+                                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                </div>
+                                <div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-28 mb-2"></div>
+                                    <div className="h-24 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                </div>
+                                <div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-36 mb-2"></div>
+                                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                </div>
+                            </div>
+                            <div className="flex justify-center items-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue"></div>
+                            </div>
+                        </div>
+                    ) : (
                     <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
                         {/* Product Selection */}
                         <div>
@@ -307,84 +439,74 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
                         </div>
 
                         {/* Actions */}
-                        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                             {store?.specialOffer && (
-                                <>
+                                <div className="flex gap-2 pb-3 sm:pb-0 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-gray-700 sm:pr-3">
                                     <button
                                         type="button"
                                         onClick={() => openDeleteConfirm('pause')}
                                         disabled={loading}
-                                        className="flex items-center justify-center gap-2 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                                         title="Pause the offer temporarily"
                                     >
                                         <Pause className="w-4 h-4" />
-                                        <span className="hidden sm:inline">Pause</span>
+                                        <span>Pause</span>
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => openDeleteConfirm('reset')}
-                                        disabled={loading}
-                                        className="flex items-center justify-center gap-2 px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                        title="Reset the offer"
-                                    >
-                                        <X className="w-4 h-4" />
-                                        <span className="hidden sm:inline">Reset</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => openDeleteConfirm('remove')}
-                                        disabled={loading}
-                                        className="flex items-center justify-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                        title="Remove the offer permanently"
-                                    >
-                                        <X className="w-4 h-4" />
-                                        <span className="hidden sm:inline">Remove</span>
-                                    </button>
-                                </>
+                                </div>
                             )}
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                disabled={loading}
-                                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="flex-1 px-4 py-2 bg-brand-blue hover:bg-brand-blue/90 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading ? 'Saving...' : 'Save Offer'}
-                            </button>
+                            <div className="flex gap-3 flex-1">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    disabled={loading}
+                                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1 px-4 py-2 bg-brand-blue hover:bg-brand-blue/90 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {loading ? 'Saving...' : store?.specialOffer ? 'Update Offer' : 'Save Offer'}
+                                </button>
+                            </div>
                         </div>
                     </form>
+                    )}
                 </motion.div>
             </div>
+                )}
+            </AnimatePresence>
 
             {/* Confirmation Dialog */}
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {showDeleteConfirm && (
                     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                         <motion.div
+                            key="delete-confirm-modal"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden"
+                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
                         >
                             <div className="p-6">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                                        <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                                    <div className={`p-2 rounded-lg ${
+                                        deleteAction === 'pause'
+                                            ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                                            : 'bg-red-100 dark:bg-red-900/30'
+                                    }`}>
+                                        {deleteAction === 'pause' && <Pause className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />}
+                                        {deleteAction === 'remove' && <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />}
                                     </div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                                         {deleteAction === 'pause' && 'Pause Special Offer?'}
-                                        {deleteAction === 'reset' && 'Reset Special Offer?'}
                                         {deleteAction === 'remove' && 'Remove Special Offer?'}
                                     </h3>
                                 </div>
 
-                                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                                <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm leading-relaxed">
                                     {getDeleteDescription()}
                                 </p>
 
@@ -402,9 +524,7 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
                                         className={`flex-1 px-4 py-2 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                                             deleteAction === 'pause'
                                                 ? 'bg-yellow-500 hover:bg-yellow-600'
-                                                : deleteAction === 'reset'
-                                                    ? 'bg-orange-500 hover:bg-orange-600'
-                                                    : 'bg-red-500 hover:bg-red-600'
+                                                : 'bg-red-500 hover:bg-red-600'
                                         }`}
                                     >
                                         {loading ? 'Processing...' : 'Confirm'}
@@ -415,6 +535,6 @@ export default function SpecialOfferModal({ isOpen, onClose, onSuccess }: Specia
                     </div>
                 )}
             </AnimatePresence>
-        </AnimatePresence>
+        </>
     );
 }

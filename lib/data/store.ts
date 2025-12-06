@@ -69,6 +69,7 @@ export interface SerializedStore {
         offerTimeEnd: string;
         discount: number;
         description: string;
+        paused?: boolean;
     };
 }
 
@@ -138,6 +139,7 @@ export function serializeStore(store: any): SerializedStore {
             offerTimeEnd: store.specialOffer.offerTimeEnd?.toISOString() || '',
             discount: store.specialOffer.discount || 0,
             description: store.specialOffer.description || '',
+            paused: store.specialOffer.paused || false,
         } : undefined,
         createdAt: store.createdAt?.toISOString() || new Date().toISOString(),
         updatedAt: store.updatedAt?.toISOString() || new Date().toISOString(),

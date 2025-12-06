@@ -33,9 +33,11 @@ export default function CategoriesManagementModal({ isOpen, onClose, onSuccess }
             const res = await fetch('/api/store/owner');
             if (!res.ok) throw new Error('Failed to fetch store');
             const data = await res.json();
+            console.log('Fetched store data:', data);
+            console.log('Categories:', data.categories);
             setCategories(data.categories || []);
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching categories:', err);
             toast.error('Failed to load categories');
         }
     };

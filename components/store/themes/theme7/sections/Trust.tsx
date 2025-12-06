@@ -17,7 +17,7 @@ const Trust: React.FC = () => {
     
     const primaryColor = selectedStore.theme?.primaryColor || '#f97316';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#fedcc5';
-    const surfaceGradient = `linear-gradient(160deg, ${surfaceColor} 0%, #ffffff 65%)`;
+    const surfaceGradient = surfaceColor
     const storeLanguage = selectedStore.language || 'en';
 
     const features = [

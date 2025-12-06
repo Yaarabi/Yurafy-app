@@ -23,8 +23,8 @@ const ProductGrid: React.FC = () => {
     if (!selectedStore) return null;
     const primaryColor = selectedStore.theme?.primaryColor || '#ca8a04';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#f8fafc';
-    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
-    const storeLanguage = selectedStore.language || 'en';
+    const surfaceGradient = surfaceColor
+    const storeLanguage = selectedStore.language?.split('-')[0]?.toLowerCase() || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
         e.stopPropagation();
@@ -122,7 +122,6 @@ const ProductGrid: React.FC = () => {
                                 whileHover={{ y: -8 }}
                                 className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
                             >
-                                {/* Image Section */}
                                 <div className="relative overflow-hidden aspect-square">
                                     <motion.img
                                         src={product.mainImage}
@@ -131,8 +130,7 @@ const ProductGrid: React.FC = () => {
                                         whileHover={{ scale: 1.05 }}
                                         transition={{ duration: 0.4 }}
                                     />
-                                    
-                                    {/* Hover overlay with actions */}
+
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                                         <motion.button
                                             whileHover={{ scale: 1.1 }}
@@ -140,7 +138,7 @@ const ProductGrid: React.FC = () => {
                                             onClick={(e) => handleViewProduct(e, product)}
                                             disabled={disableNavigation}
                                             className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
-                                            title="View Details"
+                                            title={getStoreTranslation('view', storeLanguage)}
                                         >
                                             <Eye className="w-5 h-5" style={{ color: primaryColor }} />
                                         </motion.button>
@@ -150,32 +148,49 @@ const ProductGrid: React.FC = () => {
                                             onClick={(e) => handleAddToCart(e, product)}
                                             className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
                                             style={{ backgroundColor: primaryColor }}
-                                            title="Add to Cart"
+                                            title={getStoreTranslation('addToCart', storeLanguage)}
                                         >
                                             <ShoppingCart className="w-5 h-5 text-white" />
                                         </motion.button>
                                     </div>
-                                    
-                                    {/* Price badge */}
-                                    <div 
-                                        className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-sm font-bold text-white shadow-lg"
-                                        style={{ backgroundColor: primaryColor }}
-                                    >
-                                        ${product.price?.toFixed(2) ?? "0.00"}
-                                    </div>
                                 </div>
-                                
-                                {/* Content Section */}
+
                                 <div className="p-5 flex-grow flex flex-col">
                                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-opacity-80 transition-all">
                                         {product.name}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed flex-grow">
+                                    <p className="text-sm text-gray-600 flex-grow line-clamp-2">
                                         {product.description}
                                     </p>
-                                    
-                                    {/* Mobile buttons */}
-                                    <div className="flex gap-2 sm:hidden">
+
+                                    <div className="mt-4 flex items-center justify-between">
+                                        <div className="text-lg font-bold text-gray-900">
+                                            ${product.price.toFixed(2)}
+                                        </div>
+                                        <div className="hidden sm:flex gap-2">
+                                            <button
+                                                onClick={(e) => handleViewProduct(e, product)}
+                                                disabled={disableNavigation}
+                                                className="px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                style={{
+                                                    borderColor: primaryColor,
+                                                    color: primaryColor,
+                                                }}
+                                            >
+                                                {getStoreTranslation('view', storeLanguage)}
+                                            </button>
+                                            <button
+                                                onClick={(e) => handleAddToCart(e, product)}
+                                                className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all flex items-center justify-center gap-2"
+                                                style={{ backgroundColor: primaryColor }}
+                                            >
+                                                <ShoppingCart className="w-4 h-4" />
+                                                {getStoreTranslation('addToCart', storeLanguage)}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2 sm:hidden mt-4">
                                         <button
                                             onClick={(e) => handleViewProduct(e, product)}
                                             disabled={disableNavigation}
@@ -185,7 +200,7 @@ const ProductGrid: React.FC = () => {
                                                 color: primaryColor,
                                             }}
                                         >
-                                            {getStoreTranslation("view", storeLanguage) || "View"}
+                                            {getStoreTranslation('view', storeLanguage) || 'View'}
                                         </button>
                                         <button
                                             onClick={(e) => handleAddToCart(e, product)}
@@ -193,7 +208,7 @@ const ProductGrid: React.FC = () => {
                                             style={{ backgroundColor: primaryColor }}
                                         >
                                             <ShoppingCart className="w-4 h-4" />
-                                            {getStoreTranslation("add", storeLanguage) || "Add"}
+                                            {getStoreTranslation('addToCart', storeLanguage) || 'Add to Cart'}
                                         </button>
                                     </div>
                                 </div>

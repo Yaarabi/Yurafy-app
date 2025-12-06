@@ -24,7 +24,7 @@ const ProductGrid: React.FC = () => {
 
     const primaryColor = selectedStore.theme?.primaryColor || '#06b6d4';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#e6f9fd';
-    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
+    const surfaceGradient = surfaceColor
     const storeLanguage = selectedStore.language || 'en';
 
     const handleViewProduct = (e: React.MouseEvent, product: IProduct) => {
@@ -149,7 +149,7 @@ const ProductGrid: React.FC = () => {
                                                 onClick={(e) => handleViewProduct(e, product)}
                                                 className="flex-1 px-4 py-3 bg-[var(--color-primary)] text-white text-sm font-black uppercase tracking-wider rounded-none hover:bg-[var(--color-primary)]/90 transition-colors duration-300"
                                             >
-                                                View
+                                                    {getStoreTranslation('view', storeLanguage)}
                                             </button>
                                             <button 
                                                 onClick={(e) => handleAddToCart(e, product)}
@@ -160,7 +160,7 @@ const ProductGrid: React.FC = () => {
                                                     backgroundColor: 'transparent'
                                                 }}
                                             >
-                                                Add to Cart
+                                                    {getStoreTranslation('addToCart', storeLanguage)}
                                             </button>
                                         </div>
                                     </div>

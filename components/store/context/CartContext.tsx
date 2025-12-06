@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { IProduct } from '@/models/products';
 import toast from 'react-hot-toast';
+import { getStoreTranslation } from '../utils/translations';
+import { useStore } from '../hooks/useStore';
 
 const CART_STORAGE_KEY = 'cart_items';
 
@@ -40,6 +42,9 @@ export const CartContext = createContext<CartContextValue | undefined>(undefined
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+    const { selectedStore } = useStore();
+    const storeLanguage = selectedStore?.language?.split('-')[0]?.toLowerCase() || 'en';
+    const t = useCallback((key: string) => getStoreTranslation(key, storeLanguage), [storeLanguage]);
 
     // Load cart from localStorage on mount
     useEffect(() => {
@@ -80,13 +85,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const addToCart = useCallback((product: IProduct, quantity: number, options?: { color?: string; size?: string; metadata?: CartItem['metadata'] }): boolean => {
-        // Validate product availability
         if (product.stock <= 0) {
-            toast.error('Product is out of stock');
+            toast.error(t('productOutOfStock'));
             return false;
         }
 
-        // Check if adding quantity exceeds stock
         const existingItem = items.find(
             item => item.productId === product._id && 
             item.color === options?.color && 
@@ -95,7 +98,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         const currentQuantity = existingItem ? existingItem.quantity : 0;
         if (currentQuantity + quantity > product.stock) {
-            toast.error(`Only ${product.stock} items available in stock`);
+            toast.error(t('onlyItemsAvailable').replace('{count}', String(product.stock)));
             return false;
         }
 
@@ -106,7 +109,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             );
 
             if (existingIndex >= 0) {
-                // Update existing item
                 const updated = [...prev];
                 updated[existingIndex] = {
                     ...updated[existingIndex],
@@ -114,7 +116,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 };
                 return updated;
             } else {
-                // Add new item
                 return [...prev, {
                     productId: product._id!,
                     product,
@@ -127,17 +128,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
         });
 
-        toast.success('Added to cart!');
+        toast.success(t('addedToCart'));
         return true;
-    }, [items]);
+    }, [items, t]);
 
     const removeFromCart = useCallback((productId: string, color?: string, size?: string) => {
         setItems(prev => prev.filter(
             item => getItemKey(item.productId, item.color, item.size) !== 
                     getItemKey(productId, color, size)
         ));
-        toast.success('Item removed from cart');
-    }, []);
+        toast.success(t('itemRemoved'));
+    }, [t]);
 
     const updateQuantity = useCallback((productId: string, quantity: number, color?: string, size?: string) => {
         if (quantity <= 0) {
@@ -149,9 +150,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const itemKey = getItemKey(productId, color, size);
             return prev.map(item => {
                 if (getItemKey(item.productId, item.color, item.size) === itemKey) {
-                    // Validate stock
                     if (quantity > item.product.stock) {
-                        toast.error(`Only ${item.product.stock} items available in stock`);
+                        toast.error(t('onlyItemsAvailable').replace('{count}', String(item.product.stock)));
                         return item;
                     }
                     return { ...item, quantity };
@@ -159,7 +159,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 return item;
             });
         });
-    }, [removeFromCart]);
+    }, [removeFromCart, t]);
 
     const openCart = useCallback(() => setIsOpen(true), []);
     const closeCart = useCallback(() => setIsOpen(false), []);

@@ -11,7 +11,7 @@ const About: React.FC = () => {
     const { about, brandName, whoWeAre } = selectedStore;
     const primaryColor = selectedStore.theme?.primaryColor || '#14b8a6';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#c4ede9';
-    const surfaceGradient = `linear-gradient(180deg, ${surfaceColor} 0%, #ffffff 100%)`;
+    const surfaceGradient = surfaceColor
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,

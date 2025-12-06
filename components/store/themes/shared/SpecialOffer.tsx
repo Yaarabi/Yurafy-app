@@ -49,7 +49,8 @@ const SpecialOffer: React.FC = () => {
         return () => clearInterval(interval);
     }, [selectedStore?.specialOffer, products]);
 
-    if (!selectedStore?.specialOffer || !offerProduct) return null;
+    // Don't show if no offer, no product, or offer is paused
+    if (!selectedStore?.specialOffer || !offerProduct || selectedStore.specialOffer.paused) return null;
 
     const primaryColor = selectedStore.theme?.primaryColor || '#3B82F6';
     const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;

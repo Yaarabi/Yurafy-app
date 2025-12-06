@@ -10,6 +10,7 @@ const OrderForm: React.FC = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         phone: '',
+        city: '',
         address: '',
     });
     const [submissionState, setSubmissionState] = useState<{ status: 'idle' | 'submitting' | 'success' | 'error', message: string }>({ status: 'idle', message: '' });
@@ -44,8 +45,8 @@ const OrderForm: React.FC = () => {
             return;
         }
 
-        if (!formData.fullName || !formData.address) {
-            setSubmissionState({ status: 'error', message: 'Full Name, Phone, and Address are required.' });
+        if (!formData.fullName || !formData.address || !formData.city) {
+            setSubmissionState({ status: 'error', message: 'Full Name, Phone, City, and Address are required.' });
             return;
         }
 
@@ -75,6 +76,7 @@ const OrderForm: React.FC = () => {
             shippingAddress: {
                 fullName: formData.fullName,
                 phone: normalizedPhone,
+                city: formData.city,
                 address: formData.address,
             },
         };
@@ -92,6 +94,7 @@ const OrderForm: React.FC = () => {
                 setFormData({
                     fullName: '',
                     phone: '',
+                    city: '',
                     address: '',
                 });
                 console.log('Order submitted:', orderData);
@@ -134,7 +137,7 @@ const OrderForm: React.FC = () => {
     }
 
     return (
-        <div className={`bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg ${isRTL ? 'text-right' : ''}`} id="order-form" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className={`bg-white p-4 sm:p-6 lg:p-10 rounded-lg shadow-lg max-w-5xl w-full mx-auto ${isRTL ? 'text-right' : ''}`} id="order-form" dir={isRTL ? 'rtl' : 'ltr'}>
             <div className="mb-6">
                 <h3 className={`text-xl sm:text-2xl font-bold text-gray-800 mb-2 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('orderDetails', storeLanguage)}</h3>
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
@@ -151,10 +154,10 @@ const OrderForm: React.FC = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 {/* Color Selection */}
                 {selectedProduct.colors && selectedProduct.colors.length > 0 && (
-                    <div>
+                    <div className="lg:col-span-1">
                         <label htmlFor="color" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}> 
                             {getStoreTranslation('color', storeLanguage)} {productOptions.color ? `(${productOptions.color})` : '*'}
                         </label>
@@ -176,7 +179,7 @@ const OrderForm: React.FC = () => {
 
                 {/* Size Selection */}
                 {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
-                    <div>
+                    <div className="lg:col-span-1">
                         <label htmlFor="size" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
                             {getStoreTranslation('size', storeLanguage)} {productOptions.size ? `(${productOptions.size})` : '*'}
                         </label>
@@ -197,7 +200,7 @@ const OrderForm: React.FC = () => {
                 )}
 
                 {/* Quantity - Improved Style */}
-                <div>
+                <div className="lg:col-span-1">
                     <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('quantity', storeLanguage)}</label>
                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
                         <button
@@ -239,11 +242,11 @@ const OrderForm: React.FC = () => {
                     )}
                 </div>
 
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray-200 lg:col-span-2">
                     <h4 className={`text-lg font-semibold text-gray-800 mb-4 ${isRTL ? 'text-right' : ''}`}>{getStoreTranslation('shippingInformation', storeLanguage)}</h4>
                 </div>
 
-                <div>
+                <div className="lg:col-span-1">
                     <label htmlFor="fullName" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
                         {getStoreTranslation('fullName', storeLanguage)} *
                     </label>
@@ -258,7 +261,7 @@ const OrderForm: React.FC = () => {
                         placeholder="Full name"
                     />
                 </div>
-                <div>
+                <div className="lg:col-span-1">
                     <label htmlFor="phone" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
                         {getStoreTranslation('phoneNumber', storeLanguage)} *
                     </label>
@@ -271,7 +274,22 @@ const OrderForm: React.FC = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="lg:col-span-1">
+                    <label htmlFor="city" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
+                        {getStoreTranslation('city', storeLanguage)} *
+                    </label>
+                    <input
+                        type="text"
+                        name="city"
+                        id="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        required
+                        className={`mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm ${isRTL ? 'text-right' : ''}`}
+                        placeholder={getStoreTranslation('cityPlaceholder', storeLanguage)}
+                    />
+                </div>
+                <div className="lg:col-span-2">
                     <label htmlFor="address" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
                         {getStoreTranslation('fullAddress', storeLanguage)} *
                     </label>
@@ -287,9 +305,9 @@ const OrderForm: React.FC = () => {
                     />
                 </div>
                 {submissionState.status === 'error' && (
-                    <p className="text-sm text-red-600">{submissionState.message}</p>
+                    <p className="text-sm text-red-600 lg:col-span-2">{submissionState.message}</p>
                 )}
-                <div>
+                <div className="lg:col-span-2">
                     <button
                         type="submit"
                         disabled={submissionState.status === 'submitting' || selectedProduct.stock <= 0}
