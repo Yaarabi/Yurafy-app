@@ -10,7 +10,7 @@ interface IMessage {
 }
 
 export default function SupportBot() {
-    const t = useTranslations('support');
+    const t = useTranslations('supportBot');
     const [messages, setMessages] = useState<IMessage[]>([]);
     const [input, setInput] = useState('');
     const chatRef = useRef<HTMLDivElement>(null);

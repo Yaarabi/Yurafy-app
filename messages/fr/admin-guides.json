@@ -1,0 +1,49 @@
+{
+  "admin": {
+    "guides": {
+      "title": "Gérer les Guides",
+      "subtitle": "Ajoutez, modifiez et organisez les guides vidéo pour les utilisateurs",
+      "addNew": "Ajouter un Nouveau Guide",
+      "editGuide": "Modifier le Guide",
+      "createGuide": "Créer un Nouveau Guide",
+      "empty": "Aucun guide pour le moment. Cliquez sur 'Ajouter un Nouveau Guide' pour en créer un.",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce guide ?",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "cancel": "Annuler",
+      "table": {
+        "category": "Catégorie",
+        "title": "Titre",
+        "videoUrl": "URL de la Vidéo",
+        "order": "Ordre",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "form": {
+        "category": "Catégorie",
+        "title": "Titre",
+        "description": "Description",
+        "videoUrl": "URL de la Vidéo YouTube",
+        "order": "Ordre d'Affichage",
+        "status": "Statut",
+        "isActive": "Actif"
+      },
+      "success": {
+        "created": "Guide créé avec succès",
+        "updated": "Guide mis à jour avec succès",
+        "deleted": "Guide supprimé avec succès"
+      },
+      "errors": {
+        "loadFailed": "Échec du chargement des guides",
+        "saveFailed": "Échec de l'enregistrement du guide",
+        "deleteFailed": "Échec de la suppression du guide"
+      }
+    }
+  }
+}

@@ -69,7 +69,7 @@ const SpecialOffer: React.FC = () => {
     };
 
     return (
-        <div className="relative py-12 sm:py-16 md:py-20 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
             <div className="absolute inset-0 opacity-10">
                 <div className="absolute inset-0" style={{
                     backgroundImage: `radial-gradient(circle at 20% 50%, ${primaryColor}40 0%, transparent 50%),
@@ -85,7 +85,7 @@ const SpecialOffer: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="max-w-6xl mx-auto"
                 >
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
+                    <div className="bg-white/95 backdrop-blur-sm shadow-2xl overflow-hidden">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                             {/* Image Section */}
                             <div className="relative h-64 sm:h-80 lg:h-full min-h-[300px] overflow-hidden">

@@ -86,6 +86,7 @@ export default function SignupPage() {
             </motion.div>
             
             <div className="relative z-10 w-full max-w-md">
+                {/* <SignupForm/> */}
                 {/* Back button */}
                 <button
                     type="button"

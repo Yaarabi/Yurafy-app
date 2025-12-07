@@ -35,7 +35,16 @@ export async function generateProductMetadata(slug: string, locale: string = 'en
     const productUrl = await buildProductUrl({ locale, storeDomain: store?.domain, productSlug: product.slug });
 
     const title = `${product.name} – ${store?.brandName || 'Yurafy'}`;
-    const description = product.description || `Buy ${product.name} from ${store?.brandName || 'Yurafy'}.`;
+    
+    // Build description with specifications for better SEO
+    let description = product.description || `Buy ${product.name} from ${store?.brandName || 'Yurafy'}.`;
+    if (product.specifications && product.specifications.length > 0) {
+        const specsList = product.specifications
+            .map((spec) => `${spec.title}: ${spec.description}`)
+            .join(' | ');
+        description = `${description} Specifications: ${specsList}`;
+    }
+    
     return {
         metadataBase: new URL(productUrl),
         title,

@@ -1,0 +1,18 @@
+{
+  "Resources": {
+    "title": "Resources",
+    "description": "Access helpful resources, guides, and support to help you succeed with Yurafy.",
+    "blog": {
+      "title": "Blog",
+      "description": "Read our latest articles, tips, and insights on business automation, AI, and e-commerce."
+    },
+    "support": {
+      "title": "Support",
+      "description": "Get help from our support team via chat, email, or phone."
+    },
+    "terms": {
+      "title": "Terms & Privacy",
+      "description": "Review our terms of service and privacy policy to understand how we protect your data."
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "agent": {
+    "header": {
+      "title": "AI Agent Assistant",
+      "subtitle": "Your intelligent store assistant",
+      "clearChat": "Clear Chat"
+    },
+    "messages": {
+      "startConversation": "Start a conversation",
+      "startDescription": "Ask me anything about your store, products, orders, or customers. I'm here to help!"
+    },
+    "input": {
+      "placeholder": "Ask me anything about your store...",
+      "send": "Send",
+      "hint": "Press Enter to send, Shift+Enter for new line"
+    }
+  }
+}

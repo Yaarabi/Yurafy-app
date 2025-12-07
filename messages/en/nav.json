@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "products": "Products",
+    "customers": "Customers",
+    "settings": "Settings",
+    "integrations": "Integrations",
+    "whatsapp": "WhatsApp",
+    "automation": "Automation",
+    "agent": "AI Agent",
+    "conversations": "Conversations",
+    "guides": "Guides",
+    "support": "Support"
+  }
+}

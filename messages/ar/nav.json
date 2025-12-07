@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "dashboard": "الرئيسية",
+    "orders": "الطلبات",
+    "products": "المنتجات",
+    "customers": "العملاء",
+    "integrations": "التكاملات",
+    "settings": "الإعدادات",
+    "whatsapp": "واتساب",
+    "automation": "الأتمتة",
+    "agent": "وكيل الذكاء الاصطناعي",
+    "conversations": "المحادثات",
+    "guides": "الأدلة",
+    "support": "الدعم"
+  }
+}

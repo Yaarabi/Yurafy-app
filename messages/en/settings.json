@@ -1,0 +1,42 @@
+{
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "profile": "Profile",
+      "plan": "Plan",
+      "store": "Store",
+      "whatsapp": "WhatsApp",
+      "language": "Language",
+      "mode": "Mode"
+    },
+    "profileTitle": "Personal information",
+    "name": "Name",
+    "email": "Email",
+    "save": "Save changes",
+    "brandTitle": "Brand logo",
+    "brandHint": "Upload your brand logo (PNG, JPG, SVG).",
+    "password": {
+      "change": "Change Password",
+      "hide": "Hide Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm Password",
+      "hint": "Must contain: 8+ characters, uppercase, lowercase, number",
+      "update": "Update Password",
+      "updating": "Updating...",
+      "cancel": "Cancel",
+      "success": "Password changed successfully!",
+      "errors": {
+        "minLength": "Password must be at least 8 characters",
+        "uppercase": "Password must contain an uppercase letter",
+        "lowercase": "Password must contain a lowercase letter",
+        "number": "Password must contain a number",
+        "currentRequired": "Current password is required",
+        "newRequired": "New password is required",
+        "mismatch": "Passwords do not match",
+        "same": "New password must be different from current password",
+        "failed": "Failed to change password"
+      }
+    }
+  }
+}

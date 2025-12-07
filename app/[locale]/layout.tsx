@@ -2,14 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
-
-async function getMessages(locale: string) {
-  try {
-    return (await import(`../../messages/${locale}.json`)).default;
-  } catch {
-    return (await import(`../../messages/en.json`)).default;
-  }
-}
+import { loadMessages } from '@/lib/utils/loadMessages';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -82,7 +75,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const messages = await getMessages(locale);
+  const messages = await loadMessages(locale);
 
   return (
         <NextIntlClientProvider locale={locale} messages={messages}>

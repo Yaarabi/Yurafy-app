@@ -1,0 +1,48 @@
+{
+  "orders": {
+    "title": "Orders",
+    "loading": "Loading orders...",
+    "empty": "No orders found",
+    "actions": "Actions",
+    "edit": "Edit order",
+    "delete": "Delete order",
+    "deleteConfirm": "Are you sure you want to delete this order?",
+    "whatsappRequired": "WhatsApp feature required",
+    "moreProducts": "+{count} more",
+    "columns": {
+      "id": "Order ID",
+      "customer": "Customer",
+      "phone": "Phone",
+      "address": "Address",
+      "products": "Products",
+      "color": "Color",
+      "size": "Size",
+      "quantity": "Quantity",
+      "total": "Total Amount",
+      "status": "Status",
+      "date": "Date"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "new": "New",
+      "confirmed": "Confirmed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "filters": {
+      "label": "Filters:",
+      "productPlaceholder": "Filter by product name",
+      "addressPlaceholder": "Filter by address",
+      "allStatus": "All Status",
+      "status": {
+        "new": "New",
+        "confirmed": "Confirmed",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      }
+    }
+  }
+}

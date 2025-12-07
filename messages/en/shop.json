@@ -1,0 +1,36 @@
+{
+  "shop": {
+    "searchPlaceholder": "Search for products...",
+    "noProducts": "No products available."
+  },
+  "themes": {
+    "title": "Choose Your Store Theme",
+    "subtitle": "Select a theme that matches your brand identity. Preview each theme to see how it looks with sample content. You can customize the primary color after selection.",
+    "customizeColors": "Customize Colors",
+    "adjustColors": "Adjust colors in real-time",
+    "primaryColor": "Primary Color",
+    "secondaryColor": "Secondary Color",
+    "textColor": "Text Color",
+    "surfaceColor": "Section Background",
+    "store": "Store",
+    "product": "Product",
+    "selectThisTheme": "Select This Theme",
+    "continue": "Continue",
+    "continueWith": "Continue with",
+    "previewActive": "Preview Active",
+    "previewTheme": "Preview Theme",
+    "closePreview": "Close Preview",
+    "themeNames": {
+      "1": "Classic Green",
+      "2": "Modern Blue",
+      "3": "Luxury Black & Gold",
+      "4": "Soft Violet",
+      "5": "Sunset Coral",
+      "6": "Minimal Gray",
+      "7": "Ocean Teal",
+      "8": "Powder Pink",
+      "9": "Emerald Forest",
+      "10": "Arctic White"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "whatsappPage": {
+    "title": "Automatisation WhatsApp",
+    "description": "Automatisez vos interactions clients et les mises à jour de commandes avec notre bot WhatsApp. Envoyez des messages instantanés, des confirmations de commande et des campagnes promotionnelles directement sur WhatsApp de vos clients.",
+    "currentPlan": "Plan Actuel : ",
+    "notSubscribed": "Vous n'êtes abonné à aucun plan WhatsApp.",
+    "subscribeCTA": "Abonnez-vous à un plan pour activer l'automatisation WhatsApp.",
+    "featuresTitle": "Fonctionnalités du Bot WhatsApp",
+    "feature1": {
+      "title": "Messages Automatisés",
+      "description": "Envoyez automatiquement des confirmations de commande, des mises à jour d'expédition et des notifications de livraison."
+    },
+    "feature2": {
+      "title": "Campagnes de Diffusion",
+      "description": "Créez et envoyez des messages promotionnels à tous vos clients en une fois."
+    },
+    "feature3": {
+      "title": "Support Client",
+      "description": "Utilisez le bot pour répondre instantanément aux questions courantes des clients."
+    },
+    "feature4": {
+      "title": "Configuration Facile",
+      "description": "Connectez votre compte WhatsApp Business en quelques clics."
+    },
+    "aiAgentTitle": "Passer à l'Agent WhatsApp IA",
+    "aiAgentDescription": "Élevez vos interactions client au niveau supérieur avec notre agent WhatsApp piloté par l'IA. Il peut comprendre et répondre aux demandes des clients, fournir des recommandations personnalisées et gérer des conversations complexes.",
+    "aiFeature1": {
+      "title": "Compréhension du Langage Naturel",
+      "description": "L'agent IA peut comprendre les messages des clients et répondre de manière appropriée."
+    },
+    "aiFeature2": {
+      "title": "Réponses Personnalisées",
+      "description": "Fournissez des recommandations adaptées basées sur les préférences et l'historique des commandes des clients."
+    },
+    "aiFeature3": {
+      "title": "Disponibilité 24/7",
+      "description": "L'agent IA est toujours disponible pour assister vos clients, même en dehors des heures d'ouverture."
+    },
+    "aiFeature4": {
+      "title": "Intégration Transparente",
+      "description": "Intégrez facilement l'agent IA avec votre compte WhatsApp Business existant."
+    },
+    "subscribeButton": "S'abonner Maintenant",
+    "manageSubscriptionButton": "Gérer l'Abonnement"
+  }
+}

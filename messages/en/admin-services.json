@@ -1,0 +1,51 @@
+{
+  "admin": {
+    "services": {
+      "title": "Service Inquiries",
+      "subtitle": "Manage customer service requests and inquiries",
+      "search": "Search by name, email, or phone...",
+      "filters": {
+        "allServices": "All Services",
+        "allStatuses": "All Statuses"
+      },
+      "showing": "Showing",
+      "of": "of",
+      "inquiries": "inquiries",
+      "empty": "No inquiries found",
+      "confirmDelete": "Are you sure you want to delete this inquiry?",
+      "delete": "Delete",
+      "table": {
+        "date": "Date",
+        "customer": "Customer",
+        "service": "Service Type",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "converted": "Converted",
+        "closed": "Closed"
+      },
+      "details": {
+        "title": "Inquiry Details",
+        "customerInfo": "Customer Information",
+        "email": "Email",
+        "phone": "Phone Number",
+        "serviceInfo": "Service Information",
+        "message": "Message",
+        "updateStatus": "Update Status",
+        "submitted": "Submitted"
+      },
+      "success": {
+        "statusUpdated": "Status updated successfully",
+        "deleted": "Inquiry deleted successfully"
+      },
+      "errors": {
+        "loadFailed": "Failed to load inquiries",
+        "updateFailed": "Failed to update status",
+        "deleteFailed": "Failed to delete inquiry"
+      }
+    }
+  }
+}

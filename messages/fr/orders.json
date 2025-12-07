@@ -1,0 +1,48 @@
+{
+  "orders": {
+    "title": "Commandes",
+    "loading": "Chargement des commandes...",
+    "empty": "Aucune commande trouvée",
+    "actions": "Actions",
+    "edit": "Modifier la commande",
+    "delete": "Supprimer la commande",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette commande ?",
+    "whatsappRequired": "Fonctionnalité WhatsApp requise",
+    "moreProducts": "+{count} de plus",
+    "columns": {
+      "id": "ID de commande",
+      "customer": "Client",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "products": "Produits",
+      "color": "Couleur",
+      "size": "Taille",
+      "quantity": "Quantité",
+      "total": "Montant total",
+      "status": "Statut",
+      "date": "Date"
+    },
+    "status": {
+      "pending": "En attente",
+      "processing": "En traitement",
+      "new": "Nouveau",
+      "confirmed": "Confirmée",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée"
+    },
+    "filters": {
+      "label": "Filtres :",
+      "productPlaceholder": "Filtrer par nom de produit",
+      "addressPlaceholder": "Filtrer par adresse",
+      "allStatus": "Tous les statuts",
+      "status": {
+        "new": "Nouveau",
+        "confirmed": "Confirmée",
+        "shipped": "Expédiée",
+        "delivered": "Livrée",
+        "cancelled": "Annulée"
+      }
+    }
+  }
+}

@@ -17,6 +17,10 @@ export interface IProduct {
     descriptionsImage?: string[]; // Images for description section (different from mainImage and images)
     sizes?: string[]; // ✅ Changed: Now accepts any string (e.g., "L", "40", "XL")
     colors?: string[];
+    specifications?: { // ✅ Added: Product specifications
+        title: string;
+        description: string;
+    }[];
     bundles?: { // ✅ Added: Bundle/promotion configuration
         type: "buy_x_get_y" | "special_price" | "percentage_off";
         buyQuantity?: number; // For "buy_x_get_y": buy 2
@@ -74,6 +78,13 @@ const ProductSchema = new Schema(
         descriptionsImage: [{ type: String }], // Images for description section (different from mainImage and images)
         sizes: [{ type: String }], // ✅ Changed: Accepts any string values
         colors: [{ type: String }],
+        specifications: [ // ✅ Added: Product specifications
+            {
+                title: { type: String, required: true },
+                description: { type: String, required: true },
+                _id: false,
+            }
+        ],
         bundles: { // ✅ Added: Bundle/promotion configuration
             type: {
                 type: String,

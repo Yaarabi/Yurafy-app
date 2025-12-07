@@ -1,0 +1,46 @@
+{
+  "whatsappPage": {
+    "title": "WhatsApp Automation",
+    "description": "Automate your customer interactions and order updates with our WhatsApp bot. Send instant messages, order confirmations, and promotional campaigns directly to your customers' WhatsApp.",
+    "currentPlan": "Current Plan: ",
+    "notSubscribed": "You are not subscribed to any WhatsApp plan.",
+    "subscribeCTA": "Subscribe to a plan to enable WhatsApp automation.",
+    "featuresTitle": "WhatsApp Bot Features",
+    "feature1": {
+      "title": "Automated Messages",
+      "description": "Send automatic order confirmations, shipping updates, and delivery notifications."
+    },
+    "feature2": {
+      "title": "Broadcast Campaigns",
+      "description": "Create and send promotional messages to all your customers at once."
+    },
+    "feature3": {
+      "title": "Customer Support",
+      "description": "Use the bot to answer common customer questions instantly."
+    },
+    "feature4": {
+      "title": "Easy Setup",
+      "description": "Connect your WhatsApp Business account in just a few clicks."
+    },
+    "aiAgentTitle": "Upgrade to AI WhatsApp Agent",
+    "aiAgentDescription": "Take your customer interactions to the next level with our AI-powered WhatsApp agent. It can understand and respond to customer inquiries, provide personalized recommendations, and handle complex conversations.",
+    "aiFeature1": {
+      "title": "Natural Language Understanding",
+      "description": "The AI agent can understand customer messages and respond appropriately."
+    },
+    "aiFeature2": {
+      "title": "Personalized Responses",
+      "description": "Provide tailored recommendations based on customer preferences and order history."
+    },
+    "aiFeature3": {
+      "title": "24/7 Availability",
+      "description": "The AI agent is always available to assist your customers, even outside business hours."
+    },
+    "aiFeature4": {
+      "title": "Seamless Integration",
+      "description": "Easily integrate the AI agent with your existing WhatsApp Business account."
+    },
+    "subscribeButton": "Subscribe Now",
+    "manageSubscriptionButton": "Manage Subscription"
+  }
+}

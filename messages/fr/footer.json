@@ -1,0 +1,33 @@
+{
+  "Footer": {
+    "companyName": "Yurafy",
+    "companyDescription": "Autonomiser les entreprises avec l'automatisation pilotée par l'IA. Créez, publiez et développez sans effort.",
+    "navigation": {
+      "title": "Navigation",
+      "home": "Accueil",
+      "products": "Produits",
+      "pricing": "Tarifs",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "resources": {
+      "title": "Ressources",
+      "resources": "Ressources",
+      "blog": "Blog",
+      "support": "Support",
+      "terms": "Conditions & Confidentialité",
+      "services": "Services"
+    },
+    "contact": {
+      "title": "Contactez-Nous",
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse"
+    },
+    "copyright": "© 2025 Yurafy – Tous droits réservés.",
+    "brandSlogan": "Votre boutique de confiance en ligne",
+    "quickLinks": "Liens rapides",
+    "followUs": "Suivez-nous",
+    "rightsReserved": "Tous droits réservés."
+  }
+}

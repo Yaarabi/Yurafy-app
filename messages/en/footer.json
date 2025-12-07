@@ -1,0 +1,34 @@
+{
+  "Footer": {
+    "companyName": "Yurafy",
+    "companyDescription": "Empowering businesses with AI-driven automation. Create, post, and grow effortlessly.",
+    "navigation": {
+      "title": "Navigation",
+      "home": "Home",
+      "products": "Products",
+      "pricing": "Pricing",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "resources": {
+      "title": "Resources",
+      "resources": "Resources",
+      "blog": "Blog",
+      "faqs": "FAQs",
+      "support": "Support",
+      "terms": "Terms & Privacy",
+      "services": "Services"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "copyright": "© 2025 Yurafy – All rights reserved.",
+    "brandSlogan": "Your trusted online store",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "rightsReserved": "All rights reserved."
+  }
+}

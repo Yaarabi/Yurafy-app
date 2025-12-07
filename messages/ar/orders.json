@@ -1,0 +1,51 @@
+{
+  "orders": {
+    "title": "الطلبات",
+    "loading": "جاري تحميل الطلبات...",
+    "empty": "لا توجد طلبات",
+    "actions": "الإجراءات",
+    "domainOfWorkRequired": "يرجى إدخال مجال العمل (إجباري عند اختيار أخرى)",
+    "domainOfWorkMax": "مجال العمل يجب ألا يتجاوز 100 حرف",
+    "messageRequired": "يرجى تقديم مزيد من التفاصيل (إجباري عند اختيار أخرى)",
+    "edit": "تعديل الطلب",
+    "delete": "حذف الطلب",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الطلب؟",
+    "whatsappRequired": "ميزة واتساب مطلوبة",
+    "moreProducts": "+{count} المزيد",
+    "columns": {
+      "id": "رقم الطلب",
+      "customer": "العميل",
+      "phone": "رقم الهاتف",
+      "address": "العنوان",
+      "products": "المنتجات",
+      "color": "اللون",
+      "size": "المقاس",
+      "quantity": "الكمية",
+      "total": "إجمالي المبلغ",
+      "status": "الحالة",
+      "date": "التاريخ"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "processing": "قيد المعالجة",
+      "new": "جديد",
+      "confirmed": "مؤكد",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ألغيت"
+    },
+    "filters": {
+      "label": "الفلاتر:",
+      "productPlaceholder": "تصفية حسب اسم المنتج",
+      "addressPlaceholder": "تصفية حسب العنوان",
+      "allStatus": "جميع الحالات",
+      "status": {
+        "new": "جديد",
+        "confirmed": "مؤكد",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "ألغيت"
+      }
+    }
+  }
+}

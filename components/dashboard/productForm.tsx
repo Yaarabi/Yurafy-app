@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import BasicInfo from './product-form/BasicInfo';
 import MediaUploads from './product-form/MediaUploads';
 import VariantsAndBundles from './product-form/VariantsAndBundles';
+import Specifications from './product-form/Specifications';
 import { Input, Textarea } from './product-form/FormControls';
 
 // Helper function to create valid bundle objects
@@ -63,6 +64,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             descriptionsImage: [],
             sizes: [],
             colors: [],
+            specifications: [],
         };
 
         // Only add bundles if they're enabled in initialValues
@@ -162,6 +164,7 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
             descriptionsImage: [],
             sizes: [],
             colors: [],
+            specifications: [],
         };
         setValues(resetState);
         setErrors({});
@@ -250,6 +253,12 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
                 showBundles={showBundles}
                 setShowBundles={setShowBundles}
                 createBundleObject={createBundleObject}
+                Input={Input}
+            />
+
+            <Specifications 
+                values={values}
+                setValues={setValues}
                 Input={Input}
             />
 

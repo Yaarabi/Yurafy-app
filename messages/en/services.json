@@ -1,0 +1,141 @@
+{
+  "services": {
+    "hero": {
+      "title": "Launch New Generation Store with WhatsApp & Delivery Automation and AI",
+      "subtitle": "Custom storefronts, WhatsApp auto-replies, Link delivery company, and team dashboards and management",
+      "ctaPrimary": "Get Your Store Now",
+      "ctaSecondary": "Chat with Us on WhatsApp",
+      "features": {
+        "codCheckout": {
+          "title": "COD Checkout Form",
+          "description": "Optimized for conversion and mobile."
+        },
+        "whatsappAuto": {
+          "title": "WhatsApp Automation",
+          "description": "Auto-confirm orders and notify customers."
+        },
+        "deliveryApi": {
+          "title": "Link Delivery Company",
+          "description": "Real-time tracking and Auto fill order info."
+        },
+        "teamDashboard": {
+          "title": "Team Dashboard",
+          "description": "Assign, track, and manage orders with ease."
+        }
+      }
+    },
+    "popular": "Most Popular",
+    "priceNote": "One-time payment",
+    "getStarted": "Get Started",
+    "videoTitle": "See How It Works",
+    "servicesTitle": "Our Service Packages",
+    "basicStore": {
+      "type": "Basic Store",
+      "description": "Product listing, COD checkout form, dashboard (no automation)",
+      "features": {
+        "catalog": "Product catalog",
+        "checkout": "COD checkout form",
+        "dashboard": "Basic admin dashboard",
+        "responsive": "Mobile responsive design",
+        "seo": "SEO optimization"
+      }
+    },
+    "whatsappAuto": {
+      "type": "Store + WhatsApp Auto Reply",
+      "description": "WhatsApp API setup, templates, order confirmation messages",
+      "features": {
+        "basic": "Everything in Basic Store",
+        "api": "WhatsApp Business API setup",
+        "templates": "Automated message templates",
+        "confirmation": "Order confirmation via WhatsApp",
+        "notifications": "Customer notifications"
+      }
+    },
+    "deliveryApi": {
+      "type": "Store + Delivery API Integration",
+      "description": "Connect store to Ameex, Ozon, or other company",
+      "features": {
+        "basic": "Everything in Basic Store",
+        "integration": "Delivery company integration",
+        "labels": "Automated shipping labels",
+        "tracking": "Real-time tracking",
+        "bulk": "Bulk order processing"
+      }
+    },
+    "fullCod": {
+      "type": "Full COD System (Automation)",
+      "description": "Store + WhatsApp + delivery + dashboard",
+      "features": {
+        "complete": "Complete e-commerce solution",
+        "whatsapp": "WhatsApp automation",
+        "delivery": "Delivery API integration",
+        "team": "Team management",
+        "analytics": "Advanced analytics dashboard",
+        "orders": "Order management system",
+        "payment": "Payment tracking"
+      }
+    },
+    "aiAgent": {
+      "type": "AI WhatsApp Agent Integration",
+      "description": "Custom OpenAI or Dialogflow agent, order management & training",
+      "features": {
+        "fullCod": "Everything in Full COD System",
+        "chatbot": "Custom AI chatbot (OpenAI/Dialogflow)",
+        "nlu": "Natural language understanding",
+        "support": "Automated customer support",
+        "orderChat": "Order management via chat",
+        "training": "Agent training & optimization"
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Your Project?",
+      "subtitle": "Contact us today for a free consultation and quote",
+      "button": "Request a Quote"
+    },
+    "form": {
+      "title": "Request a Quote",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "phoneNumber": "Phone Number",
+      "email": "Email Address",
+      "serviceType": "Service Type",
+      "selectService": "Select a service",
+      "message": "Additional Details",
+      "optional": "Optional",
+      "messagePlaceholder": "Tell us about your project requirements...",
+      "domainOfWork": "Domain of Work",
+      "domainOfWorkPlaceholder": "e.g., E-commerce, Restaurant, Electronics",
+      "otherOption": "Other",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "cancel": "Cancel",
+      "success": "Thank you! Your request has been submitted successfully. We will contact you soon.",
+      "errors": {
+        "fullName": "Please enter a valid full name (at least 2 characters)",
+        "phoneNumber": "Please enter a valid Moroccan phone number (e.g., +212 600 000 000)",
+        "email": "Please enter a valid email address",
+        "serviceType": "Please select a service type",
+        "domainOfWorkRequired": "Please enter the domain of work (required for Other)",
+        "domainOfWorkMax": "Domain of work must not exceed 100 characters",
+        "messageRequired": "Please provide more details (required for Other)",
+        "validation": "Please fix the errors in the form",
+        "submit": "Failed to submit request. Please try again."
+      }
+    },
+    "differentIdea": {
+      "badge": "Different Idea 💡",
+      "title": "Want something different?",
+      "description": "Don't see exactly what you need? Tell us about a custom app or feature and we'll build it for you.",
+      "cta": "Tell us your idea"
+    },
+    "conversion": {
+      "heading": "Not sure which plan fits your needs?",
+      "subtext": "Whether you're just starting or scaling fast, we’ve got flexible options for every merchant.",
+      "chatLabel": "Chat with us on WhatsApp",
+      "chatAria": "Open WhatsApp chat",
+      "requestLabel": "Tell us what you need",
+      "requestNote": "We’ll get back to you with a tailored offer.",
+      "addon": "Need a custom setup or flexible pricing? Let’s talk — we’re here to help Moroccan merchants grow."
+    }
+  }
+}

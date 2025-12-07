@@ -1,0 +1,59 @@
+{
+  "whatsapp": {
+    "conversations": {
+      "searchPlaceholder": "Search by name or phone number...",
+      "filters": "Filters:",
+      "clearAll": "Clear All",
+      "of": "of",
+      "loading": "Loading...",
+      "status": {
+        "all": "All Status",
+        "humanNeeded": "Human Needed",
+        "optedIn": "Opted In",
+        "optedOut": "Opted Out"
+      },
+      "filterButtons": {
+        "autoReply": "Auto Reply",
+        "orderConfirm": "Order Confirm",
+        "adTemplate": "Ad Template",
+        "agentReply": "Agent Reply",
+        "unread": "Unread"
+      },
+      "sort": {
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "mostUnread": "Most Unread",
+        "name": "Name"
+      },
+      "selectConversation": "Select a conversation",
+      "empty": {
+        "title": "No conversations yet",
+        "description": "Start a conversation to see it here",
+        "noMessages": "No messages yet"
+      },
+      "tracking": {
+        "autoReply": "Auto Reply Sent",
+        "auto": "Auto",
+        "orderConfirm": "Order Confirmation Sent",
+        "order": "Order",
+        "adTemplate": "Ad Template Sent",
+        "ad": "Ad",
+        "read": "Message Read",
+        "readLabel": "Read"
+      }
+    },
+    "chat": {
+      "back": "Back",
+      "status": {
+        "humanRequired": "Human Support Required",
+        "optedIn": "Opted In",
+        "optedOut": "Opted Out"
+      },
+      "empty": {
+        "noMessages": "No messages yet",
+        "noText": "(No text)"
+      },
+      "you": "You"
+    }
+  }
+}

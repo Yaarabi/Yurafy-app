@@ -1,0 +1,33 @@
+{
+  "Footer": {
+    "companyName": "Yurafy",
+    "companyDescription": "تمكين الشركات من خلال الأتمتة المدعومة بالذكاء الاصطناعي. أنشئ، انشر، وارتق بأعمالك بسهولة.",
+    "navigation": {
+      "title": "التنقل",
+      "home": "الرئيسية",
+      "products": "المنتجات",
+      "pricing": "الأسعار",
+      "about": "حول",
+      "contact": "اتصل"
+    },
+    "resources": {
+      "title": "الموارد",
+      "resources": "الموارد",
+      "blog": "مدونة",
+      "support": "الدعم",
+      "terms": "الشروط & الخصوصية",
+      "services": "خدمات اخرى"
+    },
+    "contact": {
+      "title": "اتصل بنا",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان"
+    },
+    "copyright": "© 2025 Yurafy – جميع الحقوق محفوظة.",
+    "brandSlogan": "متجرك الموثوق عبر الإنترنت",
+    "quickLinks": "روابط سريعة",
+    "followUs": "تابعنا",
+    "rightsReserved": "جميع الحقوق محفوظة."
+  }
+}

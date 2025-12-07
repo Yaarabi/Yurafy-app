@@ -1,65 +1,40 @@
-import React, { type CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { motion } from 'framer-motion';
-import GeometricDecorations from '../../shared/GeometricDecorations';
 import { getStoreTranslation } from '../../../utils/translations';
 
 const Hero: React.FC = () => {
     const { selectedStore } = useStore();
-
     if (!selectedStore) return null;
 
     const { hero } = selectedStore;
-    const primaryColor = selectedStore.theme?.primaryColor || '#6366f1';
-    const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
+    const primaryColor = selectedStore.theme?.primaryColor || '#c15a4a'; // flat background like your image
     const storeLanguage = selectedStore.language || 'en';
 
     const heroBackgroundStyle: CSSProperties = {
-        background: `linear-gradient(140deg, ${primaryColor} 0%, ${secondaryColor || primaryColor} 55%, ${primaryColor} 100%)`,
+        backgroundColor: primaryColor,
     };
 
     return (
         <section className="relative overflow-hidden text-white" style={heroBackgroundStyle}>
-            <GeometricDecorations type="professional" color={primaryColor} className="opacity-10" />
 
-            <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                    background: `radial-gradient(circle at 20% 20%, ${primaryColor}33, transparent 55%), radial-gradient(circle at 80% 15%, ${secondaryColor}40, transparent 60%), linear-gradient(140deg, ${primaryColor}26, transparent 55%)`,
-                }}
-            />
-
-            {hero.imageUrl && (
-                <div className="pointer-events-none absolute -right-32 top-1/2 hidden h-[520px] w-[520px] -translate-y-1/2 rounded-[18rem] border border-white/10 bg-white/5 shadow-[0_0_120px_-20px_rgba(255,255,255,0.4)] lg:block">
-                    <div
-                        className="absolute inset-6 rounded-[16rem] bg-cover bg-center"
-                        style={{ backgroundImage: `url(${hero.imageUrl})` }}
-                    />
-                    <div className="absolute inset-0 -z-10 rotate-12 rounded-[18rem] border border-white/10" />
-                </div>
-            )}
-
-            <div className="relative mx-auto flex min-h-[80vh] max-w-6xl flex-col justify-center px-4 py-20 sm:px-6 md:py-24 lg:py-32">
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, ease: 'easeOut' }}
-                    className="max-w-2xl rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8 md:p-12"
-                >
-                    <motion.h2
-                        initial={{ opacity: 0, y: 24 }}
+            {/* === TEXT & CTA === */}
+            <div className="relative mx-auto flex min-h-[75vh] max-w-6xl flex-col justify-center px-4 py-20 sm:px-6 lg:py-24">
+                <div className="max-w-2xl">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.9, delay: 0.1, ease: 'easeOut' }}
-                        className="text-3xl font-bold leading-tight sm:text-5xl md:text-6xl"
+                        transition={{ duration: 0.6 }}
+                        className="text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl"
                     >
                         {hero.title}
-                    </motion.h2>
+                    </motion.h1>
 
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
-                        className="mt-6 text-base text-white/80 sm:text-lg md:text-xl"
+                        transition={{ duration: 0.6, delay: 0.15 }}
+                        className="mt-6 text-lg text-white/90 sm:text-xl max-w-xl"
                     >
                         {hero.subtitle}
                     </motion.p>
@@ -67,25 +42,49 @@ const Hero: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.35, ease: 'easeOut' }}
+                        transition={{ duration: 0.6, delay: 0.25 }}
                         className="mt-10"
                     >
                         <a
                             href="#products"
-                            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/30 bg-white/90 px-7 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 transition-all duration-300 hover:border-white/60 hover:bg-white"
+                            className="inline-flex items-center gap-3 rounded-full bg-white px-8 py-3 text-sm font-semibold uppercase tracking-wide text-slate-900 shadow hover:bg-white/90 transition"
                             style={{ color: primaryColor }}
                         >
-                            <span className="absolute inset-0 translate-x-full bg-white/40 transition-transform duration-500 group-hover:translate-x-0" />
-                            <span className="relative z-10 text-slate-900" style={{ color: primaryColor }}>
-                                {getStoreTranslation('shopNow', storeLanguage)}
-                            </span>
+                            {getStoreTranslation('shopNow', storeLanguage)}
                         </a>
                     </motion.div>
+                </div>
+            </div>
+
+            {/* === PRODUCT IMAGE (TEDDY STYLE) === */}
+            {hero.imageUrl && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, ease: 'easeOut' }}
+                    className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2 hidden lg:block"
+                >
+                    <img
+                        src={hero.imageUrl}
+                        alt="hero"
+                        className="h-[420px] w-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                    />
                 </motion.div>
+            )}
+
+            {/* === BOTTOM CLOUD SHAPE (same as your example) === */}
+            <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+                <svg
+                    viewBox="0 0 1440 120 1440 120 1440 120"
+                    preserveAspectRatio="none"
+                    className="block w-full h-[90px]"
+                    style={{ fill: '#ffffff' }}
+                >
+                    <path d="M0,32 C120,80 240,80 360,50 C480,20 600,20 720,50 C840,80 960,80 1080,50 C1200,20 1320,20 1440,50 L1440,120 L0,120 Z" />
+                </svg>
             </div>
         </section>
     );
 };
 
 export default Hero;
-

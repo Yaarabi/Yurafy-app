@@ -1,0 +1,160 @@
+{
+  "whatsapp": {
+    "tools": {
+      "section": {
+        "tools": {
+          "title": "أدوات الوكيل",
+          "description": "قم بتمكين أو تعطيل أدوات محددة لوكيل الذكاء الاصطناعي الخاص بك. لن تكون الأدوات المعطلة متاحة للوكيل أثناء المحادثات."
+        },
+        "templates": {
+          "title": "تكوين القوالب",
+          "label": "القوالب الموجودة"
+        }
+      },
+      "categories": {
+        "Orders": "الطلبات",
+        "Products": "المنتجات",
+        "Memory": "الذاكرة",
+        "Brand Info": "معلومات العلامة التجارية",
+        "Templates": "القوالب",
+        "Notifications": "الإشعارات"
+      },
+      "tools": {
+        "search_order": {
+          "name": "البحث عن طلب",
+          "description": "البحث عن طلبات العملاء بالاسم، الهاتف، المعرف، أو الحالة"
+        },
+        "update_order_status": {
+          "name": "تحديث حالة الطلب",
+          "description": "تحديث حالة طلب موجود"
+        },
+        "create_order": {
+          "name": "إنشاء طلب",
+          "description": "إنشاء طلب جديد للعميل"
+        },
+        "extract_orders_from_messages": {
+          "name": "استخراج الطلبات من الرسائل",
+          "description": "تحليل رسائل المحادثة للكشف واستخراج معلومات الطلب تلقائياً"
+        },
+        "search_product": {
+          "name": "البحث عن منتج",
+          "description": "البحث عن المنتجات بالاسم، الفئة، العلامة التجارية، أو الرابط"
+        },
+        "store_agent_action": {
+          "name": "تخزين إجراء الوكيل",
+          "description": "تخزين أو تحديث ما فعله أو لاحظه وكيل الذكاء الاصطناعي حول العميل"
+        },
+        "get_agent_memory": {
+          "name": "الحصول على ذاكرة الوكيل",
+          "description": "استرجاع ملخص مخزن للإجراءات السابقة أو حالات العملاء"
+        },
+        "brand_info_retrieval": {
+          "name": "استرجاع معلومات العلامة التجارية",
+          "description": "البحث في المعرفة المرفوعة للعلامة التجارية (دلائل، أسئلة شائعة، مستندات)"
+        },
+        "template_guide": {
+          "name": "دليل القوالب",
+          "description": "يقترح قوالب ذات صلة لاستخدامها عند الرد على العملاء"
+        },
+        "send_template": {
+          "name": "إرسال قالب",
+          "description": "إرسال رسالة قالب واتساب معتمدة إلى العميل"
+        },
+        "send_owner_notification": {
+          "name": "إرسال إشعار للمالك",
+          "description": "إرسال إشعار للمالك عندما يحتاج الوكيل إلى المساعدة أو يواجه مشاكل لا يمكنه التعامل معها"
+        }
+      },
+      "tool": {
+        "enabledLabel": "مفعل",
+        "enabled": "تم تفعيل الأداة \"{tool}\"",
+        "disabled": "تم تعطيل الأداة \"{tool}\"",
+        "enable": "تفعيل {tool}",
+        "disable": "تعطيل {tool}",
+        "updateError": "فشل تحديث الأداة"
+      },
+      "template": {
+        "empty": "لا توجد قوالب بعد.",
+        "addLabel": "إضافة قالب آخر",
+        "exists": "القالب موجود بالفعل",
+        "added": "تم إضافة القالب \"{template}\"",
+        "deleted": "تم حذف القالب \"{template}\"",
+        "addError": "فشل إضافة القالب",
+        "deleteError": "فشل حذف القالب"
+      },
+      "file": {
+        "uploadLabel": "رفع ملف (لـ RAG)",
+        "currentFile": "الملف الحالي",
+        "delete": "حذف",
+        "saving": "جاري الحفظ...",
+        "saveAndGenerate": "حفظ الملف وإنشاء الـ embeddings",
+        "cancel": "إلغاء",
+        "saved": "تم حفظ الملف في الوكيل",
+        "embeddingsGenerated": "تم إنشاء الـ embeddings بنجاح",
+        "deleted": "تم حذف الملف والـ embeddings",
+        "deleteError": "فشل الحذف"
+      }
+    },
+    "ordersTriggers": {
+      "title": "محفزات رسائل الطلبات",
+      "description": "إرسال رسائل واتساب تلقائيا عند تغيير حالة الطلب",
+      "addTrigger": "إضافة محفز",
+      "editTrigger": "تحرير المحفز",
+      "totalTriggers": "إجمالي المحفزات",
+      "activeTriggers": "نشط",
+      "inactiveTriggers": "غير نشط",
+      "enabled": "مفعل",
+      "disabled": "معطل",
+      "template": "قالب الرسالة",
+      "edit": "تحرير",
+      "delete": "حذف",
+      "noTriggers": "لا توجد محفزات مكونة",
+      "noTriggersDescription": "أنشئ محفزك الأول لإرسال الرسائل تلقائيا عند تغيير حالة الطلب",
+      "createFirst": "إنشاء أول محفز",
+      "deleteConfirm": "هل أنت متأكد من حذف هذا المحفز؟",
+      "fetchError": "فشل في جلب المحفزات",
+      "addSuccess": "تم إنشاء المحفز بنجاح",
+      "addError": "فشل في إنشاء المحفز",
+      "updateSuccess": "تم تحديث المحفز بنجاح",
+      "updateError": "فشل في تحديث المحفز",
+      "deleteSuccess": "تم حذف المحفز بنجاح",
+      "deleteError": "فشل في حذف المحفز",
+      "enabledSuccess": "تم تفعيل المحفز",
+      "disabledSuccess": "تم تعطيل المحفز",
+      "toggleError": "فشل في تبديل المحفز",
+      "status": {
+        "pending": "قيد الانتظار",
+        "confirmed": "مؤكد",
+        "processing": "قيد المعالجة",
+        "shipped": "تم الشحن",
+        "delivered": "تم التوصيل",
+        "cancelled": "ملغى",
+        "refunded": "مسترد",
+        "returned": "مرتجع"
+      },
+      "form": {
+        "triggerName": "اسم المشغل",
+        "triggerNamePlaceholder": "مثال: تأكيد الطلب",
+        "whatsappAccount": "حساب واتساب",
+        "selectAccount": "اختر حساب واتساب",
+        "orderStatus": "حالة الطلب",
+        "selectStatus": "اختر حالة الطلب",
+        "template": "قالب الرسالة",
+        "selectTemplate": "اختر قالباً",
+        "templatePlaceholder": "أدخل الرسالة المراد إرسالها عند تغيير حالة الطلب...",
+        "templateHint": "استخدم متغيرات مثل '{customerName}', '{orderNumber}', '{status}' في رسالتك",
+        "enableAuto": "تفعيل الإرسال التلقائي",
+        "autoHint": "عند التفعيل، سيتم إرسال الرسائل تلقائيا عند تغيير الحالة",
+        "enableActive": "تفعيل المشغل",
+        "activeHint": "عند التفعيل، سيكون هذا المشغل نشطاً",
+        "cancel": "إلغاء",
+        "create": "إنشاء محفز",
+        "creating": "جاري الإنشاء...",
+        "update": "تحديث المحفز",
+        "updating": "جاري التحديث...",
+        "save": "حفظ",
+        "saving": "جاري الحفظ..."
+      }
+    }
+  }
+}

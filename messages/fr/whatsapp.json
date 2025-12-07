@@ -1,0 +1,224 @@
+{
+  "whatsapp": {
+    "tabs": {
+      "connection": "Connexion",
+      "aiAgent": "Agent IA",
+      "tools": "Outils",
+      "automation": "Paramètres d'automatisation",
+      "ordersTriggers": "Déclencheurs de commandes",
+      "templates": "Modèles",
+      "testPanel": "Panneau de test"
+    },
+    "conversations": {
+      "searchPlaceholder": "Rechercher par nom ou numéro de téléphone...",
+      "filters": "Filtres :",
+      "clearAll": "Tout effacer",
+      "of": "sur",
+      "loading": "Chargement...",
+      "status": {
+        "all": "Tous les statuts",
+        "humanNeeded": "Intervention humaine requise",
+        "optedIn": "Abonné",
+        "optedOut": "Désabonné"
+      },
+      "filterButtons": {
+        "autoReply": "Réponse auto",
+        "orderConfirm": "Confirmation commande",
+        "adTemplate": "Modèle pub",
+        "agentReply": "Réponse agent",
+        "unread": "Non lus"
+      },
+      "sort": {
+        "newest": "Plus récent",
+        "oldest": "Plus ancien",
+        "mostUnread": "Plus de non lus",
+        "name": "Nom"
+      },
+      "selectConversation": "Sélectionner une conversation",
+      "empty": {
+        "title": "Aucune conversation pour le moment",
+        "description": "Démarrez une conversation pour la voir ici",
+        "noMessages": "Aucun message pour le moment"
+      },
+      "tracking": {
+        "autoReply": "Réponse automatique envoyée",
+        "auto": "Auto",
+        "orderConfirm": "Confirmation de commande envoyée",
+        "order": "Commande",
+        "adTemplate": "Modèle publicitaire envoyé",
+        "ad": "Pub",
+        "read": "Message lu",
+        "readLabel": "Lu"
+      }
+    },
+    "chat": {
+      "back": "Retour",
+      "status": {
+        "humanRequired": "Support humain requis",
+        "optedIn": "Abonné",
+        "optedOut": "Désabonné"
+      },
+      "empty": {
+        "noMessages": "Aucun message pour le moment",
+        "noText": "(Aucun texte)"
+      },
+      "you": "Vous"
+    },
+    "tools": {
+      "section": {
+        "tools": {
+          "title": "Outils de l'agent",
+          "description": "Activez ou désactivez des outils spécifiques pour votre agent IA. Les outils désactivés ne seront pas disponibles pour l'agent pendant les conversations."
+        },
+        "templates": {
+          "title": "Configuration des modèles",
+          "label": "Modèles existants"
+        }
+      },
+      "categories": {
+        "Orders": "Commandes",
+        "Products": "Produits",
+        "Memory": "Mémoire",
+        "Brand Info": "Informations de marque",
+        "Templates": "Modèles",
+        "Notifications": "Notifications"
+      },
+      "tools": {
+        "search_order": {
+          "name": "Rechercher une commande",
+          "description": "Rechercher des commandes client par nom, téléphone, ID ou statut"
+        },
+        "update_order_status": {
+          "name": "Mettre à jour le statut de la commande",
+          "description": "Mettre à jour le statut d'une commande existante"
+        },
+        "create_order": {
+          "name": "Créer une commande",
+          "description": "Créer une nouvelle commande pour un client"
+        },
+        "extract_orders_from_messages": {
+          "name": "Extraire les commandes des messages",
+          "description": "Analyser les messages de conversation pour détecter et extraire automatiquement les informations de commande"
+        },
+        "search_product": {
+          "name": "Rechercher un produit",
+          "description": "Rechercher des produits par nom, catégorie, marque ou slug"
+        },
+        "store_agent_action": {
+          "name": "Stocker l'action de l'agent",
+          "description": "Stocker ou mettre à jour ce que l'agent IA a fait ou observé à propos d'un client"
+        },
+        "get_agent_memory": {
+          "name": "Obtenir la mémoire de l'agent",
+          "description": "Récupérer le résumé stocké des actions précédentes ou situations client"
+        },
+        "brand_info_retrieval": {
+          "name": "Récupération d'informations de marque",
+          "description": "Rechercher dans les connaissances téléchargées de la marque (manuels, FAQ, documents)"
+        },
+        "template_guide": {
+          "name": "Guide des modèles",
+          "description": "Suggère des modèles pertinents à utiliser lors de la réponse aux clients"
+        },
+        "send_template": {
+          "name": "Envoyer un modèle",
+          "description": "Envoyer un message de modèle WhatsApp approuvé à un client"
+        },
+        "send_owner_notification": {
+          "name": "Envoyer une notification au propriétaire",
+          "description": "Envoyer une notification au propriétaire lorsque l'agent a besoin d'assistance ou rencontre des problèmes qu'il ne peut pas gérer"
+        }
+      },
+      "tool": {
+        "enabledLabel": "Activé",
+        "enabled": "Outil \"{tool}\" activé",
+        "disabled": "Outil \"{tool}\" désactivé",
+        "enable": "Activer {tool}",
+        "disable": "Désactiver {tool}",
+        "updateError": "Échec de la mise à jour de l'outil"
+      },
+      "template": {
+        "empty": "Aucun modèle pour le moment.",
+        "addLabel": "Ajouter un autre modèle",
+        "exists": "Le modèle existe déjà",
+        "added": "Modèle \"{template}\" ajouté",
+        "deleted": "Modèle \"{template}\" supprimé",
+        "addError": "Échec de l'ajout du modèle",
+        "deleteError": "Échec de la suppression du modèle"
+      },
+      "file": {
+        "uploadLabel": "Téléchargement de fichier (pour RAG)",
+        "currentFile": "Fichier actuel",
+        "delete": "Supprimer",
+        "saving": "Enregistrement...",
+        "saveAndGenerate": "Enregistrer le fichier et générer les embeddings",
+        "cancel": "Annuler",
+        "saved": "Fichier enregistré dans l'agent",
+        "embeddingsGenerated": "Embeddings générés avec succès",
+        "deleted": "Fichier et embeddings supprimés",
+        "deleteError": "Échec de la suppression"
+      }
+    },
+    "ordersTriggers": {
+      "title": "Déclencheurs de messages de commande",
+      "description": "Envoi automatique de messages WhatsApp lors du changement de statut des commandes",
+      "addTrigger": "Ajouter un déclencheur",
+      "editTrigger": "Modifier le déclencheur",
+      "totalTriggers": "Total des déclencheurs",
+      "activeTriggers": "Actifs",
+      "inactiveTriggers": "Inactifs",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "template": "Modèle de message",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "noTriggers": "Aucun déclencheur configuré",
+      "noTriggersDescription": "Créez votre premier déclencheur pour envoyer automatiquement des messages lors du changement de statut des commandes",
+      "createFirst": "Créer le premier déclencheur",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce déclencheur ?",
+      "fetchError": "Échec de récupération des déclencheurs",
+      "addSuccess": "Déclencheur créé avec succès",
+      "addError": "Échec de création du déclencheur",
+      "updateSuccess": "Déclencheur mis à jour avec succès",
+      "updateError": "Échec de mise à jour du déclencheur",
+      "deleteSuccess": "Déclencheur supprimé avec succès",
+      "deleteError": "Échec de suppression du déclencheur",
+      "enabledSuccess": "Déclencheur activé",
+      "disabledSuccess": "Déclencheur désactivé",
+      "toggleError": "Échec de basculement du déclencheur",
+      "status": {
+        "pending": "En attente",
+        "confirmed": "Confirmé",
+        "processing": "En cours de traitement",
+        "shipped": "Expédié",
+        "delivered": "Livré",
+        "cancelled": "Annulé",
+        "refunded": "Remboursé",
+        "returned": "Retourné"
+      },
+      "form": {
+        "triggerName": "Nom du déclencheur",
+        "triggerNamePlaceholder": "ex: Confirmation de commande",
+        "whatsappAccount": "Compte WhatsApp",
+        "selectAccount": "Sélectionner un compte WhatsApp",
+        "orderStatus": "Statut de la commande",
+        "selectStatus": "Sélectionner le statut",
+        "template": "Modèle de message",
+        "selectTemplate": "Sélectionner un modèle",
+        "templatePlaceholder": "Entrez le message à envoyer lors du changement de statut...",
+        "templateHint": "Utilisez des variables comme '{customerName}', '{orderNumber}', '{status}' dans votre message",
+        "enableAuto": "Activer l'exécution automatique",
+        "autoHint": "Si activé, les messages s'envoient automatiquement. Sinon, ils nécessitent une approbation manuelle.",
+        "enableActive": "Activer le déclencheur",
+        "activeHint": "Une fois activé, ce déclencheur sera actif",
+        "cancel": "Annuler",
+        "create": "Créer le déclencheur",
+        "creating": "Création...",
+        "update": "Mettre à jour le déclencheur",
+        "updating": "Mise à jour...",
+        "save": "Enregistrer",
+        "saving": "Enregistrement..."
+      }
+    }
+  }
+}

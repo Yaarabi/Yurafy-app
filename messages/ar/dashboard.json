@@ -1,0 +1,79 @@
+{
+  "dashboard": {
+    "title": "مرحباً بك في لوحتك",
+    "subtitle": "أدِر الطلبات والمنتجات وعلامتك من مكان واحد.",
+    "header": {
+      "title": "لوحة التحكم"
+    },
+    "themeToggle": {
+      "ariaLabel": "تبديل السمة"
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "markAllRead": "تمييز الكل كمقروء",
+      "markAllSuccess": "تم تمييز كل الإشعارات كمقروءة",
+      "markAllError": "فشل تمييز كل الإشعارات كمقروءة",
+      "deleteError": "فشل حذف الإشعار",
+      "deleteReadSuccess": "تم حذف كل الإشعارات المقروءة",
+      "deleteReadError": "فشل حذف الإشعارات المقروءة",
+      "markRead": "تمييز كمقروء",
+      "delete": "حذف",
+      "close": "إغلاق",
+      "empty": "لا توجد إشعارات",
+      "clearAllRead": "مسح كل الإشعارات المقروءة"
+    },
+    "plan": {
+      "expired": "انتهت صلاحية خطتك",
+      "planLabel": "الخطة",
+      "expires": "تنتهي",
+      "renewPlan": "تجديد الخطة",
+      "upgradePlan": "ترقية الخطة",
+      "products": "المنتجات",
+      "orders": "الطلبات",
+      "contacts": "جهات الاتصال"
+    },
+    "stats": {
+      "totalRevenue": "إجمالي الإيرادات",
+      "products": "المنتجات",
+      "orders": "الطلبات",
+      "templates": "القوالب",
+      "contacts": "جهات الاتصال",
+      "recentOrders": "الطلبات الأخيرة",
+      "topProducts": "أفضل المنتجات",
+      "noOrders": "لا توجد طلبات بعد",
+      "noProducts": "لا توجد منتجات بعد",
+      "topCustomers": {
+        "title": "أفضل العملاء",
+        "subtitle": {
+          "orders": "حسب عدد الطلبات",
+          "spent": "حسب المبلغ المنفق"
+        },
+        "orders": "الطلبات",
+        "spent": "المبلغ المنفق",
+        "byOrders": "حسب الطلبات",
+        "bySpent": "حسب الإنفاق"
+      }
+    },
+    "metrics": {
+      "title": "مقاييس المتجر",
+      "subtitle": "نظرة عامة على الأداء والإحصائيات الرئيسية"
+    },
+    "charts": {
+      "revenue": {
+        "title": "إيرادات المتجر",
+        "subtitle": "تتبع إيراداتك عبر الفترات الزمنية",
+        "total": "الإجمالي",
+        "label": "الإيرادات"
+      },
+      "ordersStatus": {
+        "title": "حالة الطلبات",
+        "subtitle": "توزيع الطلبات حسب الحالة"
+      },
+      "topProducts": {
+        "title": "المنتجات الأكثر مبيعاً",
+        "subtitle": "المنتجات الأعلى أداءً في متجرك",
+        "label": "المبيعات"
+      }
+    }
+  }
+}

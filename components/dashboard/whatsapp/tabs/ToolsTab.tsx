@@ -19,6 +19,7 @@ const AVAILABLE_TOOLS = [
     { name: "search_order", description: "Search for customer orders by name, phone, ID, or status", category: "Orders" },
     { name: "update_order_status", description: "Update the status of an existing order", category: "Orders" },
     { name: "create_order", description: "Create a new order for a customer", category: "Orders" },
+    { name: "extract_orders_from_messages", description: "Analyze conversation messages to detect and extract order information automatically", category: "Orders" },
     { name: "search_product", description: "Search for products by name, category, brand, or slug", category: "Products" },
     { name: "list_products", description: "Get a list of all products with their names and slugs", category: "Products" },
     { name: "get_agent_memory", description: "Retrieve the conversation history with a customer as context/memory", category: "Memory" },

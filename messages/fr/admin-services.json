@@ -1,0 +1,51 @@
+{
+  "admin": {
+    "services": {
+      "title": "Demandes de Services",
+      "subtitle": "Gérer les demandes et les demandes de renseignements des clients",
+      "search": "Rechercher par nom, email ou téléphone...",
+      "filters": {
+        "allServices": "Tous les Services",
+        "allStatuses": "Tous les Statuts"
+      },
+      "showing": "Affichage de",
+      "of": "sur",
+      "inquiries": "demandes",
+      "empty": "Aucune demande trouvée",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette demande ?",
+      "delete": "Supprimer",
+      "table": {
+        "date": "Date",
+        "customer": "Client",
+        "service": "Type de Service",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "status": {
+        "new": "Nouveau",
+        "contacted": "Contacté",
+        "converted": "Converti",
+        "closed": "Fermé"
+      },
+      "details": {
+        "title": "Détails de la Demande",
+        "customerInfo": "Informations Client",
+        "email": "Email",
+        "phone": "Téléphone",
+        "serviceInfo": "Informations sur le Service",
+        "message": "Message",
+        "updateStatus": "Mettre à Jour le Statut",
+        "submitted": "Soumis"
+      },
+      "success": {
+        "statusUpdated": "Statut mis à jour avec succès",
+        "deleted": "Demande supprimée avec succès"
+      },
+      "errors": {
+        "loadFailed": "Échec du chargement des demandes",
+        "updateFailed": "Échec de la mise à jour du statut",
+        "deleteFailed": "Échec de la suppression de la demande"
+      }
+    }
+  }
+}

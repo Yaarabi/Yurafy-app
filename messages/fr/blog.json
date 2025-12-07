@@ -1,0 +1,19 @@
+{
+  "Blog": {
+    "title": "Blog",
+    "description": "Restez informé des derniers insights, conseils et meilleures pratiques pour l'automatisation commerciale et les solutions pilotées par l'IA.",
+    "empty": "Aucun article de blog disponible pour le moment. Revenez bientôt pour des mises à jour !",
+    "post1": {
+      "title": "Commencer avec Yurafy : Guide Complet",
+      "excerpt": "Apprenez comment configurer votre compte Yurafy, connecter vos comptes professionnels et commencer à automatiser vos flux de travail en quelques minutes. Ce guide complet couvre tout, de la création de compte aux fonctionnalités avancées."
+    },
+    "post2": {
+      "title": "Comment l'Automatisation IA Peut Transformer Votre Entreprise",
+      "excerpt": "Découvrez la puissance de l'automatisation pilotée par l'IA et comment elle peut vous aider à gagner du temps, augmenter les ventes et développer vos opérations commerciales. Exemples concrets et histoires de succès de clients Yurafy."
+    },
+    "post3": {
+      "title": "Automatisation WhatsApp Business : Meilleures Pratiques",
+      "excerpt": "Apprenez comment utiliser efficacement l'automatisation WhatsApp pour l'engagement client, la gestion des commandes et les campagnes marketing. Conseils et stratégies d'experts de l'industrie."
+    }
+  }
+}

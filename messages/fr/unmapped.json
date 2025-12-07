@@ -1,0 +1,10 @@
+{
+  "common": {
+    "appTitle": "Tableau de bord vendeur",
+    "logout": "Se déconnecter",
+    "buttons": {
+      "back": "Retour",
+      "connect": "Connecter"
+    }
+  }
+}

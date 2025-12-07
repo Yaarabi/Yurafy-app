@@ -1,0 +1,115 @@
+{
+  "dashboard": {
+    "title": "Welcome to your dashboard",
+    "subtitle": "Manage orders, products, and your brand in one place.",
+    "header": {
+      "title": "Dashboard"
+    },
+    "themeToggle": {
+      "ariaLabel": "Toggle theme"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Mark all read",
+      "markAllSuccess": "All notifications marked as read",
+      "markAllError": "Failed to mark all as read",
+      "deleteError": "Failed to delete notification",
+      "deleteReadSuccess": "All read notifications deleted",
+      "deleteReadError": "Failed to delete read notifications",
+      "markRead": "Mark as read",
+      "delete": "Delete",
+      "close": "Close",
+      "empty": "No notifications",
+      "clearAllRead": "Clear all read notifications"
+    },
+    "plan": {
+      "expired": "Your plan has expired",
+      "planLabel": "Plan",
+      "expires": "Expires",
+      "renewPlan": "Renew Plan",
+      "upgradePlan": "Upgrade Plan",
+      "products": "Products",
+      "orders": "Orders",
+      "contacts": "Contacts"
+    },
+    "stats": {
+      "totalRevenue": "Total Revenue",
+      "products": "Products",
+      "orders": "Orders",
+      "templates": "Templates",
+      "contacts": "Contacts",
+      "recentOrders": "Recent Orders",
+      "topProducts": "Top Products",
+      "noOrders": "No orders yet",
+      "noProducts": "No products yet",
+      "topCustomers": {
+        "title": "Top Customers",
+        "subtitle": {
+          "orders": "By order count",
+          "spent": "By total spent"
+        },
+        "orders": "Orders",
+        "spent": "Spent",
+        "byOrders": "Total Orders",
+        "bySpent": "Total Spent ($)",
+        "empty": "No customer data available"
+      }
+    },
+    "charts": {
+      "revenue": {
+        "title": "Revenue Over Time",
+        "subtitle": "Last 30 days",
+        "total": "Total",
+        "label": "Revenue ($)",
+        "noData": "No revenue data available"
+      },
+      "ordersStatus": {
+        "title": "Orders by Status",
+        "subtitle": "{count} total orders",
+        "noData": "No orders data available"
+      },
+      "topProducts": {
+        "title": "Top Products",
+        "subtitle": "By sales count",
+        "totalSales": "Total Sales",
+        "label": "Sales Count",
+        "noData": "No products data available",
+        "unnamedProduct": "Unnamed Product"
+      }
+    },
+    "metrics": {
+      "title": "COD & E-Business Metrics",
+      "subtitle": "Key performance indicators for your business"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connect and manage your store and delivery integrations",
+      "categories": {
+        "stores": {
+          "title": "Stores",
+          "description": "Add and manage connected stores (Shopify, WooCommerce, etc.)",
+          "manage": "Manage Stores"
+        },
+        "delivery": {
+          "title": "Delivery Companies",
+          "description": "Connect delivery partners and manage shipping integration settings",
+          "manage": "Manage Delivery Companies"
+        }
+      },
+      "providers": {
+        "shopify": {
+          "name": "Shopify",
+          "description": "connect your Store to get real time order"
+        },
+        "woocommerce": {
+          "name": "WooCommerce",
+          "description": "connect your Store to get real time order"
+        },
+        "youcan": {
+          "name": "YouCan",
+          "description": "connect your Store to get real time order"
+        }
+      }
+    }
+  }
+}

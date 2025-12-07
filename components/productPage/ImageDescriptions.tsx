@@ -21,12 +21,6 @@ export default function ImageDescriptions({ product }: ImageDescriptionsProps) {
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 px-4 sm:px-6">
             <div className="border-t border-gray-200 pt-8">
-                <h4
-                    className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center"
-                    style={{ color: 'var(--secondary-color)' }}
-                >
-                    {getStoreTranslation('productImages', storeLanguage)}
-                </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {product.descriptionsImage.map((img, idx) => (
                         <div 

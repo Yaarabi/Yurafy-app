@@ -1,0 +1,47 @@
+{
+  "Support": {
+    "title": "Centre de Support",
+    "description": "Obtenez l'aide dont vous avez besoin pour réussir avec Yurafy. Notre équipe de support est disponible via plusieurs canaux.",
+    "chat": {
+      "title": "Chat de Support",
+      "description": "Discutez avec notre équipe de support en temps réel. Obtenez une aide instantanée pour toutes vos questions.",
+      "action": "Démarrer le Chat",
+      "subtitle": "Nous sommes là pour vous aider 24/7",
+      "empty": {
+        "title": "Pas encore de messages",
+        "description": "Démarrez une conversation avec notre équipe de support. Nous sommes là pour vous aider !"
+      },
+      "messages": {
+        "sent": "Message envoyé avec succès",
+        "sendError": "Échec de l'envoi du message",
+        "loadError": "Échec du chargement des messages"
+      },
+      "input": {
+        "placeholder": "Tapez votre message...",
+        "send": "Envoyer",
+        "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+      }
+    },
+    "email": {
+      "title": "Support par E-mail",
+      "description": "Envoyez-nous un e-mail et nous répondrons dans les 24 heures.",
+      "action": "Envoyer un E-mail"
+    },
+    "phone": {
+      "title": "Support Téléphonique",
+      "description": "Appelez-nous directement pour une assistance immédiate.",
+      "action": "Appeler Maintenant"
+    },
+    "hours": {
+      "title": "Heures de Support",
+      "description": "Lundi - Vendredi : 9h00 - 18h00 (GMT+1) | Samedi : 10h00 - 14h00"
+    }
+  },
+  "supportBot": {
+    "title": "Bot de support",
+    "welcome": "Bonjour ! Je suis votre bot de support. Comment puis-je aider ?",
+    "stubReply": "Merci ! Un agent examinera votre demande prochainement.",
+    "placeholder": "Tapez votre question...",
+    "send": "Envoyer"
+  }
+}

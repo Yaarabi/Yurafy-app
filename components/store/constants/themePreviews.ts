@@ -76,7 +76,7 @@ export const THEME_PREVIEWS: ThemePreview[] = [
             hero: {
                 title: 'Less, but better.',
                 subtitle: 'Thoughtfully designed goods for a calm space',
-                imageUrl: 'https://picsum.photos/seed/minimal/800/600',
+                imageUrl: 'https://images.pexels.com/photos/994234/pexels-photo-994234.jpeg',
             },
             about: {
                 title: 'The Art of Simplicity',

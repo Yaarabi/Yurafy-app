@@ -23,27 +23,12 @@ const StorePage: React.FC = () => {
         footer: true,
     };
     
-    // Masonry Grid Theme Layout: Full-width Hero -> Product Grid (Masonry) -> About -> Trust -> Footer
-    const primaryColor = selectedStore.theme?.primaryColor || '#8B5CF6';
-    const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
-    const textColor = selectedStore.theme?.textColor || '#ffffff';
-
+    // Food Theme Layout: Hero (includes Header) -> Product Grid -> About -> Trust -> Footer
     return (
         <main className="min-h-screen" style={{ 
             backgroundColor: '#ffffff',
-            '--color-primary': primaryColor,
-            '--color-secondary': secondaryColor,
-            '--color-text': textColor,
         } as React.CSSProperties}>
-            {themeStructure.header && <Header />}
-            {themeStructure.hero && (
-                <div className="relative w-full overflow-hidden" style={{ 
-                    background: `linear-gradient(180deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
-                    minHeight: '70vh',
-                }}>
-                    <Hero />
-                </div>
-            )}
+            {themeStructure.hero && <Hero />}
             <SpecialOffer />
             <Categories />
             {themeStructure.productGrid && (

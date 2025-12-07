@@ -1,0 +1,33 @@
+{
+  "FAQs": {
+    "title": "Frequently Asked Questions",
+    "description": "Find answers to the most common questions about Yurafy.",
+    "faq1": {
+      "question": "What is Yurafy?",
+      "answer": "Yurafy is an AI-powered business automation platform that helps businesses create online stores, automate WhatsApp messaging, and streamline operations with intelligent solutions. We combine web development, AI automation, and customer engagement tools into one comprehensive platform."
+    },
+    "faq2": {
+      "question": "How much does Yurafy cost?",
+      "answer": "Yurafy offers flexible pricing plans starting from a free tier with basic features. Paid plans range from $11/month for Starter to $50/month for Visionary, with plans for businesses of all sizes. Visit our pricing page to see detailed feature comparisons."
+    },
+    "faq3": {
+      "question": "Do I need technical knowledge to use Yurafy?",
+      "answer": "No technical knowledge is required! Yurafy is designed to be user-friendly and intuitive. Our AI-powered tools guide you through setup, and our support team is always available to help. Most users can start using the platform within minutes."
+    },
+    "faq4": {
+      "question": "Can I customize my store design?",
+      "answer": "Yes! Yurafy offers multiple pre-designed themes and allows you to customize colors, fonts, and layouts."
+    },
+    "faq5": {
+      "question": "How does WhatsApp automation work?",
+      "answer": "Yurafy integrates with WhatsApp Business API to automate customer interactions. You can set up auto-replies, order confirmations, shipping notifications, and broadcast campaigns. The AI agent can handle customer inquiries 24/7, providing instant responses."
+    },
+    "faq6": {
+      "question": "Is my data secure?",
+      "answer": "Absolutely. We take data security seriously and use industry-standard encryption, secure authentication, and regular security audits. Your data is stored securely and never shared with third parties without your consent. Read our Privacy Policy for more details."
+    },
+    "stillHaveQuestions": "Still have questions?",
+    "contactSupport": "Our support team is here to help you succeed with Yurafy.",
+    "contactButton": "Contact Support"
+  }
+}

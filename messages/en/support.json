@@ -1,0 +1,47 @@
+{
+  "Support": {
+    "title": "Support Center",
+    "description": "Get the help you need to succeed with Yurafy. Our support team is available via multiple channels.",
+    "chat": {
+      "title": "Support Chat",
+      "description": "Chat with our support team in real-time. Get instant help with any questions.",
+      "action": "Start Chat",
+      "subtitle": "We're here to help you 24/7",
+      "empty": {
+        "title": "No messages yet",
+        "description": "Start a conversation with our support team. We're here to help!"
+      },
+      "messages": {
+        "sent": "Message sent successfully",
+        "sendError": "Failed to send message",
+        "loadError": "Failed to load messages"
+      },
+      "input": {
+        "placeholder": "Type your message...",
+        "send": "Send",
+        "hint": "Press Enter to send, Shift+Enter for new line"
+      }
+    },
+    "email": {
+      "title": "Email Support",
+      "description": "Send us an email and we'll respond within 24 hours.",
+      "action": "Send Email"
+    },
+    "phone": {
+      "title": "Phone Support",
+      "description": "Call us directly for immediate assistance.",
+      "action": "Call Now"
+    },
+    "hours": {
+      "title": "Support Hours",
+      "description": "Monday - Friday: 9:00 AM - 6:00 PM (GMT+1) | Saturday: 10:00 AM - 2:00 PM"
+    }
+  },
+  "supportBot": {
+    "title": "Support bot",
+    "welcome": "Hi! I'm your support bot. How can I help?",
+    "stubReply": "Thanks! A support agent will review this shortly.",
+    "placeholder": "Type your question...",
+    "send": "Send"
+  }
+}

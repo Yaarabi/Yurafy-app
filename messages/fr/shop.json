@@ -1,0 +1,36 @@
+{
+  "shop": {
+    "searchPlaceholder": "Rechercher des produits...",
+    "noProducts": "Aucun produit disponible."
+  },
+  "themes": {
+    "title": "Choisissez le thème de votre magasin",
+    "subtitle": "Sélectionnez un thème qui correspond à l'identité de votre marque. Prévisualisez chaque thème pour voir à quoi il ressemble avec un contenu d'exemple. Vous pouvez personnaliser la couleur principale après la sélection.",
+    "customizeColors": "Personnaliser les couleurs",
+    "adjustColors": "Ajustez les couleurs en temps réel",
+    "primaryColor": "Couleur principale",
+    "secondaryColor": "Couleur secondaire",
+    "textColor": "Couleur du texte",
+    "surfaceColor": "Fond des sections",
+    "store": "Magasin",
+    "product": "Produit",
+    "selectThisTheme": "Sélectionner ce thème",
+    "continue": "Continuer",
+    "continueWith": "Continuer avec",
+    "previewActive": "Aperçu actif",
+    "previewTheme": "Aperçu du thème",
+    "closePreview": "Fermer l'aperçu",
+    "themeNames": {
+      "1": "Vert classique",
+      "2": "Bleu moderne",
+      "3": "Noir et or de luxe",
+      "4": "Violet doux",
+      "5": "Corail couchant",
+      "6": "Gris minimal",
+      "7": "Sarcelle océan",
+      "8": "Rose poudré",
+      "9": "Forêt émeraude",
+      "10": "Blanc arctique"
+    }
+  }
+}

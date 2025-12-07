@@ -1,0 +1,141 @@
+{
+  "services": {
+    "hero": {
+      "title": "Lancez Boutique Nouvelle Génération avec Automatisation WhatsApp & Livraison et IA",
+      "subtitle": "Vitrines personnalisées, réponses automatiques WhatsApp, Lien société de livraison, et tableaux de bord et gestion d'équipe",
+      "ctaPrimary": "Obtenez Votre Boutique Maintenant",
+      "ctaSecondary": "Discutez avec Nous sur WhatsApp",
+      "features": {
+        "codCheckout": {
+          "title": "Formulaire de Paiement COD",
+          "description": "Optimisé pour la conversion et le mobile."
+        },
+        "whatsappAuto": {
+          "title": "Automatisation WhatsApp",
+          "description": "Confirmez automatiquement les commandes et notifiez les clients."
+        },
+        "deliveryApi": {
+          "title": "Lien Société de Livraison",
+          "description": "Suivi en temps réel et remplissage automatique des informations de commande."
+        },
+        "teamDashboard": {
+          "title": "Tableau de Bord d'Équipe",
+          "description": "Attribuez, suivez et gérez les commandes facilement."
+        }
+      }
+    },
+    "popular": "Le Plus Populaire",
+    "priceNote": "Paiement unique",
+    "getStarted": "Commencer",
+    "videoTitle": "Découvrez Comment Ça Marche",
+    "servicesTitle": "Nos Forfaits de Services",
+    "basicStore": {
+      "type": "Boutique Basique",
+      "description": "Liste de produits, formulaire COD, tableau de bord (sans automatisation)",
+      "features": {
+        "catalog": "Catalogue de produits",
+        "checkout": "Formulaire de paiement COD",
+        "dashboard": "Tableau de bord administrateur basique",
+        "responsive": "Design responsive mobile",
+        "seo": "Optimisation SEO"
+      }
+    },
+    "whatsappAuto": {
+      "type": "Boutique + Réponse Auto WhatsApp",
+      "description": "Configuration API WhatsApp, modèles, messages de confirmation",
+      "features": {
+        "basic": "Tout de Boutique Basique",
+        "api": "Configuration API WhatsApp Business",
+        "templates": "Modèles de messages automatisés",
+        "confirmation": "Confirmation de commande via WhatsApp",
+        "notifications": "Notifications clients"
+      }
+    },
+    "deliveryApi": {
+      "type": "Boutique + Intégration API Livraison",
+      "description": "Connecter la boutique à Ameex, Ozon ou autre société",
+      "features": {
+        "basic": "Tout de Boutique Basique",
+        "integration": "Intégration société de livraison",
+        "labels": "Étiquettes d'expédition automatisées",
+        "tracking": "Suivi en temps réel",
+        "bulk": "Traitement de commandes en masse"
+      }
+    },
+    "fullCod": {
+      "type": "Système COD Complet (Automatisation)",
+      "description": "Boutique + WhatsApp + livraison + tableau de bord",
+      "features": {
+        "complete": "Solution e-commerce complète",
+        "whatsapp": "Automatisation WhatsApp",
+        "delivery": "Intégration API livraison",
+        "team": "Gestion d'équipe",
+        "analytics": "Tableau de bord analytique avancé",
+        "orders": "Système de gestion des commandes",
+        "payment": "Suivi des paiements"
+      }
+    },
+    "aiAgent": {
+      "type": "Intégration Agent IA WhatsApp",
+      "description": "Agent OpenAI ou Dialogflow personnalisé, gestion et formation",
+      "features": {
+        "fullCod": "Tout du Système COD Complet",
+        "chatbot": "Chatbot IA personnalisé (OpenAI/Dialogflow)",
+        "nlu": "Compréhension du langage naturel",
+        "support": "Support client automatisé",
+        "orderChat": "Gestion des commandes via chat",
+        "training": "Formation et optimisation de l'agent"
+      }
+    },
+    "cta": {
+      "title": "Prêt à Démarrer Votre Projet ?",
+      "subtitle": "Contactez-nous aujourd'hui pour une consultation et un devis gratuits",
+      "button": "Demander un Devis"
+    },
+    "form": {
+      "title": "Demander un Devis",
+      "fullName": "Nom Complet",
+      "fullNamePlaceholder": "Entrez votre nom complet",
+      "phoneNumber": "Numéro de Téléphone",
+      "email": "Adresse Email",
+      "serviceType": "Type de Service",
+      "selectService": "Sélectionnez un service",
+      "message": "Détails Supplémentaires",
+      "optional": "Optionnel",
+      "messagePlaceholder": "Parlez-nous des exigences de votre projet...",
+      "domainOfWork": "Domaine d'activité",
+      "domainOfWorkPlaceholder": "Ex: E-commerce, Restaurant, Électronique",
+      "otherOption": "Autre",
+      "submit": "Soumettre la Demande",
+      "submitting": "Envoi en cours...",
+      "cancel": "Annuler",
+      "success": "Merci ! Votre demande a été soumise avec succès. Nous vous contacterons bientôt.",
+      "errors": {
+        "fullName": "Veuillez entrer un nom complet valide (au moins 2 caractères)",
+        "phoneNumber": "Veuillez entrer un numéro de téléphone marocain valide (ex: +212 600 000 000)",
+        "email": "Veuillez entrer une adresse email valide",
+        "serviceType": "Veuillez sélectionner un type de service",
+        "domainOfWorkRequired": "Veuillez entrer le domaine d'activité (requis pour Autre)",
+        "domainOfWorkMax": "Le domaine d'activité ne doit pas dépasser 100 caractères",
+        "messageRequired": "Veuillez fournir plus de détails (requis pour Autre)",
+        "validation": "Veuillez corriger les erreurs dans le formulaire",
+        "submit": "Échec de la soumission de la demande. Veuillez réessayer."
+      }
+    },
+    "differentIdea": {
+      "badge": "Idée Différente 💡",
+      "title": "Vous voulez quelque chose de différent ?",
+      "description": "Vous ne trouvez pas exactement ce dont vous avez besoin ? Parlez-nous d'une application ou d'une fonctionnalité personnalisée et nous la construirons pour vous.",
+      "cta": "Dites-nous votre idée"
+    },
+    "conversion": {
+      "heading": "Vous n'êtes pas sûr du plan adapté à vos besoins ?",
+      "subtext": "Que vous démarriez ou que vous passiez à l'échelle, nous avons des options flexibles pour chaque marchand.",
+      "chatLabel": "Discutez avec nous sur WhatsApp",
+      "chatAria": "Ouvrir le chat WhatsApp",
+      "requestLabel": "Dites-nous ce dont vous avez besoin",
+      "requestNote": "Nous reviendrons vers vous avec une offre personnalisée.",
+      "addon": "Besoin d'une configuration personnalisée ou d'un tarif flexible ? Parlons-en — nous aidons les marchands marocains à croître."
+    }
+  }
+}

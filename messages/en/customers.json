@@ -1,0 +1,34 @@
+{
+  "customers": {
+    "table": {
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "orders": "Orders",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled",
+        "spent": "Spent",
+        "lastOrder": "Last Order",
+        "status": "Status"
+      },
+      "loading": "Loading customers...",
+      "empty": "No customers found",
+      "guest": "Guest",
+      "noAddress": "No address",
+      "whatsappRequired": "WhatsApp feature required"
+    },
+    "filters": {
+      "label": "Filters",
+      "allStatus": "All Status",
+      "status": {
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "delivered": "Delivered",
+        "new": "New"
+      },
+      "addressPlaceholder": "Search by address..."
+    }
+  }
+}

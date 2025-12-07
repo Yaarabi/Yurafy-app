@@ -9,6 +9,7 @@ import Trust from './sections/Trust';
 import { ArrowLeftIcon } from '../../components/icons';
 import { motion } from 'framer-motion';
 import ImageDescriptions from '@/components/productPage/ImageDescriptions';
+import SpecificationsTable from '@/components/productPage/SpecificationsTable';
 
 const ProductPage: React.FC = () => {
     const { selectedStore, selectedProduct } = useStore();
@@ -75,7 +76,13 @@ const ProductPage: React.FC = () => {
                         <div id="order-form" className="bg-gray-50 rounded-lg p-4 sm:p-6 lg:p-8 border border-gray-200">
                             <OrderForm />
                         </div>
-                        {/* Image Descriptions - Below Order Form */}
+                        {/* Specifications Table - Below Order Form */}
+                        {selectedProduct && (
+                            <div className="bg-white rounded-lg p-4 sm:p-6 lg:p-8 border border-gray-200 shadow-lg">
+                                <SpecificationsTable product={selectedProduct} primaryColor={primaryColor} secondaryColor={secondaryColor} />
+                            </div>
+                        )}
+                        {/* Image Descriptions - Below Specifications */}
                         {selectedProduct && (
                             <div className="bg-white rounded-lg p-4 sm:p-6 lg:p-8 border border-gray-200 shadow-lg">
                                 <ImageDescriptions product={selectedProduct} />

@@ -1,0 +1,34 @@
+{
+  "customers": {
+    "table": {
+      "columns": {
+        "name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "orders": "Commandes",
+        "delivered": "Livrées",
+        "cancelled": "Annulées",
+        "spent": "Dépensé",
+        "lastOrder": "Dernière commande",
+        "status": "Statut"
+      },
+      "loading": "Chargement des clients...",
+      "empty": "Aucun client trouvé",
+      "guest": "Invité",
+      "noAddress": "Aucune adresse",
+      "whatsappRequired": "Fonctionnalité WhatsApp requise"
+    },
+    "filters": {
+      "label": "Filtres",
+      "allStatus": "Tous les statuts",
+      "status": {
+        "confirmed": "Confirmé",
+        "cancelled": "Annulé",
+        "delivered": "Livré",
+        "new": "Nouveau"
+      },
+      "addressPlaceholder": "Rechercher par adresse..."
+    }
+  }
+}

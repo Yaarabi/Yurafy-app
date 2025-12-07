@@ -1,0 +1,51 @@
+{
+  "admin": {
+    "services": {
+      "title": "استفسارات الخدمات",
+      "subtitle": "إدارة طلبات واستفسارات العملاء",
+      "search": "البحث بالاسم أو البريد الإلكتروني أو الهاتف...",
+      "filters": {
+        "allServices": "كل الخدمات",
+        "allStatuses": "كل الحالات"
+      },
+      "showing": "عرض",
+      "of": "من",
+      "inquiries": "استفسارات",
+      "empty": "لا توجد استفسارات",
+      "confirmDelete": "هل أنت متأكد من حذف هذا الاستفسار؟",
+      "delete": "حذف",
+      "table": {
+        "date": "التاريخ",
+        "customer": "العميل",
+        "service": "نوع الخدمة",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "new": "جديد",
+        "contacted": "تم التواصل",
+        "converted": "تم التحويل",
+        "closed": "مغلق"
+      },
+      "details": {
+        "title": "تفاصيل الاستفسار",
+        "customerInfo": "معلومات العميل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "serviceInfo": "معلومات الخدمة",
+        "message": "الرسالة",
+        "updateStatus": "تحديث الحالة",
+        "submitted": "تم الإرسال"
+      },
+      "success": {
+        "statusUpdated": "تم تحديث الحالة بنجاح",
+        "deleted": "تم حذف الاستفسار بنجاح"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الاستفسارات",
+        "updateFailed": "فشل تحديث الحالة",
+        "deleteFailed": "فشل حذف الاستفسار"
+      }
+    }
+  }
+}

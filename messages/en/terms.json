@@ -1,0 +1,32 @@
+{
+  "Terms": {
+    "title": "Terms of Service & Privacy Policy",
+    "description": "Please read these terms carefully before using Yurafy. By using our services, you agree to these terms.",
+    "lastUpdated": "Last Updated: January 2025",
+    "section1": {
+      "title": "1. Acceptance of Terms",
+      "content": "By accessing and using Yurafy, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service."
+    },
+    "section2": {
+      "title": "2. Use License",
+      "content": "Permission is granted to temporarily use Yurafy for personal or commercial business purposes. This is the grant of a license, not a transfer of title, and under this license you may not: modify or copy the materials; use the materials for any commercial purpose or for any public display; attempt to reverse engineer any software contained in Yurafy; remove any copyright or other proprietary notations from the materials."
+    },
+    "section3": {
+      "title": "3. Privacy Policy",
+      "content": "We respect your privacy and are committed to protecting your personal information. We collect only the information necessary to provide our services and improve your experience. Your data is encrypted, stored securely, and never shared with third parties without your explicit consent. For detailed information about data collection, usage, and your rights, please review our complete Privacy Policy."
+    },
+    "section4": {
+      "title": "4. Service Availability",
+      "content": "We strive to maintain high availability of our services, but we do not guarantee uninterrupted access. Yurafy may be temporarily unavailable due to maintenance, updates, or unforeseen circumstances. We are not liable for any losses resulting from service interruptions."
+    },
+    "section5": {
+      "title": "5. Limitation of Liability",
+      "content": "In no event shall Yurafy or its suppliers be liable for any damages arising out of the use or inability to use the materials on Yurafy, even if Yurafy or an authorized representative has been notified orally or in writing of the possibility of such damage."
+    },
+    "questions": {
+      "title": "Questions about our Terms?",
+      "description": "If you have any questions about our Terms of Service or Privacy Policy, please don't hesitate to contact us.",
+      "button": "Contact Support"
+    }
+  }
+}

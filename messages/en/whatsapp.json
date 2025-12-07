@@ -1,0 +1,227 @@
+{
+  "whatsapp": {
+    "tabs": {
+      "connection": "Connection",
+      "aiAgent": "AI Agent",
+      "tools": "Tools",
+      "automation": "Automation Settings",
+      "ordersTriggers": "Orders Triggers",
+      "templates": "Templates",
+      "testPanel": "Test Panel"
+    },
+    "conversations": {
+      "searchPlaceholder": "Search by name or phone number...",
+      "filters": "Filters:",
+      "clearAll": "Clear All",
+      "of": "of",
+      "loading": "Loading...",
+      "status": {
+        "all": "All Status",
+        "optedIn": "Opted In",
+        "optedOut": "Opted Out"
+      },
+      "filterButtons": {
+        "autoReply": "Auto Reply",
+        "orderConfirm": "Order Confirm",
+        "adTemplate": "Ad Template",
+        "agentReply": "Agent Reply",
+        "unread": "Unread"
+      },
+      "sort": {
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "mostUnread": "Most Unread",
+        "name": "Name"
+      },
+      "selectConversation": "Select a conversation",
+      "empty": {
+        "title": "No conversations yet",
+        "description": "Start a conversation to see it here",
+        "noMessages": "No messages yet"
+      },
+      "tracking": {
+        "autoReply": "Auto Reply Sent",
+        "auto": "Auto",
+        "orderConfirm": "Order Confirmation Sent",
+        "order": "Order",
+        "adTemplate": "Ad Template Sent",
+        "ad": "Ad",
+        "read": "Message Read",
+        "readLabel": "Read"
+      }
+    },
+    "chat": {
+      "back": "Back",
+      "status": {
+        "humanRequired": "Human Support Required",
+        "optedIn": "Opted In",
+        "optedOut": "Opted Out"
+      },
+      "empty": {
+        "noMessages": "No messages yet",
+        "noText": "(No text)"
+      },
+      "you": "You"
+    },
+    "tools": {
+      "section": {
+        "tools": {
+          "title": "Agent Tools",
+          "description": "Enable or disable specific tools for your AI agent. Disabled tools will not be available to the agent during conversations."
+        },
+        "templates": {
+          "title": "Templates Configuration",
+          "label": "Existing Templates"
+        }
+      },
+      "categories": {
+        "Orders": "Orders",
+        "Products": "Products",
+        "Memory": "Memory",
+        "Brand Info": "Brand Info",
+        "Templates": "Templates",
+        "Notifications": "Notifications"
+      },
+      "tools": {
+        "search_order": {
+          "name": "Search Order",
+          "description": "Search for customer orders by name, phone, ID, or status"
+        },
+        "update_order_status": {
+          "name": "Update Order Status",
+          "description": "Update the status of an existing order"
+        },
+        "create_order": {
+          "name": "Create Order",
+          "description": "Create a new order for a customer"
+        },
+        "extract_orders_from_messages": {
+          "name": "Extract Orders from Messages",
+          "description": "Analyze conversation messages to detect and extract order information automatically"
+        },
+        "search_product": {
+          "name": "Search Product",
+          "description": "Search for products by name, category, brand, or slug"
+        },
+        "list_products": {
+          "name": "List Products",
+          "description": "Retrieve a list of products with optional filters like category or brand"
+        },
+        "store_agent_action": {
+          "name": "Store Agent Action",
+          "description": "Store or update what the AI agent did or observed about a customer"
+        },
+        "get_agent_memory": {
+          "name": "Get Agent Memory",
+          "description": "Retrieve stored summary of previous actions or customer situations"
+        },
+        "brand_info_retrieval": {
+          "name": "Brand Info Retrieval",
+          "description": "Search through brand's uploaded knowledge (manuals, FAQs, documents)"
+        },
+        "template_guide": {
+          "name": "Template Guide",
+          "description": "Suggests relevant templates to use when responding to customers"
+        },
+        "send_template": {
+          "name": "Send Template",
+          "description": "Send an approved WhatsApp template message to a customer"
+        },
+        "send_owner_notification": {
+          "name": "Send Owner Notification",
+          "description": "Send notification to owner when agent needs assistance or encounters issues it cannot handle"
+        }
+      },
+      "tool": {
+        "enabledLabel": "Enabled",
+        "enabled": "Tool \"{tool}\" enabled",
+        "disabled": "Tool \"{tool}\" disabled",
+        "enable": "Enable {tool}",
+        "disable": "Disable {tool}",
+        "updateError": "Failed to update tool"
+      },
+      "template": {
+        "empty": "No templates yet.",
+        "addLabel": "Add Another Template",
+        "exists": "Template already exists",
+        "added": "Template \"{template}\" added",
+        "deleted": "Template \"{template}\" deleted",
+        "addError": "Failed to add template",
+        "deleteError": "Failed to delete template"
+      },
+      "file": {
+        "uploadLabel": "File Upload (for RAG)",
+        "currentFile": "Current File",
+        "delete": "Delete",
+        "saving": "Saving...",
+        "saveAndGenerate": "Save File & Generate Embeddings",
+        "cancel": "Cancel",
+        "saved": "File saved to agent",
+        "embeddingsGenerated": "Embeddings generated successfully",
+        "deleted": "File and embeddings deleted",
+        "deleteError": "Delete failed"
+      }
+    },
+    "ordersTriggers": {
+      "title": "Order Message Triggers",
+      "description": "Automatically send WhatsApp messages when order status changes",
+      "addTrigger": "Add Trigger",
+      "editTrigger": "Edit Trigger",
+      "totalTriggers": "Total Triggers",
+      "activeTriggers": "Active",
+      "inactiveTriggers": "Inactive",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "template": "Message Template",
+      "edit": "Edit",
+      "delete": "Delete",
+      "noTriggers": "No triggers configured",
+      "noTriggersDescription": "Create your first order trigger to automatically send messages when order status changes",
+      "createFirst": "Create First Trigger",
+      "deleteConfirm": "Are you sure you want to delete this trigger?",
+      "fetchError": "Failed to fetch triggers",
+      "addSuccess": "Trigger created successfully",
+      "addError": "Failed to create trigger",
+      "updateSuccess": "Trigger updated successfully",
+      "updateError": "Failed to update trigger",
+      "deleteSuccess": "Trigger deleted successfully",
+      "deleteError": "Failed to delete trigger",
+      "enabledSuccess": "Trigger enabled",
+      "disabledSuccess": "Trigger disabled",
+      "toggleError": "Failed to toggle trigger",
+      "status": {
+        "new": "New",
+        "confirmed": "Confirmed",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "form": {
+        "triggerName": "Trigger Name",
+        "triggerNamePlaceholder": "e.g. Order Confirmation",
+        "whatsappAccount": "WhatsApp Account",
+        "selectAccount": "Select WhatsApp Account",
+        "orderStatus": "Order Status",
+        "selectStatus": "Select Order Status",
+        "template": "Message Template",
+        "selectTemplate": "Select a template",
+        "templatePlaceholder": "Enter the message to send when order status changes...",
+        "templateHint": "Use variables like '{customerName}', '{orderNumber}', '{status}' in your message",
+        "timing": "Delay (seconds)",
+        "timingPlaceholder": "e.g. 60",
+        "timingHint": "Time to wait before sending the message (in seconds). 0 for immediate.",
+        "enableActive": "Enable Trigger",
+        "activeHint": "When enabled, this trigger will be active",
+        "enableAuto": "Enable Automatic Execution",
+        "autoHint": "If enabled, messages send automatically. If disabled, they require manual approval.",
+        "cancel": "Cancel",
+        "create": "Create Trigger",
+        "creating": "Creating...",
+        "update": "Update Trigger",
+        "updating": "Updating...",
+        "save": "Save",
+        "saving": "Saving..."
+      }
+    }
+  }
+}

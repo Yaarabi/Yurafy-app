@@ -59,7 +59,7 @@ const ProductGrid: React.FC = () => {
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />
             
-            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl z-10">
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-4 z-10">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -107,13 +107,6 @@ const ProductGrid: React.FC = () => {
                                 variants={cardVariants}
                                 className="group relative bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
                             >
-                                {/* Organic Corner Accent */}
-                                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden z-10">
-                                    <div 
-                                        className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
-                                        style={{ borderTopColor: primaryColor }}
-                                    ></div>
-                                </div>
                                 
                                 <div className="relative overflow-hidden h-80">
                                     <motion.img
@@ -132,7 +125,7 @@ const ProductGrid: React.FC = () => {
                                     </div>
                                     
                                 </div>
-                                <div className="p-8 flex-grow flex flex-col justify-between">
+                                <div className="p-4 flex-grow flex flex-col">
                                     <div>
                                         <h4 className="text-2xl font-light text-gray-900 mb-4 leading-tight">
                                             {product.name}
@@ -178,7 +171,7 @@ const ProductGrid: React.FC = () => {
                             </motion.div>
                         ))}
                     </motion.div>
-                    {products.length > 4 && (
+
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -199,7 +192,6 @@ const ProductGrid: React.FC = () => {
                                 {getStoreTranslation("viewAllProducts", storeLanguage) || "View All Products"}
                             </button>
                         </motion.div>
-                    )}
                     </>
                 )}
             </div>

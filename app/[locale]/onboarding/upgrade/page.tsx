@@ -141,12 +141,12 @@ export default function OnboardingUpgradePage() {
                         </motion.h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                             {specialPlans
-                                .filter(plan => {
+                                .filter((plan: any) => {
                                     // Hide current plan
-                                    if (currentPlan && plan.key.toLowerCase() === currentPlan.planKey?.toLowerCase()) return false;
+                                    if (currentPlan && plan.key?.toLowerCase() === currentPlan.planKey?.toLowerCase()) return false;
                                     return true;
                                 })
-                                .map((plan, index) => (
+                                .map((plan: any, index) => (
                                     <UpgradeSpecialPlanCard
                                         key={plan.key}
                                         plan={plan}

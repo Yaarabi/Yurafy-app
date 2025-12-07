@@ -1,0 +1,32 @@
+{
+  "integrations": {
+    "title": "التكاملات",
+    "subtitle": "ربط وإدارة تكاملات المتجر وعمليات الشحن",
+    "categories": {
+      "stores": {
+        "title": "المتاجر",
+        "description": "أضف وقم بإدارة المتاجر المتصلة (Shopify، WooCommerce، إلخ)",
+        "manage": "إدارة المتاجر"
+      },
+      "delivery": {
+        "title": "شركات الشحن",
+        "description": "ربط شركاء الشحن وإدارة إعدادات الشحن",
+        "manage": "إدارة شركات الشحن"
+      }
+    },
+    "providers": {
+      "shopify": {
+        "name": "Shopify",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      },
+      "woocommerce": {
+        "name": "WooCommerce",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      },
+      "youcan": {
+        "name": "YouCan",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      }
+    }
+  }
+}

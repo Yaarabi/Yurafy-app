@@ -1,0 +1,204 @@
+{
+  "AboutSection": {
+    "title": "Qui Nous Sommes",
+    "description": "Yurafy est une plateforme technologique de pointe dédiée à l'autonomisation des entreprises de toutes tailles avec des solutions d'automatisation pilotées par l'IA. Nous combinons l'intelligence artificielle, l'automatisation et le développement web expert pour fournir des solutions intelligentes qui rationalisent les opérations, augmentent les ventes et font gagner un temps précieux. Que vous soyez un artisan local, un détaillant, un vendeur e-commerce ou une entreprise en croissance, nos outils complets vous aident à atteindre vos clients plus rapidement, plus intelligemment et plus efficacement.",
+    "highlight1": "Génération de contenu par l'IA pour des descriptions de produits et du contenu marketing instantanés et de haute qualité",
+    "highlight2": "Solutions de messagerie WhatsApp automatisées et d'engagement client",
+    "highlight3": "Développement de magasins web personnalisés avec design réactif et optimisation SEO",
+    "highlight4": "Plateforme complète d'automatisation commerciale des pages produits à la communication client"
+  },
+  "FeaturesSection": {
+    "title": "Automatisation Tout-en-Un pour les Vendeurs",
+    "subtitle": "Tout ce dont vous avez besoin pour développer votre entreprise en une seule plateforme",
+    "feature1": {
+      "title": "Boutique en Ligne",
+      "description": "Créez votre boutique en ligne professionnelle avec un design moderne et des fonctionnalités e-commerce complètes."
+    },
+    "feature2": {
+      "title": "Automatisation WhatsApp",
+      "description": "Automatisez vos communications WhatsApp et gérez les conversations clients avec l'IA pour des réponses instantanées."
+    },
+    "feature3": {
+      "title": "Assistant IA",
+      "description": "Agent IA intelligent qui répond aux questions des clients, traite les commandes et fournit des recommandations de produits."
+    },
+    "feature4": {
+      "title": "Contenu Généré par IA",
+      "description": "Générez automatiquement des descriptions de produits, des images et du contenu marketing optimisé par l'IA."
+    }
+  },
+  "HeroSection": {
+    "language": "FR",
+    "login": "Se Connecter",
+    "signup": "S'inscrire",
+    "logoAlt": "Logo Yurafy",
+    "title": "Yurafy – Plateforme d'Automatisation Commerciale Pilotée par l'IA",
+    "subtitle": "Transformez votre entreprise avec l'automatisation pilotée par l'IA. Créez de magnifiques magasins, automatisez la messagerie WhatsApp et développez sans effort avec des solutions intelligentes.",
+    "cta": {
+      "getStarted": "Commencer Gratuitement",
+      "learnMore": "En Savoir Plus"
+    },
+    "dashboardAlt": "Maquette du tableau de bord commercial"
+  },
+  "HowItWorks": {
+    "title": "Comment Ça Marche",
+    "subtitle": "Commencez en quatre étapes simples",
+    "step1": {
+      "title": "Choisissez Votre Plan",
+      "description": "Sélectionnez le plan parfait pour votre entreprise. Commencez avec notre essai gratuit et passez à une version supérieure quand vous êtes prêt."
+    },
+    "step2": {
+      "title": "Configurez Votre Boutique",
+      "description": "Créez votre boutique en ligne avec notre configurateur facile. Ajoutez des produits, personnalisez le design et intégrez WhatsApp."
+    },
+    "step3": {
+      "title": "Activez l'Automatisation",
+      "description": "Configurez votre agent IA pour gérer les conversations clients, traiter les commandes et fournir une assistance 24h/24 et 7j/7."
+    },
+    "step4": {
+      "title": "Commencez à Vendre",
+      "description": "Lancez votre boutique et commencez à vendre. Suivez les performances, engagez les clients et développez votre entreprise."
+    },
+    "cta": "Commencer Maintenant"
+  },
+  "OtherServicesSection": {
+    "title": "Transformez Votre Entreprise avec des Solutions Web Personnalisées",
+    "subtitle": "Vous cherchez un site web entièrement personnalisé ? Notre équipe d'experts construit des sites web magnifiques et réactifs adaptés à votre marque unique et aux besoins de votre entreprise. Du concept au lancement, nous livrons des expériences web exceptionnelles qui génèrent des résultats.",
+    "service1": {
+      "title": "Développement Web Sur Mesure",
+      "description": "Sites web professionnels et réactifs construits à partir de zéro. Nous créons des sites rapides, optimisés pour le SEO qui représentent parfaitement votre marque et convertissent les visiteurs en clients.",
+      "features": {
+        "0": "Design personnalisé",
+        "1": "Mise en page responsive",
+        "2": "Performance rapide",
+        "3": "Optimisé SEO"
+      }
+    },
+    "service2": {
+      "title": "Solutions Pilotées par l'IA",
+      "description": "Intégrez l'IA de pointe pour automatiser les flux de travail, générer du contenu et fournir des interactions client intelligentes qui s'adaptent à votre entreprise.",
+      "features": {
+        "0": "Intégration IA",
+        "1": "Génération de contenu",
+        "2": "Automatisation intelligente",
+        "3": "Multilingue"
+      }
+    },
+    "service3": {
+      "title": "Automatisation Commerciale",
+      "description": "Connectez vos applications, réseaux sociaux et canaux de communication en un système automatisé transparent qui fonctionne 24/7 pour développer votre entreprise.",
+      "features": {
+        "0": "Priorité au mobile",
+        "1": "Intégration WhatsApp",
+        "2": "Réseaux sociaux",
+        "3": "Mises à jour en temps réel"
+      }
+    },
+    "highlights": {
+      "fast": "Livraison rapide",
+      "secure": "Sécurisé & fiable",
+      "design": "Design personnalisé"
+    },
+    "cta": {
+      "contact": "Commencer"
+    }
+  },
+  "PlansSection": {
+    "title": "Des Plans Flexibles pour Votre Entreprise",
+    "subtitle": "Choisissez le plan parfait pour les besoins de votre entreprise",
+    "popular": "Populaire",
+    "bestValue": "Meilleure Valeur",
+    "choosePlan": "Choisir le Plan",
+    "getStartedFree": "Commencer Gratuitement",
+    "perMonth": "mois",
+    "free": {
+      "name": "Gratuit",
+      "price": "0",
+      "description": "Testez toutes les fonctionnalités avec une utilisation limitée.",
+      "features": {
+        "0": "5 Produits",
+        "1": "10 Commandes",
+        "2": "Support Basique"
+      }
+    },
+    "starter": {
+      "name": "Débutant",
+      "price": "13",
+      "description": "Configuration de boutique de base avec marque et domaine.",
+      "features": {
+        "0": "500 Commandes",
+        "1": "Domaine Personnalisé",
+        "2": "Thème Personnalisé",
+        "3": "Outils SEO"
+      }
+    },
+    "whatsapp": {
+      "name": "Automatisation WhatsApp",
+      "price": "11",
+      "description": "Automatisez la messagerie avec l'API WhatsApp Cloud.",
+      "features": {
+        "0": "500 Contacts",
+        "1": "Réponses Auto",
+        "2": "Modèles",
+        "3": "Diffusions"
+      }
+    },
+    "aiAgent": {
+      "name": "Agent IA WhatsApp",
+      "price": "21",
+      "description": "Automatisation + assistant WhatsApp alimenté par l'IA.",
+      "features": {
+        "0": "1000 Contacts",
+        "1": "Assistant IA",
+        "2": "Réponses Intelligentes",
+        "3": "Multilingue"
+      }
+    },
+    "proSeller": {
+      "name": "Vendeur Pro",
+      "price": "27",
+      "description": "Débutant + Automatisation WhatsApp pour vendeurs sérieux.",
+      "features": {
+        "0": "1500 Commandes",
+        "1": "Boutique + WhatsApp",
+        "2": "2000 Contacts",
+        "3": "Support Prioritaire"
+      }
+    },
+    "visionary": {
+      "name": "Visionnaire",
+      "price": "50",
+      "description": "Vendeur Pro + Agent IA pour une mise à l'échelle complète.",
+      "features": {
+        "0": "Commandes Illimitées",
+        "1": "Toutes les Fonctionnalités",
+        "2": "Agent IA",
+        "3": "Support Prioritaire"
+      }
+    }
+  },
+  "TestimonialsSection": {
+    "title": "Ce Que Nos Clients Disent",
+    "testimonial1": {
+      "quote": "Yurafy a transformé mon entreprise. L'automatisation IA me fait gagner des heures chaque jour, et mes ventes ont augmenté de 40% depuis que j'utilise la plateforme.",
+      "name": "Fatima, Propriétaire E-commerce"
+    },
+    "testimonial2": {
+      "quote": "L'automatisation WhatsApp est incroyable. Mes clients reçoivent des réponses instantanées, et je peux me concentrer sur le développement de mon entreprise au lieu de répondre aux messages toute la journée.",
+      "name": "Youssef, Détaillant"
+    },
+    "testimonial3": {
+      "quote": "Le service de développement web personnalisé a dépassé mes attentes. Mon nouveau site web a l'air professionnel et convertit beaucoup mieux qu'avant.",
+      "name": "Sarah, Propriétaire d'Entreprise"
+    }
+  },
+  "CallToAction": {
+    "headline": "Prêt à Transformer Votre Entreprise avec Yurafy ?",
+    "cta": "Commencer Maintenant"
+  },
+  "trustBanner": {
+    "cod": "Paiement à la livraison",
+    "fastDelivery": "Livraison rapide 24-48h",
+    "support": "Service client WhatsApp"
+  }
+}

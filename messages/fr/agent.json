@@ -1,0 +1,18 @@
+{
+  "agent": {
+    "header": {
+      "title": "Assistant Agent IA",
+      "subtitle": "Votre assistant intelligent pour le magasin",
+      "clearChat": "Effacer la conversation"
+    },
+    "messages": {
+      "startConversation": "Démarrer une conversation",
+      "startDescription": "Posez-moi n'importe quelle question sur votre magasin, produits, commandes ou clients. Je suis là pour vous aider !"
+    },
+    "input": {
+      "placeholder": "Posez-moi n'importe quelle question sur votre magasin...",
+      "send": "Envoyer",
+      "hint": "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+    }
+  }
+}

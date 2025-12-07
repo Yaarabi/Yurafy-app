@@ -9,9 +9,10 @@ import { useRouter, useParams } from "next/navigation";
 interface SearchBarProps {
     primaryColor?: string;
     onProductSelect?: (product: IProduct) => void;
+    isCompact?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProductSelect }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProductSelect, isCompact = false }) => {
     const { selectedStore } = useStore();
     const router = useRouter();
     const params = useParams();
@@ -110,7 +111,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ primaryColor = '#0891b2', onProdu
     };
 
     return (
-        <div ref={searchRef} className="relative w-full max-w-md">
+        <div ref={searchRef} className={`relative ${isCompact ? 'w-48 xl:w-64' : 'w-full max-w-md'}`}>
             <div className="relative">
                 <input
                     ref={inputRef}

@@ -1,0 +1,59 @@
+{
+  "whatsapp": {
+    "conversations": {
+      "searchPlaceholder": "Rechercher par nom ou numéro de téléphone...",
+      "filters": "Filtres :",
+      "clearAll": "Tout effacer",
+      "of": "sur",
+      "loading": "Chargement...",
+      "status": {
+        "all": "Tous les statuts",
+        "humanNeeded": "Intervention humaine requise",
+        "optedIn": "Abonné",
+        "optedOut": "Désabonné"
+      },
+      "filterButtons": {
+        "autoReply": "Réponse auto",
+        "orderConfirm": "Confirmation commande",
+        "adTemplate": "Modèle pub",
+        "agentReply": "Réponse agent",
+        "unread": "Non lus"
+      },
+      "sort": {
+        "newest": "Plus récent",
+        "oldest": "Plus ancien",
+        "mostUnread": "Plus de non lus",
+        "name": "Nom"
+      },
+      "selectConversation": "Sélectionner une conversation",
+      "empty": {
+        "title": "Aucune conversation pour le moment",
+        "description": "Démarrez une conversation pour la voir ici",
+        "noMessages": "Aucun message pour le moment"
+      },
+      "tracking": {
+        "autoReply": "Réponse automatique envoyée",
+        "auto": "Auto",
+        "orderConfirm": "Confirmation de commande envoyée",
+        "order": "Commande",
+        "adTemplate": "Modèle publicitaire envoyé",
+        "ad": "Pub",
+        "read": "Message lu",
+        "readLabel": "Lu"
+      }
+    },
+    "chat": {
+      "back": "Retour",
+      "status": {
+        "humanRequired": "Support humain requis",
+        "optedIn": "Abonné",
+        "optedOut": "Désabonné"
+      },
+      "empty": {
+        "noMessages": "Aucun message pour le moment",
+        "noText": "(Aucun texte)"
+      },
+      "you": "Vous"
+    }
+  }
+}

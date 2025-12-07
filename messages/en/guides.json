@@ -1,0 +1,21 @@
+{
+  "guides": {
+    "title": "Video Guides",
+    "subtitle": "Learn how to use our platform with these step-by-step video tutorials",
+    "categories": {
+      "all": "All Guides",
+      "overview": "Overview",
+      "products": "Products",
+      "orders": "Orders",
+      "automation": "Automation",
+      "ai-agent": "AI Agent",
+      "services": "Services"
+    },
+    "watchNow": "Watch Now",
+    "close": "Close",
+    "empty": "No guides available in this category",
+    "errors": {
+      "loadFailed": "Failed to load guides"
+    }
+  }
+}

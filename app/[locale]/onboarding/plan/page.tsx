@@ -3,7 +3,6 @@ import { motion } from "framer-motion"
 import { Sparkles, Crown } from "lucide-react"
 import { useParams } from "next/navigation"
 import PlanCard from "@/components/onboarding/plan/PlanCard"
-import SpecialPlanCard from "@/components/onboarding/plan/SpecialPlanCard"
 import { usePlansData } from "@/hooks/onboarding/usePlansData"
 import { useUpgradeMode } from "@/hooks/onboarding/useUpgradeMode"
 import { usePlanSelection } from "@/hooks/onboarding/usePlanSelection"
@@ -11,7 +10,7 @@ import { usePlanSelection } from "@/hooks/onboarding/usePlanSelection"
 export default function PlanPage() {
     const params = useParams()
     const isUpgrade = useUpgradeMode()
-    const { plans, specialPlans, loading: plansLoading } = usePlansData()
+    const { plans, loading: plansLoading } = usePlansData()
     const { loading, handlePlanSelect } = usePlanSelection(isUpgrade)
 
     return (
@@ -79,30 +78,6 @@ export default function PlanPage() {
                         ))}
                         </div>
 
-                        {/* Special Plans Section */}
-                        {specialPlans.length > 0 && (
-                            <div className="mt-12">
-                                <motion.h3
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-900"
-                                >
-                                    Special Offers
-                                </motion.h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                                    {specialPlans.map((plan, index) => (
-                                        <SpecialPlanCard
-                                            key={plan.key}
-                                            plan={plan}
-                                            index={index}
-                                            isLoading={loading === plan.key}
-                                            isUpgrade={isUpgrade}
-                                            onSelect={handlePlanSelect}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
             </motion.div>
         </div>
     )

@@ -1,0 +1,208 @@
+{
+  "AboutSection": {
+    "title": "Who We Are",
+    "description": "Yurafy is a cutting-edge technology platform dedicated to empowering businesses of all sizes with AI-driven automation solutions. We combine artificial intelligence, automation, and expert web development to deliver intelligent solutions that streamline operations, increase sales, and save valuable time. Whether you're a local artisan, retailer, e-commerce seller, or growing business, our comprehensive tools help you reach customers faster, smarter, and more efficiently.",
+    "highlight1": "AI-powered content generation for instant high-quality product descriptions and marketing content",
+    "highlight2": "Automated WhatsApp messaging and customer engagement solutions",
+    "highlight3": "Custom web store development with responsive design and SEO optimization",
+    "highlight4": "Complete business automation platform from product pages to customer communication"
+  },
+  "FeaturesSection": {
+    "title": "All-in-One Seller Automation",
+    "subtitle": "Everything you need to grow your business in one platform",
+    "feature1": {
+      "title": "Online Store",
+      "description": "Create beautiful, responsive stores with custom themes and domains. Perfect for showcasing your products."
+    },
+    "feature2": {
+      "title": "WhatsApp Automation",
+      "description": "Automate customer interactions, order confirmations, and marketing campaigns through WhatsApp."
+    },
+    "feature3": {
+      "title": "AI Assistant",
+      "description": "Intelligent 24/7 customer support with natural language understanding and multi-language support."
+    },
+    "feature4": {
+      "title": "AI Store Content",
+      "description": "Generate your store description and titles by AI automatically in multiple languages."
+    }
+  },
+  "HeroSection": {
+    "language": "EN",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logoAlt": "Yurafy Logo",
+    "title": "Yurafy – AI-Powered Business Automation Platform",
+    "subtitle": "Transform your business with AI-driven automation. Create stunning stores, automate WhatsApp messaging, and scale effortlessly with intelligent solutions.",
+    "cta": {
+      "getStarted": "Get Started Free",
+      "learnMore": "Learn More"
+    },
+    "dashboardAlt": "Business dashboard mockup"
+  },
+  "HowItWorks": {
+    "title": "How It Works",
+    "subtitle": "Get started in four simple steps",
+    "step1": {
+      "title": "Choose Your Plan",
+      "description": "Select the perfect plan for your business needs - from Free to Visionary."
+    },
+    "step2": {
+      "title": "Set Up Your Store",
+      "description": "Create your store with custom branding, domain, and theme in minutes."
+    },
+    "step3": {
+      "title": "Enable Automation",
+      "description": "Connect WhatsApp and activate AI agents for automated customer support."
+    },
+    "step4": {
+      "title": "Start Selling",
+      "description": "Add products, generate content with AI, and start accepting orders."
+    },
+    "cta": "Get Started Now",
+    "oldStep4": {
+      "title": "Grow & Track",
+      "description": "Monitor engagement, reach, and sales with built-in analytics dashboards."
+    }
+  },
+  "OtherServicesSection": {
+    "title": "Transform Your Business with Custom Web Solutions",
+    "subtitle": "Looking for a fully custom website? Our expert team builds stunning, responsive websites tailored to your unique brand and business needs. From concept to launch, we deliver exceptional web experiences that drive results.",
+    "service1": {
+      "title": "Custom Web Development",
+      "description": "Professional, responsive websites built from scratch. We create fast-loading, SEO-optimized sites that perfectly represent your brand and convert visitors into customers.",
+      "features": {
+        "0": "Custom Design",
+        "1": "Responsive Layout",
+        "2": "Fast Performance",
+        "3": "SEO Optimized"
+      }
+    },
+    "service2": {
+      "title": "AI-Powered Solutions",
+      "description": "Integrate cutting-edge AI to automate workflows, generate content, and provide intelligent customer interactions that scale with your business.",
+      "features": {
+        "0": "AI Integration",
+        "1": "Content Generation",
+        "2": "Smart Automation",
+        "3": "Multi-language"
+      }
+    },
+    "service3": {
+      "title": "Business Automation",
+      "description": "Connect your apps, social media, and communication channels into a seamless automated system that works 24/7 to grow your business.",
+      "features": {
+        "0": "Mobile-First",
+        "1": "WhatsApp Integration",
+        "2": "Social Media",
+        "3": "Real-time Updates"
+      }
+    },
+    "highlights": {
+      "fast": "Fast Delivery",
+      "secure": "Secure & Reliable",
+      "design": "Custom Design"
+    },
+    "cta": {
+      "contact": "Get Started"
+    }
+  },
+  "PlansSection": {
+    "title": "Flexible Plans to Fit Your Business",
+    "subtitle": "Choose the perfect plan for your business needs",
+    "popular": "Popular",
+    "bestValue": "Best Value",
+    "choosePlan": "Choose Plan",
+    "getStartedFree": "Get Started Free",
+    "perMonth": "mo",
+    "free": {
+      "name": "Free",
+      "price": "0",
+      "description": "Test all features with limited usage.",
+      "features": {
+        "0": "5 Products",
+        "1": "10 Orders",
+        "2": "Basic Support"
+      }
+    },
+    "starter": {
+      "name": "Starter",
+      "price": "13",
+      "description": "Basic store setup with branding and domain.",
+      "features": {
+        "0": "500 Orders",
+        "1": "Custom Domain",
+        "2": "Custom Theme",
+        "3": "SEO Tools"
+      }
+    },
+    "whatsapp": {
+      "name": "WhatsApp Automation",
+      "price": "11",
+      "description": "Automate messaging with WhatsApp Cloud API.",
+      "features": {
+        "0": "500 Contacts",
+        "1": "Auto Replies",
+        "2": "Templates",
+        "3": "Broadcasts"
+      }
+    },
+    "aiAgent": {
+      "name": "AI WhatsApp Agent",
+      "price": "21",
+      "description": "Automation + AI-powered WhatsApp assistant.",
+      "features": {
+        "0": "1000 Contacts",
+        "1": "AI Assistant",
+        "2": "Smart Replies",
+        "3": "Multi-language"
+      }
+    },
+    "proSeller": {
+      "name": "Pro Seller",
+      "price": "27",
+      "description": "Starter + WhatsApp Automation for serious sellers.",
+      "features": {
+        "0": "1500 Orders",
+        "1": "Store + WhatsApp",
+        "2": "2000 Contacts",
+        "3": "Priority Support"
+      }
+    },
+    "visionary": {
+      "name": "Visionary",
+      "price": "50",
+      "description": "Pro Seller + AI Agent for full power scaling.",
+      "features": {
+        "0": "Unlimited Orders",
+        "1": "All Features",
+        "2": "AI Agent",
+        "3": "Priority Support"
+      }
+    }
+  },
+  "TestimonialsSection": {
+    "title": "What Our Customers Say",
+    "testimonial1": {
+      "quote": "Yurafy transformed my business. AI automation saves me hours every day and my sales are up 40% since using the platform.",
+      "name": "Fatima, E-commerce Owner"
+    },
+    "testimonial2": {
+      "quote": "The WhatsApp automation is incredible. My customers get instant replies and I can focus on growing instead of answering messages all day.",
+      "name": "Youssef, Retailer"
+    },
+    "testimonial3": {
+      "quote": "The custom web development service exceeded my expectations. My new site looks professional and converts far better than before.",
+      "name": "Sarah, Business Owner"
+    }
+  },
+  "CallToAction": {
+    "headline": "Ready to Transform Your Business with Yurafy?",
+    "cta": "Get Started Now"
+  },
+  "trustBanner": {
+    "cod": "Cash on Delivery",
+    "fastDelivery": "Fast Delivery 24-48h",
+    "support": "WhatsApp Customer Support"
+  }
+}

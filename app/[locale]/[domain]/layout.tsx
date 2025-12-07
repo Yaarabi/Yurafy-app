@@ -3,14 +3,7 @@ import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import Script from 'next/script';
-
-async function getMessages(locale: string) {
-    try {
-        return (await import(`@/messages/${locale}.json`)).default;
-    } catch {
-        return (await import(`@/messages/en.json`)).default;
-    }
-}
+import { loadMessages } from '@/lib/utils/loadMessages';
 
 export default async function Layout({
     children,
@@ -26,7 +19,7 @@ export default async function Layout({
         notFound();
     }
 
-    const messages = await getMessages(locale);
+    const messages = await loadMessages(locale);
 
     // ✅ headers() is synchronous, no await
     const headersList = await headers();

@@ -1,0 +1,111 @@
+{
+  "dashboard": {
+    "title": "Bienvenue sur votre tableau de bord",
+    "subtitle": "Gérez les commandes, les produits et votre marque au même endroit.",
+    "header": {
+      "title": "Tableau de bord"
+    },
+    "themeToggle": {
+      "ariaLabel": "Basculer le thème"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Tout marquer comme lu",
+      "markAllSuccess": "Toutes les notifications marquées comme lues",
+      "markAllError": "Échec du marquage de toutes comme lues",
+      "deleteError": "Échec de la suppression de la notification",
+      "deleteReadSuccess": "Toutes les notifications lues supprimées",
+      "deleteReadError": "Échec de la suppression des notifications lues",
+      "markRead": "Marquer comme lue",
+      "delete": "Supprimer",
+      "close": "Fermer",
+      "empty": "Aucune notification",
+      "clearAllRead": "Effacer toutes les notifications lues"
+    },
+    "plan": {
+      "expired": "Votre plan a expiré",
+      "planLabel": "Plan",
+      "expires": "Expire",
+      "renewPlan": "Renouveler le plan",
+      "upgradePlan": "Mettre à niveau le plan",
+      "products": "Produits",
+      "orders": "Commandes",
+      "contacts": "Contacts"
+    },
+    "stats": {
+      "totalRevenue": "Revenu total",
+      "products": "Produits",
+      "orders": "Commandes",
+      "templates": "Modèles",
+      "contacts": "Contacts",
+      "recentOrders": "Commandes récentes",
+      "topProducts": "Meilleurs produits",
+      "noOrders": "Aucune commande pour le moment",
+      "noProducts": "Aucun produit pour le moment",
+      "topCustomers": {
+        "title": "Meilleurs Clients",
+        "subtitle": {
+          "orders": "Par nombre de commandes",
+          "spent": "Par montant total dépensé"
+        },
+        "orders": "Commandes",
+        "spent": "Dépensé",
+        "byOrders": "Total des commandes",
+        "bySpent": "Total dépensé ($)",
+        "empty": "Aucune donnée client disponible"
+      }
+    },
+    "charts": {
+      "revenue": {
+        "title": "Revenu dans le temps",
+        "subtitle": "30 derniers jours",
+        "total": "Total",
+        "label": "Revenu ($)",
+        "noData": "Aucune donnée de revenu disponible"
+      },
+      "ordersStatus": {
+        "title": "Commandes par statut",
+        "subtitle": "{count} commandes au total",
+        "noData": "Aucune donnée de commande disponible"
+      },
+      "topProducts": {
+        "title": "Meilleurs produits",
+        "subtitle": "Par nombre de ventes",
+        "totalSales": "Ventes totales",
+        "label": "Nombre de ventes",
+        "noData": "Aucune donnée de produit disponible",
+        "unnamedProduct": "Produit sans nom"
+      }
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "subtitle": "Connectez et gérez vos intégrations de boutique et de livraison",
+      "categories": {
+        "stores": {
+          "title": "Boutiques",
+          "description": "Ajoutez et gérez les boutiques connectées (Shopify, WooCommerce, ...)",
+          "manage": "Gérer les boutiques"
+        },
+        "delivery": {
+          "title": "Sociétés de livraison",
+          "description": "Connectez les partenaires de livraison et gérez les paramètres d'expédition",
+          "manage": "Gérer les livraisons"
+        }
+      },
+      "providers": {
+        "shopify": {
+          "name": "Shopify",
+          "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
+        },
+        "woocommerce": {
+          "name": "WooCommerce",
+          "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
+        },
+        "youcan": {
+          "name": "YouCan",
+          "description": "Connectez votre boutique pour recevoir les commandes en temps réel"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "Terms": {
+    "title": "Conditions de Service & Politique de Confidentialité",
+    "description": "Veuillez lire attentivement ces conditions avant d'utiliser Yurafy. En utilisant nos services, vous acceptez ces conditions.",
+    "lastUpdated": "Dernière mise à jour : Janvier 2025",
+    "section1": {
+      "title": "1. Acceptation des Conditions",
+      "content": "En accédant et en utilisant Yurafy, vous acceptez et acceptez d'être lié par les termes et conditions de cet accord. Si vous n'acceptez pas de respecter ce qui précède, veuillez ne pas utiliser ce service."
+    },
+    "section2": {
+      "title": "2. Licence d'Utilisation",
+      "content": "L'autorisation est accordée d'utiliser temporairement Yurafy à des fins personnelles ou commerciales. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre, et sous cette licence vous ne pouvez pas : modifier ou copier les matériaux ; utiliser les matériaux à des fins commerciales ou pour un affichage public ; tenter de rétroconcevoir tout logiciel contenu dans Yurafy ; supprimer toute mention de droits d'auteur ou autres mentions de propriété des matériaux."
+    },
+    "section3": {
+      "title": "3. Politique de Confidentialité",
+      "content": "Nous respectons votre vie privée et nous nous engageons à protéger vos informations personnelles. Nous collectons uniquement les informations nécessaires pour fournir nos services et améliorer votre expérience. Vos données sont cryptées, stockées en toute sécurité et jamais partagées avec des tiers sans votre consentement explicite. Pour des informations détaillées sur la collecte de données, l'utilisation et vos droits, veuillez consulter notre Politique de Confidentialité complète."
+    },
+    "section4": {
+      "title": "4. Disponibilité du Service",
+      "content": "Nous nous efforçons de maintenir une haute disponibilité de nos services, mais nous ne garantissons pas un accès ininterrompu. Yurafy peut être temporairement indisponible en raison de maintenance, de mises à jour ou de circonstances imprévues. Nous ne sommes pas responsables des pertes résultant d'interruptions de service."
+    },
+    "section5": {
+      "title": "5. Limitation de Responsabilité",
+      "content": "En aucun cas Yurafy ou ses fournisseurs ne seront responsables des dommages résultant de l'utilisation ou de l'incapacité à utiliser les matériaux sur Yurafy, même si Yurafy ou un représentant autorisé a été notifié oralement ou par écrit de la possibilité de tels dommages."
+    },
+    "questions": {
+      "title": "Des questions sur nos Conditions ?",
+      "description": "Si vous avez des questions sur nos Conditions de Service ou notre Politique de Confidentialité, n'hésitez pas à nous contacter.",
+      "button": "Contacter le Support"
+    }
+  }
+}

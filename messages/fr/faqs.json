@@ -1,0 +1,33 @@
+{
+  "FAQs": {
+    "title": "Questions Fréquemment Posées",
+    "description": "Trouvez des réponses aux questions les plus courantes sur Yurafy.",
+    "faq1": {
+      "question": "Qu'est-ce que Yurafy ?",
+      "answer": "Yurafy est une plateforme d'automatisation commerciale pilotée par l'IA qui aide les entreprises à créer des magasins en ligne, automatiser la messagerie WhatsApp et rationaliser les opérations avec des solutions intelligentes. Nous combinons le développement web, l'automatisation IA et les outils d'engagement client en une plateforme complète."
+    },
+    "faq2": {
+      "question": "Combien coûte Yurafy ?",
+      "answer": "Yurafy propose des plans tarifaires flexibles à partir d'un niveau gratuit avec des fonctionnalités de base. Les plans payants vont de 11$/mois pour Starter à 50$/mois pour Visionary, avec des plans pour entreprises de toutes tailles. Visitez notre page tarifaire pour voir des comparaisons détaillées de fonctionnalités."
+    },
+    "faq3": {
+      "question": "Ai-je besoin de connaissances techniques pour utiliser Yurafy ?",
+      "answer": "Aucune connaissance technique n'est requise ! Yurafy est conçu pour être convivial et intuitif. Nos outils pilotés par l'IA vous guident dans la configuration, et notre équipe de support est toujours disponible pour vous aider. La plupart des utilisateurs peuvent commencer à utiliser la plateforme en quelques minutes."
+    },
+    "faq4": {
+      "question": "Puis-je personnaliser le design de mon magasin ?",
+      "answer": "Oui ! Yurafy propose plusieurs thèmes préconçus et vous permet de personnaliser les couleurs, les polices et les mises en page."
+    },
+    "faq5": {
+      "question": "Comment fonctionne l'automatisation WhatsApp ?",
+      "answer": "Yurafy s'intègre avec l'API WhatsApp Business pour automatiser les interactions client. Vous pouvez configurer des réponses automatiques, des confirmations de commande, des notifications d'expédition et des campagnes de diffusion. L'agent IA peut gérer les demandes des clients 24/7, fournissant des réponses instantanées."
+    },
+    "faq6": {
+      "question": "Mes données sont-elles sécurisées ?",
+      "answer": "Absolument. Nous prenons la sécurité des données au sérieux et utilisons un cryptage de niveau industriel, une authentification sécurisée et des audits de sécurité réguliers. Vos données sont stockées en toute sécurité et jamais partagées avec des tiers sans votre consentement. Lisez notre Politique de Confidentialité pour plus de détails."
+    },
+    "stillHaveQuestions": "Vous avez encore des questions ?",
+    "contactSupport": "Notre équipe de support est là pour vous aider à réussir avec Yurafy.",
+    "contactButton": "Contacter le Support"
+  }
+}

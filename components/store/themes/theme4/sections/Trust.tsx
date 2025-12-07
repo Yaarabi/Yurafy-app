@@ -96,14 +96,6 @@ const Trust: React.FC = () => {
                                 e.currentTarget.style.borderColor = `${primaryColor}30`;
                             }}
                         >
-                            {/* Organic Corner Accent */}
-                            <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-                                <div 
-                                    className="absolute top-0 right-0 w-0 h-0 border-l-[32px] border-l-transparent border-t-[32px] transition-all duration-300 group-hover:border-t-[40px] group-hover:border-l-[40px]"
-                                    style={{ borderTopColor: primaryColor }}
-                                ></div>
-                            </div>
-                            
                             <div 
                                 className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl mb-4 sm:mb-6 relative z-10"
                                 style={{ backgroundColor: `${primaryColor}15` }}

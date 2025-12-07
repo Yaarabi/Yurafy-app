@@ -59,13 +59,8 @@ const Header: React.FC = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="relative bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b-2 overflow-hidden"
-            style={{ borderColor: `${primaryColor}40` }}
+            className="relative text-white overflow-hidden"
         >
-            {/* Food Geometric Pattern */}
-            <div className="absolute inset-0 opacity-5 pointer-events-none">
-                <GeometricDecorations type="food" color={primaryColor} />
-            </div>
             
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
                 <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6 py-3 sm:py-4">
@@ -85,8 +80,7 @@ const Header: React.FC = () => {
                         )}
                         <div className="flex flex-col">
                             <h1 
-                                className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold truncate"
-                                style={{ color: primaryColor }}
+                                className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold truncate text-white"
                             >
                                 {selectedStore.brandName}
                             </h1>
@@ -100,8 +94,7 @@ const Header: React.FC = () => {
                                 key={link.label}
                                 href={disableNavigation ? '#' : link.href}
                                 onClick={(e) => { if (disableNavigation) e.preventDefault(); }}
-                                className="text-base font-bold text-gray-800 hover:transition-colors duration-200 whitespace-nowrap"
-                                style={{ color: link.href === '#about' ? primaryColor : undefined }}
+                                className="text-base font-bold text-white hover:transition-colors duration-200 whitespace-nowrap"
                             >
                                 {link.label}
                             </a>
@@ -122,24 +115,22 @@ const Header: React.FC = () => {
                         <a
                             href={disableNavigation ? '#' : `${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
                             onClick={(e) => { if (disableNavigation) e.preventDefault(); }}
-                            className="hidden md:flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                            style={{ color: primaryColor }}
+                            className="hidden text-white md:flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200"
                         >
                             Login
                         </a>
                         <button
                             onClick={openCart}
-                            className="relative p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                            className="relative p-1.5 sm:p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
                             aria-label="View cart"
                         >
                             <ShoppingCartIcon 
-                                className="h-5 w-5 sm:h-6 sm:w-6"
-                                style={{ color: primaryColor }}
+                                className="h-5 w-5 sm:h-6 sm:w-6 text-white"
                             />
                             {cartItemsCount > 0 && (
                                 <span 
-                                    className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs"
-                                    style={{ backgroundColor: primaryColor }}
+                                    className="absolute -top-1 -right-1 bg-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs"
+                                    style={{ color: primaryColor }}
                                 >
                                     {cartItemsCount > 99 ? '99+' : cartItemsCount}
                                 </span>
@@ -149,14 +140,14 @@ const Header: React.FC = () => {
                         {/* Mobile Menu Toggle Button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                            className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
                             aria-label="Toggle menu"
                             aria-expanded={mobileMenuOpen}
                         >
                             {mobileMenuOpen ? (
-                                <X className="h-6 w-6" style={{ color: primaryColor }} />
+                                <X className="h-6 w-6 text-white" />
                             ) : (
-                                <Menu className="h-6 w-6" style={{ color: primaryColor }} />
+                                <Menu className="h-6 w-6 text-white" />
                             )}
                         </button>
                     </div>
@@ -170,10 +161,9 @@ const Header: React.FC = () => {
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="md:hidden overflow-hidden border-t"
-                            style={{ borderColor: `${primaryColor}20` }}
+                            className="md:hidden overflow-hidden border-t border-white/20"
                         >
-                            <div className="px-4 py-4 space-y-4 bg-white">
+                            <div className="px-4 py-4 space-y-4">
                                 {/* Search Bar */}
                                 <div className="w-full">
                                     <SearchBar 
@@ -195,11 +185,7 @@ const Header: React.FC = () => {
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: index * 0.1 }}
-                                            className="text-base font-semibold py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                                            style={{ 
-                                                color: link.href === '#about' ? primaryColor : '#374151',
-                                                backgroundColor: link.href === '#about' ? `${primaryColor}10` : undefined
-                                            }}
+                                            className="text-base font-semibold py-2 px-3 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
                                         >
                                             {link.label}
                                         </motion.a>
@@ -211,11 +197,7 @@ const Header: React.FC = () => {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: headerLinks.length * 0.1 }}
-                                        className="text-base font-semibold py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                                        style={{ 
-                                            color: primaryColor,
-                                            backgroundColor: `${primaryColor}10`
-                                        }}
+                                        className="text-base font-semibold py-2 px-3 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
                                     >
                                         Login
                                     </motion.a>

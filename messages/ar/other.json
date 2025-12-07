@@ -1,0 +1,133 @@
+{
+  "common": {
+    "appTitle": "لوحة تحكم البائع",
+    "logout": "تسجيل الخروج",
+    "buttons": {
+      "back": "رجوع"
+    }
+  },
+  "integrations": {
+    "title": "التكاملات",
+    "subtitle": "ربط وإدارة تكاملات المتجر وعمليات الشحن",
+    "categories": {
+      "stores": {
+        "title": "المتاجر",
+        "description": "أضف وقم بإدارة المتاجر المتصلة (Shopify، WooCommerce، إلخ)",
+        "manage": "إدارة المتاجر"
+      },
+      "delivery": {
+        "title": "شركات الشحن",
+        "description": "ربط شركاء الشحن وإدارة إعدادات الشحن",
+        "manage": "إدارة شركات الشحن"
+      }
+    },
+    "providers": {
+      "shopify": {
+        "name": "Shopify",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      },
+      "woocommerce": {
+        "name": "WooCommerce",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      },
+      "youcan": {
+        "name": "YouCan",
+        "description": "اربط متجرك لتلقي الطلبات في الوقت الفعلي"
+      }
+    }
+  },
+  "admin": {
+    "guides": {
+      "title": "إدارة الأدلة",
+      "subtitle": "إضافة وتحرير وتنظيم أدلة الفيديو للمستخدمين",
+      "addNew": "إضافة دليل جديد",
+      "editGuide": "تحرير الدليل",
+      "createGuide": "إنشاء دليل جديد",
+      "empty": "لا توجد أدلة حتى الآن. انقر على 'إضافة دليل جديد' لإنشاء واحد.",
+      "confirmDelete": "هل أنت متأكد من حذف هذا الدليل؟",
+      "edit": "تحرير",
+      "delete": "حذف",
+      "save": "حفظ",
+      "saving": "جاري الحفظ...",
+      "cancel": "إلغاء",
+      "table": {
+        "category": "الفئة",
+        "title": "العنوان",
+        "videoUrl": "رابط الفيديو",
+        "order": "الترتيب",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "form": {
+        "category": "الفئة",
+        "title": "العنوان",
+        "description": "الوصف",
+        "videoUrl": "رابط فيديو YouTube",
+        "order": "ترتيب العرض",
+        "status": "الحالة",
+        "isActive": "نشط"
+      },
+      "success": {
+        "created": "تم إنشاء الدليل بنجاح",
+        "updated": "تم تحديث الدليل بنجاح",
+        "deleted": "تم حذف الدليل بنجاح"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الأدلة",
+        "saveFailed": "فشل حفظ الدليل",
+        "deleteFailed": "فشل حذف الدليل"
+      }
+    },
+    "services": {
+      "title": "استفسارات الخدمات",
+      "subtitle": "إدارة طلبات واستفسارات العملاء",
+      "search": "البحث بالاسم أو البريد الإلكتروني أو الهاتف...",
+      "filters": {
+        "allServices": "كل الخدمات",
+        "allStatuses": "كل الحالات"
+      },
+      "showing": "عرض",
+      "of": "من",
+      "inquiries": "استفسارات",
+      "empty": "لا توجد استفسارات",
+      "confirmDelete": "هل أنت متأكد من حذف هذا الاستفسار؟",
+      "delete": "حذف",
+      "table": {
+        "date": "التاريخ",
+        "customer": "العميل",
+        "service": "نوع الخدمة",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "new": "جديد",
+        "contacted": "تم التواصل",
+        "converted": "تم التحويل",
+        "closed": "مغلق"
+      },
+      "details": {
+        "title": "تفاصيل الاستفسار",
+        "customerInfo": "معلومات العميل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "serviceInfo": "معلومات الخدمة",
+        "message": "الرسالة",
+        "updateStatus": "تحديث الحالة",
+        "submitted": "تم الإرسال"
+      },
+      "success": {
+        "statusUpdated": "تم تحديث الحالة بنجاح",
+        "deleted": "تم حذف الاستفسار بنجاح"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الاستفسارات",
+        "updateFailed": "فشل تحديث الحالة",
+        "deleteFailed": "فشل حذف الاستفسار"
+      }
+    }
+  }
+}

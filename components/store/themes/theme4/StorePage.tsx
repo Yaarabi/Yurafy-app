@@ -1,16 +1,15 @@
 import React from 'react';
-import Header from './sections/Header';
 import Hero from './sections/Hero';
 import ProductGrid from './sections/ProductGrid';
 import Footer from './sections/Footer';
 import About from './sections/About';
 import Trust from './sections/Trust';
-import SpecialOffer from '../shared/SpecialOffer';
-import Categories from '../shared/Categories';
+import SpecialOffer from './sections/SpecialOffer';
+import Categories from './sections/Categories';
 import { useStore } from '../../hooks/useStore';
 
 const StorePage: React.FC = () => {
-    const { selectedStore } = useStore();
+    const { selectedStore } = useStore() as { selectedStore: any };
 
     if (!selectedStore) return null;
 
@@ -23,10 +22,9 @@ const StorePage: React.FC = () => {
         footer: true,
     };
 
-    // Minimalist Theme Layout: Hero -> Product Grid -> About -> Trust -> Footer
+    // Minimalist Theme Layout: Hero (includes Header) -> Product Grid -> About -> Trust -> Footer
     return (
         <main>
-            {themeStructure.header && <Header />}
             {themeStructure.hero && <Hero />}
             <SpecialOffer />
             <Categories />

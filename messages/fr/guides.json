@@ -1,0 +1,21 @@
+{
+  "guides": {
+    "title": "Guides Vidéo",
+    "subtitle": "Apprenez à utiliser notre plateforme avec ces tutoriels vidéo étape par étape",
+    "categories": {
+      "all": "Tous les Guides",
+      "overview": "Aperçu",
+      "products": "Produits",
+      "orders": "Commandes",
+      "automation": "Automatisation",
+      "ai-agent": "Agent IA",
+      "services": "Services"
+    },
+    "watchNow": "Regarder Maintenant",
+    "close": "Fermer",
+    "empty": "Aucun guide disponible dans cette catégorie",
+    "errors": {
+      "loadFailed": "Échec du chargement des guides"
+    }
+  }
+}

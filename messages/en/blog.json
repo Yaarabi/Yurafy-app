@@ -1,0 +1,19 @@
+{
+  "Blog": {
+    "title": "Blog",
+    "description": "Stay updated with the latest insights, tips, and best practices for business automation and AI-powered solutions.",
+    "empty": "No blog posts available yet. Check back soon for updates!",
+    "post1": {
+      "title": "Getting Started with Yurafy: A Complete Guide",
+      "excerpt": "Learn how to set up your Yurafy account, connect your business accounts, and start automating your workflows in minutes. This comprehensive guide covers everything from account creation to advanced features."
+    },
+    "post2": {
+      "title": "How AI Automation Can Transform Your Business",
+      "excerpt": "Discover the power of AI-driven automation and how it can help you save time, increase sales, and scale your business operations. Real-world examples and success stories from Yurafy customers."
+    },
+    "post3": {
+      "title": "WhatsApp Business Automation: Best Practices",
+      "excerpt": "Learn how to effectively use WhatsApp automation for customer engagement, order management, and marketing campaigns. Tips and strategies from industry experts."
+    }
+  }
+}

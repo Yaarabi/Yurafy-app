@@ -1,0 +1,10 @@
+{
+  "common": {
+    "appTitle": "Seller Dashboard",
+    "logout": "Logout",
+    "buttons": {
+      "back": "Back",
+      "connect": "Connect"
+    }
+  }
+}
