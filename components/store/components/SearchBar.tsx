@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useStore } from "../hooks/useStore";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useParams } from "next/navigation";
 

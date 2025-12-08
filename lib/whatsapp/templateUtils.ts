@@ -1,6 +1,6 @@
 
-import { IOrder } from "@/models/orders";
-import { ITemplate } from "@/models/templates";
+import { IOrder } from "@/models/store/orders";
+import { ITemplate } from "@/models/automation/templates";
 
 /**
  * Ensures variables array aligns with placeholders in content/caption and returns values in order.

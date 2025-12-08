@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAIResponse } from "@/lib/agent/agent";
-import AIAgent, { IAIAgent } from "@/models/ai-agent";
+import AIAgent, { IAIAgent } from "@/models/automation/ai-agent";
 
 export async function POST(req: NextRequest) {
     try {

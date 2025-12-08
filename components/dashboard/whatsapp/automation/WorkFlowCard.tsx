@@ -1,5 +1,5 @@
 'use client';
-import { ITemplate } from '@/models/templates';
+import { ITemplate } from '@/models/automation/templates';
 import WorkflowToggle from './WorkflowToggle';
 import TemplateSelector from './TemplateSelector';
 

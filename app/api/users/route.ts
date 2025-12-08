@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
-import Plan from "@/models/plan";
+import Plan from "@/models/support/plan";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import fs from "fs/promises";
@@ -179,9 +179,9 @@ export async function PUT(req: NextRequest) {
 
         // If active status was updated, sync with related records
         if (updateData.active !== undefined) {
-            const Store = (await import('@/models/store')).default;
-            const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
-            const AIAgent = (await import('@/models/ai-agent')).default;
+            const Store = (await import('@/models/store/store')).default;
+            const WhatsAppAccount = (await import('@/models/automation/whatsappAccount')).default;
+            const AIAgent = (await import('@/models/automation/ai-agent')).default;
             
             // Update related records to match user's active status
             await Promise.all([
@@ -229,17 +229,17 @@ export async function DELETE(req: NextRequest) {
         if (!deletedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
         // Import all models that reference the user
-        const Store = (await import('@/models/store')).default;
-        const WhatsAppAccount = (await import('@/models/whatsappAccount')).default;
-        const AIAgent = (await import('@/models/ai-agent')).default;
-        const Product = (await import('@/models/products')).default;
-        const Order = (await import('@/models/orders')).default;
-        const Notification = (await import('@/models/notification')).default;
-        const Support = (await import('@/models/support')).default;
-        const Template = (await import('@/models/templates')).default;
-        const AgentVector = (await import('@/models/agentVector')).default;
-        const AgentCheckpoint = (await import('@/models/agentCheckpoint')).default;
-        const WhatsAppMessage = (await import('@/models/whatsappMessage')).default;
+        const Store = (await import('@/models/store/store')).default;
+        const WhatsAppAccount = (await import('@/models/automation/whatsappAccount')).default;
+        const AIAgent = (await import('@/models/automation/ai-agent')).default;
+        const Product = (await import('@/models/store/products')).default;
+        const Order = (await import('@/models/store/orders')).default;
+        const Notification = (await import('@/models/support/notification')).default;
+        const Support = (await import('@/models/support/support')).default;
+        const Template = (await import('@/models/automation/templates')).default;
+        const AgentVector = (await import('@/models/automation/agentVector')).default;
+        const AgentCheckpoint = (await import('@/models/automation/agentCheckpoint')).default;
+        const WhatsAppMessage = (await import('@/models/automation/whatsappMessage')).default;
 
         // Delete all related records from database
         await Promise.all([

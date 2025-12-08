@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import Notification from '@/models/notification';
+import Notification from '@/models/support/notification';
 
 export async function PATCH(req: NextRequest) {
     try {

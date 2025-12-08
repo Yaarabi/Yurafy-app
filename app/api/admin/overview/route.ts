@@ -3,12 +3,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
 import User from '@/models/users';
-import Store from '@/models/store';
-import Order from '@/models/orders';
-import WhatsAppAccount from '@/models/whatsappAccount';
-import SupportMessage from '@/models/support';
-import ServiceInquiry from '@/models/serviceInquiry';
-import SupportAgent, { ISupportAgent } from '@/models/supportAgent';
+import Store from '@/models/store/store';
+import Order from '@/models/store/orders';
+import WhatsAppAccount from '@/models/automation/whatsappAccount';
+import SupportMessage from '@/models/support/support';
+import ServiceInquiry from '@/models/support/serviceInquiry';
+import SupportAgent, { ISupportAgent } from '@/models/support/supportAgent';
 
 export async function GET(req: NextRequest) {
     try {

@@ -15,7 +15,7 @@ import LogoLoader from "@/components/themePreview/loadder";
 import { useUserFeatures } from "@/hooks/useUserFeatures";
 import { useSettingsData } from "@/hooks/settings/useSettingsData";
 import type { SerializedStore } from "@/lib/data/store";
-import type { IProduct } from "@/models/products";
+import type { IProduct } from "@/models/store/products";
 
 type ColorKey = "primary" | "secondary" | "text" | "surface";
 type PreviewPage = "STORE_PAGE" | "PRODUCT_PAGE";

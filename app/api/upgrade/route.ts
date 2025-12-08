@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import Store from "@/models/store";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import AIAgent from "@/models/ai-agent";
+import Store from "@/models/store/store";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import AIAgent from "@/models/automation/ai-agent";
 import crypto from "crypto";
 import { getPlanTemplate, normalizePlanKey } from "@/lib/utils/planUtils";
 
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
         // ✅ FIXED: Prevent downgrades with user-friendly error message
         const User = (await import('@/models/users')).default;
-        const Plan = (await import('@/models/plan')).default;
+        const Plan = (await import('@/models/support/plan')).default;
         const user = await User.findById(userId);
         if (user?.currentPlanId) {
             const currentPlan = await Plan.findById(user.currentPlanId);

@@ -2,7 +2,7 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { connectDB } from "@/lib/db/mongoDB";
-import AIAgent from "@/models/ai-agent";
+import AIAgent from "@/models/automation/ai-agent";
 import { ChatMistralAI } from "@langchain/mistralai";
 
 const model = new ChatMistralAI({

@@ -1,6 +1,6 @@
 'use client';
 
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import Image from 'next/image';
 import { getStoreTranslation } from '@/components/store/utils/translations';
 import { useStore } from '@/components/store/hooks/useStore';

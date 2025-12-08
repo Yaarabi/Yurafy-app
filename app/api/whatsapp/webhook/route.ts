@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import WhatsAppConversation, { IWhatsAppMessage } from "@/models/whatsappMessage";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import WhatsAppConversation, { IWhatsAppMessage } from "@/models/automation/whatsappMessage";
 import { sendWhatsAppMessage } from "@/lib/whatsapp/sendMessage";
 import crypto from "crypto";
-import Template, { ITemplate } from "@/models/templates";
+import Template, { ITemplate } from "@/models/automation/templates";
 import { encryptMessage } from "@/lib/whatsapp/messageEncryption";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 

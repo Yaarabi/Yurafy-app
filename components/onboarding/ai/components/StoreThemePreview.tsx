@@ -8,7 +8,7 @@ import ThemeRenderer from '@/components/store/themes/ThemeRenderer';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
 import { useStore } from '@/components/store/hooks/useStore';
 import { SerializedStore } from '@/lib/data/store';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { FAKE_PRODUCTS } from '@/components/store/constants/data';
 
 interface StoreThemePreviewProps {

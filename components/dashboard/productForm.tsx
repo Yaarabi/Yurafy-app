@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, ChangeEvent, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { useSession } from 'next-auth/react';
 import BackButton from './BackButton';
 import toast from 'react-hot-toast';
@@ -87,24 +87,6 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         return { ...defaultState, ...initialValues };
     };
 
-    const DEFAULT_CATEGORIES = [
-        'Fashion & Apparel',
-        'Beauty & Personal Care',
-        'Electronics & Gadgets',
-        'Home & Living',
-        'Appliances',
-        'Food & Beverages',
-        'Health & Wellness',
-        'Sports & Outdoors',
-        'Toys, Kids & Baby',
-        'Books, Art & Stationery',
-        'Automotive',
-        'Digital Products & Services',
-        'Handmade & Local Creations',
-        'Pet Supplies',
-        'Office & Business',
-    ];
-
     const [storeCategories, setStoreCategories] = useState<string[]>([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
 
@@ -141,11 +123,8 @@ export default function ProductForm({ onSubmit, loading, initialValues, onReset 
         fetchStoreCategories();
     }, []);
 
-    // Combine default categories with store categories
-    const PRODUCT_CATEGORIES = [
-        ...storeCategories,
-        ...DEFAULT_CATEGORIES.filter(cat => !storeCategories.includes(cat)),
-    ];
+    // Use only store categories
+    const PRODUCT_CATEGORIES = storeCategories;
 
     // Reset form function
     const resetForm = useCallback(() => {

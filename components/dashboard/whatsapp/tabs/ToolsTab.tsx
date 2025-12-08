@@ -1,8 +1,8 @@
 'use client';
 import TemplateSelector from "../automation/TemplateSelector";
 import SettingsSection from "@/components/dashboard/setting/settingSection";
-import { IAIAgent } from "@/models/ai-agent";
-import { ITemplate } from "@/models/templates";
+import { IAIAgent } from "@/models/automation/ai-agent";
+import { ITemplate } from "@/models/automation/templates";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { Trash2, Save, X, ToggleLeft, ToggleRight } from "lucide-react";

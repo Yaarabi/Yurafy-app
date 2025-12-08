@@ -1,8 +1,8 @@
 import { connectDB } from '../db/mongoDB';
-import Product from '@/models/products';
-import Store, { IStore } from '@/models/store';
+import Product from '@/models/store/products';
+import Store, { IStore } from '@/models/store/store';
 import User, { IUser } from '@/models/users';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { serializeStore, SerializedStore } from './store';
 
 // ----------------------

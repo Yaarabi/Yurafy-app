@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/db/mongoDB"; 
 import User from "@/models/users";
-import Plan from "@/models/plan";
+import Plan from "@/models/support/plan";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { emailService } from "@/lib/services/emailService";

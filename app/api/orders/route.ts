@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import Order, { IOrder } from "@/models/orders";
+import Order, { IOrder } from "@/models/store/orders";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 import mongoose from "mongoose";
 

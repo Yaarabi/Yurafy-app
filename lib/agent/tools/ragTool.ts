@@ -2,7 +2,7 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { connectDB } from "@/lib/db/mongoDB";
-import AgentChunks, { IAgentChunks } from "@/models/agentVector"
+import AgentChunks, { IAgentChunks } from "@/models/automation/agentVector"
 import { Mistral } from "@mistralai/mistralai";
 import axios from "axios";
 

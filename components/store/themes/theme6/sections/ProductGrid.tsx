@@ -5,7 +5,7 @@ import { useStore } from "../../../hooks/useStore";
 import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { Eye, ShoppingCart } from "lucide-react";
 import { getStoreTranslation } from "../../../utils/translations";
 

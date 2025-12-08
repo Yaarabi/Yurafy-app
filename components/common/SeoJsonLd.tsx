@@ -1,7 +1,7 @@
 "use client";
 
 import { SerializedStore } from "@/lib/data/store";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 
 interface SeoJsonLdProps {
     store: SerializedStore;

@@ -4,11 +4,11 @@ import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import mongoose from "mongoose";
 import User from "@/models/users";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import AIAgent from "@/models/ai-agent";
-import Store from "@/models/store";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import AIAgent from "@/models/automation/ai-agent";
+import Store from "@/models/store/store";
 import crypto from "crypto";
-import Plan, { IPlan } from "@/models/plan";
+import Plan, { IPlan } from "@/models/support/plan";
 import { getPlanTemplate, normalizePlanKey, validatePlanFeatures } from "@/lib/utils/planUtils";
 
 // Encrypt WhatsApp token helper

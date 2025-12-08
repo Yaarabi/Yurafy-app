@@ -1,6 +1,6 @@
 import axios from "axios";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
 import { normalizePhoneNumber } from "./phoneNormalize";
 import { encryptMessage } from "./messageEncryption";
 

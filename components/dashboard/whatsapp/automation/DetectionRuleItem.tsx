@@ -2,7 +2,7 @@
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import { DetectionRule } from './types';
 import TemplateSelector from './TemplateSelector';
-import { ITemplate } from '@/models/templates';
+import { ITemplate } from '@/models/automation/templates';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 

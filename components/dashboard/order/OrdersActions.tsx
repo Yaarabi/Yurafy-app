@@ -2,7 +2,7 @@
 
 import { FaFileUpload, FaPlus, FaEllipsisV, FaFileDownload } from 'react-icons/fa';
 import Papa from 'papaparse';
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import CSVExport from './CSVexport';

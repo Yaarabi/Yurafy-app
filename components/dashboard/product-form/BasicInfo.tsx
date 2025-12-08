@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 
 interface BasicInfoProps {
     values: Partial<IProduct>;

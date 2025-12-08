@@ -2,7 +2,7 @@
 
 import { ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import toast from 'react-hot-toast';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

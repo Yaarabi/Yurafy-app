@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import Products from "@/models/products";
+import Products from "@/models/store/products";
 
 // ✅ GET Products (all or by id, but scoped to logged-in user)
 export async function GET(req: Request) {

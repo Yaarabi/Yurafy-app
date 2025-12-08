@@ -6,6 +6,7 @@ import Footer from './sections/Footer';
 import ProductDetails from '../../sections/ProductDetails';
 import OrderForm from '../../sections/OrderForm';
 import Trust from './sections/Trust';
+import RelatedProducts from './sections/RelatedProducts';
 import { ArrowLeftIcon } from '../../components/icons';
 import { motion } from 'framer-motion';
 import ImageDescriptions from '@/components/productPage/ImageDescriptions';
@@ -51,6 +52,10 @@ const ProductPage: React.FC = () => {
                         {selectedProduct && (
                                 <ImageDescriptions product={selectedProduct} />
                         )}
+                    </div>
+                    {/* Related Products Section */}
+                    <div className="mt-8 sm:mt-12 lg:mt-16">
+                        <RelatedProducts />
                     </div>
                     {/* Trust Section */}
                     <div className="mt-8 sm:mt-12 lg:mt-16">

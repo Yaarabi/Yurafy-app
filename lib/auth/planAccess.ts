@@ -5,7 +5,7 @@
 
 import { connectDB } from "../db/mongoDB";
 import User from "@/models/users";
-import Plan from "@/models/plan";
+import Plan from "@/models/support/plan";
 import { PlanKey, hasFeature, getFeatureLimit } from "../config/planFeatures";
 
 export interface PlanStatus {

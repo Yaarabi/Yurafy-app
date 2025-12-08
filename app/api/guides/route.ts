@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import Guide from '@/models/guides';
+import Guide from '@/models/support/guides';
 
 // GET: Fetch all active guides
 export async function GET(req: NextRequest) {

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
-import Plan from "@/models/plan";
+import Plan from "@/models/support/plan";
 
 const ALLOWED_UPDATE_FIELDS = ["username", "email", "phone"];
 

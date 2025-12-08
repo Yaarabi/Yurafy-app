@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import StoreComponent from "./StorePage";
 import { SerializedStore } from "@/lib/data/products";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import SeoJsonLd from "@/components/common/SeoJsonLd";
 
 interface StoreClientWrapperProps {

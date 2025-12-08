@@ -4,7 +4,7 @@
  */
 
 import { connectDB } from "@/lib/db/mongoDB";
-import Notification from "@/models/notification";
+import Notification from "@/models/support/notification";
 import mongoose from "mongoose";
 
 // Import Notification model for deduplication checks

@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db/mongoDB";
-import AgentCheckpoint from "@/models/agentCheckpoint";
+import AgentCheckpoint from "@/models/automation/agentCheckpoint";
 import { MemorySaver } from "@langchain/langgraph";
 
 /**

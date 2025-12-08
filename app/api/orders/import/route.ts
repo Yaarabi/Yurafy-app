@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next"; 
 import { authOptions } from "@/lib/auth/auth"; 
 import { connectDB } from "@/lib/db/mongoDB";
-import Order from "@/models/orders";
-import { IOrder } from "@/models/orders";
+import Order from "@/models/store/orders";
+import { IOrder } from "@/models/store/orders";
 
 export async function POST(req: NextRequest) {
     await connectDB();

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { IWhatsAppAccount } from "@/models/whatsappAccount";
-import Template, { ITemplate } from "@/models/templates";
+import { IWhatsAppAccount } from "@/models/automation/whatsappAccount";
+import Template, { ITemplate } from "@/models/automation/templates";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
 import { normalizePhoneNumber } from "./phoneNormalize";
 
 export async function sendTemplateMessage(

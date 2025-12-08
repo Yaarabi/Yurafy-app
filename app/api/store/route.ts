@@ -3,7 +3,7 @@ import { getStoreByDomain, getAllStores } from "@/lib/data/store";
 import { connectDB } from "@/lib/db/mongoDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
-import Store from "@/models/store";
+import Store from "@/models/store/store";
 import User from "@/models/users";
 
 connectDB();

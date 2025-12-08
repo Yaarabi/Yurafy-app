@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
-import Product from "@/models/products";
+import Product from "@/models/store/products";
 import { withRateLimit, DEFAULT_CONFIG } from "@/lib/utils/rateLimit";
 import { handleApiError, createErrorResponse, isValidObjectId } from "@/lib/utils/errors";
 import { logger } from "@/lib/utils/logging";

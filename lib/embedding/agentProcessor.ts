@@ -1,8 +1,8 @@
 import axios from "axios";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Mistral } from "@mistralai/mistralai";
-import AgentChunks from "@/models/agentVector"
-import { IAIAgent } from "@/models/ai-agent";
+import AgentChunks from "@/models/automation/agentVector"
+import { IAIAgent } from "@/models/automation/ai-agent";
 
 //
 

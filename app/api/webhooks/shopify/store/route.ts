@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import ShopifyStore from "@/models/shopifyStore";
+import ShopifyStore from "@/models/integration/shopifyStore";
 import crypto from "crypto";
 
 function generate6CharToken(): string {

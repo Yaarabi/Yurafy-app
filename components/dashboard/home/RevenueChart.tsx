@@ -2,7 +2,7 @@
 
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { IOrder } from "@/models/orders";
+import { IOrder } from "@/models/store/orders";
 import { TrendingUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 

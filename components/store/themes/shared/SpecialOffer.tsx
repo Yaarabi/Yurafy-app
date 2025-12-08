@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useStore } from "../../hooks/useStore";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { Clock, Tag, ArrowRight } from "lucide-react";
 import { getStoreTranslation } from "../../utils/translations";
 

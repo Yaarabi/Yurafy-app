@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 import crypto from "crypto";
 
 // ------------------------
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
             await account.save();
             
             // ✅ Auto-link existing AI agent to this WhatsApp account
-            const AIAgent = (await import("@/models/ai-agent")).default;
+            const AIAgent = (await import("@/models/automation/ai-agent")).default;
             const existingAgent = await AIAgent.findOne({ owner: session.user.id });
             if (existingAgent && !existingAgent.account) {
                 existingAgent.account = account._id;
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
             });
             
             // ✅ Auto-link existing AI agent to this new WhatsApp account
-            const AIAgent = (await import("@/models/ai-agent")).default;
+            const AIAgent = (await import("@/models/automation/ai-agent")).default;
             const existingAgent = await AIAgent.findOne({ owner: session.user.id });
             if (existingAgent && !existingAgent.account) {
                 existingAgent.account = account._id;

@@ -1,10 +1,10 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
-import Order, { IOrder } from "@/models/orders";
-import Notification from "@/models/notification";
+import Order, { IOrder } from "@/models/store/orders";
+import Notification from "@/models/support/notification";
 import { connectDB } from "@/lib/db/mongoDB";
-import type { IWhatsAppConversation } from "@/models/whatsappMessage";
+import type { IWhatsAppConversation } from "@/models/automation/whatsappMessage";
 
 /**
  * 🔍 Search orders by name, phone, ID, or status
@@ -165,7 +165,7 @@ export const extractOrdersFromMessagesTool = tool(
         
         try {
             // Import WhatsAppConversation model with proper typing
-            const { default: WhatsAppConversation } = await import("@/models/whatsappMessage");
+            const { default: WhatsAppConversation } = await import("@/models/automation/whatsappMessage");
             
             // Find the conversation (lean to plain object)
             const conversation = await (WhatsAppConversation as mongoose.Model<IWhatsAppConversation>).findOne({

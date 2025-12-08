@@ -5,7 +5,7 @@ import ThemeInjector from "@/components/productPage/ThemeInjector";
 import { StoreProvider } from "@/components/store/context/StoreContext";
 import ThemeRenderer from "@/components/store/themes/ThemeRenderer";
 import type { SerializedStore } from "@/lib/data/store";
-import type { IProduct } from "@/models/products";
+import type { IProduct } from "@/models/store/products";
 
 interface ThemePreviewProps {
     previewStore: SerializedStore | null;

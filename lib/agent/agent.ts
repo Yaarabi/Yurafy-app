@@ -1,7 +1,7 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatMistralAI } from "@langchain/mistralai";
 import { MemorySaver } from "@langchain/langgraph";
-import AIAgent, { IAIAgent } from "@/models/ai-agent";
+import AIAgent, { IAIAgent } from "@/models/automation/ai-agent";
 import { connectDB } from "../db/mongoDB";
 import { orderTools } from "./tools/orderTools";
 import { searchProductTool, listProductsTool } from "./tools/productTools";

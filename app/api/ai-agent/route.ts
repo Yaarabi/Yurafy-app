@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import AIAgent from "@/models/ai-agent";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import AIAgent from "@/models/automation/ai-agent";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 import mongoose from "mongoose";
 
 /** Helper to validate ObjectId */

@@ -11,8 +11,8 @@ import TopProductsChart from "@/components/dashboard/home/TopProductsChart";
 import CustomersChart from "@/components/dashboard/home/customers";
 import CODMetrics from "@/components/dashboard/home/CODMetrics";
 import Link from "next/link";
-import { IOrder } from "@/models/orders";
-import { IProduct } from "@/models/products";
+import { IOrder } from "@/models/store/orders";
+import { IProduct } from "@/models/store/products";
 import type { UserFeaturesData } from "@/hooks/useUserFeatures";
 
 interface UserPlan {

@@ -2,7 +2,7 @@
 
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { IOrder } from "@/models/orders";
+import { IOrder } from "@/models/store/orders";
 import { Package } from "lucide-react";
 import { useTranslations } from "next-intl";
 

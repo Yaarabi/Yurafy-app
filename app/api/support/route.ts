@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import SupportMessage from '@/models/support';
+import SupportMessage from '@/models/support/support';
 import { connectDB } from '@/lib/db/mongoDB';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import User from '@/models/users';
-import Notification from '@/models/notification';
+import Notification from '@/models/support/notification';
 
 export async function POST(req: NextRequest) {
     await connectDB();

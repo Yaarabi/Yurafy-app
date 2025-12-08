@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Search, Calendar, Percent, FileText, AlertCircle, Pause, Trash2, Play } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 

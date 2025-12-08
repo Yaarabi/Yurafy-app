@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Template from "@/models/templates";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import Template from "@/models/automation/templates";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { decryptToken } from "../webhook/route";

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Template from "@/models/templates";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import Template from "@/models/automation/templates";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
 import { decryptToken } from "../webhook/route";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";

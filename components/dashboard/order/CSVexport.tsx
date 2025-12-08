@@ -1,6 +1,6 @@
 'use client';
 
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import React, { ReactNode } from 'react';
 import { FaFileDownload } from 'react-icons/fa';
 import toast from 'react-hot-toast';

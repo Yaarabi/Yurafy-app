@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import Order from "@/models/orders";
+import Order from "@/models/store/orders";
 
 const VALID_STATUSES = ["new", "confirmed", "shipped", "delivered", "cancelled"] as const;
 type OrderStatus = typeof VALID_STATUSES[number];
@@ -58,6 +58,22 @@ export async function PATCH(req: Request) {
 
         if (!order) {
             return NextResponse.json({ message: "Order not found" }, { status: 404 });
+        }
+
+        // Trigger Google Sheets integration if connected (non-blocking)
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+            fetch(`${baseUrl}/api/integrations/google-sheets/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId: id,
+                    ownerId: userId,
+                }),
+            }).catch(err => console.error('Google Sheets send error:', err));
+        } catch (err) {
+            // Silently fail - don't block order status update
+            console.error('Error triggering Google Sheets:', err);
         }
 
         return NextResponse.json({ 

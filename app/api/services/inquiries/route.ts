@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
-import ServiceInquiry from '@/models/serviceInquiry';
+import ServiceInquiry from '@/models/support/serviceInquiry';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 

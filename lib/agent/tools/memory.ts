@@ -2,7 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppConversation, { IWhatsAppMessage, IWhatsAppConversation } from "@/models/whatsappMessage";
+import WhatsAppConversation, { IWhatsAppMessage, IWhatsAppConversation } from "@/models/automation/whatsappMessage";
 
 /**
  * 🧠 Retrieve the conversation history (memory) for a specific customer

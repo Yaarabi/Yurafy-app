@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppConversation from "@/models/whatsappMessage";
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 /**

@@ -1,5 +1,5 @@
 import { connectDB } from "../db/mongoDB";
-import Plan, { IPlan } from "@/models/plan";
+import Plan, { IPlan } from "@/models/support/plan";
 import User from "@/models/users";
 import { logger } from "./logging";
 

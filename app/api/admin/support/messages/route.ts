@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import SupportMessage from '@/models/support';
+import SupportMessage from '@/models/support/support';
 import mongoose from 'mongoose';
 
 /**

@@ -3,7 +3,7 @@
 import React from "react";
 import { useStore } from "../hooks/useStore";
 import { motion, Variants } from "framer-motion";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 
 const gridVariants = {
     hidden: { opacity: 0 },

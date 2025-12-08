@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from "react";
-import { IWhatsAppConversation, IWhatsAppMessage } from "@/models/whatsappMessage";
+import { IWhatsAppConversation, IWhatsAppMessage } from "@/models/automation/whatsappMessage";
 import { AlertCircle, UserCheck, UserX, Bot, Info, CheckSquare, Square, Sparkles, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';

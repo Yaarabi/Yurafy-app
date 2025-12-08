@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 import OrdersFilters from './OrdersFilters';

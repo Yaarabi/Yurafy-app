@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
-import AmeexAccount from '@/models/ameexAccount';
+import AmeexAccount from '@/models/integration/ameexAccount';
 import { ameexAddParcel } from '@/lib/ameex';
 import { decryptToken } from '@/lib/crypto';
 

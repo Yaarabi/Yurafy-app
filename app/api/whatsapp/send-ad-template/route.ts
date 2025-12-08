@@ -1,9 +1,9 @@
 // app/api/whatsapp/send-ads/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Template from "@/models/templates";
-import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";   
-import WhatsAppConversation from "@/models/whatsappMessage";
+import Template from "@/models/automation/templates";
+import WhatsAppAccount, { IWhatsAppAccount } from "@/models/automation/whatsappAccount";   
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
 import { sendTemplateMessage } from "@/lib/whatsapp/sendTemplate";
 import { buildButtonUrlParameters } from "@/lib/whatsapp/templateUtils";
 import { decryptToken } from "../webhook/route";

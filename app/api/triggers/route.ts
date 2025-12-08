@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
-import OrderMessageTrigger from '@/models/orderMessageTrigger';
-import WhatsAppAccount from '@/models/whatsappAccount';
+import OrderMessageTrigger from '@/models/automation/orderMessageTrigger';
+import WhatsAppAccount from '@/models/automation/whatsappAccount';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 

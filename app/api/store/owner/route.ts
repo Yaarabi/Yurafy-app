@@ -2,10 +2,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
-import Store from "@/models/store";
+import Store from "@/models/store/store";
 import { ensureFeatureEnabled } from "@/lib/utils/planEnforcer";
 import { connectDB } from "@/lib/db/mongoDB";
-import type { IStore } from "@/models/store";
+import type { IStore } from "@/models/store/store";
 import { 
     // reuse the serializer to ensure consistent shape
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

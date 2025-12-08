@@ -1,5 +1,5 @@
 'use client';
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import { Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
 import User from '@/models/users';
-import Plan from '@/models/plan';
+import Plan from '@/models/support/plan';
 
 // GET: Fetch user's current plan (Admin only)
 export async function GET(

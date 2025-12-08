@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import YouCanStore from "@/models/youcanStore";
-import Order from "@/models/orders";
+import YouCanStore from "@/models/integration/youcanStore";
+import Order from "@/models/store/orders";
 import crypto from 'crypto';
 
 function mapYouCanToOrderDoc(youcanOrder: any, ownerId: string) {

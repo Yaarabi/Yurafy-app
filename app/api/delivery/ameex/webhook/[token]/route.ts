@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
-import AmeexAccount from '@/models/ameexAccount';
-import Order from '@/models/orders';
+import AmeexAccount from '@/models/integration/ameexAccount';
+import Order from '@/models/store/orders';
 
 export async function POST(req: NextRequest, context: any) {
     await connectDB();

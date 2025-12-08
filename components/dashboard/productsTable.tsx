@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";

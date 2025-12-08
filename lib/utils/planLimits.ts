@@ -6,13 +6,13 @@
 
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
-import Plan from "@/models/plan";
-import Product from "@/models/products";
-import Order from "@/models/orders";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import WhatsAppConversation from "@/models/whatsappMessage";
-import AIAgent from "@/models/ai-agent";
-import Store from "@/models/store";
+import Plan from "@/models/support/plan";
+import Product from "@/models/store/products";
+import Order from "@/models/store/orders";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import WhatsAppConversation from "@/models/automation/whatsappMessage";
+import AIAgent from "@/models/automation/ai-agent";
+import Store from "@/models/store/store";
 import { getPlanTemplate } from "./planUtils";
 import { createPlanLimitNotification } from "./notifications";
 import mongoose from "mongoose";

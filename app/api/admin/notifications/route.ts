@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Notification from "@/models/notification";
-import SupportMessage from "@/models/support";
-import ServiceInquiry from "@/models/serviceInquiry";
-import SupportAgent from "@/models/supportAgent";
+import Notification from "@/models/support/notification";
+import SupportMessage from "@/models/support/support";
+import ServiceInquiry from "@/models/support/serviceInquiry";
+import SupportAgent from "@/models/support/supportAgent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 

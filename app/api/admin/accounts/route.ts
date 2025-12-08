@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 import User from "@/models/users";
 
 export async function GET(req: NextRequest) {

@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
 import User from '@/models/users';
-import Plan from '@/models/plan';
+import Plan from '@/models/support/plan';
 import { createPlanExpiryNotification, createPlanLimitNotification } from '@/lib/utils/notifications';
 import { deactivateFeaturesOnLimitReached, checkPlanLimit } from '@/lib/utils/planLimits';
 import { planFeatures } from '@/lib/config/planFeatures';

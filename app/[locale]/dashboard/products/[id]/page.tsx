@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import ProductForm from '@/components/dashboard/productForm';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import LogoLoader from '@/components/themePreview/loadder';
 import toast from 'react-hot-toast';
 

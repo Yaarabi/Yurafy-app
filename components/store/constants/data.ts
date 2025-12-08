@@ -1,5 +1,5 @@
 import type { SerializedStore } from '@/lib/data/store';
-import type { IProduct } from '@/models/products';
+import type { IProduct } from '@/models/store/products';
 
 export const STORES: SerializedStore = {
         _id: 'store_modern_tech',

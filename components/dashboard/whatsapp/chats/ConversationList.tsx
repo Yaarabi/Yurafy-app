@@ -1,6 +1,6 @@
 'use client';
 
-import { IWhatsAppConversation } from '@/models/whatsappMessage';
+import { IWhatsAppConversation } from '@/models/automation/whatsappMessage';
 import { FaUser } from 'react-icons/fa';
 import { AlertCircle, UserCheck, UserX, MessageSquare, CheckCircle2, Mail, Megaphone, Eye, CheckSquare, Square } from 'lucide-react';
 import { useTranslations } from 'next-intl';

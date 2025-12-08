@@ -1,4 +1,4 @@
-import { IOrder } from "@/models/orders";
+import { IOrder } from "@/models/store/orders";
 
 export const VARIABLES = [
     { label: "Name", value: "{{1}}" },

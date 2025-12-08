@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, XCircle, Truck, Package, Clock, TrendingUp, AlertCircle } from "lucide-react";
-import { IOrder } from "@/models/orders";
+import { IOrder } from "@/models/store/orders";
 
 interface CODMetricsProps {
     orders: IOrder[];

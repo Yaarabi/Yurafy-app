@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import ConversationList from './ConversationList';
 import ChatWindow from './ChatWindow';
-import { IWhatsAppConversation } from '@/models/whatsappMessage';
+import { IWhatsAppConversation } from '@/models/automation/whatsappMessage';
 import { Filter, X, Search, SortAsc, SortDesc, Sparkles, Loader2, CheckSquare, Square } from 'lucide-react';
 import { useUserFeatures } from '@/hooks/useUserFeatures';
 import { useTranslations } from 'next-intl';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IWhatsAppConversation } from '@/models/whatsappMessage';
+import { IWhatsAppConversation } from '@/models/automation/whatsappMessage';
 import toast from 'react-hot-toast';
 import { FaUser } from 'react-icons/fa';
 

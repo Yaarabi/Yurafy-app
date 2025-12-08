@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SpecificationsTableProps {

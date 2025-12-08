@@ -3,8 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
 import { connectDB } from '@/lib/db/mongoDB';
 import User, { IUser } from '@/models/users';
-import WhatsAppAccount from '@/models/whatsappAccount';
-import WhatsAppConversation from '@/models/whatsappMessage';
+import WhatsAppAccount from '@/models/automation/whatsappAccount';
+import WhatsAppConversation from '@/models/automation/whatsappMessage';
 import mongoose from 'mongoose';
 
 export async function GET(req: NextRequest) {

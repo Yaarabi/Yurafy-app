@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoDB';
-import Guide from '@/models/guides';
+import Guide from '@/models/support/guides';
 
 // GET: Public fetch of active guides, optionally filtered by category
 export async function GET(req: NextRequest) {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Order from "@/models/orders";
+import Order from "@/models/store/orders";
 import { normalizePhoneNumber } from "@/lib/whatsapp/phoneNormalize";
 
 // POST Create Order (guest order - no authentication required)

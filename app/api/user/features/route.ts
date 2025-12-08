@@ -3,13 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User, { IUser } from "@/models/users";
-import Store, { IStore } from "@/models/store";
-import WhatsAppAccount, { IWhatsAppAccount } from "@/models/whatsappAccount";
-import AIAgent, { IAIAgent } from "@/models/ai-agent";
-import Product from "@/models/products";
-import Order from "@/models/orders";
-import Plan, { IPlan } from "@/models/plan";
-import Template from "@/models/templates";
+import Store, { IStore } from "@/models/store/store";
+import WhatsAppAccount, { IWhatsAppAccount } from "@/models/automation/whatsappAccount";
+import AIAgent, { IAIAgent } from "@/models/automation/ai-agent";
+import Product from "@/models/store/products";
+import Order from "@/models/store/orders";
+import Plan, { IPlan } from "@/models/support/plan";
+import Template from "@/models/automation/templates";
 
 /**
  * GET /api/user/features

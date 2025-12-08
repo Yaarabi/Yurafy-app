@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useStore } from '@/components/store/hooks/useStore';
-import type { IProduct } from '@/models/products';
+import type { IProduct } from '@/models/store/products';
 
-type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE';
+type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE' | 'SHOP_PAGE';
 
 interface ProductPageAutoSelectProps {
     product: IProduct | undefined;
@@ -20,7 +20,7 @@ const ProductPageAutoSelect: React.FC<ProductPageAutoSelectProps> = ({ product, 
             return;
         }
 
-        if (currentPage === 'STORE_PAGE') {
+        if (currentPage === 'STORE_PAGE' || currentPage === 'SHOP_PAGE') {
             goHome();
         }
     }, [currentPage, product, goHome, selectProduct]);

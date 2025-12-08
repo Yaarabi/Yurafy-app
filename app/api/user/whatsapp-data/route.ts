@@ -3,10 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
-import WhatsAppAccount from "@/models/whatsappAccount";
-import AIAgent from "@/models/ai-agent";
-import Template from "@/models/templates";
-import Plan from "@/models/plan";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
+import AIAgent from "@/models/automation/ai-agent";
+import Template from "@/models/automation/templates";
+import Plan from "@/models/support/plan";
 
 /**
  * GET /api/user/whatsapp-data

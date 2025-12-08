@@ -2,7 +2,7 @@
 import SettingsSection from "@/components/dashboard/setting/settingSection";
 import WorkflowToggle from "@/components/dashboard/whatsapp/automation/WorkflowToggle";
 import EditableField from "@/components/dashboard/setting/SettingsField";
-import { IAIAgent } from "@/models/ai-agent";
+import { IAIAgent } from "@/models/automation/ai-agent";
 import { useState } from "react";
 
 interface AIAgentSettingsProps {

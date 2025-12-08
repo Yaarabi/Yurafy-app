@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WooStore from "@/models/wooStore";
+import WooStore from "@/models/integration/wooStore";
 import crypto from "crypto";
 
 function generate6CharToken(): string {

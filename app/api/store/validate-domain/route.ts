@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Store from "@/models/store";
+import Store from "@/models/store/store";
 
 /**
  * POST /api/store/validate-domain

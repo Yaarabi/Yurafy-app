@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import toast from 'react-hot-toast';
 import { getStoreTranslation } from '../utils/translations';
 import { useStore } from '../hooks/useStore';

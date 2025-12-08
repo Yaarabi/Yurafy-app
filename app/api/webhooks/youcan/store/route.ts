@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import YouCanStore from "@/models/youcanStore";
+import YouCanStore from "@/models/integration/youcanStore";
 import crypto from "crypto";
 import { registerWebhook, unregisterWebhook } from '@/lib/youcan/resthooks';
 function generate6CharToken(): string {

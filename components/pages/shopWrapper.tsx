@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { SerializedStore } from "@/lib/data/products";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import SeoJsonLd from "@/components/common/SeoJsonLd";
 import { StoreProvider } from "@/components/store/context/StoreContext";
 import Cart from "@/components/store/components/Cart";

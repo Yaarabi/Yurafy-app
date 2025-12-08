@@ -1,6 +1,6 @@
 "use client";
 
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { SerializedStore } from "@/lib/data/products";
 import WhatsAppButton from "../productPage/ProductActions";
 import ThemeRenderer from "../store/themes/ThemeRenderer";

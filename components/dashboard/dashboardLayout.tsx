@@ -61,6 +61,17 @@ export default function ProtectedDashboardClient({
         }
     }, [status, session, router, locale]);
 
+    // Prevent dashboard theme classes from leaking to public pages on unmount
+    useEffect(() => {
+        return () => {
+            const root = document.documentElement;
+            root.classList.remove("dark");
+            root.classList.remove("light");
+            root.removeAttribute("style"); // next-themes sets color-scheme inline
+            root.removeAttribute("data-theme");
+        };
+    }, []);
+
     if (status === "loading" || onboardingCompleted === null) return <LogoLoader />;
 
     // Dashboard pages require completed onboarding

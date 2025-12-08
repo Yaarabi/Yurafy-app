@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { FileText, User, Send, Loader2, MessageSquare, Phone } from "lucide-react";
-import { ITemplate } from "@/models/templates";
-import { IWhatsAppConversation } from "@/models/whatsappMessage";
+import { ITemplate } from "@/models/automation/templates";
+import { IWhatsAppConversation } from "@/models/automation/whatsappMessage";
 
 export default function TestPanelTab() {
     const [templates, setTemplates] = useState<ITemplate[]>([]);

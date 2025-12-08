@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { SerializedStore } from '@/lib/data/products';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { CartProvider } from './CartContext';
 
 export type StoreContextValue = {

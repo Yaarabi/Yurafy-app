@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import ShopifyStore from "@/models/shopifyStore";
+import ShopifyStore from "@/models/integration/shopifyStore";
 
 // Map incoming Shopify order to internal orders/guest payload
 function mapShopifyToOrderPayload(shopifyOrder: any, ownerId: string) {

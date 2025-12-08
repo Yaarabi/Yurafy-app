@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, Variants } from "framer-motion";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import GeometricDecorations from "../../shared/GeometricDecorations";
 import { getStoreTranslation } from "../../../utils/translations";
 

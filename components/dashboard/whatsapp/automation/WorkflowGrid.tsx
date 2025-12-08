@@ -1,5 +1,5 @@
 'use client';
-import { ITemplate } from '@/models/templates';
+import { ITemplate } from '@/models/automation/templates';
 import { DetectionRule } from './types';
 import DetectionRuleItem from './DetectionRuleItem';
 import WorkflowCard from './WorkFlowCard';

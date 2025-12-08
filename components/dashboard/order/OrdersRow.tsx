@@ -1,5 +1,5 @@
 'use client';
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import { FaTrash } from 'react-icons/fa';
 
 interface OrdersRowProps {

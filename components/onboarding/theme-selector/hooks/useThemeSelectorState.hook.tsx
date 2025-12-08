@@ -7,7 +7,7 @@ import { StoreProvider } from '../../../store/context/StoreContext';
 import ThemeRenderer from '../../../store/themes/ThemeRenderer';
 import { FAKE_PRODUCTS } from '../../../store/constants/data';
 import type { SerializedStore } from '../../../../lib/data/store';
-import type { IProduct } from '../../../../models/products';
+import type { IProduct } from '../../../../models/store/products';
 import ProductPageAutoSelect from '../ProductPageAutoSelect';
 
 type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE' | 'SHOP_PAGE';

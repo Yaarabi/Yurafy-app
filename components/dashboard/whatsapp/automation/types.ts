@@ -1,5 +1,5 @@
 
-import { ITemplate } from '@/models/templates';
+import { ITemplate } from '@/models/automation/templates';
 
 export interface DetectionRule {
     keywords: string[];

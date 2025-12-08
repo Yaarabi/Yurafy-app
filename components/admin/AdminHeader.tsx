@@ -24,6 +24,12 @@ export default function AdminHeader() {
             setDarkMode(false);
             document.documentElement.classList.remove('dark');
         }
+        return () => {
+            const root = document.documentElement;
+            root.classList.remove('dark');
+            root.removeAttribute('style');
+            root.removeAttribute('data-theme');
+        };
     }, []);
 
     const toggleTheme = () => {

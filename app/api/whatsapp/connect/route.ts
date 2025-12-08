@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 
 export async function PUT(req: NextRequest) {
     await connectDB();

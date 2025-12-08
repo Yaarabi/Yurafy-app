@@ -3,7 +3,7 @@
 
 import React from "react";
 import ProductCompo from "@/components/pages/ProductPage";
-import { IProduct } from "@/models/products";
+import { IProduct } from "@/models/store/products";
 import { SerializedStore } from "@/lib/data/products";
 import { StoreProvider } from "@/components/store/context/StoreContext";
 import Cart from "@/components/store/components/Cart";

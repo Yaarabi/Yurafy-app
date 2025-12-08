@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { ITemplate } from '@/models/templates';
+import { ITemplate } from '@/models/automation/templates';
 import { DetectionRule } from './types';
 import AddDetectionRuleModal from './NewDetectionRuleForm';
 import AutomationGrid from './WorkflowGrid';

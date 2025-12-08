@@ -1,6 +1,6 @@
 
 import { connectDB } from "@/lib/db/mongoDB";
-import Store, { IStore } from "@/models/store";
+import Store, { IStore } from "@/models/store/store";
 import User, { IUser } from "@/models/users";
 
 

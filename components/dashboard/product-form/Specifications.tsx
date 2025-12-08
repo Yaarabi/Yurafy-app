@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { IProduct } from '@/models/products';
+import { IProduct } from '@/models/store/products';
 import { Trash2, Plus } from 'lucide-react';
 
 interface SpecificationsProps {

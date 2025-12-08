@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import WooStore from "@/models/wooStore";
+import WooStore from "@/models/integration/wooStore";
 import crypto from 'crypto';
 
 function mapWooToOrderPayload(wooOrder: any, ownerId: string) {

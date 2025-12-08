@@ -1,8 +1,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import AIAgent from "@/models/ai-agent";
-import AgentChunks from "@/models/agentVector"
+import AIAgent from "@/models/automation/ai-agent";
+import AgentChunks from "@/models/automation/agentVector"
 import { processAgentEmbedding } from "@/lib/embedding/agentProcessor";
 
 export async function GET(req: NextRequest) {

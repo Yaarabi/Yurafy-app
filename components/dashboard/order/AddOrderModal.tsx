@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FaTimes, FaPlus, FaTrash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-import { IOrder } from '@/models/orders';
+import { IOrder } from '@/models/store/orders';
 import { normalizePhoneNumber } from '@/lib/utils/phoneUtils';
 
 interface ProductItem {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ITemplate } from "@/models/templates";
+import { ITemplate } from "@/models/automation/templates";
 
 interface TemplateSelectorProps {
     label: string;

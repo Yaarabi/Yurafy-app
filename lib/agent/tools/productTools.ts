@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import mongoose from "mongoose";
-import Product, { IProduct } from "@/models/products";
+import Product, { IProduct } from "@/models/store/products";
 import { connectDB } from "@/lib/db/mongoDB";
 
 /**

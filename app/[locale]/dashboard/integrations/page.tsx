@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import LogoLoader from "@/components/themePreview/loadder";
 import { useUserFeatures } from "@/hooks/useUserFeatures";
 import { useTranslations } from "next-intl";
-import { Store, Truck } from "lucide-react";
+import { Store, Truck, FileText } from "lucide-react";
 import { MdExtension } from "react-icons/md";
 import IntegrationCard from "@/components/dashboard/integrations/IntegrationCard";
 
@@ -64,6 +64,15 @@ export default function IntegrationsPage() {
                         description={t("integrations.categories.delivery.description")}
                         link={`/dashboard/integrations/delivery`}
                         linkLabel={t("integrations.categories.delivery.manage")}
+                    />
+
+                    {/* Google Sheets Card */}
+                    <IntegrationCard
+                        icon={<FileText className="w-5 h-5" />}
+                        title="Google Sheets"
+                        description="Send orders to Google Sheets when status changes"
+                        link={`/dashboard/integrations/google-sheets`}
+                        linkLabel="Configure"
                     />
 
                 </div>

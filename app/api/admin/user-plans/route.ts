@@ -3,11 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { connectDB } from "@/lib/db/mongoDB";
 import User from "@/models/users";
-import Plan, { IPlan } from "@/models/plan";
-import Store from "@/models/store";
-import Product from "@/models/products";
-import Order from "@/models/orders";
-import WhatsAppAccount from "@/models/whatsappAccount";
+import Plan, { IPlan } from "@/models/support/plan";
+import Store from "@/models/store/store";
+import Product from "@/models/store/products";
+import Order from "@/models/store/orders";
+import WhatsAppAccount from "@/models/automation/whatsappAccount";
 import { planFeatures } from "@/lib/config/planFeatures";
 
 export async function GET(req: NextRequest) {

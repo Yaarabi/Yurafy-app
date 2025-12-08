@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoDB";
-import Notification from "@/models/notification";
+import Notification from "@/models/support/notification";
 import User from "@/models/users";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
