@@ -10,7 +10,7 @@ const About: React.FC = () => {
     const { about, brandName, whoWeAre } = selectedStore;
     const primaryColor = selectedStore.theme?.primaryColor || '#22c55e';
     const surfaceColor = selectedStore.theme?.surfaceColor || '#e9f9ef';
-    const surfaceGradient = surfaceColor
+    
     
     const aboutData = about || {
         title: whoWeAre?.description ? undefined : `About ${brandName}`,
@@ -27,7 +27,7 @@ const About: React.FC = () => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="relative py-16 sm:py-20 md:py-24 overflow-hidden"
-            style={{ background: surfaceGradient }}
+            // style={{ background: surfaceGradient }}
         >
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />

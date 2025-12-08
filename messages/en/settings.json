@@ -37,6 +37,11 @@
         "same": "New password must be different from current password",
         "failed": "Failed to change password"
       }
+    },
+    "theme": {
+      "title": "Theme & Colors",
+      "description": "Select a theme, preview your live store, and customize colors with real data.",
+      "button": "Design Theme"
     }
   }
 }

@@ -9,7 +9,7 @@ import ColorCustomizationPanel from './ColorCustomizationPanel';
 
 type ThemeConfig = (typeof storeThemes)[number];
 
-type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE';
+type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE' | 'SHOP_PAGE';
 
 type ColorKey = 'primary' | 'secondary' | 'text' | 'surface';
 
@@ -154,6 +154,14 @@ const ThemePreviewModal: React.FC<ThemePreviewModalProps> = ({
                                 }`}
                             >
                                 {t('store')}
+                            </button>
+                            <button
+                                onClick={() => setPreviewPage('SHOP_PAGE')}
+                                className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 touch-manipulation active:scale-95 ${
+                                    previewPage === 'SHOP_PAGE' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                            >
+                                {t('shop')}
                             </button>
                             <button
                                 onClick={() => setPreviewPage('PRODUCT_PAGE')}

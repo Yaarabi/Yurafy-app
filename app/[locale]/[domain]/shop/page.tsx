@@ -1,4 +1,4 @@
-export const revalidate = 3600;
+export const revalidate = 30;
 
 import { generateStoreMetadata } from "@/lib/metadata/storeMetadata";
 import { getStoreByDomain } from "@/lib/data/store";

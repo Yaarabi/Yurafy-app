@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '../../hooks/useStore';
 import { useRouter, useParams } from 'next/navigation';
-import Header from './sections/Header';
+import Header from './sections/HeaderProductPage';
 import Footer from './sections/Footer';
 import ProductDetails from '../../sections/ProductDetails';
 import OrderForm from '../../sections/OrderForm';
@@ -16,29 +16,6 @@ const ProductPage: React.FC = () => {
     const router = useRouter();
     const params = useParams();
 
-    const handleGoBack = () => {
-        // Check if we're using subdomain (e.g., store.yura-saas.com or coutanova.localhost)
-        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-        const parts = hostname ? hostname.split('.') : [];
-        // Subdomain detection: 
-        // - For localhost: subdomain.localhost (e.g., coutanova.localhost)
-        // - For production: subdomain.domain.com (e.g., store.yura-saas.com)
-        const isLocalhostSubdomain = hostname.includes('localhost') && parts.length > 1 && parts[0] !== 'localhost';
-        const isProductionSubdomain = parts.length >= 3 && !hostname.includes('localhost') && !hostname.startsWith('127.0.0.1');
-        const isSubdomain = isLocalhostSubdomain || isProductionSubdomain;
-        
-        if (isSubdomain) {
-            // With subdomain: navigate to root
-            window.location.href = '/';
-            return;
-        } else {
-            // Without subdomain: navigate to /{locale}/{domain}
-            const domain = (params as any)?.domain || selectedStore?.domain || '';
-            const locale = (params as any)?.locale || 'en';
-            const href = `/${locale}/${domain}`;
-            router.push(href);
-        }
-    };
 
     const primaryColor = selectedStore?.theme?.primaryColor || '#4b5563';
     const secondaryColor = selectedStore?.theme?.secondaryColor || primaryColor;
@@ -57,14 +34,6 @@ const ProductPage: React.FC = () => {
                 } as React.CSSProperties}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
-                    <button
-                        onClick={handleGoBack}
-                        className="inline-flex items-center gap-2 text-sm font-light text-gray-600 hover:text-[var(--color-primary)] mb-4 sm:mb-8 lg:mb-12 transition-colors duration-300 uppercase tracking-wide"
-                    >
-                        <ArrowLeftIcon className="w-4 h-4" />
-                        <span className="hidden sm:inline">Back to Store</span>
-                        <span className="sm:hidden">Back</span>
-                    </button>
                     <div className="space-y-6 sm:space-y-8">
                         {/* Product Details */}
                         <div>
@@ -76,9 +45,7 @@ const ProductPage: React.FC = () => {
                         </div>
                         {/* Specifications Table - Below Order Form */}
                         {selectedProduct && (
-                            <div className="bg-white rounded-lg p-4 sm:p-6 lg:p-8 border border-gray-200 shadow-sm">
                                 <SpecificationsTable product={selectedProduct} primaryColor={primaryColor} secondaryColor={secondaryColor} />
-                            </div>
                         )}
                         {/* Image Descriptions - Below Specifications */}
                         {selectedProduct && (

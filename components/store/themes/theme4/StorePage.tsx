@@ -22,15 +22,19 @@ const StorePage: React.FC = () => {
         footer: true,
     };
 
+    const surfaceGradient = selectedStore.theme?.surfaceColor || '#f1f5f9';
+
     // Minimalist Theme Layout: Hero (includes Header) -> Product Grid -> About -> Trust -> Footer
     return (
         <main>
             {themeStructure.hero && <Hero />}
-            <SpecialOffer />
-            <Categories />
-            {themeStructure.productGrid && <ProductGrid />}
-            {themeStructure.about && <About />}
-            {themeStructure.trust && <Trust />}
+            <div style={{ background: surfaceGradient }}>
+                <SpecialOffer />
+                <Categories />
+                {themeStructure.productGrid && <ProductGrid />}
+                {themeStructure.about && <About />}
+                {themeStructure.trust && <Trust />}
+            </div>
             {themeStructure.footer && <Footer />}
         </main>
     );

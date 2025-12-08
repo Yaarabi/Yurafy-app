@@ -28,7 +28,7 @@ const Categories: React.FC = () => {
     };
 
     return (
-        <div className="py-12 sm:py-16 md:py-20" style={{ backgroundColor: surfaceColor }}>
+        <div className="py-12 sm:py-16 md:py-20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

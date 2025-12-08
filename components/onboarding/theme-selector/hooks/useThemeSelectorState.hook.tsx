@@ -10,7 +10,7 @@ import type { SerializedStore } from '../../../../lib/data/store';
 import type { IProduct } from '../../../../models/products';
 import ProductPageAutoSelect from '../ProductPageAutoSelect';
 
-type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE';
+type PreviewPage = 'STORE_PAGE' | 'PRODUCT_PAGE' | 'SHOP_PAGE';
 
 type ColorKey = 'primary' | 'secondary' | 'text' | 'surface';
 

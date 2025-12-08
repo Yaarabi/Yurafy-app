@@ -3,7 +3,8 @@
 import EditableField from '@/components/dashboard/setting/SettingsField';
 import LogoUploader from '@/components/dashboard/setting/LogoPreview';
 import { useRouter } from 'next/navigation';
-import { Palette, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface StoreSettingsProps {
     store: any;
@@ -14,37 +15,28 @@ interface StoreSettingsProps {
 
 export default function StoreSettings({ store, onUpdate, onUploadLogo, locale }: StoreSettingsProps) {
     const router = useRouter();
+    const t = useTranslations('settings');
     const localeSlug = Array.isArray(locale) ? locale[0] : (locale || 'en');
 
-    const openThemePage = () => {
-        router.push(`/${localeSlug}/dashboard/settings/theme`);
+    const openEditThemePage = () => {
+        router.push(`/${localeSlug}/edit-theme/${store._id}`);
     };
 
     return (
         <div className="space-y-3 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-indigo-50 via-blue-50 to-white border border-indigo-100 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-indigo-50 via-blue-50 to-white dark:from-indigo-950/30 dark:via-blue-950/30 dark:to-gray-800 border border-indigo-100 dark:border-indigo-900/50 rounded-xl">
                 <div>
-                    <p className="text-sm font-semibold text-indigo-800">Theme & Colors</p>
-                    <p className="text-xs text-indigo-700/80">Preview your live store and adjust theme colors with real data.</p>
+                    <p className="text-sm font-semibold text-indigo-800 dark:text-indigo-300">{t('theme.title')}</p>
+                    <p className="text-xs text-indigo-700/80 dark:text-indigo-400/70">{t('theme.description')}</p>
                 </div>
-                <div className="flex gap-2">
-                    <button
-                        type="button"
-                        onClick={openThemePage}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 active:scale-95 transition-transform duration-150"
-                    >
-                        <Palette className="w-4 h-4" />
-                        Preview theme
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => router.push(`/${localeSlug}/dashboard/settings/theme-select`)}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-sm hover:bg-blue-700 active:scale-95 transition-transform duration-150"
-                    >
-                        <Sparkles className="w-4 h-4" />
-                        Change theme
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    onClick={openEditThemePage}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-600 dark:to-indigo-700 text-white font-semibold shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-indigo-800 dark:hover:from-indigo-700 dark:hover:to-indigo-800 active:scale-95 transition-all duration-150 whitespace-nowrap"
+                >
+                    <Sparkles className="w-4 h-4" />
+                    {t('theme.button')}
+                </button>
             </div>
             <LogoUploader logoUrl={store.logoUrl || ''} onUpload={onUploadLogo} />
             <EditableField label="Brand Name" value={store.brandName || ''} onSave={(val) => onUpdate('brandName', val)} />

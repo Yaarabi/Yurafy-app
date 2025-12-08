@@ -44,6 +44,7 @@ const Footer: React.FC = () => {
 
     const socialLinks = selectedStore.socialLinks || {};
     const primaryColor = selectedStore.theme?.primaryColor || '#22c55e';
+    const textColor = selectedStore.theme?.textColor || '#ffffff';
     const storeLanguage = selectedStore.language || 'en';
     
     // Header links (same as in Header component) with translations
@@ -77,7 +78,7 @@ const Footer: React.FC = () => {
                                 />
                             </div>
                         ) : (
-                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">{brandName}</h3>
+                            <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: textColor }}>{brandName}</h3>
                         )}
                     </div>
 
@@ -87,7 +88,8 @@ const Footer: React.FC = () => {
                             <a
                                 key={link.label}
                                 href={link.href}
-                                className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-light"
+                                className="hover:text-gray-900 transition-colors duration-200 text-sm font-light" 
+                                style={{ color: textColor }}
                             >
                                 {link.label}
                             </a>
@@ -110,10 +112,10 @@ const Footer: React.FC = () => {
 
                 {/* Copyright */}
                 <div className="border-t border-gray-200 pt-6 mt-6">
-                    <p className="text-center text-sm text-gray-600 font-light">
+                    <p className="text-center text-sm text-gray-600 font-light" style={{ color: textColor }}>
                         &copy; {new Date().getFullYear()} {brandName}. {getStoreTranslation("allRightsReserved", storeLanguage)}
                     </p>
-                    <p className="text-center text-xs text-gray-500 mt-2 font-light">
+                    <p className="text-center text-xs text-gray-500 mt-2 font-light" style={{ color: textColor }}>
                         <a href="https://yurafy.com" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
                             Powered by Yurafy
                         </a>

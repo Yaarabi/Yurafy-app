@@ -15,7 +15,7 @@ export async function generateStoreMetadata(domain: string, locale: string = 'en
         };
     }
 
-    const title = `${store.brandName} | Yurafy`;
+    const title = `${store.brandName}`;
     const description =
         store.description ||
         `Discover products from ${store.brandName}, your trusted online store powered by Yurafy.`;

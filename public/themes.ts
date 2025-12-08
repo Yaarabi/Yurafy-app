@@ -55,7 +55,7 @@ export const storeThemes: StoreThemeDefinition[] = [
         primaryColor: "#aaa388",
         secondaryColor: "#aaa588",
         textColor: "#f3f4f6",
-        surfaceColor: "#cdd0ce",
+        surfaceColor: "#ffffff",
         gradient: { from: "#aaa388", via: "#aaa588", to: "#aaa588" },
         },
     },

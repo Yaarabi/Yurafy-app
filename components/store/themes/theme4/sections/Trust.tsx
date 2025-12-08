@@ -50,7 +50,7 @@ const Trust: React.FC = () => {
                 },
             }}
             className="relative py-16 sm:py-20 md:py-24 border-t border-b overflow-hidden"
-            style={{ borderColor: `${primaryColor}20`, background: surfaceGradient }}
+            // style={{ borderColor: `${primaryColor}20`, background: surfaceGradient }}
         >
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />
