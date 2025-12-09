@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useStore } from "../../../hooks/useStore";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -67,14 +68,19 @@ const Categories: React.FC = () => {
                                 className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 overflow-hidden rounded-full border-4 flex-shrink-0"
                                 style={{ borderColor: primaryColor }}
                             >
-                                <motion.img
-                                    src={category.img}
-                                    alt={category.name}
-                                    className="w-full h-full object-cover"
+                                <motion.div
+                                    className="relative w-full h-full"
                                     initial={{ scale: 1 }}
                                     whileHover={{ scale: 1.1 }}
                                     transition={{ duration: 0.5 }}
-                                />
+                                >
+                                    <Image
+                                        src={category.img}
+                                        alt={category.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </motion.div>
                                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
                             </div>
                             <div className="flex items-center gap-2 text-gray-900 font-bold text-base sm:text-lg group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300" style={{

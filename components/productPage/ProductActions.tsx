@@ -15,7 +15,7 @@ export default function WhatsAppButton({ ownerPhone }: WhatsAppButtonProps) {
     
     // Clean phone number (remove spaces, dashes, and other non-numeric characters except +)
     const cleanPhone = phone.replace(/[^\d+]/g, '');
-    const url = `https://wa.me/${cleanPhone}?text=Bonjour,%20je%20veux%20commander%20le%20produit:%20`;
+    const url = `https://wa.me/${cleanPhone}`;
 
     return (
         <a

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { useStore } from '@/components/store/hooks/useStore'; 
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 import GeometricDecorations from '../../shared/GeometricDecorations';
@@ -70,11 +71,12 @@ const Footer: React.FC = () => {
                     {/* Logo with Home & Garden Badge */}
                     <div className="flex flex-col items-center md:items-start">
                         {selectedStore.logoUrl ? (
-                            <div className="relative">
-                                <img
+                            <div className="relative h-12 w-12 mb-4">
+                                <Image
                                     src={selectedStore.logoUrl}
                                     alt={`${brandName} logo`}
-                                    className="h-12 w-auto object-contain mb-4 rounded-full"
+                                    fill
+                                    className="object-contain rounded-full"
                                 />
                             </div>
                         ) : (

@@ -14,6 +14,7 @@ const Hero: React.FC = () => {
     const secondaryColor = selectedStore.theme?.secondaryColor || primaryColor;
     const storeLanguage = selectedStore.language || 'en';
 
+    
     return (
         <div className="relative text-white min-h-[100vh] sm:min-h-screen flex flex-col overflow-hidden">
             {/* Hero Image Background */}

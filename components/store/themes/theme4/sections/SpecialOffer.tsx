@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { useStore } from "../../../hooks/useStore";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -90,14 +91,19 @@ const SpecialOffer: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                             {/* Image Section */}
                             <div className="relative h-64 sm:h-80 lg:h-full min-h-[300px] overflow-hidden">
-                                <motion.img
-                                    src={offerProduct.mainImage}
-                                    alt={offerProduct.name}
-                                    className="w-full h-full object-cover"
+                                <motion.div
+                                    className="relative w-full h-full"
                                     initial={{ scale: 1 }}
                                     whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.5 }}
-                                />
+                                >
+                                    <Image
+                                        src={offerProduct.mainImage}
+                                        alt={offerProduct.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </motion.div>
                                 <div className="absolute top-4 left-4">
                                     <motion.div
                                         initial={{ scale: 0 }}

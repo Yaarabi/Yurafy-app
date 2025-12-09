@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useStore } from "../../../hooks/useStore";
 import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
@@ -70,11 +71,12 @@ const Header: React.FC = () => {
                         className="group flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity min-w-0 relative"
                     >
                         {selectedStore.logoUrl && (
-                            <div className="relative">
-                                <img
+                            <div className="relative h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12">
+                                <Image
                                     src={selectedStore.logoUrl}
                                     alt={`${selectedStore.brandName} logo`}
-                                    className="h-6 w-auto sm:h-8 md:h-10 lg:h-12 object-contain flex-shrink-0 rounded-full"
+                                    fill
+                                    className="object-contain flex-shrink-0 rounded-full"
                                 />
                             </div>
                         )}

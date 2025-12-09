@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useStore } from "../../../hooks/useStore";
 import { useCart } from "../../../context/CartContext";
 import { useRouter, useParams } from "next/navigation";
@@ -78,6 +79,7 @@ const Header: React.FC = () => {
                     >
                         {selectedStore.logoUrl && (
                             <div className="relative">
+
                                 <img
                                     src={selectedStore.logoUrl}
                                     alt={`${selectedStore.brandName} logo`}

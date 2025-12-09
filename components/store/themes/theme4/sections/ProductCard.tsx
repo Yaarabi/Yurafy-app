@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 import { IProduct } from "@/models/store/products";
 import GeometricDecorations from "../../shared/GeometricDecorations";
@@ -21,6 +22,7 @@ const cardVariants: Variants = {
     visible: { opacity: 1, transition: { duration: 0.6 } },
 };
 
+
 const ProductCard: React.FC<ProductCardProps> = ({
     product,
     primaryColor,
@@ -36,13 +38,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
             className="group relative bg-white border border-gray-200 hover:border-[var(--color-primary)] transition-all duration-500 overflow-hidden flex flex-col"
         >
             <div className="relative overflow-hidden h-80">
-                <motion.img
-                    src={product.mainImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
+                <motion.div
+                    className="relative w-full h-full"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                />
+                >
+                    <Image
+                        src={product.mainImage}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                    />
+                </motion.div>
                 {/* Organic Overlay */}
                 <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
