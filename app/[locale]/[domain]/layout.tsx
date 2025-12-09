@@ -4,6 +4,42 @@ import { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 import { loadMessages } from '@/lib/utils/loadMessages';
+import { connectDB } from '@/lib/db/mongoDB';
+import Store from '@/models/store/store';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+    params
+}: {
+    params: Promise<{ locale: string; domain: string }>;
+}): Promise<Metadata> {
+    const { domain } = await params;
+    const headersList = await headers();
+    const subdomainFromHeader = headersList.get('x-subdomain');
+
+    // Fetch store data to get logo
+    let storeLogo = '/yurafy.svg'; // fallback
+    try {
+        await connectDB();
+        const store = await Store.findOne({
+            $or: [{ domain: domain }, { domain: subdomainFromHeader }]
+        }).select('logoUrl brandName').lean() as { logoUrl?: string; brandName?: string } | null;
+        
+        if (store && store.logoUrl) {
+            storeLogo = store.logoUrl;
+        }
+    } catch (error) {
+        console.error('Failed to fetch store logo for metadata:', error);
+    }
+
+    return {
+        icons: {
+            icon: storeLogo,
+            shortcut: storeLogo,
+            apple: storeLogo,
+        },
+    };
+}
 
 export default async function Layout({
     children,
