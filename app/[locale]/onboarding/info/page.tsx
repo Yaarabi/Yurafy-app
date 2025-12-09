@@ -70,22 +70,6 @@ export default function InfoPage() {
     };
 
     const handleBasicInfoSubmit = async (info: { brandName: string; domain: string; description: string; logo?: string; language?: string }) => {
-        // Save logo to user if provided (store will get it during creation)
-        if (info.logo && session?.user?.id) {
-            try {
-                const userResponse = await fetch('/api/user/me', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ logo: info.logo }),
-                });
-                if (!userResponse.ok) {
-                    console.error('Failed to save logo to user info');
-                }
-            } catch (error) {
-                console.error('Error saving logo:', error);
-            }
-        }
-        
         setBasicInfo(info);
         // Small delay for smooth transition
         setTimeout(() => {

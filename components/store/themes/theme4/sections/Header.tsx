@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { ShoppingCartIcon } from "@/components/store/components/icons";
 import SearchBar from "@/components/store/components/SearchBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { getStoreTranslation } from "../../../utils/translations";
 
 const Header: React.FC = () => {
@@ -141,9 +141,10 @@ const Header: React.FC = () => {
                         <a
                             href={disableNavigation ? '#' : `${process.env.NEXT_PUBLIC_BASE_URL || ''}/${(params as any)?.locale || 'en'}/login`}
                             onClick={(e) => { if (disableNavigation) e.preventDefault(); }}
-                            className="hidden md:flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
+                            className="hidden md:flex items-center p-1.5 sm:p-2 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
+                            aria-label="Login"
                         >
-                            Login
+                            <User className="w-5 h-5 sm:w-6 sm:h-6" />
                         </a>
                         <button
                             onClick={openCart}
@@ -225,8 +226,9 @@ const Header: React.FC = () => {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: headerLinks.length * 0.1 }}
-                                        className="text-base font-semibold py-2 px-3 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
+                                        className="flex items-center gap-2 text-base font-semibold py-2 px-3 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white"
                                     >
+                                        <User className="w-5 h-5" />
                                         Login
                                     </motion.a>
                                 </nav>
