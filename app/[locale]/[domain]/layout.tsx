@@ -2,7 +2,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { headers } from 'next/headers';
-import Script from 'next/script';
 import { loadMessages } from '@/lib/utils/loadMessages';
 import { connectDB } from '@/lib/db/mongoDB';
 import Store from '@/models/store/store';
@@ -84,25 +83,21 @@ export default async function Layout({
     };
 
     return (
-        <html lang={locale}>
-        <head>
-            {/* Canonical URL */}
-            <link rel="canonical" href={storeUrl} />
-
+        <>
             {/* Structured Data for Store */}
-            <Script
+            <script
                 id="store-ld-json"
                 type="application/ld+json"
-                strategy="beforeInteractive"
                 suppressHydrationWarning
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
-        </head>
-        <body>
+            
+            {/* Canonical Link */}
+            <link rel="canonical" href={storeUrl} />
+            
             <NextIntlClientProvider locale={locale} messages={messages}>
-            <main className="min-h-screen">{children}</main>
+                <main className="min-h-screen">{children}</main>
             </NextIntlClientProvider>
-        </body>
-        </html>
+        </>
     );
 }

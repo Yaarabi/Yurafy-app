@@ -92,3 +92,47 @@ export async function getProductsByOwner(ownerId: string): Promise<IProduct[]> {
         return [];
     }
 }
+
+// ----------------------
+// Get All Products for a Store (by store ID)
+// ----------------------
+export async function getAllStoreProducts(storeId: string): Promise<IProduct[]> {
+    if (!storeId || storeId === 'undefined') {
+        console.warn("⚠️ getAllStoreProducts called with invalid storeId:", storeId);
+        return [];
+    }
+
+    try {
+        await connectDB();
+        
+        // Find the store to get the owner ID
+        const storeDoc = await Store.findById(storeId).select('owner').lean<{ owner: any }>();
+        if (!storeDoc) {
+            console.warn("⚠️ Store not found:", storeId);
+            return [];
+        }
+
+        // Get all products for this owner/store
+        const productDocs = await Product.find({ owner: storeDoc.owner }).lean<IProduct[]>();
+        
+        // Serialize products
+        const serializedProducts: IProduct[] = (productDocs || []).map(product => ({
+            ...product,
+            _id: serializeId(product._id),
+            owner: serializeId(product.owner),
+            createdAt: product.createdAt instanceof Date ? product.createdAt : new Date(product.createdAt || 0),
+            updatedAt: product.updatedAt instanceof Date ? product.updatedAt : new Date(product.updatedAt || 0),
+            images: product.images?.map((img: any) => img) || [],
+            mainImage: product.mainImage || '',
+            sizes: product.sizes || [],
+            colors: product.colors || [],
+            descriptionsImage: product.descriptionsImage || [],
+            bundles: product.bundles || undefined,
+        }));
+
+        return serializedProducts;
+    } catch (error) {
+        console.error("⚠️ Error fetching store products:", error);
+        return [];
+    }
+}

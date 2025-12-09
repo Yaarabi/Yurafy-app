@@ -2,8 +2,6 @@
 
 import { IProduct } from '@/models/store/products';
 import Image from 'next/image';
-import { getStoreTranslation } from '@/components/store/utils/translations';
-import { useStore } from '@/components/store/hooks/useStore';
 
 interface ImageDescriptionsProps {
     product: IProduct;
@@ -15,8 +13,6 @@ export default function ImageDescriptions({ product }: ImageDescriptionsProps) {
         return null;
     }
 
-    const { selectedStore } = useStore();
-    const storeLanguage = (selectedStore?.language || 'en').split('-')[0]?.toLowerCase() || 'en';
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 px-4 sm:px-6">
@@ -25,13 +21,14 @@ export default function ImageDescriptions({ product }: ImageDescriptionsProps) {
                     {product.descriptionsImage.map((img, idx) => (
                         <div 
                             key={idx} 
-                            className="relative w-full aspect-square rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                            className="relative w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                         >
                             <Image 
                                 src={img} 
                                 alt={`${product.name} - Image ${idx + 1}`}
-                                fill
-                                className="object-cover"
+                                width={400}
+                                height={0}
+                                className="w-full h-auto"
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             />
                         </div>

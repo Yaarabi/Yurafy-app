@@ -16,7 +16,7 @@ const Hero: React.FC = () => {
 
     
     return (
-        <div className="relative text-white min-h-[100vh] sm:min-h-screen flex flex-col overflow-hidden">
+        <div className="relative text-white min-h-[80vh] sm:min-h-screen flex flex-col overflow-hidden">
             {/* Hero Image Background */}
             {hero.imageUrl && (
                 <div 
@@ -68,7 +68,7 @@ const Hero: React.FC = () => {
                         transition={{ duration: 0.8, delay: 0.8 }}
                     >
                         <a 
-                            href="#products" 
+                            href={`/${storeLanguage}/shop/`} 
                             className="group relative inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-4 border-2 border-white text-sm sm:text-base md:text-lg font-light tracking-wide hover:bg-white hover:text-gray-900 transition-all duration-500 overflow-hidden"
                         >
                             <span className="relative z-10">{getStoreTranslation("shopNow", storeLanguage)}</span>

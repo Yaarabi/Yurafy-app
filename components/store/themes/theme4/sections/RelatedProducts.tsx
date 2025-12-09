@@ -23,13 +23,17 @@ const RelatedProducts: React.FC = () => {
 
     // Get related products: same category, excluding current product, sorted by newest first
     const relatedProducts = useMemo(() => {
-        if (!selectedStore || !selectedProduct || !selectedProduct.category) return [];
+        if (!selectedStore || !selectedProduct || !selectedProduct.category) {
+            return [];
+        }
         
-        return products
-            .filter(p => 
-                p.category === selectedProduct.category && 
-                p._id !== selectedProduct._id
-            )
+        
+        const filtered = products
+            .filter(p => {
+                const isSameCategory = p.category === selectedProduct.category;
+                const isDifferentProduct = p._id !== selectedProduct._id;
+                return isSameCategory && isDifferentProduct;
+            })
             .sort((a, b) => {
                 // Sort by createdAt (newest first)
                 const dateA = new Date(a.createdAt || 0).getTime();
@@ -37,6 +41,9 @@ const RelatedProducts: React.FC = () => {
                 return dateB - dateA;
             })
             .slice(0, 4); // Show max 4 related products
+            
+        console.log('RelatedProducts - Filtered result:', filtered.length, 'products');
+        return filtered;
     }, [products, selectedProduct, selectedStore]);
     
     if (!selectedStore || !selectedProduct) return null;

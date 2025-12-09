@@ -13,13 +13,14 @@ interface ProductPageClientWrapperProps {
     product: IProduct;
     store: SerializedStore | null;
     productUrl?: string;
+    products?: IProduct[];
 }
 
-const ProductPageClientWrapper: React.FC<ProductPageClientWrapperProps> = ({ product, store, productUrl }) => {
+const ProductPageClientWrapper: React.FC<ProductPageClientWrapperProps> = ({ product, store, productUrl, products = [] }) => {
 
     if(!store) return <h2>Not Found</h2>
     return (
-        <StoreProvider stores={[store]} initialStore={store}>
+        <StoreProvider stores={[store]} initialStore={store} products={products}>
             <SeoJsonLd store={store} product={product} storeUrl={productUrl} />
             <ProductCompo product={product} store={store} />
             <Cart />

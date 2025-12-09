@@ -46,7 +46,7 @@ const ProductPage: React.FC = () => {
                         </div>
                         {/* Specifications Table - Below Order Form */}
                         {selectedProduct && (
-                                <SpecificationsTable product={selectedProduct} primaryColor={primaryColor} secondaryColor={secondaryColor} />
+                                <SpecificationsTable product={selectedProduct} primaryColor={primaryColor} secondaryColor={secondaryColor} storeLanguage={selectedStore?.language} />
                         )}
                         {/* Image Descriptions - Below Specifications */}
                         {selectedProduct && (

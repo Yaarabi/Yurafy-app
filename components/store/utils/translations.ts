@@ -32,6 +32,7 @@ const translations: Record<string, Record<string, string>> = {
         specifications: "Specifications",
         category: "Category",
         brand: "Brand",
+        viewSpecifications: "View Full Specifications",
         shippingInformation: "Shipping Information",
         fullName: "Full Name",
         fullNamePlaceholder: "Enter your full name",
@@ -81,6 +82,8 @@ const translations: Record<string, Record<string, string>> = {
         itemRemoved: "Item removed from cart",
         productOutOfStock: "Product is out of stock",
         onlyItemsAvailable: "Only {count} items available in stock",
+        relatedProducts: "Related Products",
+        discoverMore: "Discover more products from the same category",
     },
     fr: {
         about: "À propos",
@@ -110,6 +113,7 @@ const translations: Record<string, Record<string, string>> = {
         specifications: "Spécifications",
         category: "Catégorie",
         brand: "Marque",
+        viewSpecifications: "Voir toutes les spécifications",
         shippingInformation: "Informations de Livraison",
         fullName: "Nom Complet",
         fullNamePlaceholder: "Entrez votre nom complet",
@@ -159,6 +163,8 @@ const translations: Record<string, Record<string, string>> = {
         itemRemoved: "Article retiré du panier",
         productOutOfStock: "Produit en rupture de stock",
         onlyItemsAvailable: "Seulement {count} articles disponibles en stock",
+        relatedProducts: "Produits Associés",
+        discoverMore: "Découvrez plus de produits de la même catégorie",
     },
     ar: {
         about: "حول",
@@ -188,6 +194,7 @@ const translations: Record<string, Record<string, string>> = {
         specifications: "المواصفات",
         category: "الفئة",
         brand: "العلامة التجارية",
+        viewSpecifications: "عرض جميع المواصفات",
         shippingInformation: "معلومات الشحن",
         fullName: "الاسم الكامل",
         fullNamePlaceholder: "أدخل اسمك الكامل",
@@ -237,6 +244,8 @@ const translations: Record<string, Record<string, string>> = {
         itemRemoved: "تمت إزالة العنصر من السلة",
         productOutOfStock: "المنتج غير متوفر",
         onlyItemsAvailable: "يتوفر فقط {count} من العناصر في المخزون",
+        relatedProducts: "منتجات ذات صلة",
+        discoverMore: "اكتشف المزيد من المنتجات من نفس الفئة",
     },
 };
 

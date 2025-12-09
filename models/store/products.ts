@@ -8,6 +8,7 @@ export interface IProduct {
     slug: string;
     description?: string;
     price: number;
+    currency?: string; // e.g., '$', '€', 'MAD', 'DH'
     discount?: number;
     stock: number;
     category: string;
@@ -60,6 +61,10 @@ const ProductSchema = new Schema(
             type: Number, 
             required: true,
             index: true, // Index for price sorting/filtering
+        },
+        currency: { 
+            type: String, 
+            default: '$',
         },
         discount: { type: Number, default: 0 },
         stock: { 

@@ -56,7 +56,7 @@ const ProductGrid: React.FC = () => {
     const displayedProducts = products.slice(0, 4);
 
     return (
-        <div id="products" className="relative py-24 overflow-hidden">
+        <div id="products" className="relative py-20 overflow-hidden">
             {/* Organic Geometric Pattern */}
             <GeometricDecorations type="organic" color={primaryColor} className="opacity-5" />
             

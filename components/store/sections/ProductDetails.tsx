@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useStore } from '../hooks/useStore';
 import { useCart } from '../context/CartContext';
 import ProductVariantsUI from './ProductVariantsUI';
-import toast from 'react-hot-toast';
 import { getStoreTranslation } from '../../store/utils/translations';
 
 const ProductDetails: React.FC = () => {
@@ -51,7 +51,7 @@ const ProductDetails: React.FC = () => {
             <div>
                 <div className="aspect-square w-full bg-gray-200 rounded-lg overflow-hidden mb-4 relative">
                     {mainImage ? (
-                        <img src={mainImage} alt={selectedProduct.name} className="w-full h-full object-cover object-center" />
+                        <Image src={mainImage} alt={selectedProduct.name} fill className="object-cover object-center" />
                     ) : (
                         <div className="w-full h-full bg-gray-200" aria-label={`${selectedProduct.name} placeholder`} />
                     )}
@@ -63,10 +63,10 @@ const ProductDetails: React.FC = () => {
                             <button 
                                 key={idx} 
                                 onClick={() => setMainImage(img as string)}
-                                className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
+                                className={`block h-16 w-16 rounded-md overflow-hidden transition-all duration-200 relative ${mainImage === img ? 'ring-2 ring-offset-2 ring-[var(--color-primary)]' : 'hover:opacity-80'}`}
                                 title={`${selectedProduct.name} thumbnail ${idx + 1}`}
                             >
-                                <img src={img as string} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover object-center" />
+                                <Image src={img as string} alt={`${selectedProduct.name} thumbnail ${idx + 1}`} fill className="object-cover object-center" />
                             </button>
                         ))}
                 </div>
@@ -76,7 +76,7 @@ const ProductDetails: React.FC = () => {
             <div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">{selectedProduct.name}</h1>
                 <div className="mt-3">
-                    <p className="text-3xl text-gray-900">${selectedProduct.price.toFixed(2)}</p>
+                    <p className="text-3xl text-gray-900">{selectedProduct.currency || '$'}{selectedProduct.price.toFixed(2)}</p>
                 </div>
                 <div className="mt-6">
                     <p className="text-base text-gray-700">{selectedProduct.description}</p>
@@ -144,6 +144,16 @@ const ProductDetails: React.FC = () => {
                         {selectedProduct.stock === 0 && <div><span className="font-semibold text-gray-800">Status:</span> <span className="text-red-600">{getStoreTranslation('outOfStock', storeLanguage)}</span></div>}
                     </div>
                 </div>
+
+                {/* View Full Specifications Button */}
+                {selectedProduct.specifications && selectedProduct.specifications.length > 0 && (
+                    <div className="mt-6">
+                        <a href="#specifications-table" className="inline-block px-6 py-2 rounded-md font-semibold text-white transition-transform hover:scale-105"
+                            style={{ backgroundColor: primaryColor }}>
+                            {getStoreTranslation('viewSpecifications', storeLanguage) || 'View Full Specifications'}
+                        </a>
+                    </div>
+                )}
             </div>
         </div>
     );

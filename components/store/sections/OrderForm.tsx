@@ -148,7 +148,8 @@ const OrderForm: React.FC = () => {
                     <div className="ml-4 text-right">
                         <p className="text-sm text-gray-600">{getStoreTranslation('price', storeLanguage)}</p>
                         <p className="text-lg font-bold" style={{ color: primaryColor }}>
-                            ${((productOptions.quantity || 1) * selectedProduct.price).toFixed(2)}
+                            {(selectedProduct.currency || '$')}
+                            {((productOptions.quantity || 1) * selectedProduct.price).toFixed(2)}
                         </p>
                     </div>
                 </div>
@@ -265,14 +266,16 @@ const OrderForm: React.FC = () => {
                     <label htmlFor="phone" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
                         {getStoreTranslation('phoneNumber', storeLanguage)} *
                     </label>
-                    <PhoneInput
-                        defaultCountry="ma"
-                        value={formData.phone}
-                        onChange={(phone) => setFormData({ ...formData, phone })}
-                        className={`mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none ${isRTL ? 'text-right' : ''}`}
-                        style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
-                        required
-                    />
+                    <div dir="ltr">
+                        <PhoneInput
+                            defaultCountry="ma"
+                            value={formData.phone}
+                            onChange={(phone) => setFormData({ ...formData, phone })}
+                            className="mt-1 block w-full border rounded-md focus:ring-2 focus:outline-none"
+                            style={{ '--react-international-phone-border-color': '#d1d5db', '--react-international-phone-focus-border-color': primaryColor } as React.CSSProperties}
+                            required
+                        />
+                    </div>
                 </div>
                 <div className="lg:col-span-1">
                     <label htmlFor="city" className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>

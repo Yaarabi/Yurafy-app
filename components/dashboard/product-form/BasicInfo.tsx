@@ -27,9 +27,10 @@ export default function BasicInfo({ values, handleChange, errors, Input, Textare
 
             <Textarea label={t('description')} name="description" value={values.description || ''} onChange={handleChange} />
 
-            {/* Price, Discount, Stock */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Price, Currency, Discount, Stock */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Input label={t('price')} name="price" type="number" step="0.01" value={values.price || ''} onChange={handleChange} error={errors.price} placeholder="0.00" />
+                <Input label={t('currency') || 'Currency'} name="currency" type="text" value={values.currency} onChange={handleChange} placeholder="$" maxLength={10} />
                 <Input label={t('discount')} name="discount" type="number" min="0" max="100" value={values.discount || ''} onChange={handleChange} placeholder="0" />
                 <Input label={t('stock')} name="stock" type="number" min="0" value={values.stock || ''} onChange={handleChange} error={errors.stock} placeholder="0" />
             </div>

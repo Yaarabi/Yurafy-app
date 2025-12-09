@@ -1,7 +1,7 @@
 export const revalidate = 3600;
 
 import ProductPageClientWrapper from '@/components/pages/productWraper';
-import { getProductWithStoreBySlug } from '@/lib/data/products';
+import { getProductWithStoreBySlug, getAllStoreProducts } from '@/lib/data/products';
 import { generateProductMetadata } from '@/lib/metadata/productMetadata';
 import ThemeInjector from '@/components/productPage/ThemeInjector';
 import { getStoreByDomain } from '@/lib/data/store';
@@ -11,6 +11,9 @@ import { getSubdomainFromHeaders } from '@/lib/utils/subdomain';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string; domain?: string; locale?: string }> }) {
     const { slug, domain, locale = 'en' } = await params;
+    
+    // Decode URL-encoded slug (for Arabic and other non-ASCII characters)
+    const decodedSlug = decodeURIComponent(slug);
     
     // Extract actual store domain - prioritize subdomain from headers if available
     let storeDomain = domain;
@@ -33,7 +36,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         storeDomain = storeDomain.toLowerCase().trim();
     }
     
-    const { product, store } = await getProductWithStoreBySlug(slug);
+    const { product, store } = await getProductWithStoreBySlug(decodedSlug);
 
     if (!product) {
         return <NotFound/>;
@@ -44,6 +47,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         return <NotFound/>;
     }
 
+    // Fetch all products for this store (for related products section)
+    const allStoreProducts = store ? await getAllStoreProducts(store._id) : [];
+
     // Build product URL for SEO (subdomain-aware)
     const domainPart = process.env.NEXT_PUBLIC_DOMAIN || 'yurait.vercel.app';
     const productUrl = storeSubdomain 
@@ -53,7 +59,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     return (
         <>
             <ThemeInjector theme={store?.theme || {}} />
-            <ProductPageClientWrapper product={product} store={store} productUrl={productUrl} />
+            <ProductPageClientWrapper product={product} store={store} productUrl={productUrl} products={allStoreProducts} />
         </>
     );
 }
@@ -63,7 +69,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 // ----------------------
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; locale?: string }> }) {
     const { slug, locale = 'en' } = await params;
-    return generateProductMetadata(slug, locale);
+    // Decode URL-encoded slug (for Arabic and other non-ASCII characters)
+    const decodedSlug = decodeURIComponent(slug);
+    return generateProductMetadata(decodedSlug, locale);
 }
 
 // Optional: viewport theme
