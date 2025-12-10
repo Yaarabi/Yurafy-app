@@ -148,7 +148,7 @@ const OrderForm: React.FC = () => {
                     <div className="ml-4 text-right">
                         <p className="text-sm text-gray-600">{getStoreTranslation('price', storeLanguage)}</p>
                         <p className="text-lg font-bold" style={{ color: primaryColor }}>
-                            {(selectedProduct.currency || '$')}
+                            {(selectedProduct.currency || '$')} 
                             {((productOptions.quantity || 1) * selectedProduct.price).toFixed(2)}
                         </p>
                     </div>

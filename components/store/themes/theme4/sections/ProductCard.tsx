@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         className="text-3xl font-light tracking-tight mb-3"
                         style={{ color: primaryColor }}
                     >
-                        ${product.price?.toFixed(2) ?? "0.00"}
+                        {product.price?.toFixed(2) ?? "0.00"} {product.currency || '$'}
                     </p>
                     <div className="flex gap-2">
                         <button
