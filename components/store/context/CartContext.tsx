@@ -35,6 +35,9 @@ export interface CartContextValue {
     getSubtotal: () => number;
     getShippingEstimate: () => number;
     getTotal: () => number;
+    // Helpers for UI and order creation
+    getItemTotal: (productId: string, color?: string, size?: string) => number;
+    getItemUnitPrice: (productId: string, color?: string, size?: string) => number;
 }
 
 export const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -116,13 +119,21 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 };
                 return updated;
             } else {
+                // Calculate a snapshot unit price to store on the item (use computeItemUnitPrice logic)
+                const snapshotUnitPrice = computeItemUnitPrice({
+                    productId: product._id!,
+                    product,
+                    quantity,
+                    price: product.price,
+                } as CartItem);
+
                 return [...prev, {
                     productId: product._id!,
                     product,
                     quantity,
                     color: options?.color,
                     size: options?.size,
-                    price: product.price,
+                    price: snapshotUnitPrice,
                     metadata: options?.metadata,
                 }];
             }
@@ -176,9 +187,49 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return items.reduce((total, item) => total + item.quantity, 0);
     }, [items]);
 
+    // Compute effective unit price for an item based on product discount and bundles
+    const computeItemUnitPrice = useCallback((item: CartItem) => {
+        let basePrice = item.price ?? item.product.price ?? 0;
+
+        // Apply product-level discount first (percentage)
+        if (item.product.discount && item.product.discount > 0) {
+            basePrice = parseFloat((basePrice * (1 - (item.product.discount / 100))).toFixed(2));
+        }
+
+        // Apply bundle adjustments
+        const bundles = item.product.bundles;
+        if (bundles && bundles.enabled) {
+            if (bundles.type === 'special_price' && typeof bundles.specialPrice === 'number') {
+                return bundles.specialPrice;
+            }
+            if (bundles.type === 'percentage_off' && typeof bundles.percentageOff === 'number') {
+                return parseFloat((basePrice * (1 - (bundles.percentageOff / 100))).toFixed(2));
+            }
+            // For buy_x_get_y, unit price remains basePrice but total charged quantity changes
+        }
+
+        return basePrice;
+    }, []);
+
+    // Compute total for an item (considers buy_x_get_y bundles which change charged quantity)
+    const computeItemTotal = useCallback((item: CartItem) => {
+        const unitPrice = computeItemUnitPrice(item);
+        const bundles = item.product.bundles;
+        let chargedQuantity = item.quantity;
+
+        if (bundles && bundles.enabled && bundles.type === 'buy_x_get_y' && bundles.buyQuantity && bundles.getQuantity) {
+            const groupSize = bundles.buyQuantity + bundles.getQuantity;
+            const groups = Math.floor(item.quantity / groupSize);
+            const freeItems = groups * bundles.getQuantity;
+            chargedQuantity = item.quantity - freeItems;
+        }
+
+        return parseFloat((unitPrice * chargedQuantity).toFixed(2));
+    }, [computeItemUnitPrice]);
+
     const getSubtotal = useCallback(() => {
-        return items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    }, [items]);
+        return items.reduce((total, item) => total + computeItemTotal(item), 0);
+    }, [items, computeItemTotal]);
 
     const getShippingEstimate = useCallback(() => {
         // Simple shipping estimate: 50 if subtotal < 500, free otherwise
@@ -186,9 +237,22 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return subtotal < 500 ? 50 : 0;
     }, [getSubtotal]);
 
+    // Total should be the sum of product totals only (not including shipping by default)
     const getTotal = useCallback(() => {
-        return getSubtotal() + getShippingEstimate();
-    }, [getSubtotal, getShippingEstimate]);
+        return getSubtotal();
+    }, [getSubtotal]);
+
+    const getItemTotal = useCallback((productId: string, color?: string, size?: string) => {
+        const item = items.find(i => i.productId === productId && i.color === color && i.size === size);
+        if (!item) return 0;
+        return computeItemTotal(item);
+    }, [items, computeItemTotal]);
+
+    const getItemUnitPrice = useCallback((productId: string, color?: string, size?: string) => {
+        const item = items.find(i => i.productId === productId && i.color === color && i.size === size);
+        if (!item) return 0;
+        return computeItemUnitPrice(item);
+    }, [items, computeItemUnitPrice]);
 
     const value: CartContextValue = {
         items,
@@ -204,6 +268,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         getSubtotal,
         getShippingEstimate,
         getTotal,
+        getItemTotal,
+        getItemUnitPrice,
     };
 
     return (

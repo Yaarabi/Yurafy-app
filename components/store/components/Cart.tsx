@@ -21,7 +21,9 @@ const Cart: React.FC = () => {
         getTotalItems, 
         getSubtotal, 
         getShippingEstimate, 
-        getTotal 
+        getTotal,
+        getItemUnitPrice,
+        getItemTotal,
     } = useCart();
     
     const { selectedStore } = useStore();
@@ -49,6 +51,14 @@ const Cart: React.FC = () => {
         });
         setItemVariants(variants);
     }, [items]);
+
+    // Determine the cart currency: prefer if all product currencies are the same
+    const cartCurrency = (() => {
+        const currencies = Array.from(new Set(items.map(i => i.product.currency).filter(Boolean)));
+        if (currencies.length === 1) return currencies[0];
+        // Fallback to first item's currency or '$'
+        return items.length > 0 ? (items[0].product.currency || '$') : '$';
+    })();
 
     const handleQuantityChange = (productId: string, delta: number, color?: string, size?: string) => {
         const item = items.find(
@@ -97,12 +107,15 @@ const Cart: React.FC = () => {
                         product: item.productId,
                         name: item.product.name,
                         quantity: item.quantity,
-                        price: item.price,
+                        price: getItemUnitPrice(item.productId, item.color, item.size),
+                        lineTotal: getItemTotal(item.productId, item.color, item.size),
                         color: variant.color || item.color || undefined,
                         size: variant.size || item.size || undefined,
                     };
                 }),
                 totalAmount: getTotal(),
+                currency: cartCurrency,
+                shippingAmount: getShippingEstimate(),
                 shippingAddress: {
                     fullName: checkoutForm.fullName,
                     phone: normalizePhoneNumber(checkoutForm.phone), // Normalize to E.164 format
@@ -213,8 +226,9 @@ const Cart: React.FC = () => {
                                                         <p className={`text-xs text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : ''}`}>{t('size')}: {item.size}</p>
                                                     )}
                                                     <p className="text-sm font-bold mt-1" style={{ color: primaryColor }}>
-                                                        ${item.price.toFixed(2)}
+                                                        {item.product.currency || cartCurrency}{getItemUnitPrice(item.productId, item.color, item.size).toFixed(2)}
                                                     </p>
+                                                    <p className="text-xs text-gray-500">{t('total')}: {item.product.currency || cartCurrency}{getItemTotal(item.productId, item.color, item.size).toFixed(2)}</p>
                                                     
                                                     {/* Quantity Controls */}
                                                     <div className="flex items-center gap-2 mt-2">
@@ -257,12 +271,12 @@ const Cart: React.FC = () => {
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
                                             <span className={`${isRTL ? 'text-right' : ''}`}>{t('subtotal')}</span>
-                                            <span className="font-semibold">${getSubtotal().toFixed(2)}</span>
+                                            <span className="font-semibold">{cartCurrency}{getSubtotal().toFixed(2)}</span>
                                         </div>
                                         {getShippingEstimate() > 0 && (
                                             <div className="flex justify-between text-sm">
                                                 <span className={`${isRTL ? 'text-right' : ''}`}>{t('shipping')}</span>
-                                                <span className="font-semibold">${getShippingEstimate().toFixed(2)}</span>
+                                                <span className="font-semibold">{cartCurrency}{getShippingEstimate().toFixed(2)}</span>
                                             </div>
                                         )}
                                         {getShippingEstimate() === 0 && (
@@ -273,7 +287,7 @@ const Cart: React.FC = () => {
                                         )}
                                         <div className="flex justify-between text-lg font-bold pt-2 border-t" style={{ borderColor: `${primaryColor}20` }}>
                                             <span className={`${isRTL ? 'text-right' : ''}`}>{t('total')}</span>
-                                            <span style={{ color: primaryColor }}>${getTotal().toFixed(2)}</span>
+                                            <span style={{ color: primaryColor }}>{cartCurrency}{getTotal().toFixed(2)}</span>
                                         </div>
                                     </div>
                                     <button
@@ -436,15 +450,15 @@ const Cart: React.FC = () => {
                                     <div className="space-y-1 text-sm">
                                         <div className="flex justify-between">
                                             <span>{`${t('items')} (${getTotalItems()})`}</span>
-                                            <span>${getSubtotal().toFixed(2)}</span>
+                                            <span>{cartCurrency}{getSubtotal().toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>{t('shipping')}</span>
-                                            <span>{getShippingEstimate() > 0 ? `$${getShippingEstimate().toFixed(2)}` : t('free')}</span>
+                                            <span>{getShippingEstimate() > 0 ? `${cartCurrency}${getShippingEstimate().toFixed(2)}` : t('free')}</span>
                                         </div>
                                         <div className="flex justify-between font-bold pt-2 border-t" style={{ borderColor: `${primaryColor}20` }}>
                                             <span>{t('total')}</span>
-                                            <span style={{ color: primaryColor }}>${getTotal().toFixed(2)}</span>
+                                            <span style={{ color: primaryColor }}>{cartCurrency}{getTotal().toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </div>
