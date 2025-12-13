@@ -1,9 +1,9 @@
 {
   "services": {
     "hero": {
-      "title": "Lancez Boutique Nouvelle Génération avec Automatisation WhatsApp & Livraison et IA",
-      "subtitle": "Vitrines personnalisées, réponses automatiques WhatsApp, Lien société de livraison, et tableaux de bord et gestion d'équipe",
-      "ctaPrimary": "Obtenez Votre Boutique Maintenant",
+      "title": "Des solutions web qui propulsent votre entreprise grâce aux technologies modernes",
+      "subtitle": "Nous concevons et développons des solutions digitales performantes et évolutives, adaptées à vos objectifs.",
+      "ctaPrimary": "Obtenez Votre Site Web Maintenant",
       "ctaSecondary": "Discutez avec Nous sur WhatsApp",
       "features": {
         "codCheckout": {
@@ -27,8 +27,39 @@
     "popular": "Le Plus Populaire",
     "priceNote": "Paiement unique",
     "getStarted": "Commencer",
-    "videoTitle": "Découvrez Comment Ça Marche",
-    "servicesTitle": "Nos Forfaits de Services",
+    "videoTitle": "Découvrez le Fonctionnement du Nouveau Système COD",
+    "servicesTitle": "Nos Forfaits de Services Pour COD",
+    "web": {
+      "title": "Notre Expertise",
+      "subtitle": "Solutions web qui propulsent votre entreprise",
+      "description": "Des sites CMS aux boutiques e-commerce à haute conversion et applications web sur mesure.",
+      "items": {
+        "wordpress": {
+          "title": "WordPress et CMS",
+          "description": "Thèmes et plugins WordPress sur mesure, solutions CMS conçues pour la rapidité, l'échelle et l'alignement de la marque."
+        },
+        "ecommerce": {
+          "title": "Développement E-Commerce",
+          "description": "Boutiques Shopify, YouCan et WooCommerce construites pour augmenter les conversions et rationaliser les flux de vente."
+        },
+        "uiux": {
+          "title": "Conception UI/UX",
+          "description": "Interfaces centrées sur l'utilisateur avec une esthétique moderne qui transforme les visiteurs en clients fidèles."
+        },
+        "responsive": {
+          "title": "Design responsive et mobile-first",
+          "description": "Expérience fluide sur tous les appareils avec des mises en page adaptatives, améliorations progressives et interfaces tactiles."
+        },
+        "customWebApps": {
+          "title": "Applications Web sur mesure",
+          "description": "Applications sur mesure construites avec MERN, Next.js, Nest.js et autres technologies modernes adaptées à vos besoins."
+        },
+        "performanceSeo": {
+          "title": "Performance et SEO",
+          "description": "Sites optimisés avec des temps de chargement rapides, données structurées et meilleures pratiques pour améliorer le classement et la rétention."
+        }
+      }
+    },
     "basicStore": {
       "type": "Boutique Basique",
       "description": "Liste de produits, formulaire COD, tableau de bord (sans automatisation)",

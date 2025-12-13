@@ -1,9 +1,9 @@
 {
   "services": {
     "hero": {
-      "title": "Launch New Generation Store with WhatsApp & Delivery Automation and AI",
-      "subtitle": "Custom storefronts, WhatsApp auto-replies, Link delivery company, and team dashboards and management",
-      "ctaPrimary": "Get Your Store Now",
+      "title": "Web solutions that drive your business forward with Modern Technology",
+      "subtitle": "We design and develop scalable, high-performance digital solutions tailored to your goals",
+      "ctaPrimary": "Get Your Website Now",
       "ctaSecondary": "Chat with Us on WhatsApp",
       "features": {
         "codCheckout": {
@@ -27,8 +27,39 @@
     "popular": "Most Popular",
     "priceNote": "One-time payment",
     "getStarted": "Get Started",
-    "videoTitle": "See How It Works",
-    "servicesTitle": "Our Service Packages",
+    "videoTitle": "See How New COD System Works",
+    "servicesTitle": "Our Service Packages for COD",
+    "web": {
+      "title": "Our Expertise",
+      "subtitle": "Web solutions that drive your business forward",
+      "description": "From CMS websites to high-converting e-commerce stores and custom web apps.",
+      "items": {
+        "wordpress": {
+          "title": "WordPress & CMS",
+          "description": "Custom WordPress themes, plugins, and CMS solutions designed for speed, scalability, and brand alignment."
+        },
+        "ecommerce": {
+          "title": "E-Commerce Development",
+          "description": "Shopify, YouCan, and WooCommerce stores built to increase conversions and streamline sales workflows."
+        },
+        "uiux": {
+          "title": "UI/UX Design",
+          "description": "User-centered interfaces with modern aesthetics that turn visitors into loyal customers."
+        },
+        "responsive": {
+          "title": "Responsive & Mobile-First",
+          "description": "Seamless experience on all devices with responsive layouts, progressive enhancements, and touch-friendly design."
+        },
+        "customWebApps": {
+          "title": "Custom Web Applications",
+          "description": "Bespoke applications built with MERN, Next.js, Nest.js, and other modern technologies tailored to your business needs."
+        },
+        "performanceSeo": {
+          "title": "Performance & SEO",
+          "description": "Optimized websites with fast load times, structured data, and best practices to boost search rankings and retention."
+        }
+      }
+    },
     "basicStore": {
       "type": "Basic Store",
       "description": "Product listing, COD checkout form, dashboard (no automation)",

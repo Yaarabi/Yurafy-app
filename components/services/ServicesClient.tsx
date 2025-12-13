@@ -11,6 +11,8 @@ import ServiceForm from './ServiceForm';
 import ServicesVideo from './ServicesVideo';
 import DifferentIdea from './DifferentIdea';
 import SupportChat from './SupportChat';
+import Services from './WebServices';
+import HeroTechStackLogos from './TechStack';
 
 export interface Service {
     id: string;
@@ -50,10 +52,12 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
 
     return (
         <div className="min-h-screen" dir={isArabic ? 'rtl' : 'ltr'}>
-            <ServicesHero locale={locale} />
+            <ServicesHero locale={locale} requestQuote={handleRequestQuote} />
 
-            {/* Hero Feature Cards */}
-            <HeroFeatureCards />
+            <HeroTechStackLogos />
+
+            {/* Web Services Section */}
+            <Services/>
 
             {/* Services Video Section (below hero) */}
             <ServicesVideo />
@@ -74,6 +78,9 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
                     ))}
                 </div>
             </section>
+
+            {/* Hero Feature Cards */}
+            <HeroFeatureCards />
 
             {/* Conversion Assist Section */}
             <ServicesConversion onRequest={handleRequestQuote} />

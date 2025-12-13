@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 type Message = { _id?: string; role: "user" | "bot"; text: string };
 
 export default function SupportChat() {
-    const t = useTranslations("support");
+    const t = useTranslations("Support");
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
@@ -129,13 +129,13 @@ export default function SupportChat() {
             ref={panelRef}
             id="support-chat-panel"
             role="dialog"
-            aria-label={t("title") || "Support Chat"}
+            aria-label={t("chat.title") || "Support Chat"}
             className="fixed z-[99999] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-t-lg sm:rounded-lg shadow-lg flex flex-col p-3
                 inset-x-0 bottom-0 sm:inset-auto sm:right-4 sm:bottom-16 sm:w-80 md:w-96 w-full max-h-[70vh] sm:max-h-[60vh]"
             >
             {/* Header */}
             <div className="flex items-center justify-between mb-2">
-                <div className="font-semibold text-lg">{t("title") || "Support Chat"}</div>
+                <div className="font-semibold text-lg">{t("chat.title") || "Support Chat"}</div>
                 <button
                 aria-label="Close chat"
                 onClick={() => setOpen(false)}
@@ -184,16 +184,16 @@ export default function SupportChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="flex-1 px-3 py-3 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder={t("placeholder") || "Type your message..."}
+                placeholder={t("chat.input.placeholder") || "Type your message..."}
                 onKeyDown={(e) => e.key === "Enter" && send()}
-                aria-label={t("placeholder") || "Type your message"}
+                aria-label={t("chat.input.placeholder") || "Type your message"}
                 />
                 <button
                 onClick={send}
                 disabled={loading}
                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition disabled:opacity-50"
                 >
-                {loading ? "..." : t("send") || "Send"}
+                {loading ? "..." : t("chat.input.send") || "Send"}
                 </button>
             </div>
             </div>
