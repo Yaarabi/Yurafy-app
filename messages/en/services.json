@@ -143,7 +143,7 @@
       "success": "Thank you! Your request has been submitted successfully. We will contact you soon.",
       "errors": {
         "fullName": "Please enter a valid full name (at least 2 characters)",
-        "phoneNumber": "Please enter a valid Moroccan phone number (e.g., +212 600 000 000)",
+        "phoneNumber": "Please enter a phone number",
         "email": "Please enter a valid email address",
         "serviceType": "Please select a service type",
         "domainOfWorkRequired": "Please enter the domain of work (required for Other)",
@@ -151,6 +151,30 @@
         "messageRequired": "Please provide more details (required for Other)",
         "validation": "Please fix the errors in the form",
         "submit": "Failed to submit request. Please try again."
+      }
+    },
+    "customWebsite": {
+      "type": "Custom Website",
+      "description": "Bespoke website design and development tailored to your brand.",
+      "features": {
+        "design": "Custom design & branding",
+        "development": "Custom development & integrations"
+      }
+    },
+    "wordpressWebsite": {
+      "type": "WordPress website",
+      "description": "Custom WordPress themes, plugins and CMS solutions.",
+      "features": {
+        "themes": "Custom themes",
+        "plugins": "Plugin development & integration"
+      }
+    },
+    "shopifyStore": {
+      "type": "Shopify Store",
+      "description": "Shopify setup, theme customization and app integrations.",
+      "features": {
+        "setup": "Store setup & theme customization",
+        "integration": "Third-party apps & payments"
       }
     },
     "differentIdea": {

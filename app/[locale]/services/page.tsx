@@ -83,6 +83,31 @@ async function getServicesData(locale: string): Promise<Service[]> {
             icon: 'FaRobot',
             color: 'from-[var(--brand-blue)] to-blue-900',
         },
+        // New website-related services added to match the ServiceInquiry enum
+        {
+            id: 'custom-website',
+            type: t('customWebsite.type'),
+            description: t('customWebsite.description'),
+            features: [t('customWebsite.features.design'), t('customWebsite.features.development')],
+            icon: 'FaCode',
+            color: 'from-[var(--brand-blue)] to-sky-600',
+        },
+        {
+            id: 'wordpress-website',
+            type: t('wordpressWebsite.type'),
+            description: t('wordpressWebsite.description'),
+            features: [t('wordpressWebsite.features.themes'), t('wordpressWebsite.features.plugins')],
+            icon: 'FaWordpress',
+            color: 'from-[var(--brand-blue)] to-indigo-600',
+        },
+        {
+            id: 'shopify-store',
+            type: t('shopifyStore.type'),
+            description: t('shopifyStore.description'),
+            features: [t('shopifyStore.features.setup'), t('shopifyStore.features.integration')],
+            icon: 'FaShopify',
+            color: 'from-[var(--brand-blue)] to-green-600',
+        },
     ];
 }
 

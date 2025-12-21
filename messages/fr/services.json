@@ -143,7 +143,7 @@
       "success": "Merci ! Votre demande a été soumise avec succès. Nous vous contacterons bientôt.",
       "errors": {
         "fullName": "Veuillez entrer un nom complet valide (au moins 2 caractères)",
-        "phoneNumber": "Veuillez entrer un numéro de téléphone marocain valide (ex: +212 600 000 000)",
+        "phoneNumber": "Veuillez entrer un numéro de téléphone",
         "email": "Veuillez entrer une adresse email valide",
         "serviceType": "Veuillez sélectionner un type de service",
         "domainOfWorkRequired": "Veuillez entrer le domaine d'activité (requis pour Autre)",
@@ -151,6 +151,30 @@
         "messageRequired": "Veuillez fournir plus de détails (requis pour Autre)",
         "validation": "Veuillez corriger les erreurs dans le formulaire",
         "submit": "Échec de la soumission de la demande. Veuillez réessayer."
+      }
+    },
+    "customWebsite": {
+      "type": "Site Web Sur Mesure",
+      "description": "Conception et développement de sites web sur mesure adaptés à votre marque.",
+      "features": {
+        "design": "Conception personnalisée & branding",
+        "development": "Développement personnalisé & intégrations"
+      }
+    },
+    "wordpressWebsite": {
+      "type": "Site WordPress",
+      "description": "Thèmes WordPress personnalisés, plugins et solutions CMS.",
+      "features": {
+        "themes": "Thèmes personnalisés",
+        "plugins": "Développement et intégration de plugins"
+      }
+    },
+    "shopifyStore": {
+      "type": "Boutique Shopify",
+      "description": "Configuration Shopify, personnalisation de thème et intégrations d'apps.",
+      "features": {
+        "setup": "Configuration & personnalisation du thème",
+        "integration": "Apps et paiements tiers"
       }
     },
     "differentIdea": {

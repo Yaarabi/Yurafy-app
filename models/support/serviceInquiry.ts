@@ -25,7 +25,6 @@ const serviceInquirySchema = new Schema<IServiceInquiry>(
             type: String,
             required: [true, 'Phone number is required'],
             trim: true,
-            match: [/^(\+212|0)[5-7][0-9]{8}$/, 'Please enter a valid Moroccan phone number'],
         },
         email: {
             type: String,
@@ -38,6 +37,9 @@ const serviceInquirySchema = new Schema<IServiceInquiry>(
             type: String,
             required: [true, 'Service type is required'],
             enum: [
+                'Custom Website',
+                'WordPress website',
+                'Shopify Store',
                 'Basic Store',
                 'Store + WhatsApp Auto Reply',
                 'Store + Delivery API Integration',

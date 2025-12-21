@@ -138,6 +138,10 @@ export default function AdminServicesManagement() {
         'Store + Delivery API Integration',
         'Full COD System (Automation)',
         'AI WhatsApp Agent Integration',
+        // Newly-added service types (model enum)
+        'Custom Website',
+        'WordPress website',
+        'Shopify Store',
     ];
 
     const statuses = ['new', 'contacted', 'converted', 'closed'];
