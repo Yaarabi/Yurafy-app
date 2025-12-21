@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Check, Mail, Phone, User, MessageSquare } from 'lucide-react';
+import { X, Check, Mail, User, MessageSquare } from 'lucide-react';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 
@@ -36,8 +38,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             newErrors.fullName = t('form.errors.fullName');
         }
 
-        const phoneRegex = /^(\+212|0)[5-7][0-9]{8}$/;
-        if (!formData.phoneNumber.trim() || !phoneRegex.test(formData.phoneNumber)) {
+        if (!formData.phoneNumber.trim()) {
             newErrors.phoneNumber = t('form.errors.phoneNumber');
         }
 
@@ -176,18 +177,16 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     {t('form.phoneNumber')} <span className="text-red-500">*</span>
                                 </label>
-                                <div className="relative">
-                                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input
-                                        type="tel"
-                                        name="phoneNumber"
+                                <div dir="ltr">
+                                    <PhoneInput
                                         value={formData.phoneNumber}
-                                        onChange={handleInputChange}
-                                        className={`w-full pl-11 pr-4 py-3 border ${
-                                            errors.phoneNumber ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                                        } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-                                        style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
-                                        placeholder="+212 600 000 000"
+                                        onChange={(phone) => {
+                                            setFormData((prev) => ({ ...prev, phoneNumber: phone }));
+                                            if (errors.phoneNumber) setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+                                        }}
+                                        className={`mt-1 block w-full border rounded-md ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                                        style={{ '--react-international-phone-border-color': errors.phoneNumber ? '#fca5a5' : '#d1d5db', '--react-international-phone-focus-border-color': 'var(--brand-blue)' } as React.CSSProperties}
+                                        placeholder="+1 555 555 5555"
                                     />
                                 </div>
                                 {errors.phoneNumber && (
