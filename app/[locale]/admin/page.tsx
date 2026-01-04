@@ -46,7 +46,7 @@ export default function AdminPage() {
     const { data: session } = useSession();
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'notifications' | 'send-notifications' | 'resources' | 'support' | 'support-agent' | 'uploads' | 'guides' | 'services'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'users-plans' | 'notifications' | 'send-notifications' | 'resources' | 'support' | 'support-agent' | 'uploads' | 'guides' | 'services' | 'projects'>('overview');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
