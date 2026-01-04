@@ -177,6 +177,21 @@
         "integration": "Third-party apps & payments"
       }
     },
+    "projectsTitle": "Our Recent Projects",
+    "projectsSubtitle": "A selection of recent web development projects and case studies.",
+    "projectsEmpty": "No projects yet. Check back soon.",
+    "projectsView": "View project",
+
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": {
+        "q1": { "q": "How long does a typical website project take?", "a": "Project timelines vary, but typical small-to-medium websites take 2-6 weeks depending on scope." },
+        "q2": { "q": "Do you provide hosting and maintenance?", "a": "Yes — we offer hosting, maintenance, and ongoing support plans tailored to your needs." },
+        "q3": { "q": "Can you migrate my existing website?", "a": "Absolutely — we can migrate content, design, and data from most platforms with minimal downtime." },
+        "q4": { "q": "What technologies and platforms do you use?", "a": "We build with modern web technologies like Next.js, React, TypeScript, Node, and NestJS; and we work with platforms such as Shopify, YouCan, and WordPress. We also use Tailwind CSS, MongoDB, PostgreSQL, Supabase, and other tools tailored to your project needs." }
+      }
+    },
+
     "differentIdea": {
       "badge": "Different Idea 💡",
       "title": "Want something different?",

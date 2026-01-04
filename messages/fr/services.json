@@ -177,6 +177,21 @@
         "integration": "Apps et paiements tiers"
       }
     },
+    "projectsTitle": "Nos Projets Récents",
+    "projectsSubtitle": "Une sélection de projets récents de développement web et d'études de cas.",
+    "projectsEmpty": "Aucun projet pour le moment. Revenez bientôt.",
+    "projectsView": "Voir le projet",
+
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "items": {
+        "q1": { "q": "Combien de temps prend un projet de site web typique ?", "a": "Les délais varient, mais les sites de petite à moyenne taille prennent généralement 2 à 6 semaines selon le périmètre." },
+        "q2": { "q": "Fournissez-vous l'hébergement et la maintenance ?", "a": "Oui — nous proposons l'hébergement, la maintenance et des plans de support sur mesure." },
+        "q3": { "q": "Pouvez-vous migrer mon site existant ?", "a": "Absolument — nous pouvons migrer le contenu, le design et les données depuis la plupart des plateformes avec un minimum d'interruption." },
+        "q4": { "q": "Quelles technologies et plateformes utilisez-vous ?", "a": "Nous utilisons des technologies Web modernes telles que Next.js, React, TypeScript, Node et NestJS, et travaillons avec des plateformes comme Shopify, YouCan et WordPress. Nous utilisons également Tailwind CSS, MongoDB, PostgreSQL, Supabase et d'autres outils adaptés aux besoins du projet." }
+      }
+    },
+
     "differentIdea": {
       "badge": "Idée Différente 💡",
       "title": "Vous voulez quelque chose de différent ?",

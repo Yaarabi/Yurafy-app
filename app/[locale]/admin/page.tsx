@@ -20,6 +20,7 @@ import AdminAccountsManagement from "@/components/admin/AdminAccountsManagement"
 import AdminAgentsManagement from "@/components/admin/AdminAgentsManagement";
 import AdminUploadsManagement from "@/components/admin/AdminUploadsManagement";
 import AdminGuidesManagement from "@/components/admin/AdminGuidesManagement";
+import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
 import AdminServicesManagement from "@/components/admin/AdminServicesManagement";
 import AdminUsersPlans from "@/components/admin/AdminUsersPlans";
 import AdminResourcesManagement from "@/components/admin/AdminResourcesManagement";
@@ -252,6 +253,17 @@ export default function AdminPage() {
                             <Briefcase className="w-4 h-4 inline mr-1 sm:mr-2" />
                             Services
                         </button>
+                        <button
+                            onClick={() => setActiveTab('projects')}
+                            className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
+                                activeTab === 'projects'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            <Briefcase className="w-4 h-4 inline mr-1 sm:mr-2" />
+                            Projects
+                        </button>
                     </div>
                 </div>
             </div>
@@ -420,6 +432,15 @@ export default function AdminPage() {
                         animate={{ opacity: 1 }}
                     >
                         <AdminServicesManagement />
+                    </motion.div>
+                )}
+
+                {activeTab === 'projects' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AdminProjectsManagement />
                     </motion.div>
                 )}
             </div>

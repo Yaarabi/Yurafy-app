@@ -9,6 +9,8 @@ import ServicesCTA from './ServicesCTA';
 import ServicesConversion from './ServicesConversion';
 import ServiceForm from './ServiceForm';
 import ServicesVideo from './ServicesVideo';
+import Projects from './Projects';
+import ServicesFAQ from './ServicesFAQ';
 import DifferentIdea from './DifferentIdea';
 import SupportChat from './SupportChat';
 import Services from './WebServices';
@@ -59,6 +61,11 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
             {/* Web Services Section */}
             <Services/>
 
+            {/* Projects Section */}
+            <Projects locale={locale} />
+
+            <ServicesCTA onRequestQuote={handleRequestQuote} />
+
             {/* Services Video Section (below hero) */}
             <ServicesVideo />
 
@@ -85,9 +92,11 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
             {/* Conversion Assist Section */}
             <ServicesConversion onRequest={handleRequestQuote} />
 
-            <ServicesCTA onRequestQuote={handleRequestQuote} />
+
 
             <DifferentIdea onRequest={handleRequestQuote} />
+
+            <ServicesFAQ locale={locale} />
 
             <SupportChat />
 
