@@ -3,13 +3,26 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from 'next-intl';
 
-export default function ServicesVideo() {
+interface Guide {
+    title: string;
+    description: string;
+    videoUrl: string;
+}
+
+interface ServicesVideoProps {
+    initialGuide?: Guide | null;
+}
+
+export default function ServicesVideo({ initialGuide }: ServicesVideoProps) {
     const t = useTranslations('services');
-    const [guide, setGuide] = useState<{ title: string; description: string; videoUrl: string } | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [guide, setGuide] = useState<Guide | null>(initialGuide || null);
+    const [loading, setLoading] = useState(!initialGuide);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // Only fetch if no initial data was provided
+        if (initialGuide) return;
+
         const fetchGuide = async () => {
             try {
                 setLoading(true);
@@ -28,7 +41,7 @@ export default function ServicesVideo() {
             }
         };
         fetchGuide();
-    }, []);
+    }, [initialGuide]);
 
     if (loading || error || !guide?.videoUrl) return null;
     const embed = toYouTubeEmbedUrl(guide.videoUrl);

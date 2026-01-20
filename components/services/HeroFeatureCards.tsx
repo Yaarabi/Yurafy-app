@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from 'framer-motion';
 import { ShoppingCart, MessageCircle, Truck, Users, LucideIcon } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 
@@ -43,33 +42,21 @@ export default function HeroFeatureCards() {
         },
     ];
 
-    // Duplicate features for seamless infinite scroll
-    const duplicatedFeatures = [...features, ...features, ...features];
-
     return (
         <section className="overflow-hidden py-10 bg-gradient-to-b from-blue-50/50 via-white to-white dark:from-gray-900/50 dark:via-gray-950 dark:to-gray-950">
-            <motion.div
+            <div
                 className="flex gap-5"
-                animate={{
-                    x: isRTL ? [0, 1 * (220 + 20) * features.length] : [0, -1 * (220 + 20) * features.length],
-                }}
-                transition={{
-                    x: {
-                        repeat: Infinity,
-                        repeatType: "loop",
-                        duration: 25,
-                        ease: "linear",
-                    },
+                style={{
+                    animation: isRTL ? `scrollRight 50s linear infinite` : `scrollLeft 50s linear infinite`,
+                    width: 'fit-content',
                 }}
             >
-                {duplicatedFeatures.map((feature, index) => {
+                {features.map((feature, index) => {
                     const Icon = feature.icon;
                     return (
-                        <motion.div
+                        <div
                             key={index}
-                            className="flex-shrink-0 w-[220px]"
-                            whileHover={{ scale: 1.08, y: -5 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="flex-shrink-0 w-[220px] hover:scale-108 transition-transform duration-300"
                         >
                             <div className="group relative bg-white dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-5 border border-gray-100 dark:border-gray-700/50 hover:border-transparent transition-all duration-300 h-full shadow-lg hover:shadow-2xl overflow-hidden">
                                 {/* Gradient overlay on hover */}
@@ -98,10 +85,10 @@ export default function HeroFeatureCards() {
                                 {/* Corner decoration */}
                                 <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} bottom-0 w-16 h-16 bg-gradient-to-br ${feature.gradient} opacity-5 dark:opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-300`} />
                             </div>
-                        </motion.div>
+                        </div>
                     );
                 })}
-            </motion.div>
+            </div>
         </section>
     );
 }

@@ -34,6 +34,25 @@ body {
   --color-text-muted: #9ca3af;
 }
 
+/* Performance-optimized CSS animations */
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
 .react-international-phone-input-container {
   width: 100% !important;
 }

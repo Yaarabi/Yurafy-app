@@ -10,12 +10,15 @@ interface Project {
     img: string;
 }
 
-export default function Projects({ locale }: { locale: string }) {
+export default function Projects({ locale, initialProjects }: { locale: string; initialProjects?: Project[] }) {
     const t = useTranslations("services");
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [projects, setProjects] = useState<Project[]>(initialProjects || []);
+    const [loading, setLoading] = useState(!initialProjects);
 
     useEffect(() => {
+        // Only fetch if no initial data was provided
+        if (initialProjects && initialProjects.length > 0) return;
+
         let cancelled = false;
         async function load() {
         try {
@@ -34,7 +37,7 @@ export default function Projects({ locale }: { locale: string }) {
         return () => {
         cancelled = true;
         };
-    }, [locale]);
+    }, [initialProjects]);
 
     if (loading)
         return (

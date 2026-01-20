@@ -1,7 +1,6 @@
 
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 
@@ -85,32 +84,19 @@ export default function HeroTechStackLogos() {
         },
     ];
 
-    const duplicatedStack = [...techStack, ...techStack, ...techStack];
-
     return (
         <section className="overflow-hidden py-12 bg-white">
-            <motion.div
+            <div
                 className="flex gap-6"
-                animate={{
-                    x: isRTL
-                        ? [0, (180 + 10) * techStack.length]
-                        : [0, -(180 + 10) * techStack.length],
-                }}
-                transition={{
-                    x: {
-                        repeat: Infinity,
-                        repeatType: "loop",
-                        duration: 30,
-                        ease: "linear",
-                    },
+                style={{
+                    animation: isRTL ? `scrollRight 60s linear infinite` : `scrollLeft 60s linear infinite`,
+                    width: 'fit-content',
                 }}
             >
-                {duplicatedStack.map((tech, index) => (
-                    <motion.div
+                {techStack.map((tech, index) => (
+                    <div
                         key={index}
-                        className="flex-shrink-0 w-[180px]"
-                        whileHover={{ scale: 1.08 }}
-                        transition={{ duration: 0.25 }}
+                        className="flex-shrink-0 w-[180px] hover:scale-108 transition-transform duration-300"
                     >
                         <div className="h-full flex flex-col items-center justify-center gap-4 bg-white border border-gray-100 rounded-2xl p-6 shadow-md hover:shadow-xl transition">
                             <div className="relative w-16 h-16">
@@ -120,7 +106,7 @@ export default function HeroTechStackLogos() {
                                     fill
                                     className="object-contain"
                                     sizes="64px"
-                                    unoptimized
+                                    loading="lazy"
                                 />
                             </div>
 
@@ -128,9 +114,9 @@ export default function HeroTechStackLogos() {
                                 {tech.name}
                             </p>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
-            </motion.div>
+            </div>
         </section>
     );
 }

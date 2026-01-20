@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Globe2, ArrowRight, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,11 +23,10 @@ export default function ServicesHero({ locale, requestQuote }: ServicesHeroProps
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.18),_transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(255,255,255,0.08),_transparent_55%)]" />
 
-            {/* Floating hexagons */}
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="absolute top-24 right-12 w-40 h-40 opacity-20 pointer-events-none"
+            {/* Floating hexagons - CSS animated for better performance */}
+            <div
+                className="absolute top-24 right-12 w-40 h-40 opacity-20 pointer-events-none animate-spin"
+                style={{ animationDuration: '30s' }}
             >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                     <polygon
@@ -37,12 +35,13 @@ export default function ServicesHero({ locale, requestQuote }: ServicesHeroProps
                         opacity="0.3"
                     />
                 </svg>
-            </motion.div>
+            </div>
 
-            <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            <div
                 className="absolute bottom-20 left-12 w-32 h-32 opacity-25 pointer-events-none"
+                style={{
+                    animation: 'spin 40s linear infinite reverse',
+                }}
             >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                     <polygon
@@ -51,7 +50,7 @@ export default function ServicesHero({ locale, requestQuote }: ServicesHeroProps
                         opacity="0.35"
                     />
                 </svg>
-            </motion.div>
+            </div>
 
             {/* Dots + connection lines */}
             <svg className="absolute inset-0 w-full h-full opacity-25 pointer-events-none">
@@ -92,31 +91,16 @@ export default function ServicesHero({ locale, requestQuote }: ServicesHeroProps
 
                 {/* Hero Content */}
                 <div className="text-center max-w-5xl mx-auto">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8"
-                    >
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8">
                         {t("hero.title")}
-                    </motion.h1>
+                    </h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.15 }}
-                        className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 leading-relaxed"
-                    >
+                    <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 leading-relaxed">
                         {t("hero.subtitle")}
-                    </motion.p>
+                    </p>
 
                     {/* CTA */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.3 }}
-                        className="flex flex-col sm:flex-row gap-6 justify-center"
-                    >
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center">
                         <button
                             onClick={requestQuote}
                             className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-white rounded-2xl font-semibold shadow-xl hover:scale-105 transition"
@@ -135,7 +119,7 @@ export default function ServicesHero({ locale, requestQuote }: ServicesHeroProps
                             <MessageCircle className="w-5 h-5" />
                             {t("hero.ctaSecondary")}
                         </a>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>

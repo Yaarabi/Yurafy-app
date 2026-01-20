@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return {
         metadataBase: new URL(baseUrl),
         title,
-        description,
+        description: description || 'Professional web development services in Morocco',
         keywords: [
             'web development Morocco', "WordPress",
             'e-commerce Morocco', 'موقع إلكتروني',

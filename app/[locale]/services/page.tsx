@@ -86,13 +86,49 @@ async function getServicesData(locale: string): Promise<Service[]> {
     ];
 }
 
+// Server-side data fetch for guides
+async function getServicesGuide() {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/guides/public?category=services`, { 
+            next: { revalidate: 3600 }
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return Array.isArray(data.guides) && data.guides.length > 0 ? data.guides[0] : null;
+    } catch (error) {
+        console.error('Failed to fetch guide:', error);
+        return null;
+    }
+}
+
+// Server-side data fetch for projects
+async function getProjects() {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/projects`, { 
+            next: { revalidate: 3600 }
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.projects || [];
+    } catch (error) {
+        console.error('Failed to fetch projects:', error);
+        return [];
+    }
+}
+
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
-    const services = await getServicesData(locale);
+    const [services, guide, projects] = await Promise.all([
+        getServicesData(locale),
+        getServicesGuide(),
+        getProjects(),
+    ]);
     
     return (
         <>
-            <ServicesClient locale={locale} services={services} />                            
+            <ServicesClient locale={locale} services={services} initialGuide={guide} initialProjects={projects} />                            
             <Footer />
         </>
     );

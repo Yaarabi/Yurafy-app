@@ -29,9 +29,11 @@ export interface Service {
 interface ServicesClientProps {
     locale: string;
     services: Service[];
+    initialGuide?: { title: string; description: string; videoUrl: string } | null;
+    initialProjects?: any[];
 }
 
-export default function ServicesClient({ locale, services }: ServicesClientProps) {
+export default function ServicesClient({ locale, services, initialGuide, initialProjects }: ServicesClientProps) {
     const t = useTranslations('services');
     const isArabic = locale === 'ar';
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -62,15 +64,15 @@ export default function ServicesClient({ locale, services }: ServicesClientProps
             <Services/>
 
             {/* Projects Section */}
-            <Projects locale={locale} />
+            <Projects locale={locale} initialProjects={initialProjects} />
 
             <ServicesCTA onRequestQuote={handleRequestQuote} />
 
             {/* Services Video Section (below hero) */}
-            <ServicesVideo />
+            <ServicesVideo initialGuide={initialGuide} />
 
             <section id="services" className="max-w-7xl mx-auto px-4 py-16 scroll-mt-20">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white" role="heading" aria-level={2}>
                     {t('servicesTitle')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

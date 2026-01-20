@@ -44,7 +44,7 @@ export default function ServicesFAQ({ locale }: { locale: string }) {
                 >
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <HelpCircle className="w-10 h-10" style={{ color: 'var(--brand-blue)' }} />
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">{t('faq.title')}</h2>
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900" role="heading" aria-level={2}>{t('faq.title')}</h2>
                     </div>
                     <p className="text-lg text-gray-600">{t('projectsSubtitle') || ''}</p>
                 </motion.div>

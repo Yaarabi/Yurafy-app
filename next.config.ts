@@ -65,7 +65,12 @@ const nextConfig: NextConfig = {
             protocol: 'https',
             hostname: 'khamsat.hsoubcdn.com',
             pathname: '/**',
-        }
+        },
+        {
+            protocol: 'https',
+            hostname: 'th.bing.com',
+            pathname: '/**',
+        },
         ],
     },
 };
