@@ -14,7 +14,6 @@ const shopifyStoreSchema = new Schema<IShopifyStore>(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
-            index: true,
         },
         token: {
             type: String,

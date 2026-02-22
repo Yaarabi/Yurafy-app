@@ -41,26 +41,22 @@ const ProductSchema = new Schema(
             type: Schema.Types.ObjectId, 
             ref: "User", 
             required: true,
-            index: true, // Index for owner-based queries
         },
         name: { 
             type: String, 
             required: true, 
             trim: true,
-            index: true, // Index for search
         },
         slug: { 
             type: String, 
             required: true, 
             unique: true, 
             lowercase: true,
-            index: true, // Unique index already exists
         },
         description: { type: String },
         price: { 
             type: Number, 
             required: true,
-            index: true, // Index for price sorting/filtering
         },
         currency: { 
             type: String, 
@@ -71,12 +67,10 @@ const ProductSchema = new Schema(
             type: Number, 
             required: true, 
             default: 0,
-            index: true, // Index for stock queries
         },
         category: { 
             type: String, 
             required: true,
-            index: true, // Index for category filtering
         },
         mainImage: { type: String, required: true },
         images: [{ type: String, required: false }],

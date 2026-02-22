@@ -34,7 +34,6 @@ const GoogleSheetSchema = new Schema<IGoogleSheetIntegration>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
     clientIdEncrypted: {
       type: String,
@@ -107,10 +106,8 @@ const GoogleSheetSchema = new Schema<IGoogleSheetIntegration>(
   { timestamps: true }
 );
 
-// Index for finding integration by owner
-GoogleSheetSchema.index({ owner: 1 });
+// Index for finding integration by owner and enabled status
 GoogleSheetSchema.index({ owner: 1, enabled: 1 });
-GoogleSheetSchema.index({ token: 1 });
 
 export default mongoose.models.GoogleSheetIntegration ||
   mongoose.model<IGoogleSheetIntegration>("GoogleSheetIntegration", GoogleSheetSchema);

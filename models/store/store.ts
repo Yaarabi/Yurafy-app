@@ -64,13 +64,11 @@ const storeSchema = new Schema<IStore>(
             type: mongoose.Schema.Types.ObjectId, 
             ref: "User", 
             required: true,
-            index: true, // Index for owner lookups
         },
         brandName: { 
             type: String, 
             required: true, 
             trim: true,
-            index: true, // Index for search
         },
         domain: { 
             type: String, 
@@ -78,19 +76,16 @@ const storeSchema = new Schema<IStore>(
             trim: true, 
             unique: true, 
             lowercase: true,
-            index: true, // Unique index already exists
         },
         description: { type: String, required: true, trim: true },
         language: { 
             type: String, 
             enum: ['en', 'fr', 'ar'],
             default: 'en',
-            index: true, // Index for language filtering
         },
         themeId: { 
             type: Number, 
             required: true,
-            index: true, // Index for theme filtering
         },
 
         theme: {

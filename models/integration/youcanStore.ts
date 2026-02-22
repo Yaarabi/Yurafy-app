@@ -18,13 +18,11 @@ const youcanStoreSchema = new Schema<IYouCanStore>(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
-            index: true,
         },
         token: {
             type: String,
             required: true,
             trim: true,
-            index: true,
         },
         accessToken: {
             type: String,
@@ -44,12 +42,10 @@ const youcanStoreSchema = new Schema<IYouCanStore>(
             type: String,
             required: false,
             trim: true,
-            index: true,
         },
         connect: {
             type: Boolean,
             default: false,
-            index: true,
         },
     },
     { timestamps: true }

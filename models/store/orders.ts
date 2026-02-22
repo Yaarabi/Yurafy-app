@@ -38,7 +38,6 @@ const OrderSchema = new Schema(
       type: Schema.Types.ObjectId, 
       ref: "User", 
       required: true,
-      index: true, // Index for owner queries
     },
     products: [
       {
@@ -53,13 +52,11 @@ const OrderSchema = new Schema(
     totalAmount: { 
       type: Number, 
       required: true,
-      index: true, // Index for financial queries
     },
     status: {
       type: String,
       enum: ["new", "confirmed", "shipped", "delivered", "cancelled"],
       default: "new",
-      index: true, // Index for status filtering
     },
     shippingAddress: {
       fullName: { type: String, required: true },

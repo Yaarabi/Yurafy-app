@@ -7,6 +7,7 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
+import { VALID_SERVICE_TYPES, isServiceTypeInList } from '@/lib/services/serviceTypesEnum';
 
 interface ServiceFormProps {
     isOpen: boolean;
@@ -54,6 +55,11 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             newErrors.serviceType = t('form.errors.serviceType');
         }
 
+        // Validate that service type is in the valid list
+        if (formData.serviceType && !isServiceTypeInList(formData.serviceType as any)) {
+            newErrors.serviceType = `Invalid service type selected. Please choose from the dropdown.`;
+        }
+
         const isOther = formData.serviceType === 'Other';
 
         // domainOfWork validation: required if Other, else only length check
@@ -88,6 +94,17 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
         setSubmitting(true);
 
         try {
+            // Log form data for debugging (server can help if needed)
+            console.log('ServiceForm: Submitting inquiry', {
+                fullName: formData.fullName,
+                phoneNumber: formData.phoneNumber,
+                email: formData.email,
+                serviceType: formData.serviceType,
+                serviceTypeValid: isServiceTypeInList(formData.serviceType as any),
+                domainOfWork: formData.domainOfWork ? '[provided]' : '[empty]',
+                message: formData.message ? '[provided]' : '[empty]',
+            });
+
             const response = await fetch('/api/services/inquiries', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -97,7 +114,24 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to submit');
+                // Better error handling for API validation errors
+                const errorMessage = data.message || data.error || 'Failed to submit';
+                
+                // Log server error for debugging
+                console.error('ServiceForm submission error:', {
+                    status: response.status,
+                    error: data.error,
+                    details: data.details,
+                });
+                
+                // If there are detailed validation errors from the API
+                if (data.details && Array.isArray(data.details)) {
+                    toast.error(data.details[0] || errorMessage);
+                } else {
+                    toast.error(errorMessage);
+                }
+                
+                return;
             }
 
             toast.success(t('form.success'));
@@ -227,13 +261,21 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     {t('form.serviceType')} <span className="text-red-500">*</span>
                                 </label>
+                                {services.length === 0 && (
+                                    <div className="p-3 mb-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                                            Services are loading. Please refresh the page if this persists.
+                                        </p>
+                                    </div>
+                                )}
                                     <select
                                         name="serviceType"
                                         value={formData.serviceType}
                                         onChange={handleInputChange}
+                                        disabled={services.length === 0}
                                         className={`w-full px-4 py-3 border ${
                                             errors.serviceType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                                        } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                                        } rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed`}
                                         style={{ '--tw-ring-color': 'var(--brand-blue)' } as React.CSSProperties}
                                     >
                                         <option value="">{t('form.selectService')}</option>

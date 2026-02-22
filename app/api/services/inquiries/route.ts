@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db/mongoDB';
 import ServiceInquiry from '@/models/support/serviceInquiry';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
+import { VALID_SERVICE_TYPES, isValidServiceType } from '@/lib/services/serviceTypesEnum';
 
 // GET - Fetch all service inquiries (Admin only)
 export async function GET(request: NextRequest) {
@@ -62,32 +63,61 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { fullName, phoneNumber, email, serviceType, message, domainOfWork } = body;
 
-        // Basic required fields
-        if (!fullName || !phoneNumber || !serviceType) {
+        // Basic required fields validation
+        if (!fullName || typeof fullName !== 'string' || !fullName.trim()) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: 'Full name is required and must be a valid string' },
+                { status: 400 }
+            );
+        }
+
+        if (!phoneNumber || typeof phoneNumber !== 'string' || !phoneNumber.trim()) {
+            return NextResponse.json(
+                { error: 'Phone number is required and must be a valid string' },
+                { status: 400 }
+            );
+        }
+
+        if (!serviceType || typeof serviceType !== 'string' || !serviceType.trim()) {
+            return NextResponse.json(
+                { error: 'Service type is required and must be a valid string' },
+                { status: 400 }
+            );
+        }
+
+        // Validate service type against enum
+        if (!isValidServiceType(serviceType)) {
+            console.warn(`Invalid service type received: "${serviceType}". Valid types are: ${VALID_SERVICE_TYPES.join(', ')}`);
+            return NextResponse.json(
+                { error: `Invalid service type. Please select a valid service from the dropdown.` },
                 { status: 400 }
             );
         }
 
         // Additional conditional requirements for "Other"
         if (serviceType === 'Other') {
-            if (!domainOfWork || !domainOfWork.trim() || !message || !message.trim()) {
+            if (!domainOfWork || typeof domainOfWork !== 'string' || !domainOfWork.trim()) {
                 return NextResponse.json(
-                    { error: 'Domain of work and more details message are required for Other service type.' },
+                    { error: 'Domain of work is required when selecting "Other"' },
+                    { status: 400 }
+                );
+            }
+            if (!message || typeof message !== 'string' || !message.trim()) {
+                return NextResponse.json(
+                    { error: 'Additional details are required when selecting "Other"' },
                     { status: 400 }
                 );
             }
         }
 
-        // Create new inquiry
+        // Create new inquiry with cleaned data
         const inquiry = await ServiceInquiry.create({
-            fullName,
-            phoneNumber,
-            email,
-            serviceType,
+            fullName: fullName.trim(),
+            phoneNumber: phoneNumber.trim(),
+            email: email ? email.trim() : undefined,
+            serviceType: serviceType.trim(),
             domainOfWork: domainOfWork?.trim() || undefined,
-            message: message || '',
+            message: message?.trim() || undefined,
             status: 'new',
         });
 
@@ -105,11 +135,20 @@ export async function POST(request: NextRequest) {
     } catch (error: any) {
         console.error('Error creating service inquiry:', error);
 
-        // Handle validation errors
+        // Handle MongoDB validation errors
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map((err: any) => err.message);
+            console.error('Validation error details:', messages);
             return NextResponse.json(
                 { error: 'Validation error', details: messages },
+                { status: 400 }
+            );
+        }
+
+        // Handle MongoDB duplicate key errors
+        if (error.code === 11000) {
+            return NextResponse.json(
+                { error: 'This inquiry has already been submitted' },
                 { status: 400 }
             );
         }
