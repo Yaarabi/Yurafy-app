@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         const { fullName, phoneNumber, email, serviceType, message, domainOfWork } = body;
 
         // Basic required fields
-        if (!fullName || !phoneNumber || !email || !serviceType) {
+        if (!fullName || !phoneNumber || !serviceType) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }

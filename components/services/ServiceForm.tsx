@@ -42,9 +42,12 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             newErrors.phoneNumber = t('form.errors.phoneNumber');
         }
 
-        const emailRegex = /^\S+@\S+\.\S+$/;
-        if (!formData.email.trim() || !emailRegex.test(formData.email)) {
-            newErrors.email = t('form.errors.email');
+        // Email is optional - only validate if provided
+        if (formData.email.trim()) {
+            const emailRegex = /^\S+@\S+\.\S+$/;
+            if (!emailRegex.test(formData.email)) {
+                newErrors.email = t('form.errors.email');
+            }
         }
 
         if (!formData.serviceType) {
@@ -179,6 +182,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                                 </label>
                                 <div dir="ltr">
                                     <PhoneInput
+                                        defaultCountry="ma"
                                         value={formData.phoneNumber}
                                         onChange={(phone) => {
                                             setFormData((prev) => ({ ...prev, phoneNumber: phone }));
@@ -197,7 +201,7 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                             {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    {t('form.email')} <span className="text-red-500">*</span>
+                                    {t('form.email')} ({t('form.optional')})
                                 </label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
