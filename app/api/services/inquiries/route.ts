@@ -3,7 +3,6 @@ import { connectDB } from '@/lib/db/mongoDB';
 import ServiceInquiry from '@/models/support/serviceInquiry';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
-import { VALID_SERVICE_TYPES, isValidServiceType } from '@/lib/services/serviceTypesEnum';
 
 // GET - Fetch all service inquiries (Admin only)
 export async function GET(request: NextRequest) {
@@ -81,15 +80,6 @@ export async function POST(request: NextRequest) {
         if (!serviceType || typeof serviceType !== 'string' || !serviceType.trim()) {
             return NextResponse.json(
                 { error: 'Service type is required and must be a valid string' },
-                { status: 400 }
-            );
-        }
-
-        // Validate service type against enum
-        if (!isValidServiceType(serviceType)) {
-            console.warn(`Invalid service type received: "${serviceType}". Valid types are: ${VALID_SERVICE_TYPES.join(', ')}`);
-            return NextResponse.json(
-                { error: `Invalid service type. Please select a valid service from the dropdown.` },
                 { status: 400 }
             );
         }

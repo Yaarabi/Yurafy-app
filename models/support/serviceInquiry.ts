@@ -35,17 +35,7 @@ const serviceInquirySchema = new Schema<IServiceInquiry>(
         serviceType: {
             type: String,
             required: [true, 'Service type is required'],
-            enum: [
-                'Custom Website',
-                'WordPress website',
-                'Shopify Store',
-                'Basic Store',
-                'Store + WhatsApp Auto Reply',
-                'Store + Delivery API Integration',
-                'Full COD System (Automation)',
-                'AI WhatsApp Agent Integration',
-                'Other',
-            ],
+            trim: true,
         },
         domainOfWork: {
             type: String,

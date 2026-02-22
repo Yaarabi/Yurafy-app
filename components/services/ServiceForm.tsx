@@ -7,7 +7,7 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
-import { VALID_SERVICE_TYPES, isServiceTypeInList } from '@/lib/services/serviceTypesEnum';
+
 
 interface ServiceFormProps {
     isOpen: boolean;
@@ -55,9 +55,12 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
             newErrors.serviceType = t('form.errors.serviceType');
         }
 
-        // Validate that service type is in the valid list
-        if (formData.serviceType && !isServiceTypeInList(formData.serviceType as any)) {
-            newErrors.serviceType = `Invalid service type selected. Please choose from the dropdown.`;
+        // Validate that service type is in the available services list or 'Other'
+        if (formData.serviceType && formData.serviceType !== 'Other') {
+            const isValidService = services.some(service => service.type === formData.serviceType);
+            if (!isValidService) {
+                newErrors.serviceType = `Invalid service type selected. Please choose from the dropdown.`;
+            }
         }
 
         const isOther = formData.serviceType === 'Other';
@@ -100,7 +103,6 @@ export default function ServiceForm({ isOpen, onClose, services, initialServiceT
                 phoneNumber: formData.phoneNumber,
                 email: formData.email,
                 serviceType: formData.serviceType,
-                serviceTypeValid: isServiceTypeInList(formData.serviceType as any),
                 domainOfWork: formData.domainOfWork ? '[provided]' : '[empty]',
                 message: formData.message ? '[provided]' : '[empty]',
             });
