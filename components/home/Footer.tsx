@@ -85,9 +85,9 @@ export default function Footer() {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 bg-green-500 hover:bg-green-600 text-white p-3 sm:p-4 rounded-full shadow-lg z-50 flex items-center justify-center transition"
+                className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center transition"
                 >
-                    <FaWhatsapp className="text-lg sm:text-xl" />
+                    <FaWhatsapp size={35} className="text-lg sm:text-xl" />
             </a>  
 
             <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
