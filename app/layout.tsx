@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Providers from '@/components/home/provider';
 import { Toaster } from 'react-hot-toast';
 import { Analytics } from "@vercel/analytics/next";
+import MetaPixel from '@/components/home/MetaPixel';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
@@ -189,6 +190,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                <MetaPixel />
                 {/* Global Schema.org JSON-LD */}
                 <script
                     type="application/ld+json"

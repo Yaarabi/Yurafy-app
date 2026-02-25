@@ -12,11 +12,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     };
 
     const descriptions: Record<string, string> = {
-        en: 'Professional web development services in Morocco. E-commerce stores, WhatsApp automation, delivery API integration, and AI chatbots. Prices from 1,500 MAD.',
-        fr: 'Services de développement web professionnel au Maroc. Boutiques e-commerce, automatisation WhatsApp, intégration API de livraison et chatbots IA. À partir de 1 500 MAD.',
-        ar: 'خدمات تطوير ويب احترافية في المغرب. متاجر إلكترونية، أتمتة واتساب، تكامل API التوصيل، وروبوتات الدردشة بالذكاء الاصطناعي. من 1500 درهم.',
+        en: 'Professional web development services in Morocco. E-commerce stores, WhatsApp automation, delivery API integration, and AI chatbots.',
+        fr: 'Services de développement web professionnel au Maroc. Boutiques e-commerce, automatisation WhatsApp, intégration API de livraison et chatbots IA.',
+        ar: 'خدمات تطوير ويب احترافية في المغرب. متاجر إلكترونية، أتمتة واتساب، تكامل API التوصيل، وروبوتات الدردشة بالذكاء الاصطناعي. '
     };
-
+    
     const title = titles[locale] || titles.en;
     const description = descriptions[locale] || descriptions.en;
 
