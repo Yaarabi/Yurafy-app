@@ -45,7 +45,7 @@ export default async function RootPage() {
     }
     
     // No subdomain, redirect to default locale
-    redirect('/en');
+    redirect('/en/services');
 }
 
 // Provide store-specific metadata when accessed via subdomain root
